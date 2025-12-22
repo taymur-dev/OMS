@@ -1,23 +1,34 @@
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
+
 import { Pagination } from "../../Components/Pagination/Pagination";
+
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
+
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
+
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 import { EditButton } from "../../Components/CustomButtons/EditButton";
+
 import { useEffect, useState } from "react";
-import { AddQuotation } from "../../Components/QuotationModal/AddQuotation";
-import { ViewButton } from "../../Components/CustomButtons/ViewButton";
-import { EditQuotation } from "../../Components/QuotationModal/EditQuotation";
+
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 
+import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+
+import { AddJob } from "../../Components/JobModal/AddJob";
+import { UpdateJob } from "../../Components/JobModal/UpdateJob";
+import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+
 const numbers = [10, 25, 50, 100];
 
-type LoanT = "ADD" | "VIEW" | "EDIT" | "";
+type LoanT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
 export const Jobs = () => {
   const { loader } = useAppSelector((state) => state.NavigateSate);
 
@@ -28,6 +39,8 @@ export const Jobs = () => {
   const [pageNo, setPageNo] = useState(1);
 
   const [selectedValue, setSelectedValue] = useState(10);
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleChangeShowData = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -51,14 +64,14 @@ export const Jobs = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("JOBS"));
     }, 1000);
-  }, []);
+  }, [dispatch]);
 
   if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Jobs" activeFile="Jobs list" />
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Jobs :{" "}
@@ -85,34 +98,39 @@ export const Jobs = () => {
             </span>
             <span>entries</span>
           </div>
-          <TableInputField />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
-        <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 text-sm ">
-            <span className="p-2">Sr</span>
-            <span className="p-2 text-left">Created By</span>
-            <span className="p-2 text-left">Job Title</span>
-            <span className="p-2 text-left">Created At</span>
-            <span className="p-2 text-left">Approval</span>
-            <span className="p-2 text-left">Actions</span>
+        <div className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto">
+          <div className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px] ">
+            <span className="">Sr#</span>
+            <span className="">Created By</span>
+            <span className="">Job Title</span>
+            <span className="">Created At</span>
+            <span className="">Approval</span>
+            <span className=" text-center w-32">Actions</span>
           </div>
-          <div className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center ">
-            <span className=" p-2 text-left">1</span>
-            <div className=" p-2 text-left   ">
+          <div className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]">
+            <span className=" px-2">1</span>
+            <div className="">
               Hamza Amin
               <span className="block text-xs text-gray-400">
                 TECHNICAL RECRUITER
               </span>
             </div>
-            <span className=" p-2 text-left   ">Software Engr</span>
-            <span className=" p-2 text-left  ">23,may,2025</span>
+            <span className="">Software Engr</span>
+            <span className=" ">23,may,2025</span>
             <span className=" text-orange-500 ">
               <span className="bg-orange-100 p-2 rounded-full ">Pending</span>
             </span>
-            <span className="p-2 flex items-center  gap-1">
+            <span className=" flex items-center  gap-1">
               <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
 
-              <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
+              <DeleteButton
+                handleDelete={() => handleToggleViewModal("DELETE")}
+              />
             </span>
           </div>
         </div>
@@ -128,10 +146,19 @@ export const Jobs = () => {
       </div>
 
       {isOpenModal === "ADD" && (
-        <AddQuotation setModal={() => handleToggleViewModal("")} />
+        <AddJob setModal={() => handleToggleViewModal("")} />
       )}
       {isOpenModal === "EDIT" && (
-        <EditQuotation setModal={() => handleToggleViewModal("")} />
+        <UpdateJob setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "DELETE" && (
+        <ConfirmationModal
+          isOpen={() => handleToggleViewModal("")}
+          onClose={() => handleToggleViewModal("DELETE")}
+          onConfirm={() => handleToggleViewModal("")}
+          message="Are you sure you want to delete this job?"
+        />
       )}
     </div>
   );

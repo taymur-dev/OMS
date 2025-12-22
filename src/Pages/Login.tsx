@@ -36,7 +36,7 @@ export const Login = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("logIn"));
     }, 1000);
-  }, []);
+  }, [dispatch]);
 
   if (currentUser?.role === "admin") return <Navigate to={"/"} />;
   if (currentUser?.role === "user") return <Navigate to={"/User/dashboard"} />;
@@ -52,7 +52,7 @@ export const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post(`${BASE_URL}/login`, formData);
+      const res = await axios.post(`${BASE_URL}/api/login`, formData);
       const { token } = res.data;
       setAuthToken(token);
       dispatch(authSuccess(res.data));

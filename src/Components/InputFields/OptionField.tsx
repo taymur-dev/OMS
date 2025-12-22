@@ -22,17 +22,32 @@ export const OptionField = ({
   inital,
 }: OptionFieldProps) => {
   return (
-    <div className=" flex flex-col  mt-3">
-      <label className=" text-gray-900 text-xs font-semibold">
+    <div className="flex flex-col mt-4">
+      <label className="mb-1 text-gray-700 text-sm font-medium">
         {labelName}
       </label>
       <select
         value={value}
         onChange={handlerChange}
         name={name}
-        className="p-1 py-2 rounded bg-white text-gray-800  border border-gray-300 focus:outline-indigo-500"
+        className="
+          p-3
+          rounded-lg
+          bg-white
+          text-gray-900
+          border
+          border-gray-300
+          focus:border-indigo-500
+          focus:ring
+          focus:ring-indigo-200
+          focus:outline-none
+          transition
+          duration-200
+          shadow-sm
+          hover:border-gray-400
+        "
       >
-        <option value={""}>{inital}</option>
+        <option value="">{inital}</option>
         {optionData?.map((options) => (
           <option value={options.value} key={options.id}>
             {options.label}

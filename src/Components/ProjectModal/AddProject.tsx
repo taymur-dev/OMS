@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState, useCallback } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { InputField } from "../InputFields/InputField";
@@ -24,8 +24,8 @@ type AllCategoryT = {
 
 const initialState = {
   projectName: "",
-  selectCategory: "",
-  projectDescription: "",
+  projectCategory: "",
+  description: "",
   startDate: currentDate,
   endDate: currentDate,
 };
@@ -51,9 +51,9 @@ export const AddProject = ({
     setAddProject({ ...addProject, [name]: value });
   };
 
-  const handleGetAllCategories = async () => {
+  const handleGetAllCategories = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getCategory`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getCategory`, {
         headers: {
           Authorization: token,
         },
@@ -62,17 +62,21 @@ export const AddProject = ({
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [token]);
 
   console.log("submitted", addProject);
   const handlerSubmitted = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BASE_URL}/admin/addProject`, addProject, {
-        headers: {
-          Authorization: token,
-        },
-      });
+      const res = await axios.post(
+        `${BASE_URL}/api/admin/addProject`,
+        addProject,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
       console.log(res.data);
       handleGetAllProjects();
       setModal();
@@ -83,7 +87,7 @@ export const AddProject = ({
   };
   useEffect(() => {
     handleGetAllCategories();
-  }, []);
+  }, [handleGetAllCategories]);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
@@ -101,8 +105,8 @@ export const AddProject = ({
               />
               <OptionField
                 labelName="Project Category*"
-                name="selectCategory"
-                value={addProject.selectCategory}
+                name="projectCategory"
+                value={addProject.projectCategory}
                 handlerChange={handlerChange}
                 optionData={categories?.map((category) => ({
                   id: category.id,
@@ -114,10 +118,10 @@ export const AddProject = ({
 
               <TextareaField
                 labelName="Project Desciption"
-                name="projectDescription"
+                name="description"
                 placeHolder="Enter Project Description..."
                 handlerChange={handlerChange}
-                inputVal={addProject.projectDescription}
+                inputVal={addProject.description}
               />
               <InputField
                 labelName="Start Date*"

@@ -1,197 +1,228 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useEffect, useState, useCallback } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
-
 import { CancelBtn } from "../CustomButtons/CancelBtn";
-
 import { Title } from "../Title";
-
 import { UserSelect } from "../InputFields/UserSelect";
-
-import axios from "axios";
-
-import { BASE_URL } from "../../Content/URL";
-
-import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../InputFields/InputField";
 import { TextareaField } from "../InputFields/TextareaField";
 import { OptionField } from "../InputFields/OptionField";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
 
-type AddAttendanceProps = {
+type AddProgressProps = {
   setModal: () => void;
-  handleGetAllProgress: () => void;
+  handleRefresh: () => void;
 };
 
-type SeleteProjectT = {
-  projectId: number;
+type UserT = {
+  id: number | string;
+  employeeName?: string;
+  name?: string;
+  loginStatus?: string;
+};
+
+type ProjectT = {
+  id?: number;
+  projectId?: number;
   projectName: string;
+  projectCategory?: string;
 };
 
 type AddProgressType = {
-  employeeId?: string;
-  project?: string;
-  date?: string;
-  note?: string;
-  [key: string]: string | undefined;
+  employee_id: string;
+  projectId: string;
+  date: string;
+  note: string;
 };
 
-const initialState = {
-  employeeId: "",
-  project: "",
+const initialState: AddProgressType = {
+  employee_id: "",
+  projectId: "",
   date: "",
   note: "",
 };
-export const AddProgress = ({
-  setModal,
-  handleGetAllProgress,
-}: AddAttendanceProps) => {
-  const { currentUser } = useAppSelector((state) => state.officeState);
 
-  const isAdmin = currentUser?.role;
+export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+  const token = currentUser?.token;
+  const isAdmin = currentUser?.role === "admin";
 
   const [addProgress, setAddProgress] = useState<AddProgressType>(initialState);
+  const [allUsers, setAllUsers] = useState<UserT[]>([]);
+  const [selectProject, setSelectProject] = useState<ProjectT[]>([]);
 
-  const [allUsers, setAllUsers] = useState([]);
+  const getAllUsers = useCallback(async () => {
+    if (!token) return;
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setAllUsers(res.data?.users ?? []);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+    }
+  }, [token]);
 
-  const [seleteProject, setSeleteProject] = useState<SeleteProjectT[] | null>(
-    null
+  const fetchProjectsByUser = useCallback(
+    async (userId: string | number) => {
+      if (!token || !userId) return;
+      try {
+        const res = await axios.get(
+          `${BASE_URL}/api/admin/getAssignProjects/${userId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const projects = res.data?.projects || res.data?.data || res.data || [];
+        setSelectProject(Array.isArray(projects) ? projects : []);
+      } catch (err) {
+        console.error("Error fetching projects:", err);
+        setSelectProject([]);
+      }
+    },
+    [token]
   );
 
-  const token = currentUser?.token;
+  useEffect(() => {
+    if (isAdmin) getAllUsers();
+  }, [isAdmin, getAllUsers]);
+
+  useEffect(() => {
+    if (!currentUser || !token || isAdmin) return;
+
+    const fetchMyProjects = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/api/user/getAssignProjects`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const projects = res.data || [];
+        setSelectProject(Array.isArray(projects) ? projects : []);
+      } catch (err) {
+        console.error("Error fetching my projects:", err);
+        setSelectProject([]);
+      }
+    };
+
+    setAddProgress((prev) => ({
+      ...prev,
+      employee_id: String(currentUser.id),
+    }));
+    fetchMyProjects();
+  }, [currentUser, token, isAdmin]);
 
   const handlerChange = (
     e: React.ChangeEvent<
-      HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    e.preventDefault();
-
     const { name, value } = e.target;
 
-    if (value === "") {
-      // Agar value empty hai to us property ko remove karo
-      const updatedProgress = { ...addProgress };
-      delete updatedProgress[name];
-      setAddProgress(updatedProgress);
-    } else {
-      // Warna normally set karo
-      setAddProgress({ ...addProgress, [name]: value });
-    }
-  };
+    setAddProgress((prev) => ({ ...prev, [name]: value }));
 
-  console.log("adsdka", addProgress);
-
-  const getAllUsers = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      setAllUsers(res?.data?.users);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleSeleteProject = async () => {
-    try {
-      const res = await axios.get(
-        `${BASE_URL}/admin/getProjectByUser/${addProgress.employeeId}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-      console.log(res.data);
-      setSeleteProject(res.data);
-    } catch (error) {
-      console.log(error);
+    if (name === "employee_id" && value) {
+      fetchProjectsByUser(value);
+      setAddProgress((prev) => ({ ...prev, projectId: "" }));
     }
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!addProgress.employee_id) {
+      alert("Please select an employee");
+      return;
+    }
+
+    if (!addProgress.projectId || !addProgress.date || !addProgress.note) {
+      alert("Please fill all required fields");
+      return;
+    }
+
     try {
-      const res = await axios.post(
-        `${BASE_URL}/admin/addProgress/${addProgress.employeeId}`,
-        addProgress,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
+      await axios.post(
+        `${BASE_URL}/api/admin/addProgress`,
+        { ...addProgress, projectId: Number(addProgress.projectId) },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log(res.data);
-      handleGetAllProgress();
-    } catch (error) {
-      console.log(error);
+      handleRefresh();
+      setModal();
+      setAddProgress(initialState);
+    } catch (err) {
+      console.error("Error adding progress:", err);
+      alert("Failed to add progress");
     }
   };
 
-  useEffect(() => {
-    getAllUsers();
-  }, []);
-  useEffect(() => {
-    if (addProgress.employeeId) {
-      handleSeleteProject();
-    }
-  }, [addProgress?.employeeId]);
+  const userOptions = isAdmin
+    ? allUsers
+        .filter((u) => u.loginStatus === "Y" && u.id != null)
+        .map((u) => ({
+          id: Number(u.id),
+          name: u.employeeName || u.name || "User",
+          value: String(u.id),
+          label: u.employeeName || u.name || "User",
+          loginStatus: u.loginStatus || "Y",
+          projectName: "",
+        }))
+    : [];
+
   return (
-    <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
-          <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Add Progress</Title>
-            <div className="mx-2 flex-wrap gap-3  ">
-              {isAdmin === "admin" && (
-                <UserSelect
-                  labelName="Employees*"
-                  name="employeeId"
-                  value={addProgress.employeeId ?? ""}
-                  handlerChange={handlerChange}
-                  optionData={allUsers}
-                />
-              )}
+    <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
+      <div className="w-[42rem] bg-white rounded-xl border border-indigo-500">
+        <form onSubmit={handlerSubmitted}>
+          <Title setModal={setModal}>Add Progress</Title>
 
-              <OptionField
-                labelName="Project"
-                name="project"
+          <div className="mx-2 space-y-2">
+            {isAdmin && (
+              <UserSelect
+                labelName="Employees*"
+                name="employee_id"
+                value={addProgress.employee_id}
                 handlerChange={handlerChange}
-                value={addProgress.project ?? ""}
-                optionData={seleteProject?.map((project) => ({
-                  id: project.projectId,
-                  label: project.projectName,
-                  value: project.projectName,
-                }))}
-                inital="Please Select Project"
+                disabled={false}
+                optionData={userOptions}
               />
+            )}
 
-              {isAdmin === "admin" && (
-                <InputField
-                  labelName="End Date*"
-                  name="date"
-                  type="date"
-                  handlerChange={handlerChange}
-                  inputVal={addProgress.date}
-                />
-              )}
+            <OptionField
+              labelName="Project*"
+              name="projectId"
+              value={addProgress.projectId}
+              handlerChange={handlerChange}
+              optionData={selectProject.map((p, index) => ({
+                id: p.projectId ?? p.id ?? index + 1,
+                value: String(p.projectId ?? p.id ?? ""),
+                label: p.projectCategory
+                  ? `${p.projectName} (${p.projectCategory})`
+                  : p.projectName,
+              }))}
+              inital={
+                selectProject.length
+                  ? "Please Select Project"
+                  : "No projects available"
+              }
+            />
 
-              <TextareaField
-                labelName="Note*"
-                name="note"
-                handlerChange={handlerChange}
-                inputVal={addProgress.note ?? ""}
-              />
-            </div>
+            <InputField
+              labelName="Date*"
+              name="date"
+              type="date"
+              handlerChange={handlerChange}
+              inputVal={addProgress.date}
+            />
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Save Progress"} />
-            </div>
-          </form>
-        </div>
+            <TextareaField
+              labelName="Note*"
+              name="note"
+              handlerChange={handlerChange}
+              inputVal={addProgress.note}
+            />
+          </div>
+
+          <div className="flex justify-center gap-2 m-2">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Save Progress" />
+          </div>
+        </form>
       </div>
     </div>
   );

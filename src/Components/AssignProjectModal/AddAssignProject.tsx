@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState, useCallback } from "react";
 
 import { AddButton } from "../CustomButtons/AddButton";
 
@@ -56,9 +56,9 @@ export const AddAssignProject = ({
     setAddProject({ ...addProject, [name]: value });
   };
 
-  const getAllUsers = async () => {
+  const getAllUsers = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
         headers: {
           Authorization: token,
         },
@@ -67,11 +67,11 @@ export const AddAssignProject = ({
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [token]);
 
-  const getAllProjects = async () => {
+  const getAllProjects = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getProjects`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getProjects`, {
         headers: {
           Authorization: token,
         },
@@ -81,32 +81,39 @@ export const AddAssignProject = ({
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [token]);
 
   const handlerSubmitted = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post(
-        `${BASE_URL}/admin/assignProject`,
-        addProject,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+  e.preventDefault();
+  try {
+    const payload = {
+      employee_id: addProject.userId, 
+      projectId: addProject.projectId,
+      date: new Date().toISOString(),
+    };
 
-      console.log(res.data);
-      handleGetAllAssignProjects();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    const res = await axios.post(
+      `${BASE_URL}/api/admin/assignProject`,
+      payload,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    console.log(res.data);
+    handleGetAllAssignProjects();
+    setModal(); // close modal after successful save
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   useEffect(() => {
     getAllUsers();
     getAllProjects();
-  }, []);
+  }, [getAllProjects, getAllUsers]);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">

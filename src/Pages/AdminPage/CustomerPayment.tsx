@@ -23,13 +23,15 @@ import {
 } from "../../redux/NavigationSlice";
 
 import { Loader } from "../../Components/LoaderComponent/Loader";
+import { EditButton } from "../../Components/CustomButtons/EditButton";
+import { ViewButton } from "../../Components/CustomButtons/ViewButton";
+import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 
 const numbers = [10, 25, 50, 100];
 
 type CustomerPaymentT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
 
 export const CustomerPayment = () => {
-  
   const { loader } = useAppSelector((state) => state.NavigateSate);
 
   const dispatch = useAppDispatch();
@@ -37,6 +39,8 @@ export const CustomerPayment = () => {
   const [isOpenModal, setIsOpenModal] = useState<CustomerPaymentT>("");
 
   const [pageNo, setPageNo] = useState(1);
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [selectedValue, setSelectedValue] = useState(10);
 
@@ -62,7 +66,7 @@ export const CustomerPayment = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("Customer Payment"));
     }, 1000);
-  }, []);
+  }, [dispatch]);
 
   if (loader) return <Loader />;
 
@@ -72,7 +76,7 @@ export const CustomerPayment = () => {
         tileName="Customer Payment"
         activeFile="Customer Payment list"
       />
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Customer Payment :{" "}
@@ -99,22 +103,34 @@ export const CustomerPayment = () => {
             </span>
             <span>entries</span>
           </div>
-          <TableInputField />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
-        <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-5 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 text-sm ">
-            <span className="p-2">Sr</span>
-            <span className="p-2 text-left">Customer Name</span>
-            <span className="p-2 text-left">Payment Date</span>
-            <span className="p-2 text-left">Amount</span>
-            <span className="p-2 text-left">Invoice No</span>
+        <div className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto">
+          <div className="grid grid-cols-6  bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]">
+            <span className="">Sr#</span>
+            <span className="">Customer Name</span>
+            <span className="">Payment Date</span>
+            <span className="">Amount</span>
+            <span className="">Invoice No</span>
+            <span className="text-center w-36">Actions</span>
           </div>
-          <div className="grid grid-cols-5 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center ">
-            <span className=" p-2 text-left">1</span>
-            <span className=" p-2 text-left">Hamza Amin</span>
-            <span className=" p-2 text-left">Developer</span>
-            <span className=" p-2 text-left">25,05,2025</span>
-            <span className=" p-2 text-left">Pending</span>
+          <div className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px] ">
+            <span className=" px-2">1</span>
+            <span className="">Hamza Amin</span>
+            <span className="">Developer</span>
+            <span className="">25,05,2025</span>
+            <span className="">Pending</span>
+            <span className=" flex items-center  gap-1">
+              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
+
+              <ViewButton handleView={() => handleToggleViewModal("")} />
+              <DeleteButton
+                handleDelete={() => handleToggleViewModal("DELETE")}
+              />
+            </span>
           </div>
         </div>
       </div>

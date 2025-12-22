@@ -4,7 +4,6 @@ type UserT = {
   [key: string]: string;
 };
 
-// Define the initial state with proper types
 type AuthState = {
   currentUser: UserT | null;
   error: string;

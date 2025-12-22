@@ -1,151 +1,205 @@
-import React, { useEffect, useState } from "react";
-
-import { AddButton } from "../CustomButtons/AddButton";
-
-import { CancelBtn } from "../CustomButtons/CancelBtn";
-
-import { Title } from "../Title";
-
-import { UserSelect } from "../InputFields/UserSelect";
-
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 
-import { BASE_URL } from "../../Content/URL";
-
-import { useAppSelector } from "../../redux/Hooks";
+import { AddButton } from "../CustomButtons/AddButton";
+import { CancelBtn } from "../CustomButtons/CancelBtn";
+import { Title } from "../Title";
+import { UserSelect } from "../InputFields/UserSelect";
 import { InputField } from "../InputFields/InputField";
 import { OptionField } from "../InputFields/OptionField";
+import { toast } from "react-toastify";
 
-type AddAttendanceProps = {
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+
+type EditProgressProps = {
   setModal: () => void;
+  progressData: {
+    id: number;
+    employee_id: number;
+    employeeName: string;
+    projectId: number;
+    projectName: string;
+    date: string;
+    note: string;
+  };
+  handleRefresh: () => void;
 };
 
-const initialState = {
-  employeeId: "",
-  project: "",
-  date: "",
-  note: "",
+type UpdateProgressState = {
+  employee_id: string;
+  project: string;
+  date: string;
+  note: string;
 };
 
-type SeleteProjectT = {
+type SelectProjectT = {
   projectId: number;
   projectName: string;
 };
 
-export const EditProgress = ({ setModal }: AddAttendanceProps) => {
+export const EditProgress = ({
+  setModal,
+  progressData,
+  handleRefresh,
+}: EditProgressProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
+  const token = currentUser?.token;
 
-  const [updateProgress, setUpdateProgress] = useState(initialState);
+  const [updateProgress, setUpdateProgress] = useState<UpdateProgressState>({
+    employee_id: "",
+    project: "",
+    date: "",
+    note: "",
+  });
 
-  const [allUsers, setAllUsers] = useState([]);
-
-  const [seleteProject, setSeleteProject] = useState<SeleteProjectT[] | null>(
+  const [allUsers, setAllUsers] = useState<[]>([]);
+  const [selectProject, setSelectProject] = useState<SelectProjectT[] | null>(
     null
   );
 
-  const token = currentUser?.token;
-
-  console.log(updateProgress, "<=>");
+  useEffect(() => {
+    if (progressData) {
+      setUpdateProgress({
+        employee_id: String(progressData.employee_id),
+        project: progressData.projectName,
+        date: progressData.date?.split("T")[0],
+        note: progressData.note,
+      });
+    }
+  }, [progressData]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    e.preventDefault();
-
     const { name, value } = e.target;
-
-    setUpdateProgress({ ...updateProgress, [name]: value });
+    setUpdateProgress((prev) => ({ ...prev, [name]: value }));
   };
 
-  const getAllUsers = async () => {
+  const getAllUsers = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
-        headers: {
-          Authorization: token,
-        },
+      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
+        headers: { Authorization: token },
       });
-      setAllUsers(res?.data?.users);
+      setAllUsers(res?.data?.users || []);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
-  };
+  }, [token]);
 
-  const handleSeleteProject = async () => {
+  const getAssignedProjects = useCallback(async () => {
+    if (!updateProgress.employee_id) return;
+
     try {
       const res = await axios.get(
-        `${BASE_URL}/admin/getProjectByUser/${updateProgress.employeeId}`,
+        `${BASE_URL}/api/admin/getAssignProjects/${updateProgress.employee_id}`,
         {
-          headers: {
-            Authorization: token,
-          },
+          headers: { Authorization: token },
         }
       );
-      console.log(res.data);
-      setSeleteProject(res.data);
+      setSelectProject(res.data || []);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
-  };
-
-  const handlerSubmitted = async () => {};
+  }, [token, updateProgress.employee_id]);
 
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [getAllUsers]);
 
   useEffect(() => {
-    if (updateProgress.employeeId) {
-      handleSeleteProject();
+    getAssignedProjects();
+  }, [getAssignedProjects]);
+
+  const handlerSubmitted = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const selectedProject = selectProject?.find(
+        (p) => p.projectName === updateProgress.project
+      );
+
+      if (!selectedProject) {
+        toast.warning("Please select a valid project");
+
+        return;
+      }
+
+      await axios.put(
+        `${BASE_URL}/api/admin/updateProgress/${progressData.id}`,
+        {
+          employee_id: updateProgress.employee_id,
+          projectId: selectedProject.projectId,
+          date: updateProgress.date,
+          note: updateProgress.note,
+          progressStatus: "Y",
+        },
+        {
+          headers: { Authorization: token },
+        }
+      );
+
+      handleRefresh();
+      toast.success("Progress updated successfully");
+
+      setModal();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update progress");
     }
-  }, [updateProgress.employeeId]);
+  };
+
   return (
-    <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
-          <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Update Progress</Title>
-            <div className="mx-2 flex-wrap gap-3  ">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-500">
+        <form onSubmit={handlerSubmitted}>
+          <Title setModal={setModal}>Update Progress</Title>
+
+          <div className="mx-2 flex-wrap gap-3">
+            {currentUser?.role === "admin" && (
               <UserSelect
                 labelName="Employees*"
-                name="employeeId"
-                value={updateProgress.employeeId}
+                name="employee_id"
+                value={updateProgress.employee_id}
                 handlerChange={handlerChange}
                 optionData={allUsers}
               />
+            )}
 
-              <OptionField
-                labelName="Project"
-                name="project"
-                handlerChange={handlerChange}
-                value={updateProgress.project}
-                optionData={seleteProject?.map((project) => ({
-                  id: project.projectId,
-                  label: project.projectName,
-                  value: project.projectName,
-                }))}
-                inital="Please Select Project"
-              />
+            <OptionField
+              labelName="Project*"
+              name="project"
+              value={updateProgress.project}
+              handlerChange={handlerChange}
+              optionData={selectProject?.map((p) => ({
+                id: p.projectId,
+                label: p.projectName,
+                value: p.projectName,
+              }))}
+              inital="Please Select Project"
+            />
 
-              <InputField
-                labelName="End Date*"
-                name="date"
-                handlerChange={handlerChange}
-                inputVal={updateProgress.note}
-              />
-              <InputField
-                labelName="Note*"
-                name="note"
-                handlerChange={handlerChange}
-                inputVal={updateProgress.note}
-              />
-            </div>
+            <InputField
+              labelName="End Date*"
+              name="date"
+              type="date"
+              handlerChange={handlerChange}
+              inputVal={updateProgress.date}
+            />
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Update Progress"} />
-            </div>
-          </form>
-        </div>
+            <InputField
+              labelName="Note*"
+              name="note"
+              handlerChange={handlerChange}
+              inputVal={updateProgress.note}
+            />
+          </div>
+
+          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Update Progress" />
+          </div>
+        </form>
       </div>
     </div>
   );

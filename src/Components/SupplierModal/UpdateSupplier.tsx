@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { InputField } from "../InputFields/InputField";
 import { Title } from "../Title";
 import { AddButton } from "../CustomButtons/AddButton";
@@ -9,71 +9,138 @@ import { useAppSelector } from "../../redux/Hooks";
 import { toast } from "react-toastify";
 import { TextareaField } from "../InputFields/TextareaField";
 
-type AddCustomerProps = {
+type UpdateSupplierProps = {
   setModal: () => void;
-  // handleGetAllCustomers: () => void;
-};
-const initialState = {
-  supplierName: "",
-  supplierAddress: "",
-  supplierContact: "",
-  supplierEmail: "",
+  supplierData: {
+    supplierId: number;
+    supplierName: string;
+    supplierEmail: string;
+    supplierContact: string;
+    supplierAddress: string;
+  };
+  refreshSuppliers: () => void; // callback to refresh supplier list
 };
 
 export const UpdateSupplier = ({
   setModal,
-}: // handleGetAllCustomers,
-AddCustomerProps) => {
-  const [updateSupplier, setUpdateSupplier] = useState(initialState);
-
-  console.log(updateSupplier);
-
+  supplierData,
+  refreshSuppliers,
+}: UpdateSupplierProps) => {
+  const [updateSupplier, setUpdateSupplier] = useState(supplierData);
   const { currentUser } = useAppSelector((state) => state?.officeState);
-
+  const token = currentUser?.token;
   const [loading, setLoading] = useState(false);
 
-  const token = currentUser?.token;
+  // Update state if supplierData changes (when selecting another supplier)
+  useEffect(() => {
+    setUpdateSupplier(supplierData);
+  }, [supplierData]);
+
+  // const handlerChange = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  // ) => {
+  //   const { name, value } = e.target;
+  //   setUpdateSupplier({ ...updateSupplier, [name]: value });
+  // };
+
+  // const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   try {
+  //     const res = await axios.post(
+  //       `${BASE_URL}/api/admin/updateSupplier`,
+  //       updateSupplier,
+  //       {
+  //         headers: { Authorization: token || "" },
+  //       }
+  //     );
+  //     toast.success(res.data.message);
+  //     refreshSuppliers();
+  //     setModal();
+  //   } catch (error) {
+  //     const axiosError = error as AxiosError<{ message: string }>;
+  //     toast.error(axiosError.response?.data.message || "Something went wrong");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    e.preventDefault();
-    const { name, value } = e.target;
+    const { name } = e.target;
+    let value = e.target.value;
+
+    if (name === "supplierName" || name === "supplierAddress") {
+      // Capitalize first letter of each word
+      value = value.replace(/\b\w/g, (char) => char.toUpperCase());
+    }
+
+    if (name === "supplierEmail") {
+      // Convert email to lowercase
+      value = value.toLowerCase();
+    }
+
+    if (name === "supplierContact") {
+      // Keep only digits and limit to 11
+      value = value.replace(/\D/g, "").slice(0, 11);
+    }
+
     setUpdateSupplier({ ...updateSupplier, [name]: value });
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const { supplierName, supplierEmail, supplierContact, supplierAddress } =
+      updateSupplier;
+
+    // Frontend validation
+    if (
+      !supplierName ||
+      !supplierEmail ||
+      !supplierContact ||
+      !supplierAddress
+    ) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    if (!/^\d{11}$/.test(supplierContact)) {
+      toast.error("Contact must be 11 digits");
+      return;
+    }
+
+    if (!/^[a-z0-9._%+-]+@gmail\.com$/.test(supplierEmail)) {
+      toast.error("Email must be a valid @gmail.com address");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await axios.post(
-        `${BASE_URL}/admin/addCustomer`,
+        `${BASE_URL}/api/admin/updateSupplier`,
         updateSupplier,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
+        { headers: { Authorization: token || "" } }
       );
-      console.log(res.data.message);
-      toast.success(res.data.message);
 
-      setLoading(false);
+      toast.success(res.data.message);
+      refreshSuppliers();
       setModal();
-      setUpdateSupplier(initialState);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(axiosError.response?.data.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
-    <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border  border-indigo-500 ">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-500">
         <form onSubmit={handlerSubmitted}>
-          <Title setModal={() => setModal()}>Updated Supplier</Title>
-          <div className="mx-2  flex-wrap gap-3  ">
+          <Title setModal={setModal}>Update Supplier</Title>
+          <div className="mx-2 flex-wrap gap-3">
             <InputField
               labelName="Supplier Name*"
               placeHolder="Enter the Supplier Name"
@@ -90,11 +157,10 @@ AddCustomerProps) => {
               handlerChange={handlerChange}
               inputVal={updateSupplier.supplierEmail}
             />
-
             <InputField
               labelName="Supplier Contact*"
               placeHolder="Enter the Supplier Contact Number"
-              type="number"
+              type="text"
               name="supplierContact"
               handlerChange={handlerChange}
               inputVal={updateSupplier.supplierContact}
@@ -108,9 +174,9 @@ AddCustomerProps) => {
             />
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-            <CancelBtn setModal={() => setModal()} />
-            <AddButton label={"Update Supplier"} loading={loading} />
+          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Update Supplier" loading={loading} />
           </div>
         </form>
       </div>

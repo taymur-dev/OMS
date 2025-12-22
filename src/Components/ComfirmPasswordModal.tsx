@@ -29,10 +29,10 @@ export const ComfirmPasswordModal = ({ catchId, setModal }: PasswordProps) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleChangePassword = async (Id: number | null) => {
+  const handleChangePassword = async (id: number | null) => {
     try {
       const res = await axios.put(
-        `${BASE_URL}/admin/changePassword/${Id}`,
+        `${BASE_URL}/api/confirmPassword/${id}`,
         formData,
         {
           headers: {

@@ -5,7 +5,7 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AddSale } from "../../Components/SaleModals/AddSale";
 import { EditSale } from "../../Components/SaleModals/EditSale";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
@@ -46,6 +46,9 @@ export const Sales = () => {
 
   const [catchId, setCatchId] = useState<number>();
 
+    const [searchTerm, setSearchTerm] = useState("");
+
+
   console.log(catchId);
 
   const handleToggleViewModal = (active: SALET) => {
@@ -56,7 +59,7 @@ export const Sales = () => {
 
   console.log("=>", allSales?.length);
 
-  const handleGetsales = async () => {
+  const handleGetsales = useCallback (async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getSales`, {
         headers: {
@@ -67,7 +70,7 @@ export const Sales = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  } , [token]);
 
   const handleClickEditButtton = (data: ADDSALET) => {
     handleToggleViewModal("EDIT");
@@ -103,13 +106,13 @@ export const Sales = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("SALE"));
     }, 1000);
-  }, []);
+  }, [ dispatch , handleGetsales]);
 
   if (loader) return <Loader />;
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Sale" activeFile="All Sale,s list" />
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col ">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Attendance :{" "}
@@ -134,14 +137,17 @@ export const Sales = () => {
             </span>
             <span>entries</span>
           </div>
-          <TableInputField />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
-        <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Sr</span>
-            <span className="p-2 text-left min-w-[150px] ">Project</span>
-            <span className="p-2 text-left min-w-[150px] ">Customer</span>
-            <span className="p-2 text-left min-w-[150px] ">Actions</span>
+        <div className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto">
+          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px] ">
+            <span className="">Sr</span>
+            <span className="">Project</span>
+            <span className="">Customer</span>
+            <span className="text-center w-32">Actions</span>
           </div>
 
           {allSales?.length === 0 ? (
@@ -149,13 +155,13 @@ export const Sales = () => {
           ) : (
             allSales?.map((sale, index) => (
               <div
-                className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+                className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
                 key={sale.id}
               >
-                <span className=" p-2 text-left ">{index + 1}</span>
-                <span className=" p-2 text-left   ">{sale.projectName}</span>
-                <span className=" p-2 text-left  ">{sale.customerName}</span>
-                <span className="p-2 flex items-center  gap-2">
+                <span className="px-2 ">{index + 1}</span>
+                <span className=" ">{sale.projectName}</span>
+                <span className=" ">{sale.customerName}</span>
+                <span className="flex items-center  gap-1">
                   <EditButton
                     handleUpdate={() => handleClickEditButtton(sale)}
                   />

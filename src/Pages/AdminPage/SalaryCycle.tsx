@@ -28,6 +28,18 @@ export const SalaryCycle = () => {
 
   const [isOpenModal, setIsOpenModal] = useState<SALARYCYCLET>("");
 
+  const [pageNo, setPageNo] = useState(1);
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleIncrementPageButton = () => {
+    setPageNo((prev) => prev + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+  };
+
   const handleToggleViewModal = (active: SALARYCYCLET) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
@@ -38,7 +50,7 @@ export const SalaryCycle = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("SALARY CYCLE"));
     }, 1000);
-  }, []);
+  }, [dispatch]);
 
   if (loader) return <Loader />;
 
@@ -46,7 +58,7 @@ export const SalaryCycle = () => {
     <div className="w-full mx-2">
       <TableTitle tileName="Salary Cycle List" activeFile="All Todo,s list" />
 
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
+      <div className=" max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Attendance :{" "}
@@ -71,19 +83,22 @@ export const SalaryCycle = () => {
             </span>
             <span>entries</span>
           </div>
-          <TableInputField />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
-        <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Sr#</span>
-            <span className="p-2 text-left min-w-[150px] ">Year</span>
-            <span className="p-2 text-left min-w-[150px] ">Month</span>
-            <span className="p-2 text-left min-w-[150px] ">Status</span>
+        <div className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto">
+          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px] ">
+            <span className="">Sr#</span>
+            <span className="">Year</span>
+            <span className="">Month</span>
+            <span className="">Status</span>
           </div>
-          <div className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
-            <span className=" p-2 text-left ">1</span>
-            <span className=" p-2 text-left   ">2025</span>
-            <span className=" p-2 text-left  ">Apirl</span>
+          <div className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[5px]">
+            <span className=" px-2 ">1</span>
+            <span className="  ">2025</span>
+            <span className=" ">Apirl</span>
             <span className="withdraw-button">
               <IoIosClose size={20} title="notaction" />
               Not Active
@@ -94,7 +109,11 @@ export const SalaryCycle = () => {
 
       <div className="flex items-center justify-between">
         <ShowDataNumber start={1} total={10} end={1 + 9} />
-        <Pagination />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
       </div>
       {isOpenModal === "ADD" && (
         <AddSalaryCycle setModal={() => handleToggleViewModal("")} />

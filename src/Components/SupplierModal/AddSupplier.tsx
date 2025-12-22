@@ -11,7 +11,7 @@ import { TextareaField } from "../InputFields/TextareaField";
 
 type AddCustomerProps = {
   setModal: () => void;
-  // handleGetAllCustomers: () => void;
+  handleGetAllSupplier: () => void;
 };
 const initialState = {
   supplierName: "",
@@ -22,6 +22,7 @@ const initialState = {
 
 export const AddSupplier = ({
   setModal,
+  handleGetAllSupplier,
 }: // handleGetAllCustomers,
 AddCustomerProps) => {
   const [supplierData, setSupplierData] = useState(initialState);
@@ -38,27 +39,64 @@ AddCustomerProps) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     e.preventDefault();
-    const { name, value } = e.target;
+    const { name } = e.target;
+    let value = e.target.value;
+
+    if (name === "supplierName" || name === "supplierAddress") {
+      // Capitalize first letter of each word
+      value = value.replace(/\b\w/g, (char) => char.toUpperCase());
+    }
+
+    if (name === "supplierEmail") {
+      // Convert email to lowercase
+      value = value.toLowerCase();
+    }
+
+    if (name === "supplierContact") {
+      // Limit contact to 11 digits
+      value = value.replace(/\D/g, "").slice(0, 11);
+    }
+
     setSupplierData({ ...supplierData, [name]: value });
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const { supplierName, supplierEmail, supplierContact, supplierAddress } =
+      supplierData;
+
+    // Frontend validation
+    if (
+      !supplierName ||
+      !supplierEmail ||
+      !supplierContact ||
+      !supplierAddress
+    ) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    if (!/^\d{11}$/.test(supplierContact)) {
+      toast.error("Contact must be 11 digits");
+      return;
+    }
+
+    if (!/^[a-z0-9._%+-]+@gmail\.com$/.test(supplierEmail)) {
+      toast.error("Email must be a valid @gmail.com address");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await axios.post(
-        `${BASE_URL}/admin/addCustomer`,
+        `${BASE_URL}/api/admin/addSupplier`,
         supplierData,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
+        { headers: { Authorization: token } }
       );
-      console.log(res.data.message);
-      toast.success(res.data.message);
 
-      setLoading(false);
+      toast.success(res.data.message);
+      handleGetAllSupplier();
       setModal();
       setSupplierData(initialState);
     } catch (error) {

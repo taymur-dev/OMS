@@ -27,7 +27,7 @@ export const EmployeeDashborad = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("EMPLOYEE DASHBOARD"));
     }, 1000);
-  }, []);
+  }, [dispatch]);
 
   if (loader) return <Loader />;
   return (

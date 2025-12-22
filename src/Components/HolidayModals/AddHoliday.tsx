@@ -12,8 +12,7 @@ type AddAttendanceProps = {
   setModal: () => void;
   handleGetAllHodidays: () => void;
 };
-const currentDate =
-  new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
+const currentDate = new Date().toISOString().split("T")[0];
 
 const initialState = {
   date: currentDate,
@@ -39,13 +38,13 @@ export const AddHoliday = ({
   };
 
   const handlerSubmitted = async (e: React.FormEvent) => {
-    e.preventDefault(); // ✅ Form submit hone se rokne ke liye
+    e.preventDefault(); 
 
     try {
       const res = await axios.post(
-        `${BASE_URL}/admin/configHolidays`,
+        `${BASE_URL}/api/admin/configHolidays`,
         holiday,
-        { headers: { Authorization: token } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       console.log("add", res.data);
 

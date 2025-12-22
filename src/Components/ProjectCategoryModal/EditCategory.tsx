@@ -35,12 +35,12 @@ export const EditCategory = ({
     setUpdateCategory({ ...updateCategory, [name]: value } as selectCategory);
   };
   const token = currentUser?.token;
-  
+
   const handleUpdateCategory = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const res = await axios.put(
-        `${BASE_URL}/admin/updateExpenseCategory/${updateCategory?.id}`,
+        `${BASE_URL}/api/admin/updateCategory/${updateCategory?.id}`,
         updateCategory,
         {
           headers: {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 import { AddButton } from "../CustomButtons/AddButton";
 
@@ -52,9 +52,9 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
     setAddExpense({ ...addExpense, [name]: value });
   };
 
-  const getAllUsers = async () => {
+  const getAllUsers = useCallback( async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getExpenseCategory`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getExpenseCategory`, {
         headers: {
           Authorization: token,
         },
@@ -64,12 +64,12 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
     } catch (error) {
       console.log(error);
     }
-  };
+  } , [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BASE_URL}/admin/addExpense`, addExpense, {
+      const res = await axios.post(`${BASE_URL}/api/admin/addExpense`, addExpense, {
         headers: {
           Authorization: token,
         },
@@ -84,7 +84,7 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
 
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [getAllUsers]);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">

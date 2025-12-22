@@ -6,7 +6,7 @@ import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
-import { useEffect, useState } from "react";
+import { useEffect, useState , useCallback } from "react";
 import { AddExpense } from "../../Components/ManageExpense/AddExpense";
 import { EditExpense } from "../../Components/ManageExpense/EditExpense";
 import { ViewExpense } from "../../Components/ManageExpense/ViewExpense";
@@ -22,7 +22,10 @@ import { Loader } from "../../Components/LoaderComponent/Loader";
 
 type EXPENSET = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
+const numbers = [10, 25, 50, 10];
+
 type allExpenseT = {
+  id: number;
   expenseName: string;
   expenseCategoryId: number;
   categoryName: string;
@@ -34,84 +37,85 @@ type allExpenseT = {
 
 export const Expenses = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-
   const { loader } = useAppSelector((state) => state.NavigateSate);
-
   const dispatch = useAppDispatch();
 
   const [isOpenModal, setIsOpenModal] = useState<EXPENSET>("");
-
   const [allExpenses, setAllExpenses] = useState<allExpenseT[] | null>(null);
-
   const [editExpense, setEditExpense] = useState<allExpenseT | null>(null);
-
   const [viewExpense, setViewExpense] = useState<allExpenseT | null>(null);
-
   const [pageNo, setPageNo] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const token = currentUser?.token;
 
   const handleToggleViewModal = (active: EXPENSET) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
 
-  const token = currentUser?.token;
-
-  const getAllExpenses = async () => {
+  const getAllExpenses = useCallback(async () => {
     try {
-      const res = await axios.get(
-        `${BASE_URL}/admin/getExpense?page=${pageNo}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const res = await axios.get(`${BASE_URL}/api/admin/getExpense?page=${pageNo}`, {
+        headers: { Authorization: token },
+      });
       setAllExpenses(res.data);
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [token, pageNo]);
 
-  const handleIncrementPageButton = () => {
-    setPageNo(pageNo + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    setPageNo(pageNo > 1 ? pageNo - 1 : 1);
-  };
+  const handleIncrementPageButton = () => setPageNo(pageNo + 1);
+  const handleDecrementPageButton = () => setPageNo(pageNo > 1 ? pageNo - 1 : 1);
 
   const handleClickEditButton = (data: allExpenseT) => {
-    handleToggleViewModal("EDIT");
     setEditExpense(data);
+    handleToggleViewModal("EDIT");
   };
 
-  const handleClcickDeleteButton = (data: allExpenseT) => {
-    handleToggleViewModal("VIEW");
+  const handleClickDeleteButton = (data: allExpenseT) => {
     setViewExpense(data);
+    handleToggleViewModal("DELETE");
   };
 
-  useEffect(() => {
-    getAllExpenses();
-  }, [pageNo]);
+  const handleDeleteExpense = async () => {
+    if (!viewExpense) return;
+
+    try {
+      await axios.delete(`${BASE_URL}/api/admin/deleteExpense/${viewExpense.id}`, {
+        headers: { Authorization: token },
+      });
+
+      handleToggleViewModal(""); // close modal
+      getAllExpenses(); // refresh table
+    } catch (error) {
+      console.error("Failed to delete expense:", error);
+    }
+  };
+
+  const handleEditSuccess = () => {
+    handleToggleViewModal(""); // close modal
+    getAllExpenses(); // refresh table after edit
+  };
+
+  useEffect(() => { getAllExpenses(); }, [pageNo, getAllExpenses]);
 
   useEffect(() => {
     document.title = "(OMS) EXPENSE";
     dispatch(navigationStart());
-    setTimeout(() => {
-      dispatch(navigationSuccess("EXPENSE"));
-    }, 1000);
-  }, []);
+    setTimeout(() => dispatch(navigationSuccess("EXPENSE")), 1000);
+  }, [dispatch]);
 
   if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Expenses" activeFile="Expenses list" />
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Expense :{" "}
             <span className="text-2xl text-blue-500 font-semibold font-sans">
-              {[allExpenses?.length]}
+              {allExpenses?.length}
             </span>
           </span>
           <CustomButton
@@ -119,42 +123,46 @@ export const Expenses = () => {
             handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
+
         <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div></div>
-          <TableInputField />
-        </div>
-        <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Sr.</span>
-            <span className="p-2 text-left min-w-[150px] ">Expense Name</span>
-            <span className="p-2 text-left min-w-[150px] ">
-              Expense Category
+          <div>
+            <span>Show</span>
+            <span className="bg-gray-200 rounded mx-1 p-1">
+              <select>
+                {numbers.map((num) => (
+                  <option key={num}>{num}</option>
+                ))}
+              </select>
             </span>
-            <span className="p-2 text-left min-w-[150px] ">Amount</span>
-            <span className="p-2 text-left min-w-[150px] ">Add By</span>
-            <span className="p-2 text-left min-w-[150px]">Action</span>
+            <span>entries</span>
           </div>
+          <TableInputField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        </div>
+
+        <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
+          <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]">
+            <span>Sr#</span>
+            <span>Expense Name</span>
+            <span>Expense Category</span>
+            <span>Amount</span>
+            <span>Add By</span>
+            <span className="text-center w-[11rem]">Actions</span>
+          </div>
+
           {allExpenses?.map((expense, index) => (
             <div
-              className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
-              key={expense.expenseCategoryId}
+              className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
+              key={expense.id} // use unique id
             >
-              <span className=" p-2 text-left ">{index + 1}</span>
-              <span className=" p-2 text-left   ">{expense.expenseName}</span>
-              <span className=" p-2 text-left  ">{expense.categoryName}</span>
-              <span className=" p-2 text-left ">{expense.amount}</span>
-              <span className=" p-2 text-left ">{expense.addedBy}</span>
-              <span className="p-2 flex items-center  gap-1">
-                <EditButton
-                  handleUpdate={() => handleClickEditButton(expense)}
-                />
-
-                <ViewButton
-                  handleView={() => handleClcickDeleteButton(expense)}
-                />
-                <DeleteButton
-                  handleDelete={() => handleToggleViewModal("DELETE")}
-                />
+              <span className="px-2">{index + 1}</span>
+              <span>{expense.expenseName}</span>
+              <span>{expense.categoryName}</span>
+              <span>{expense.amount}</span>
+              <span>{expense.addedBy}</span>
+              <span className="flex items-center gap-1">
+                <EditButton handleUpdate={() => handleClickEditButton(expense)} />
+                <ViewButton handleView={() => handleClickDeleteButton(expense)} />
+                <DeleteButton handleDelete={() => handleClickDeleteButton(expense)} />
               </span>
             </div>
           ))}
@@ -170,12 +178,10 @@ export const Expenses = () => {
         />
       </div>
 
-      {isOpenModal === "ADD" && (
-        <AddExpense setModal={() => handleToggleViewModal("")} />
-      )}
+      {isOpenModal === "ADD" && <AddExpense setModal={() => handleToggleViewModal("")} />}
       {isOpenModal === "EDIT" && (
         <EditExpense
-          setModal={() => handleToggleViewModal("")}
+          setModal={handleEditSuccess}
           editExpense={editExpense}
         />
       )}
@@ -190,7 +196,7 @@ export const Expenses = () => {
         <ConfirmationModal
           onClose={() => handleToggleViewModal("")}
           isOpen={() => handleToggleViewModal("DELETE")}
-          onConfirm={() => handleToggleViewModal("")}
+          onConfirm={handleDeleteExpense} // call delete API
         />
       )}
     </div>

@@ -63,16 +63,6 @@ export const UpdateResignation = ({ setModal }: updatePromotionProps) => {
 
   const token = currentUser?.token;
 
-  // const [showTime, setShowTime] = useState("");
-  // setInterval(() => {
-  //   const getTime = new Date().toLocaleTimeString("en-US", {
-  //     hour: "2-digit",
-  //     minute: "2-digit",
-  //     second: "2-digit",
-  //     hour12: true,
-  //   });
-  //   setShowTime(getTime);
-  // }, 1000);
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -80,6 +70,7 @@ export const UpdateResignation = ({ setModal }: updatePromotionProps) => {
   ) => {
     e.preventDefault();
     const { name, value } = e.target;
+    
     setAddPromotion({ ...addPromotion, [name]: value });
   };
 
@@ -126,6 +117,8 @@ export const UpdateResignation = ({ setModal }: updatePromotionProps) => {
         <form onSubmit={handlerSubmitted}>
           <Title setModal={() => setModal()}>Update Employee Resignation</Title>
           <div className="mx-2  flex-wrap gap-3  ">
+
+            {}
             <UserSelect
               labelName="Select Employee*"
               name="id"
@@ -175,7 +168,7 @@ export const UpdateResignation = ({ setModal }: updatePromotionProps) => {
 
           <div className="flex items-center justify-center m-2 gap-2 text-xs ">
             <CancelBtn setModal={() => setModal()} />
-            <AddButton label={"update Promotion"} />
+            <AddButton label={"Update Resignation"} />
           </div>
         </form>
       </div>

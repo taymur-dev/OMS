@@ -26,6 +26,18 @@ export const ExpenseReports = () => {
     selectCustomer: "",
   };
 
+  const [pageNo, setPageNo] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+
+
+  const handleIncrementPageButton = () => {
+    setPageNo((prev) => prev + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+  };
+
   const [reportData, setReportData] = useState(initialState);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,7 +94,7 @@ export const ExpenseReports = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("EXPENSE REPORTS"));
     }, 1000);
-  }, []);
+  }, [dispatch]);
 
   if (loader) return <Loader />;
 
@@ -105,11 +117,14 @@ export const ExpenseReports = () => {
           </span>
           <span>entries</span>
         </div>
-        <TableInputField />
+        <TableInputField
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
       </div>
 
       {/* Report Filters */}
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white">
+      <div className="max-h-[58vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
         <div className="flex items-center justify-between text-gray-800 mx-2">
           <div className="flex flex-1 px-6 py-2 gap-2 items-center justify-between">
             <InputField
@@ -146,23 +161,21 @@ export const ExpenseReports = () => {
         {/* Report Table */}
         <div
           id="myDiv"
-          className="w-full max-h-[28.6rem] overflow-hidden mx-auto"
+          className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto"
         >
-          <div className="grid grid-cols-5 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500">
-            <span className="p-2 min-w-[50px]">Sr#</span>
-            <span className="p-2 text-left min-w-[150px]">
-              Expense Category
-            </span>
-            <span className="p-2 text-left min-w-[150px]">Expense Name</span>
-            <span className="p-2 text-left min-w-[150px]">Expense Amount</span>
-            <span className="p-2 text-left min-w-[150px]">Expense Date</span>
+          <div className="grid grid-cols-5 bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[7px]">
+            <span className="">Sr#</span>
+            <span className="">Expense Category</span>
+            <span className="">Expense Name</span>
+            <span className="">Expense Amount</span>
+            <span className="">Expense Date</span>
           </div>
-          <div className="grid grid-cols-5 border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200">
-            <span className="p-2 text-left">1</span>
-            <span className="p-2 text-left">Hamza</span>
-            <span className="p-2 text-left">Jamat Project</span>
-            <span className="p-2 text-left">2025-04-28</span>
-            <span className="p-2 text-left">2025-04-28</span>
+          <div className="grid grid-cols-5 border border-gray-600 text-gray-800   hover:bg-gray-100 transition duration-200 text-xs items-center justify-center p-[5px]">
+            <span className="px-2">1</span>
+            <span className="">Hamza</span>
+            <span className="">Jamat Project</span>
+            <span className="">2025-04-28</span>
+            <span className="">2025-04-28</span>
           </div>
         </div>
       </div>
@@ -170,7 +183,11 @@ export const ExpenseReports = () => {
       {/* Pagination and Footer */}
       <div className="flex items-center justify-between">
         <ShowDataNumber start={1} total={10} end={10} />
-        <Pagination />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
       </div>
 
       {/* Download Button */}

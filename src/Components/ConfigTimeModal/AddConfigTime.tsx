@@ -58,7 +58,7 @@ export const AddConfigTime = ({
     e.preventDefault();
     try {
       const res = await axios.post(
-        `${BASE_URL}/admin/configureTime`,
+        `${BASE_URL}/api/admin/configureTime`,
         addConfig,
         {
           headers: {

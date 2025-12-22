@@ -19,6 +19,9 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
+import { EditButton } from "../../Components/CustomButtons/EditButton";
+import { ViewButton } from "../../Components/CustomButtons/ViewButton";
+import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 
 const numbers = [10, 25, 50, 100];
 
@@ -33,6 +36,8 @@ export const SupplierPayment = () => {
   const [pageNo, setPageNo] = useState(1);
 
   const [selectedValue, setSelectedValue] = useState(10);
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleChangeShowData = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -56,7 +61,7 @@ export const SupplierPayment = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("Supplier payment"));
     }, 1000);
-  }, []);
+  }, [dispatch]);
 
   if (loader) return <Loader />;
 
@@ -66,7 +71,7 @@ export const SupplierPayment = () => {
         tileName="Supplier Payment"
         activeFile="Suppler payment list"
       />
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Supplier payment :{" "}
@@ -93,22 +98,33 @@ export const SupplierPayment = () => {
             </span>
             <span>entries</span>
           </div>
-          <TableInputField />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
-        <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-5 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 text-sm ">
-            <span className="p-2">Sr</span>
-            <span className="p-2 text-left">Supplier Name</span>
-            <span className="p-2 text-left">Payment Date</span>
-            <span className="p-2 text-left">Amount</span>
-            <span className="p-2 text-left">Invoice No</span>
+        <div className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto">
+          <div className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[7px]">
+            <span className="">Sr#</span>
+            <span className="">Supplier Name</span>
+            <span className="">Payment Date</span>
+            <span className="">Amount</span>
+            <span className="">Invoice No</span>
+            <span className="text-center w-40">Actions</span>
           </div>
-          <div className="grid grid-cols-5 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center ">
-            <span className=" p-2 text-left">1</span>
-            <span className=" p-2 text-left">Hamza Amin</span>
-            <span className=" p-2 text-left">Developer</span>
-            <span className=" p-2 text-left">25,05,2025</span>
-            <span className=" p-2 text-left">Pending</span>
+          <div className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[5px]">
+            <span className="">1</span>
+            <span className="">Hamza Amin</span>
+            <span className=" ">Developer</span>
+            <span className=" ">25,05,2025</span>
+            <span className=" ">Pending</span>
+            <span className="flex items-center  gap-1">
+              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
+              <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
+              <DeleteButton
+                handleDelete={() => handleToggleViewModal("DELETE")}
+              />
+            </span>
           </div>
         </div>
       </div>

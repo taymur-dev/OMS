@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { InputField } from "../InputFields/InputField";
@@ -62,9 +62,9 @@ export const AddAttendance = ({
     setAddUserAttendance({ ...addUserAttendance, [name]: value.trim() });
   };
 
-  const handlerGetUsers = async () => {
+  const handlerGetUsers = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
         headers: {
           Authorization: token,
         },
@@ -74,14 +74,14 @@ export const AddAttendance = ({
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(axiosError?.response?.data?.message);
     }
-  };
+  }, [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     try {
       const res = await axios.post(
-        `${BASE_URL}/admin/addAttendance/${addUserAttendance?.selectUser}`,
+        `${BASE_URL}/api/admin/addAttendance/${addUserAttendance?.selectUser}`,
         addUserAttendance,
         {
           headers: {
@@ -102,7 +102,7 @@ export const AddAttendance = ({
   };
   useEffect(() => {
     handlerGetUsers();
-  }, []);
+  }, [handlerGetUsers]);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">

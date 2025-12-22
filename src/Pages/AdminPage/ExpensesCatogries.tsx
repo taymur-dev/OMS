@@ -5,7 +5,7 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { AddCategory } from "../../Components/ExpenseCategoryModal/AddCategory";
 import { EditCategory } from "../../Components/ProjectCategoryModal/EditCategory";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
@@ -52,9 +52,21 @@ export const ExpensesCatogries = () => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
 
-  const handlegetExpenseCategory = async () => {
+  const [pageNo, setPageNo] = useState(1);
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleIncrementPageButton = () => {
+    setPageNo((prev) => prev + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+  };
+
+  const handlegetExpenseCategory = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getExpenseCategory`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getExpenseCategory`, {
         headers: {
           Authorization: token,
         },
@@ -64,7 +76,7 @@ export const ExpensesCatogries = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [token]);
 
   const handleClickEditButton = (data: AllExpenseCategoryT) => {
     handleToggleViewModal("EDIT");
@@ -78,7 +90,7 @@ export const ExpensesCatogries = () => {
   const handleDeleteCategory = async () => {
     try {
       const res = await axios.patch(
-        `${BASE_URL}/admin/deleteExpenseCategory/${catchId}`,
+        `${BASE_URL}/api/admin/deleteExpenseCategory/${catchId}`,
         {},
         {
           headers: {
@@ -100,7 +112,7 @@ export const ExpensesCatogries = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("EXPENSE CATEGORY"));
     }, 1000);
-  }, []);
+  }, [dispatch, handlegetExpenseCategory]);
   if (loader) return <Loader />;
 
   return (
@@ -109,7 +121,7 @@ export const ExpensesCatogries = () => {
         tileName="Expense Category List"
         activeFile="Expense Category list"
       />
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col ">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Attendance :{" "}
@@ -134,22 +146,25 @@ export const ExpensesCatogries = () => {
             </span>
             <span>entries</span>
           </div>
-          <TableInputField />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
-        <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-3 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Sr#</span>
-            <span className="p-2  min-w-[150px]">Category Name</span>
-            <span className="p-2 text-left min-w-[150px]">Action</span>
+        <div className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto">
+          <div className="grid grid-cols-[0.5fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]">
+            <span className="">Sr#</span>
+            <span className="">Category Name</span>
+            <span className="text-center w-28">Actions</span>
           </div>
           {allExpenseCategory?.map((category, index) => (
             <div
-              className="grid grid-cols-3 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+              className="grid grid-cols-[0.5fr_1fr_1fr] border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
               key={category.id}
             >
-              <span className=" p-2 text-left ">{index + 1}</span>
-              <span className=" p-2 text-left   ">{category.categoryName}</span>
-              <span className="p-2 flex items-center  gap-1">
+              <span className="px-2 ">{index + 1}</span>
+              <span className="">{category.categoryName}</span>
+              <span className=" flex items-center  gap-1">
                 <EditButton
                   handleUpdate={() => handleClickEditButton(category)}
                 />
@@ -165,7 +180,11 @@ export const ExpensesCatogries = () => {
 
       <div className="flex items-center justify-between">
         <ShowDataNumber start={1} total={10} end={1 + 9} />
-        <Pagination />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
       </div>
 
       {isOpenModal === "ADD" && (

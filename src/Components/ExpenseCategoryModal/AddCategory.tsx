@@ -32,7 +32,7 @@ export const AddCategory = ({ setModal }: AddAttendanceProps) => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        `${BASE_URL}/admin/createExpenseCatagory`,
+        `${BASE_URL}/api/admin/createExpenseCategory`,
         addCategory,
         {
           headers: {

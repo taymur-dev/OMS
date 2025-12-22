@@ -25,16 +25,16 @@ const currentDate =
 
 const initialState = {
   employeeId: "",
-  task: "",
-  note: "",
-  startDate: currentDate,
-  endDate: currentDate,
-  deadline: currentDate,
+  loanAmount: "0",
+  installments: "0",
+  paidAmount: "0",
+  remainingAmount: "0",
+  applyDate: currentDate,
 };
 export const AddLoan = ({ setModal }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
-  const [addTodo, setAddTodo] = useState(initialState);
+  const [addLoan, setAddLoan] = useState(initialState);
 
   const [allUsers, setAllUsers] = useState([]);
 
@@ -51,7 +51,7 @@ export const AddLoan = ({ setModal }: AddAttendanceProps) => {
 
     const { name, value } = e.target;
 
-    setAddTodo({ ...addTodo, [name]: value });
+    setAddLoan({ ...addLoan, [name]: value });
   };
 
   const getAllUsers = async () => {
@@ -70,7 +70,7 @@ export const AddLoan = ({ setModal }: AddAttendanceProps) => {
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BASE_URL}/admin/createTodo`, addTodo, {
+      const res = await axios.post(`${BASE_URL}/admin/createTodo`, addLoan, {
         headers: {
           Authorization: token,
         },
@@ -91,15 +91,15 @@ export const AddLoan = ({ setModal }: AddAttendanceProps) => {
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
+        <div className="w-[42rem]   bg-white mx-auto rounded-xl border  border-indigo-500 ">
           <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Add Over Time</Title>
+            <Title setModal={() => setModal()}>Add Loan</Title>
             <div className="mx-2 flex-wrap gap-3  ">
               {currentUser?.role === "admin" && (
                 <UserSelect
                   labelName="Employees*"
                   name="employeeId"
-                  value={addTodo.employeeId}
+                  value={addLoan.employeeId}
                   handlerChange={handlerChange}
                   optionData={allUsers}
                 />
@@ -112,23 +112,47 @@ export const AddLoan = ({ setModal }: AddAttendanceProps) => {
                   inputVal={
                     currentUser?.role === "user"
                       ? currentUser.name
-                      : addTodo.employeeId
+                      : addLoan.employeeId
                   }
                 />
               )}
               <InputField
-                labelName="Start Date*"
+                labelName="Apply Date*"
                 type="date"
-                name="startDate"
+                name="applyDate"
                 handlerChange={handlerChange}
-                inputVal={addTodo.startDate}
+                inputVal={addLoan.applyDate}
               />
 
               <InputField
-                labelName="Note*"
-                name="note"
+                labelName="Loan Amount*"
+                type="number"
+                name="loanAmount"
                 handlerChange={handlerChange}
-                inputVal={addTodo.note}
+                inputVal={addLoan.loanAmount}
+              />
+
+              <InputField
+                labelName="Installments*"
+                type="number"
+                name="installments"
+                handlerChange={handlerChange}
+                inputVal={addLoan.installments}
+              />
+
+              <InputField
+                labelName="Paid Amount*"
+                type="number"
+                name="paidAmount"
+                handlerChange={handlerChange}
+                inputVal={addLoan.paidAmount}
+              />
+
+              <InputField
+                labelName="Remaining Amount*"
+                name="remainingAmount"
+                handlerChange={handlerChange}
+                inputVal={addLoan.remainingAmount}
               />
             </div>
 

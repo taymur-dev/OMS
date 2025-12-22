@@ -14,6 +14,9 @@ import {
 } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import { AddOverTime } from "../../Components/OvertimeModals/AddOvertime";
+import { ViewOverTimeModal } from "../../Components/OvertimeModals/ViewOverTime";
+import { UpdateOverTime } from "../../Components/OvertimeModals/UpdateOverTime";
+import { EditButton } from "../../Components/CustomButtons/EditButton";
 
 const numbers = [10, 25, 50, 100];
 
@@ -26,6 +29,9 @@ export const OverTime = () => {
   const [isOpenModal, setIsOpenModal] = useState<LoanT>("");
 
   const [pageNo, setPageNo] = useState(1);
+
+    const [searchTerm, setSearchTerm] = useState("");
+
 
   const [selectedValue, setSelectedValue] = useState(10);
 
@@ -51,14 +57,14 @@ export const OverTime = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("OVER TIME"));
     }, 1000);
-  }, []);
+  }, [dispatch]);
 
   if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Over Time" activeFile="OverTime list" />
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Overtime Work :{" "}
@@ -85,32 +91,35 @@ export const OverTime = () => {
             </span>
             <span>entries</span>
           </div>
-          <TableInputField />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-[0.2fr_0.5fr_0.5fr_0.5fr_0.5fr_0.5fr] bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 text-sm ">
-            <span className="p-2  ">Sr</span>
-            <span className="p-2  ">Employee Name</span>
-            <span className="p-2">Date</span>
-            <span className="p-2 ">Over Time</span>
-            <span className="p-2 ">Approval</span>
-            <span className="p-2 ">Actions</span>
+          <div className="grid grid-cols-[0.2fr_0.5fr_0.5fr_0.5fr_0.5fr_0.5fr] bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px] ">
+            <span className="">Sr#</span>
+            <span className="">Employee Name</span>
+            <span className="">Date</span>
+            <span className="">Over Time</span>
+            <span className="">Approval</span>
+            <span className="text-center w-32">Actions</span>
           </div>
-          <div className="grid grid-cols-[0.2fr_0.5fr_0.5fr_0.5fr_0.5fr_0.5fr] border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center">
-            <span className="p-2 ">1</span>
-            <span className="p-2 ">Hamza Amin</span>
-            <span className="p-2 ">23, May, 2025</span>
-            <span className="p-2 ">32:10:20</span>
+          <div className="grid grid-cols-[0.2fr_0.5fr_0.5fr_0.5fr_0.5fr_0.5fr] border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[5px]">
+            <span className="px-2 ">1</span>
+            <span className="">Hamza Amin</span>
+            <span className="">23, May, 2025</span>
+            <span className="">32:10:20</span>
 
             <span className=" text-orange-500 ">
               <span className="bg-orange-100 p-2 rounded-full ">Pending</span>
             </span>
-            <span className="p-2 flex items-center  gap-1">
+            <span className="flex items-center  gap-1">
+              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
+              <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
               <DeleteButton
                 handleDelete={() => handleToggleViewModal("DELETE")}
               />
-
-              <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
             </span>
           </div>
         </div>
@@ -127,6 +136,14 @@ export const OverTime = () => {
 
       {isOpenModal === "ADD" && (
         <AddOverTime setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "VIEW" && (
+        <ViewOverTimeModal setModal={() => handleToggleViewModal("")} />
+      )}
+
+      {isOpenModal === "EDIT" && (
+        <UpdateOverTime setModal={() => handleToggleViewModal("")} />
       )}
       {isOpenModal === "DELETE" && (
         <ConfirmationModal

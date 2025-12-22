@@ -29,6 +29,8 @@ export const Quotation = () => {
 
   const [selectedValue, setSelectedValue] = useState(10);
 
+  const [searchTerm, setSearchTerm] = useState("");
+
   const handleChangeShowData = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -51,14 +53,14 @@ export const Quotation = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("QUOTATION"));
     }, 1000);
-  }, []);
+  }, [dispatch]);
 
   if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Quotation" activeFile="All Quotation list" />
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col ">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Attendance :{" "}
@@ -85,20 +87,23 @@ export const Quotation = () => {
             </span>
             <span>entries</span>
           </div>
-          <TableInputField />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
-        <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Sr</span>
-            <span className="p-2 text-left min-w-[150px] ">Ref</span>
-            <span className="p-2 text-left min-w-[150px] ">Customer</span>
-            <span className="p-2 text-left min-w-[150px] ">Actions</span>
+        <div className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto">
+          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]">
+            <span className="">Sr</span>
+            <span className=" ">Ref</span>
+            <span className=" ">Customer</span>
+            <span className="text-center  w-28">Actions</span>
           </div>
-          <div className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
-            <span className=" p-2 text-left ">1</span>
-            <span className=" p-2 text-left   ">Hamza amin</span>
-            <span className=" p-2 text-left  ">03210000000</span>
-            <span className="p-2 flex items-center  gap-1">
+          <div className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]">
+            <span className="px-2 ">1</span>
+            <span className=" ">Hamza amin</span>
+            <span className=" ">03210000000</span>
+            <span className=" flex items-center  gap-1">
               <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
 
               <ViewButton handleView={() => handleToggleViewModal("VIEW")} />

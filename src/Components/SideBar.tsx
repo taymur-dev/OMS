@@ -1,7 +1,7 @@
 import { AccordionItem } from "./Accordion/AccordionItem";
 import { SideBarButton } from "./SideBarComponent/SideBarButton";
 import { BiArrowBack } from "react-icons/bi";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaUser, FaUserFriends } from "react-icons/fa";
 import { PiFingerprintDuotone } from "react-icons/pi";
@@ -57,7 +57,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
     setActiveBtns((prev) => (prev === activeBtn ? "" : activeBtn));
   };
 
-  const getAllTodos = async () => {
+  const getAllTodos = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getTodos`, {
         headers: {
@@ -69,17 +69,17 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
-    if (!isOpen) setActiveBtns("");
-    setActiveBtns("Dashboard");
+    setActiveBtns("Dashboard"); // default selected button
     navigate("/");
-  }, [isOpen]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     getAllTodos();
-  }, []);
+  }, [getAllTodos]);
 
   return (
     <div
@@ -130,15 +130,6 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
                 to={"/users"}
               >
                 User
-              </Link>
-
-              <Link
-                className={`my-button ${
-                  pathname === "/employeeLifeline" && "bg-indigo-200"
-                } `}
-                to={"/employeeLifeline"}
-              >
-                Employee Lifeline
               </Link>
 
               <Link
@@ -224,6 +215,15 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         {activeBtns === "Employee" && (
           <AccordionItem isOpen={isOpen}>
             <ul className="flex flex-col ">
+              <Link
+                className={`my-button ${
+                  pathname === "/employeeLifeline" && "bg-indigo-200"
+                } `}
+                to={"/employeeLifeline"}
+              >
+                Employee Lifeline
+              </Link>
+
               <Link
                 className={`my-button ${
                   pathname === "/employeeWithdraw" && "bg-indigo-200"
@@ -475,7 +475,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
             <ul className="flex flex-col ">
               <Link
                 className={`my-button ${
-                  pathname === "/calendar" && "bg-indigo-200"
+                  pathname === "/assetsCategory" && "bg-indigo-200"
                 } `}
                 to={"/assetsCategory"}
               >
@@ -483,7 +483,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
               </Link>
               <Link
                 className={`my-button ${
-                  pathname === "/salaryCycle" && "bg-indigo-200"
+                  pathname === "/assets" && "bg-indigo-200"
                 } `}
                 to={"/assets"}
               >

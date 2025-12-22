@@ -59,7 +59,7 @@ export const EditConfigTime = ({
     e.preventDefault();
     try {
       const res = await axios.put(
-        `${BASE_URL}/admin/updateTime/${updateConfig?.id}`,
+        `${BASE_URL}/api/admin/updateTime/${updateConfig?.id}`,
         updateConfig,
         {
           headers: {

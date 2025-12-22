@@ -14,6 +14,8 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
+import { EditButton } from "../../Components/CustomButtons/EditButton";
+import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 const numbers = [10, 25, 50, 10];
 
 type EMPLOYEEACOUNTT = "ADDPAYMENT" | "ADDREFUND" | "VIEW" | "";
@@ -25,6 +27,17 @@ export const EmployeeAccount = () => {
 
   const [isOpenModal, setIsOpenModal] = useState<EMPLOYEEACOUNTT>("");
 
+  const [pageNo, setPageNo] = useState(1);
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleIncrementPageButton = () => {
+    setPageNo((prev) => prev + 1);
+  };
+  const handleDecrementPageButton = () => {
+    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+  };
+
   const handleToggleViewModal = (active: EMPLOYEEACOUNTT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
@@ -35,7 +48,7 @@ export const EmployeeAccount = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("EMPLOYEE ACCOUNT"));
     }, 1000);
-  }, []);
+  }, [dispatch]);
 
   if (loader) return <Loader />;
 
@@ -46,7 +59,7 @@ export const EmployeeAccount = () => {
         activeFile="Employee Accounts List"
       />
 
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col ">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total Number of Employee Account :{" "}
@@ -77,23 +90,28 @@ export const EmployeeAccount = () => {
             </span>
             <span>entries</span>
           </div>
-          <TableInputField />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
-        <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-5 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Sr#</span>
-            <span className="p-2 text-left min-w-[150px] ">Name</span>
-            <span className="p-2 text-left min-w-[150px] ">Email</span>
-            <span className="p-2 text-left min-w-[150px] ">Phone No#</span>
-            <span className="p-2 text-left min-w-[150px] ">Actions</span>
+        <div className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto">
+          <div className="grid grid-cols-5 bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]">
+            <span className="">Sr#</span>
+            <span className="">Name</span>
+            <span className="">Email</span>
+            <span className="">Phone No#</span>
+            <span className="text-center w-40">Actions</span>
           </div>
-          <div className="grid grid-cols-5 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
-            <span className=" p-2 text-left ">1</span>
-            <span className=" p-2 text-left   ">Hamza</span>
-            <span className=" p-2 text-left  ">hamzaamin10@gmail.com</span>
-            <span className=" p-2 text-left   ">+923215965061</span>
-            <span className="p-2 flex items-center  gap-1">
+          <div className="grid grid-cols-5 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]">
+            <span className="px-2">1</span>
+            <span className="">Hamza</span>
+            <span className="">hamzaamin10@gmail.com</span>
+            <span className="">+923215965061</span>
+            <span className="flex items-center  gap-1">
+              <EditButton handleUpdate={() => handleToggleViewModal("")} />
               <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
+              <DeleteButton handleDelete={() => handleToggleViewModal("")} />
             </span>
           </div>
         </div>
@@ -101,7 +119,11 @@ export const EmployeeAccount = () => {
 
       <div className="flex items-center justify-between">
         <ShowDataNumber start={1} total={10} end={1 + 9} />
-        <Pagination />
+        <Pagination
+          handleIncrementPageButton={handleIncrementPageButton}
+          handleDecrementPageButton={handleDecrementPageButton}
+          pageNo={pageNo}
+        />
       </div>
 
       {isOpenModal === "ADDPAYMENT" && (

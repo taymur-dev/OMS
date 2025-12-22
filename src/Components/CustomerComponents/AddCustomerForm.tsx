@@ -7,12 +7,12 @@ import axios, { AxiosError } from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 import { toast } from "react-toastify";
-// const currentDate = new Date().toISOString().split("T")[0];
 
 type AddCustomerProps = {
   setIsOpenModal: () => void;
   handleGetAllCustomers: () => void;
 };
+
 const initialState = {
   customerName: "",
   customerAddress: "",
@@ -28,65 +28,91 @@ export const AddCustomer = ({
   const [customerData, setCustomerData] = useState(initialState);
   const { currentUser } = useAppSelector((state) => state?.officeState);
   const [loading, setLoading] = useState(false);
-  console.log("btn", loading);
+
   const token = currentUser?.token;
 
-  // const [showTime, setShowTime] = useState("");
-  // setInterval(() => {
-  //   const getTime = new Date().toLocaleTimeString("en-US", {
-  //     hour: "2-digit",
-  //     minute: "2-digit",
-  //     second: "2-digit",
-  //     hour12: true,
-  //   });
-  //   setShowTime(getTime);
-  // }, 1000);
+  const capitalizeFirstLetter = (str: string) =>
+    str.charAt(0).toUpperCase() + str.slice(1);
+
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
     const { name, value } = e.target;
-    setCustomerData({ ...customerData, [name]: value.trim() });
+
+    let newValue = value;
+
+    if (
+      name === "customerName" ||
+      name === "customerAddress" ||
+      name === "companyName" ||
+      name === "companyAddress"
+    ) {
+      newValue = capitalizeFirstLetter(value);
+    }
+
+    setCustomerData((prev) => ({
+      ...prev,
+      [name]: newValue,
+    }));
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const cleanedData = {
+      customerName: customerData.customerName.trim(),
+      customerAddress: customerData.customerAddress.trim(),
+      customerContact: customerData.customerContact.trim(),
+      companyName: customerData.companyName.trim(),
+      companyAddress: customerData.companyAddress.trim(),
+    };
+
+    if (
+      !cleanedData.customerName ||
+      !cleanedData.customerAddress ||
+      !cleanedData.customerContact
+    ) {
+      return toast.error("Customer Name, Address and Contact are required");
+    }
+
+    if (!/^\d{11}$/.test(cleanedData.customerContact)) {
+      return toast.error("Contact number must be 11 digits");
+    }
+
     setLoading(true);
     try {
       const res = await axios.post(
-        `${BASE_URL}/admin/addCustomer`,
-        customerData,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
+        `${BASE_URL}/api/admin/addCustomer`,
+        cleanedData,
+        { headers: { Authorization: token } }
       );
-      console.log(res.data.message);
+
       toast.success(res.data.message);
       handleGetAllCustomers();
-      setLoading(false);
-      setIsOpenModal();
       setCustomerData(initialState);
+      setIsOpenModal();
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(axiosError.response?.data.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
-    <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border  border-indigo-500 ">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-500">
         <form onSubmit={handlerSubmitted}>
           <Title setModal={() => setIsOpenModal()}>Add Customer</Title>
-          <div className="mx-2  flex-wrap gap-3  ">
+
+          <div className="mx-2 flex-wrap gap-3">
             <InputField
-              labelName=" Customer Name*"
+              labelName="Customer Name*"
               placeHolder="Enter the Customer Name"
               type="text"
               name="customerName"
               handlerChange={handlerChange}
               inputVal={customerData.customerName}
             />
+
             <InputField
               labelName="Customer Address*"
               placeHolder="Enter the Customer Address"
@@ -104,6 +130,7 @@ export const AddCustomer = ({
               handlerChange={handlerChange}
               inputVal={customerData.customerContact}
             />
+
             <InputField
               labelName="Company Name*"
               placeHolder="Enter the Company Name"
@@ -113,19 +140,21 @@ export const AddCustomer = ({
               inputVal={customerData.companyName}
             />
           </div>
+
           <div className="px-2">
             <InputField
               labelName="Company Address*"
               placeHolder="Enter the Company Address"
               type="text"
               name="companyAddress"
-              inputVal={customerData.companyAddress}
               handlerChange={handlerChange}
+              inputVal={customerData.companyAddress}
             />
           </div>
-          <div className="flex items-center justify-center m-2 gap-2 text-xs ">
+
+          <div className="flex items-center justify-center m-2 gap-2 text-xs">
             <CancelBtn setModal={() => setIsOpenModal()} />
-            <AddButton label={"Add Customer"} loading={loading} />
+            <AddButton label="Add Customer" loading={loading} />
           </div>
         </form>
       </div>

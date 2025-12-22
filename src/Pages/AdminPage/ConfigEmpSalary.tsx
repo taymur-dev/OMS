@@ -29,6 +29,17 @@ export const ConfigEmpSalary = () => {
 
   const [isOpenModal, setIsOpenModal] = useState<CONFIGT>("");
 
+  const [pageNo, setPageNo] = useState(1);
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleIncrementPageButton = () => {
+    setPageNo((prev) => prev + 1);
+  };
+  const handleDecrementPageButton = () => {
+    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+  };
+
   const handleToggleViewModal = (active: CONFIGT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
@@ -39,14 +50,14 @@ export const ConfigEmpSalary = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("CONFIG SALARY"));
     }, 1000);
-  }, []);
+  }, [dispatch]);
 
   if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Salaries" activeFile="Salaries list" />
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Salaries :{" "}
@@ -71,24 +82,27 @@ export const ConfigEmpSalary = () => {
             </span>
             <span>entries</span>
           </div>
-          <TableInputField />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
-        <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Sr#</span>
-            <span className="p-2  min-w-[150px]">User Name</span>
-            <span className="p-2 text-left min-w-[150px]">Salary of Month</span>
-            <span className="p-2 text-left min-w-[150px]">Total Salary</span>
-            <span className="p-2 text-left min-w-[150px]">Date</span>
-            <span className="p-2 text-left min-w-[150px]">Action</span>
+        <div className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto">
+          <div className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]">
+            <span className="px-2 ">Sr#</span>
+            <span className="">User Name</span>
+            <span className="">Salary of Month</span>
+            <span className="">Total Salary</span>
+            <span className="">Date</span>
+            <span className="">Action</span>
           </div>
-          <div className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200">
-            <span className=" p-2 text-left ">1</span>
-            <span className=" p-2 text-left   ">Hamza Amin</span>
-            <span className=" p-2 text-left   ">50000</span>
-            <span className=" p-2 text-left   ">3000000</span>
-            <span className=" p-2 text-left   ">10-4-2025</span>
-            <span className="p-2 flex items-center  gap-1">
+          <div className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]">
+            <span className="  ">1</span>
+            <span className="   ">Hamza Amin</span>
+            <span className="  ">50000</span>
+            <span className="   ">3000000</span>
+            <span className="   ">10-4-2025</span>
+            <span className=" flex items-center  gap-1">
               <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
               <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
               <DeleteButton
@@ -101,7 +115,11 @@ export const ConfigEmpSalary = () => {
 
       <div className="flex items-center justify-between">
         <ShowDataNumber start={1} total={10} end={1 + 9} />
-        <Pagination />
+        <Pagination
+          handleIncrementPageButton={handleIncrementPageButton}
+          handleDecrementPageButton={handleDecrementPageButton}
+          pageNo={pageNo}
+        />
       </div>
 
       {isOpenModal === "ADD" && (

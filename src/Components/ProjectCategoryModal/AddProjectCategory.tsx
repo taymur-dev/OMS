@@ -36,7 +36,7 @@ export const AddProjectCategory = ({
     e.preventDefault();
     try {
       const res = await axios.post(
-        `${BASE_URL}/admin/createCatagory`,
+        `${BASE_URL}/api/admin/createCategory`,
         addCategory,
         { headers: { Authorization: token } }
       );

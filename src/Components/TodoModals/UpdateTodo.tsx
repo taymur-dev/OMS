@@ -1,22 +1,16 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useEffect, useState, useCallback } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
-
 import { CancelBtn } from "../CustomButtons/CancelBtn";
-
 import { Title } from "../Title";
-
 import { UserSelect } from "../InputFields/UserSelect";
-
-import axios from "axios";
-
-import { BASE_URL } from "../../Content/URL";
-
-import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../InputFields/InputField";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
 
-type ALLTODOT = {
+export type TodoType = {
   id: number;
+  employee_id: number;
   name: string;
   task: string;
   startDate: string;
@@ -25,107 +19,135 @@ type ALLTODOT = {
   deadline: string;
 };
 
-type AddAttendanceProps = {
+type UpdateTodoProps = {
   setModal: () => void;
-  seleteTodo: ALLTODOT | null;
+  seleteTodo: TodoType | null;
+  onUpdate: (updatedTodo: TodoType) => void;
 };
 
-export const UpdateTodo = ({ setModal, seleteTodo }: AddAttendanceProps) => {
+export const UpdateTodo = ({
+  setModal,
+  seleteTodo,
+  onUpdate,
+}: UpdateTodoProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-
-  const [addTodo, setAddTodo] = useState(seleteTodo);
-
-  const [allUsers, setAllUsers] = useState([]);
-
   const token = currentUser?.token;
+
+  const [todo, setTodo] = useState<TodoType | null>(seleteTodo);
+  const [allUsers, setAllUsers] = useState<{ id: number; name: string }[]>([]);
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
-    e.preventDefault();
-
     const { name, value } = e.target;
-
-    setAddTodo({ ...addTodo, [name]: value } as ALLTODOT);
+    setTodo((prev) =>
+      prev
+        ? { ...prev, [name]: name === "employee_id" ? Number(value) : value }
+        : prev
+    );
   };
 
-  const getAllUsers = async () => {
+  const getAllUsers = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
-        headers: {
-          Authorization: token,
-        },
+      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
+        headers: { Authorization: token },
       });
       setAllUsers(res?.data?.users);
     } catch (error) {
-      console.log(error);
+      console.error(error);
+    }
+  }, [token]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!todo?.id) return;
+
+    try {
+      await axios.put(
+        `${BASE_URL}/api/admin/updateTodo/${todo.id}`,
+        {
+          employee_id: todo.employee_id,
+          task: todo.task,
+          note: todo.note,
+          startDate: todo.startDate,
+          endDate: todo.endDate,
+          deadline: todo.deadline,
+        },
+        { headers: { Authorization: token } }
+      );
+
+      onUpdate({ ...todo });
+      setModal();
+    } catch (error) {
+      console.error("Update Todo Error:", error);
     }
   };
 
-  const handlerSubmitted = async () => {};
-
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [getAllUsers]);
+
   return (
-    <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
-          <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Update Todo</Title>
-            <div className="mx-2 flex-wrap gap-3  ">
-              <UserSelect
-                labelName="Employees*"
-                name="name"
-                value={addTodo?.name ?? "guest"}
-                handlerChange={handlerChange}
-                optionData={allUsers}
-              />
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-500">
+        <form onSubmit={handleSubmit}>
+          <Title setModal={setModal}>Update Todo</Title>
+          <div className="mx-2 flex-wrap gap-3">
+            <UserSelect
+              labelName="Employees*"
+              name="employee_id"
+              value={todo?.employee_id?.toString() || ""}
+              handlerChange={handlerChange}
+              optionData={allUsers.map((u) => ({
+                id: u.id,
+                name: u.name,
+                loginStatus: "",
+                projectName: "",
+              }))}
+            />
+            <InputField
+              labelName="Task*"
+              name="task"
+              handlerChange={handlerChange}
+              inputVal={todo?.task}
+            />
+            <InputField
+              labelName="Note*"
+              name="note"
+              handlerChange={handlerChange}
+              inputVal={todo?.note}
+            />
 
+            <div className="flex items-center justify-center gap-6">
               <InputField
-                labelName="Task*"
-                name="task"
+                labelName="Start Date*"
+                type="date"
+                name="startDate"
                 handlerChange={handlerChange}
-                inputVal={addTodo?.task}
+                inputVal={todo?.startDate}
               />
-
               <InputField
-                labelName="Note*"
-                name="note"
+                labelName="End Date*"
+                type="date"
+                name="endDate"
                 handlerChange={handlerChange}
-                inputVal={addTodo?.note}
+                inputVal={todo?.endDate}
               />
-
-              <div className="flex items-center justify-center gap-6">
-                <InputField
-                  labelName="Start Date*"
-                  type="date"
-                  handlerChange={handlerChange}
-                  inputVal={addTodo?.startDate.slice(0, 10)}
-                />
-
-                <InputField
-                  labelName="End Date*"
-                  type="date"
-                  handlerChange={handlerChange}
-                  inputVal={addTodo?.endDate.slice(0, 10)}
-                />
-
-                <InputField
-                  labelName="Deadline*"
-                  type="date"
-                  handlerChange={handlerChange}
-                  inputVal={addTodo?.deadline.slice(0, 10)}
-                />
-              </div>
+              <InputField
+                labelName="Deadline*"
+                type="date"
+                name="deadline"
+                handlerChange={handlerChange}
+                inputVal={todo?.deadline}
+              />
             </div>
+          </div>
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Update Todo"} />
-            </div>
-          </form>
-        </div>
+          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Update Todo" />
+          </div>
+        </form>
       </div>
     </div>
   );

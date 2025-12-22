@@ -5,7 +5,7 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AddPayment } from "../../Components/PayementModals/AddPayment";
 import { EditPayment } from "../../Components/PayementModals/EditPayment";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
@@ -55,7 +55,20 @@ export const Payments = () => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
 
-  const handleGetPayments = async () => {
+  const [pageNo, setPageNo] = useState(1);
+
+    const [searchTerm, setSearchTerm] = useState("");
+
+
+  const handleIncrementPageButton = () => {
+    setPageNo((prev) => prev + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+  };
+
+  const handleGetPayments = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getPayments`, {
         headers: {
@@ -67,7 +80,7 @@ export const Payments = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  } , [token]);
 
   const handleClickEditButton = (data: PAYMENTMETHODT) => {
     handleToggleViewModal("EDIT");
@@ -105,13 +118,13 @@ export const Payments = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("PAYMENT"));
     }, 1000);
-  }, []);
+  }, [dispatch , handleGetPayments]);
 
   if (loader) return <Loader />;
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Payment" activeFile="All Payment list" />
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Attendance :{" "}
@@ -136,35 +149,34 @@ export const Payments = () => {
             </span>
             <span>entries</span>
           </div>
-          <TableInputField />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
-        <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Sr</span>
-            <span className="p-2 text-left min-w-[150px] ">Customers</span>
-            <span className="p-2 text-left min-w-[150px] ">Amount</span>
-            <span className="p-2 text-left min-w-[150px] ">Payment Type</span>
-            <span className="p-2 text-left min-w-[150px] ">Date</span>
-            <span className="p-2 text-left min-w-[150px]">Action</span>
+        <div className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto">
+          <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px] ">
+            <span className="">Sr</span>
+            <span className="">Customers</span>
+            <span className="">Amount</span>
+            <span className="">Payment Type</span>
+            <span className="">Date</span>
+            <span className="text-center w-28">Actions</span>
           </div>
           {allPayment?.length === 0 ? (
             <div>No data found yet</div>
           ) : (
             allPayment?.map((payment, index) => (
               <div
-                className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
+                className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
                 key={payment.id}
               >
-                <span className=" p-2 text-left ">{index + 1}</span>
-                <span className=" p-2 text-left   ">
-                  {payment.customerName}
-                </span>
-                <span className=" p-2 text-left  ">{payment.amount}</span>
-                <span className=" p-2 text-left ">{payment.paymentType}</span>
-                <span className=" p-2 text-left ">
-                  {payment.date.slice(0, 10)}
-                </span>
-                <span className="p-2 flex items-center  gap-2">
+                <span className=" ">{index + 1}</span>
+                <span className=" ">{payment.customerName}</span>
+                <span className="  ">{payment.amount}</span>
+                <span className="  ">{payment.paymentType}</span>
+                <span className="  ">{payment.date.slice(0, 10)}</span>
+                <span className=" flex items-center  gap-1">
                   <EditButton
                     handleUpdate={() => handleClickEditButton(payment)}
                   />
@@ -181,7 +193,11 @@ export const Payments = () => {
 
       <div className="flex items-center justify-between">
         <ShowDataNumber start={1} total={10} end={1 + 9} />
-        <Pagination />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
       </div>
 
       {isOpenModal === "ADD" && (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { InputField } from "../InputFields/InputField";
@@ -11,7 +11,9 @@ import { UserSelect } from "../InputFields/UserSelect";
 
 type AddAttendanceProps = {
   setModal: () => void;
+  refreshLeaves: () => void;
 };
+
 const currentDate =
   new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
 
@@ -22,7 +24,7 @@ const initialState = {
   leaveReason: "",
 };
 
-export const AddLeave = ({ setModal }: AddAttendanceProps) => {
+export const AddLeave = ({ setModal, refreshLeaves }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
   const isAdmin = currentUser?.role;
@@ -46,9 +48,9 @@ export const AddLeave = ({ setModal }: AddAttendanceProps) => {
 
   console.log(leaveData);
 
-  const getAllUsers = async () => {
+  const getAllUsers = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
         headers: {
           Authorization: token,
         },
@@ -57,17 +59,15 @@ export const AddLeave = ({ setModal }: AddAttendanceProps) => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [token]);
   console.log("submitted", addLeave);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        `${BASE_URL}/admin/addLeave/${addLeave?.employeeName}`,
-        {
-          leaveData,
-        },
+        `${BASE_URL}/api/admin/addLeave/${employeeName}`,
+        { employeeName, ...leaveData },
         {
           headers: {
             Authorization: token,
@@ -75,13 +75,16 @@ export const AddLeave = ({ setModal }: AddAttendanceProps) => {
         }
       );
       console.log(res.data);
+      refreshLeaves();
+      setModal();
     } catch (error) {
       console.log(error);
     }
   };
+
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [getAllUsers]);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
@@ -146,3 +149,5 @@ export const AddLeave = ({ setModal }: AddAttendanceProps) => {
     </div>
   );
 };
+
+

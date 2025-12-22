@@ -37,7 +37,7 @@ export const Header = ({ isOpen, toggleSideBar }: IHeaderProps) => {
   }, 1000);
 
   return (
-    <div className="bg-indigo-500 max-w-full h-14 px-2 relative  w-full">
+    <div className="bg-indigo-500 max-w-full h-14 px-2 pt-1.5 relative  w-full">
       <div className="flex items-center justify-between ">
         <div className="flex gap-2 items-center ml-2 w-48  ">
           {!isOpen && (
@@ -49,7 +49,8 @@ export const Header = ({ isOpen, toggleSideBar }: IHeaderProps) => {
           {/* Toggle Button */}
           <button
             onClick={toggleSideBar}
-            className="p-2 rounded-full shadow-md hover:bg-gray-200 hover:text-indigo-400 text-white transition-all duration-300 mt-2 flex"
+            className="p-2 rounded-full shadow-md hover:bg-gray-200 hover:text-indigo-400 
+            text-white transition-all duration-300 mt-2 flex"
           >
             {isOpen ? <RxHamburgerMenu /> : <BsThreeDotsVertical />}
           </button>

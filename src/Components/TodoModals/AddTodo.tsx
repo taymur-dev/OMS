@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useCallback } from "react";
 
 import { AddButton } from "../CustomButtons/AddButton";
 
@@ -25,7 +25,7 @@ const currentDate =
   new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
 
 const initialState = {
-  employeeId: "",
+  employee_id: "",
   task: "",
   note: "",
   startDate: currentDate,
@@ -55,9 +55,9 @@ export const AddTodo = ({ setModal, getAllTodos }: AddAttendanceProps) => {
     setAddTodo({ ...addTodo, [name]: value });
   };
 
-  const getAllUsers = async () => {
+  const getAllUsers = useCallback (async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
         headers: {
           Authorization: token,
         },
@@ -66,12 +66,12 @@ export const AddTodo = ({ setModal, getAllTodos }: AddAttendanceProps) => {
     } catch (error) {
       console.log(error);
     }
-  };
+  } , [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BASE_URL}/admin/createTodo`, addTodo, {
+      const res = await axios.post(`${BASE_URL}/api/admin/createTodo`, addTodo, {
         headers: {
           Authorization: token,
         },
@@ -88,7 +88,7 @@ export const AddTodo = ({ setModal, getAllTodos }: AddAttendanceProps) => {
 
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [getAllUsers]);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
@@ -99,8 +99,8 @@ export const AddTodo = ({ setModal, getAllTodos }: AddAttendanceProps) => {
               {currentUser?.role === "admin" && (
                 <UserSelect
                   labelName="Employees*"
-                  name="employeeId"
-                  value={addTodo.employeeId}
+                  name="employee_id"
+                  value={addTodo.employee_id}
                   handlerChange={handlerChange}
                   optionData={allUsers}
                 />

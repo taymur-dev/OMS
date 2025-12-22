@@ -4,6 +4,7 @@ import { Title } from "../Title";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import axios from "axios";
+import { AxiosError } from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 import { toast } from "react-toastify";
@@ -32,9 +33,56 @@ export const UpdateCustomer = ({
   const { currentUser } = useAppSelector((state) => state?.officeState);
   const token = currentUser?.token;
 
+  // const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   e.preventDefault();
+  //   const { name, value } = e.target;
+  //   setCustomerData({ ...customerData, [name]: value } as CustomerT);
+  // };
+
+  // const handlerSubmitted = async (
+  //   e: React.FormEvent<HTMLFormElement>,
+  //   customerId: number | null
+  // ) => {
+  //   e.preventDefault();
+  //   try {
+  //     const res = await axios.patch(
+  //       `${BASE_URL}/api/admin/updateCustomer/${customerId}`,
+  //       customerData,
+  //       {
+  //         headers: {
+  //           Authorization: token,
+  //         },
+  //       }
+  //     );
+  //     console.log(res.data.message);
+  //     setIsOpenModal();
+  //     toast.success(res.data.message);
+  //     handleGetAllCustomers();
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const { name, value } = e.target;
+    const { name } = e.target;
+    let value = e.target.value;
+
+    // Capitalize first letter of names and addresses
+    if (
+      name === "customerName" ||
+      name === "customerAddress" ||
+      name === "companyName" ||
+      name === "companyAddress"
+    ) {
+      value = value.replace(/\b\w/g, (char) => char.toUpperCase());
+    }
+
+    // Limit contact to 11 digits
+    if (name === "customerContact") {
+      value = value.replace(/\D/g, "").slice(0, 11);
+    }
+
     setCustomerData({ ...customerData, [name]: value } as CustomerT);
   };
 
@@ -43,21 +91,48 @@ export const UpdateCustomer = ({
     customerId: number | null
   ) => {
     e.preventDefault();
+
+    if (!customerData) return;
+
+    const {
+      customerName,
+      customerAddress,
+      customerContact,
+      companyName,
+      companyAddress,
+    } = customerData;
+
+    // Frontend validation
+    if (
+      !customerName ||
+      !customerAddress ||
+      !customerContact ||
+      !companyName ||
+      !companyAddress
+    ) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    if (!/^\d{11}$/.test(customerContact)) {
+      toast.error("Contact must be 11 digits");
+      return;
+    }
+
     try {
-      const res = await axios.put(
-        `${BASE_URL}/admin/updateCustomer/${customerId}`,
+      const res = await axios.patch(
+        `${BASE_URL}/api/admin/updateCustomer/${customerId}`,
         customerData,
         {
-          headers: {
-            Authorization: token,
-          },
+          headers: { Authorization: token || "" },
         }
       );
-      console.log(res.data.message);
-      setIsOpenModal();
       toast.success(res.data.message);
+      setIsOpenModal();
       handleGetAllCustomers();
     } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(axiosError.response?.data?.message || "Something went wrong");
       console.log(error);
     }
   };

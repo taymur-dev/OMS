@@ -5,9 +5,9 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import { AddTodo } from "../../Components/TodoModals/AddTodo";
-import { UpdateTodo } from "../../Components/TodoModals/UpdateTodo";
+import { UpdateTodo, TodoType } from "../../Components/TodoModals/UpdateTodo";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
@@ -18,196 +18,233 @@ import {
 } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 
-type ALLTODOT = {
-  id: number;
-  name: string;
-  employeeId: number;
-  employeeName: string;
-  task: string;
-  note: string;
-  startDate: string;
-  endDate: string;
-  deadline: string;
-  Deadline?: string;
-};
+type ALLTODOT = TodoType;
 type TODOT = "Add" | "Edit" | "Delete" | "";
+
+const numbers = [10, 25, 50];
 
 export const Todo = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-
   const { loader } = useAppSelector((state) => state.NavigateSate);
-
   const dispatch = useAppDispatch();
 
-  const [allTodos, setAllTodos] = useState<ALLTODOT[] | null>(null);
-
-  const [catchId, setCatchId] = useState<number>();
-
-  const [seleteTodo, setSeleteTodo] = useState<ALLTODOT | null>(null);
-
-  const [isOpenModal, setIsOpenModal] = useState<TODOT>("");
+  const [allTodos, setAllTodos] = useState<ALLTODOT[]>([]);
+  const [selectedTodo, setSelectedTodo] = useState<ALLTODOT | null>(null);
+  const [modalType, setModalType] = useState<TODOT>("");
+  const [catchId, setCatchId] = useState<number | null>(null);
 
   const token = currentUser?.token;
   const id = currentUser?.userId;
 
-  const handleToggleViewModal = (active: TODOT) => {
-    setIsOpenModal((prev) => (prev === active ? "" : active));
+  const [pageNo, setPageNo] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  // Pagination handlers
+  const handleIncrementPageButton = () => setPageNo((prev) => prev + 1);
+  const handleDecrementPageButton = () =>
+    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+
+  // Toggle modal
+  const toggleModal = (type: TODOT) => {
+    setModalType((prev) => (prev === type ? "" : type));
   };
 
-  const getAllTodos = async () => {
+  // Fetch all todos
+  const getAllTodos = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getTodos`, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      setAllTodos(res.data);
-      console.log(res.data);
+      const res =
+        currentUser?.role === "admin"
+          ? await axios.get(`${BASE_URL}/api/admin/getTodos`, {
+              headers: { Authorization: token },
+            })
+          : await axios.get(`${BASE_URL}/api/user/getTodo/${id}`, {
+              headers: { Authorization: token },
+            });
+
+      const sortedTodos = res.data.sort(
+        (a: TodoType, b: TodoType) => a.id - b.id
+      );
+      setAllTodos(sortedTodos);
     } catch (error) {
       console.log(error);
     }
+  }, [token, currentUser?.role, id]);
+
+  const handleClickEditButton = (todo: ALLTODOT) => {
+    setSelectedTodo(todo);
+    toggleModal("Edit");
   };
 
-  const getUsersAllTodos = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/user/getTodo/${id}`, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      setAllTodos(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleClickEditButton = (seleteData: ALLTODOT) => {
-    handleToggleViewModal("Edit");
-    setSeleteTodo(seleteData);
-  };
-
-  const hanleClickDeleteButton = (id: number) => {
-    handleToggleViewModal("Delete");
+  const handleClickDeleteButton = (id: number) => {
     setCatchId(id);
+    toggleModal("Delete");
   };
 
   const handleDeleteTodo = async () => {
+    if (!catchId) return;
     try {
-      const res = await axios.patch(
-        `${BASE_URL}/admin/deleteTodo/${catchId}`,
+      await axios.patch(
+        `${BASE_URL}/api/admin/deleteTodo/${catchId}`,
         {},
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
+        { headers: { Authorization: token } }
       );
-      console.log(res.data);
-      getAllTodos();
+      setAllTodos((prev) => prev.filter((t) => t.id !== catchId));
+      toggleModal("");
     } catch (error) {
       console.log(error);
     }
   };
 
-  useEffect(() => {
-    if (currentUser?.role === "admin") {
-      getAllTodos();
-    } else {
-      getUsersAllTodos();
-    }
+  // Update Todo callback
+  const handleUpdateTodo = (updatedTodo: TodoType) => {
+    setAllTodos((prev) =>
+      prev.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo))
+    );
+  };
 
+  useEffect(() => {
+    getAllTodos();
     document.title = "(OMS)ALL Todos";
     dispatch(navigationStart());
     setTimeout(() => {
       dispatch(navigationSuccess("TODOS"));
     }, 1000);
-  }, []);
+  }, [dispatch, getAllTodos]);
+
+  // Filtered and paginated todos
+  const filteredTodos = useMemo(() => {
+    return allTodos.filter(
+      (todo) =>
+        todo.task.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        todo.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        todo.employee_id?.toString().includes(searchTerm)
+    );
+  }, [allTodos, searchTerm]);
+
+  const paginatedTodos = useMemo(() => {
+    const startIndex = (pageNo - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+    return filteredTodos.slice(startIndex, endIndex);
+  }, [filteredTodos, pageNo, rowsPerPage]);
+
   if (loader) return <Loader />;
+
   return (
     <div className="w-full mx-2">
-      <TableTitle tileName="Todo's" activeFile="All Todo,s list" />
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
+      <TableTitle tileName="Todo's" activeFile="All Todos list" />
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col ">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
-            Total number of Attendance :{" "}
+            Total number of Todos:{" "}
             <span className="text-2xl text-blue-500 font-semibold font-sans">
               [{allTodos?.length}]
             </span>
           </span>
           <CustomButton
             label="Add Todo"
-            handleToggle={() => handleToggleViewModal("Add")}
+            handleToggle={() => toggleModal("Add")}
           />
         </div>
+
         <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div></div>
-          <TableInputField />
-        </div>
-        <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-[0.5fr_1fr_2fr_1fr_1fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 ">
-            <span className="p-2  min-w-[50px]">Sr.</span>
-            <span className="p-2 text-left min-w-[150px] ">Employee</span>
-            <span className="p-2 text-left min-w-[150px] ">Tasks</span>
-            <span className="p-2 text-left min-w-[150px] ">Start Date</span>
-            <span className="p-2 text-left min-w-[150px] ">End Date</span>
-            <span className="p-2 text-left min-w-[150px] ">Deadline</span>
-            <span className="p-2 text-left min-w-[150px]">Action</span>
+          <div>
+            <span>Show</span>
+            <span className="bg-gray-200 rounded mx-1 p-1">
+              <select
+                value={rowsPerPage}
+                onChange={(e) => {
+                  setRowsPerPage(Number(e.target.value));
+                  setPageNo(1); // reset page
+                }}
+              >
+                {numbers.map((num, index) => (
+                  <option key={index} value={num}>
+                    {num}
+                  </option>
+                ))}
+              </select>
+            </span>
+            <span>entries</span>
           </div>
-          {allTodos?.map((todo, index) => (
-            <div
-              className="grid grid-cols-[0.5fr_1fr_2fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200"
-              key={todo.id}
-            >
-              <span className=" p-2 text-left ">{index + 1}</span>
-              <span className=" p-2 text-left   ">
-                {todo?.name || todo?.employeeName}
-              </span>
-              <span className=" p-2 text-left  ">{todo.task}</span>
-              <span className=" p-2 text-left ">
-                {todo.startDate.slice(0, 10)}
-              </span>
-              <span className=" p-2 text-left ">
-                {todo.endDate.slice(0, 10)}
-              </span>
-              <span className=" p-2 text-left ">
-                {todo.deadline?.slice(0, 10) || todo.Deadline?.slice(0, 10)}
-              </span>
-              <span className="p-2 flex items-center  gap-2">
-                <EditButton handleUpdate={() => handleClickEditButton(todo)} />
 
-                <DeleteButton
-                  handleDelete={() => hanleClickDeleteButton(todo.employeeId)}
-                />
-              </span>
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
+        </div>
+
+        <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
+          <div className="grid grid-cols-[0.5fr_1fr_2fr_1fr_1fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]">
+            <span>Sr#</span>
+            <span>Employee</span>
+            <span>Tasks</span>
+            <span>Start Date</span>
+            <span>End Date</span>
+            <span>Deadline</span>
+            <span className="text-center w-28">Actions</span>
+          </div>
+
+          {paginatedTodos.length === 0 ? (
+            <div className="text-gray-800 text-lg text-center py-2">
+              No records available at the moment!
             </div>
-          ))}
+          ) : (
+            paginatedTodos.map((todo, index) => (
+              <div
+                className="grid grid-cols-[0.5fr_1fr_2fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
+                key={todo.id}
+              >
+                <span className="px-2">
+                  {(pageNo - 1) * rowsPerPage + index + 1}
+                </span>
+                <span>{todo?.name || todo?.employee_id}</span>
+                <span>{todo.task}</span>
+                <span>{todo.startDate.slice(0, 10)}</span>
+                <span>{todo.endDate.slice(0, 10)}</span>
+                <span>{todo.deadline?.slice(0, 10)}</span>
+                <span className="flex items-center gap-2">
+                  <EditButton
+                    handleUpdate={() => handleClickEditButton(todo)}
+                  />
+                  <DeleteButton
+                    handleDelete={() => handleClickDeleteButton(todo.id)}
+                  />
+                </span>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
-        <ShowDataNumber start={1} total={10} end={1 + 9} />
-        <Pagination />
+      <div className="flex items-center justify-between mt-2">
+        <ShowDataNumber
+          start={(pageNo - 1) * rowsPerPage + 1}
+          end={Math.min(pageNo * rowsPerPage, filteredTodos.length)}
+          total={filteredTodos.length}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
       </div>
 
-      {isOpenModal === "Add" && (
-        <AddTodo
-          setModal={() => handleToggleViewModal("")}
-          getAllTodos={getAllTodos}
-        />
+      {modalType === "Add" && (
+        <AddTodo setModal={() => toggleModal("")} getAllTodos={getAllTodos} />
       )}
-
-      {isOpenModal === "Edit" && (
+      {modalType === "Edit" && selectedTodo && (
         <UpdateTodo
-          setModal={() => handleToggleViewModal("")}
-          seleteTodo={seleteTodo}
+          setModal={() => toggleModal("")}
+          seleteTodo={selectedTodo}
+          onUpdate={handleUpdateTodo}
         />
       )}
-
-      {isOpenModal === "Delete" && (
+      {modalType === "Delete" && (
         <ConfirmationModal
-          isOpen={() => handleToggleViewModal("Delete")}
-          onClose={() => handleToggleViewModal("")}
-          onConfirm={() => handleDeleteTodo()}
+          isOpen={() => toggleModal("Delete")}
+          onClose={() => toggleModal("")}
+          onConfirm={handleDeleteTodo}
         />
       )}
     </div>

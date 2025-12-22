@@ -1,7 +1,7 @@
 import { Title } from "../Title";
 
 type WithdrawEmployeeT = {
-  id: number;
+  withdrawalId: number;
   employeeId: number;
   name: string;
   withdrawDate: string;

@@ -11,7 +11,7 @@ export type ViewUserT = {
   password: string;
   confirmPassword: string;
   role: string;
-  image: string;
+  // image: string;
 };
 type ModalTProps = {
   setModal: () => void;
@@ -26,19 +26,15 @@ export const ViewUserDetailModal = ({
     <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
         <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg">
-          {/* Title */}
           <Title setModal={setModal}>User Details</Title>
 
-          {/* Profile Section */}
           <div className="flex items-center gap-6 bg-white p-6 shadow-md rounded-lg">
-            {/* Profile Picture */}
             <img
               className="w-24 h-24 rounded-full border-4 border-indigo-500 object-cover"
-              src={ profilePicture}
+              src={profilePicture}
               alt="Profile"
             />
 
-            {/* User Info */}
             <div className="flex flex-col">
               <h2 className="text-2xl font-semibold text-gray-800">
                 {viewUserDetail.name}
@@ -47,7 +43,6 @@ export const ViewUserDetailModal = ({
             </div>
           </div>
 
-          {/* User Details List */}
           <div className="mt-6 space-y-4">
             <div className="flex justify-between border-b pb-2">
               <span className="text-lg font-semibold text-gray-800">

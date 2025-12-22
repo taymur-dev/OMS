@@ -7,7 +7,7 @@ import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 
-type AddAttendanceProps = {
+type ProfileChangePasswordProps = {
   setModal: () => void;
 };
 
@@ -16,57 +16,69 @@ const initialState = {
   newPassword: "",
 };
 
-export const ProfileChangePassword = ({ setModal }: AddAttendanceProps) => {
+export const ProfileChangePassword = ({
+  setModal,
+}: ProfileChangePasswordProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const id = currentUser?.userId;
   const token = currentUser?.token;
 
   const [changePassword, setChangePassword] = useState(initialState);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
-  const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    e.preventDefault();
+  const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setChangePassword({ ...changePassword, [name]: value.trim() });
   };
 
-  console.log("submitted", changePassword);
-
-  const handlerSubmitted = async (
-    e: React.FormEvent<HTMLFormElement>,
-    id: string | undefined
-  ) => {
+  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!id) {
+      console.error("User ID is missing");
+      return;
+    }
+
+    if (!changePassword.oldPassword || !changePassword.newPassword) {
+      setMessage("Please fill both old and new passwords.");
+      return;
+    }
+
     try {
-      if (id === null) {
-        console.error("ID is null");
-        return;
-      }
-      const res = await axios.post(
-        `${BASE_URL}/user/forgetPassword/${id}`,
+      setLoading(true);
+      const res = await axios.put(
+        `${BASE_URL}/api/changePassword/${id}`,
         {
-          changePassword,
+          oldPassword: changePassword.oldPassword,
+          newPassword: changePassword.newPassword,
         },
         {
           headers: {
-            Authorization: token,
+            Authorization: token || "",
           },
         }
       );
-      console.log(res.data);
-    } catch (error) {
+
+      setMessage(res.data.message);
+      setChangePassword(initialState);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response) {
+        setMessage(error.response.data.message || "Error updating password");
+      } else {
+        setMessage("Network error or server is down");
+      }
       console.error(error);
     }
   };
 
   return (
     <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border  border-indigo-500 ">
-          <form onSubmit={(e) => handlerSubmitted(e, id)}>
-            <Title setModal={() => setModal()}>Change Password</Title>
-            <div className="mx-2   flex-wrap gap-3  ">
+      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+        <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-500 p-6">
+          <form onSubmit={handlerSubmitted}>
+            <Title setModal={setModal}>Change Password</Title>
+
+            <div className="flex flex-col gap-4 my-4">
               <InputField
                 labelName="Old Password*"
                 placeHolder="Enter the old password"
@@ -84,20 +96,15 @@ export const ProfileChangePassword = ({ setModal }: AddAttendanceProps) => {
                 inputVal={changePassword.newPassword}
                 handlerChange={handlerChange}
               />
-
-              {/* <InputField
-                labelName="Comfirm Password*"
-                placeHolder="Enter the Comfirm password"
-                type="password"
-                name="confirmPassword"
-                // inputVal={changePassword.confirmPassword}
-                handlerChange={handlerChange}
-              /> */}
             </div>
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Save password"} />
+            {message && (
+              <p className="text-center text-sm text-red-600 mb-2">{message}</p>
+            )}
+
+            <div className="flex items-center justify-center gap-4 mt-4">
+              <CancelBtn setModal={setModal} />
+              <AddButton label={loading ? "Saving..." : "Save Password"} />
             </div>
           </form>
         </div>

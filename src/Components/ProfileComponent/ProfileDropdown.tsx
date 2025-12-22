@@ -30,16 +30,16 @@ const ProfileDropdown = ({
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
-        setIsOpenModal(""); // Close modal when clicking outside
+        setIsOpenModal(""); 
       }
     }
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [setIsOpenModal]);
 
   const handleClose = () => {
-    setIsOpenModal(""); // Close dropdown on click
+    setIsOpenModal(""); 
   };
   const handleLogoutUser = () => {
     setIsOpenModal("");
@@ -54,7 +54,7 @@ const ProfileDropdown = ({
           <li className="border-b border-gray-200">
             <Link
               to={isAdmin === "admin" ? "/profile" : "/user/profile"}
-              onClick={handleClose} // Close dropdown on click
+              onClick={handleClose} 
               className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-gray-800"
             >
               <FiUser className="text-gray-800" /> Profile
@@ -62,7 +62,7 @@ const ProfileDropdown = ({
           </li>
           <li className="border-b border-gray-200">
             <span
-              onClick={() => setViewPasswordModal("VIEW")} // Close dropdown on click
+              onClick={() => setViewPasswordModal("VIEW")} 
               className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-gray-800"
             >
               <FiLock className="text-gray-800" /> Change Password
@@ -70,7 +70,7 @@ const ProfileDropdown = ({
           </li>
           <li>
             <div
-              onClick={handleLogoutUser} // Close dropdown on click
+              onClick={handleLogoutUser}
               className="flex items-center gap-3 px-4 py-2 hover:bg-red-100 text-red-600 font-semibold"
             >
               <FiLogOut className="text-red-500" /> Log Out

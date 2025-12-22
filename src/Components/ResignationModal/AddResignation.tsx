@@ -43,16 +43,6 @@ export const AddResignation = ({ setModal }: AddResignationProps) => {
 
   const token = currentUser?.token;
 
-  // const [showTime, setShowTime] = useState("");
-  // setInterval(() => {
-  //   const getTime = new Date().toLocaleTimeString("en-US", {
-  //     hour: "2-digit",
-  //     minute: "2-digit",
-  //     second: "2-digit",
-  //     hour12: true,
-  //   });
-  //   setShowTime(getTime);
-  // }, 1000);
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -142,7 +132,7 @@ export const AddResignation = ({ setModal }: AddResignationProps) => {
 
           <div className="flex items-center justify-center m-2 gap-2 text-xs ">
             <CancelBtn setModal={() => setModal()} />
-            <AddButton label={"Add Promotion"} />
+            <AddButton label={"Add Resignation"} />
           </div>
         </form>
       </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
@@ -11,13 +11,14 @@ import { toast } from "react-toastify";
 
 type AddAttendanceProps = {
   setModal: () => void;
+  handlegetwithDrawEmployeess: () => void;
 };
 const initialState = {
   id: "",
   withdrawReason: "",
 };
 
-export const AddWithdraw = ({ setModal }: AddAttendanceProps) => {
+export const AddWithdraw = ({ setModal , handlegetwithDrawEmployeess }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
   const [allUsers, setAllUsers] = useState([]);
@@ -36,9 +37,9 @@ export const AddWithdraw = ({ setModal }: AddAttendanceProps) => {
     setAddWithdraw({ ...addWithdraw, [name]: value });
   };
 
-  const getAllUsers = async () => {
+  const getAllUsers = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
         headers: {
           Authorization: token,
         },
@@ -48,13 +49,13 @@ export const AddWithdraw = ({ setModal }: AddAttendanceProps) => {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(axiosError.response?.data.message);
     }
-  };
+  }, [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        `${BASE_URL}/admin/withdrawEmployee/${addWithdraw?.id}`,
+        `${BASE_URL}/api/admin/withdrawEmployee/${addWithdraw?.id}`,
         addWithdraw,
         {
           headers: {
@@ -63,6 +64,7 @@ export const AddWithdraw = ({ setModal }: AddAttendanceProps) => {
         }
       );
       console.log(res.data);
+      handlegetwithDrawEmployeess();
       setModal();
       toast.success("Employee withdraw suceessfully");
     } catch (error) {
@@ -72,7 +74,7 @@ export const AddWithdraw = ({ setModal }: AddAttendanceProps) => {
   };
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [getAllUsers]);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">

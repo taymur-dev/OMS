@@ -6,15 +6,19 @@ import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { useEffect, useState } from "react";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
-import { EditQuotation } from "../../Components/QuotationModal/EditQuotation";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
-import { navigationStart, navigationSuccess } from "../../redux/NavigationSlice";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import { AddLoan } from "../../Components/LoanModal/AddLoan";
+import { UpdateLoan } from "../../Components/LoanModal/UpdateLoan";
+import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 
 const numbers = [10, 25, 50, 100];
 
-type LoanT = "ADD" | "VIEW" | "EDIT" | "";
+type LoanT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
 export const Loan = () => {
   const { loader } = useAppSelector((state) => state.NavigateSate);
 
@@ -23,6 +27,8 @@ export const Loan = () => {
   const [isOpenModal, setIsOpenModal] = useState<LoanT>("");
 
   const [pageNo, setPageNo] = useState(1);
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [selectedValue, setSelectedValue] = useState(10);
 
@@ -49,14 +55,14 @@ export const Loan = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("LOAN"));
     }, 1000);
-  }, []);
+  }, [dispatch]);
 
   if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Loan" activeFile="Loan list" />
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Loan Applications :{" "}
@@ -83,36 +89,43 @@ export const Loan = () => {
             </span>
             <span>entries</span>
           </div>
-          <TableInputField />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
-        <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-9 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 text-sm ">
-            <span className="p-2">Sr</span>
-            <span className="p-2 text-left">Employee Name</span>
-            <span className="p-2 text-left">Loan Date</span>
-            <span className="p-2 text-left">Loan Amount</span>
-            <span className="p-2 text-left">Installments</span>
-            <span className="p-2 text-left">Paid Amount</span>
-            <span className="p-2 text-left">REM Amount</span>
-            <span className="p-2 text-left">Approval</span>
-            <span className="p-2 text-left">Actions</span>
+        <div className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto">
+          <div className="grid grid-cols-10 bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px] ">
+            <span className="">Sr#</span>
+            <span className="">Employee Name</span>
+            <span className="">Loan Date</span>
+            <span className="">Loan Amount</span>
+            <span className="">Installments</span>
+            <span className="">Paid Amount</span>
+            <span className="">REM Amount</span>
+            <span className="">Approval</span>
+            <span className="text-center">Actions</span>
           </div>
-          <div className="grid grid-cols-9 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center">
-            <span className=" p-2 text-left ">1</span>
-            <span className=" p-2 text-left   ">Hamza amin</span>
-            <span className=" p-2 text-left  ">23,may,2025</span>
-            <span className=" p-2 text-left ">10,0000</span>
-            <span className=" p-2 text-left   ">10</span>
-            <span className=" p-2 text-left   ">0</span>
-            <span className=" p-2 text-left  ">10,0000</span>
+          <div className="grid grid-cols-10 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]">
+            <span className="px-2">1</span>
+            <span className="">Hamza amin</span>
+            <span className="">23,may,2025</span>
+            <span className="">10,0000</span>
+            <span className="">10</span>
+            <span className="">0</span>
+            <span className="">10,0000</span>
             <span className=" text-orange-500 ">
               <span className="bg-orange-100 p-2 rounded-full ">Pending</span>
             </span>
 
-            <span className="p-2 flex items-center  gap-1">
+            <span className=" flex items-center  gap-1">
               <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
 
               <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
+
+              <DeleteButton
+                handleDelete={() => handleToggleViewModal("DELETE")}
+              />
             </span>
           </div>
         </div>
@@ -131,7 +144,7 @@ export const Loan = () => {
         <AddLoan setModal={() => handleToggleViewModal("")} />
       )}
       {isOpenModal === "EDIT" && (
-        <EditQuotation setModal={() => handleToggleViewModal("")} />
+        <UpdateLoan setModal={() => handleToggleViewModal("")} />
       )}
     </div>
   );

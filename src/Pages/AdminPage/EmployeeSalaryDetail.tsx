@@ -35,6 +35,8 @@ export const EmployeeSalaryDetail = () => {
 
   const [selectedValue, setSelectedValue] = useState(10);
 
+  const [searchTerm, setSearchTerm] = useState("");
+
   const handleChangeShowData = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -58,7 +60,7 @@ export const EmployeeSalaryDetail = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("LOAN"));
     }, 1000);
-  }, []);
+  }, [dispatch]);
 
   if (loader) return <Loader />;
 
@@ -88,7 +90,10 @@ export const EmployeeSalaryDetail = () => {
             </span>
             <span>entries</span>
           </div>
-          <TableInputField />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
         <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
           <div className="grid grid-cols-8 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500 text-sm ">

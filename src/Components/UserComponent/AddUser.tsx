@@ -1,21 +1,12 @@
-import { ChangeEvent, useEffect, useState } from "react";
-
+import { useEffect, useState } from "react";
 import { InputField } from "../InputFields/InputField";
-
 import { Title } from "../Title";
-
 import { OptionField } from "../InputFields/OptionField";
-
 import { AddButton } from "../CustomButtons/AddButton";
-
 import { CancelBtn } from "../CustomButtons/CancelBtn";
-
 import axios from "axios";
-
 import { BASE_URL } from "../../Content/URL";
-
 import { useAppSelector } from "../../redux/Hooks";
-
 import { toast } from "react-toastify";
 
 export interface IAddUserValues {
@@ -27,8 +18,8 @@ export interface IAddUserValues {
   address: string;
   date: string;
   role: string;
-  image: string;
   password: string;
+  confirmPassword?: string;
 }
 
 export interface IAddUserProps extends React.ComponentPropsWithoutRef<"div"> {
@@ -40,8 +31,7 @@ export interface IAddUserProps extends React.ComponentPropsWithoutRef<"div"> {
   onSuccesAction: () => void;
 }
 
-const currentDate =
-  new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
+const currentDate = new Date().toISOString().split("T")[0];
 
 const initialState: IAddUserValues = {
   name: "",
@@ -51,22 +41,14 @@ const initialState: IAddUserValues = {
   address: "",
   date: currentDate,
   role: "",
-  image: "",
   userId: "",
   password: "",
+  confirmPassword: "",
 };
 
 const optionData = [
-  {
-    id: 1,
-    label: "Admin",
-    value: "admin",
-  },
-  {
-    id: 2,
-    label: "Employee",
-    value: "user",
-  },
+  { id: 1, label: "Admin", value: "Admin" },
+  { id: 2, label: "User", value: "User" },
 ];
 
 export const AddUser = ({
@@ -78,126 +60,179 @@ export const AddUser = ({
   onSuccesAction,
 }: IAddUserProps) => {
   const [loading, setLoading] = useState(false);
-
   const { currentUser } = useAppSelector((state) => state?.officeState);
-
   const token = currentUser?.token;
-
-  const [userData, setUserData] = useState(initialState);
-
-  const [image, setImage] = useState<File | null>(null);
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setImage(e.target.files[0]);
-    }
-  };
-
-  console.log("image", image);
-
-  console.log({ userData, initialState }, "initialValues");
+  const [userData, setUserData] = useState<IAddUserValues>(initialState);
 
   useEffect(() => {
-    {
-      if (initialValues) {
-        console.log("iamhittttttt", initialValues);
-
-        setUserData(initialValues);
-      }
+    if (initialValues) {
+      setUserData(initialValues);
     }
   }, [initialValues]);
 
-  // console.log("iddddddddddd",id)
-
-  // const [showTime, setShowTime] = useState("");
-  // setInterval(() => {
-  //   const getTime = new Date().toLocaleTimeString("en-US", {
-  //     hour: "2-digit",
-  //     minute: "2-digit",
-  //     second: "2-digit",
-  //     hour12: true,
-  //   });
-  //   setShowTime(getTime);
-  // }, 1000);
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    e.preventDefault();
+    const { name } = e.target;
+    let value = e.target.value;
 
-    const { name, value } = e.target;
+    if (name === "name") {
+      value = value.charAt(0).toUpperCase() + value.slice(1);
+    }
+
+    if (name === "email") {
+      value = value.toLowerCase();
+    }
+
+    if (name === "cnic") {
+      const digits = value.replace(/\D/g, "");
+      if (digits.length <= 5) {
+        value = digits;
+      } else if (digits.length <= 12) {
+        value = `${digits.slice(0, 5)}-${digits.slice(5)}`;
+      } else if (digits.length <= 13) {
+        value = `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(
+          12
+        )}`;
+      } else {
+        value = `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(
+          12,
+          13
+        )}`;
+      }
+    }
+
     setUserData({ ...userData, [name]: value });
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevents page reload on form submission
-
-    if (viewType === "ADD") handleAddUser();
-    else handleUpdateUser(userId);
-  };
-
-  const handleUpdateUser = async (userId: string | number | undefined) => {
-    try {
-      const res = await axios.put(
-        `${BASE_URL}/admin/updateUser/${userId}`,
-        { userData },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-
-      onSuccesAction();
-      console.log(res.data);
-      handlerGetUsers();
-      toast.success("User Updated Successfull");
-    } catch (error) {
-      console.log(error);
+    e.preventDefault();
+    if (viewType === "ADD") {
+      await handleAddUser();
+    } else {
+      await handleUpdateUser(userId);
     }
   };
 
-  const handleAddUser = async () => {
+  const handleAddUser = async (): Promise<void> => {
+    const { name, email, password, confirmPassword, cnic, contact, role } =
+      userData;
+
+    if (!name || !email || !password || !confirmPassword || !cnic || !role) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    if (password.length < 5) {
+      toast.error("Password must be at least 5 characters");
+      return;
+    }
+
+    if (!email.endsWith("@gmail.com")) {
+      toast.error("Email must end with @gmail.com");
+      return;
+    }
+
+    if (!/^\d{11}$/.test(contact)) {
+      toast.error("Contact must be exactly 11 digits");
+      return;
+    }
+
+    if (!/^\d{5}-\d{7}-\d{1}$/.test(cnic)) {
+      toast.error("CNIC must be 13 digits in format 12345-6789012-3");
+      return;
+    }
+
     const data = new FormData();
+    data.append("name", name);
+    data.append("email", email);
+    data.append("contact", contact);
+    data.append("cnic", cnic);
+    data.append("address", userData.address ?? "");
+    data.append("date", userData.date ?? "");
+    data.append("role", role);
+    data.append("password", password);
 
-    data.append("name", userData.name);
-    data.append("email", userData.email);
-    data.append("contact", userData.contact);
-    data.append("cnic", userData.cnic);
-    data.append("address", userData.address);
-    data.append("date", userData.date);
-    data.append("role", userData.role);
-    data.append("password", userData.password);
-    if (image) {
-      data.append("image", image);
-    }
-
-    console.log(data, "data");
     setLoading(true);
     try {
-      const res = await axios.post(`${BASE_URL}/admin/addUser`, data, {
-        headers: {
-          Authorization: token,
-        },
+      const res = await axios.post(`${BASE_URL}/api/admin/addUser`, data, {
+        headers: { Authorization: token },
       });
-      console.log("=>>>>>", res);
-      setLoading(false);
-      handlerGetUsers();
+      console.log(res.data);
+      toast.success("User added successfully");
       setUserData(initialState);
-      toast.success("Add User", { position: "bottom-right" });
-
+      handlerGetUsers();
       onSuccesAction();
-    } catch (error) {
-      console.log(error);
-      toast.info("All input fields are required");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Error adding user");
+      } else {
+        toast.error("Unexpected error occurred");
+      }
+    } finally {
       setLoading(false);
     }
   };
+
+  const handleUpdateUser = async (
+    id: string | number | undefined
+  ): Promise<void> => {
+    if (!id) return;
+
+    const { name, email, password, confirmPassword, cnic, contact, role } =
+      userData;
+
+    if (!name || !email || !cnic || !role) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
+    if (password && password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    const data = new FormData();
+    data.append("name", name);
+    data.append("email", email);
+    data.append("contact", contact ?? "");
+    data.append("cnic", cnic);
+    data.append("address", userData.address ?? "");
+    data.append("date", userData.date ?? "");
+    data.append("role", role);
+
+    if (password) data.append("password", password);
+
+    setLoading(true);
+    try {
+      await axios.put(`${BASE_URL}/api/admin/updateUser/${id}`, data, {
+        headers: { Authorization: token },
+      });
+      toast.success("User updated successfully");
+      handlerGetUsers();
+      onSuccesAction();
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Error updating user");
+      } else {
+        toast.error("Unexpected error occurred");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg  bg-opacity-90 backdrop-blur-xs  flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[35rem] overflow-y-scroll  bg-white mx-auto rounded-xl border border-indigo-500 ">
+    <div className="fixed inset-0 bg bg-opacity-90 backdrop-blur-xs flex items-center justify-center z-10">
+      <div className="w-[42rem] max-h-[35rem] overflow-y-scroll bg-white mx-auto rounded-xl border border-indigo-500">
         <form onSubmit={handlerSubmitted}>
           <Title setModal={setModal}>{viewType} USER</Title>
-          <div className="mx-2  flex-wrap gap-3  ">
+          <div className="mx-2 flex-wrap gap-3">
             <InputField
               labelName="Name*"
               placeHolder="Enter the Name"
@@ -224,11 +259,11 @@ export const AddUser = ({
             />
             <InputField
               labelName="CNIC*"
-              placeHolder="Enter the CNIC"
-              type="number"
+              placeHolder="12345-6789012-3"
+              type="text"
               name="cnic"
               handlerChange={handlerChange}
-              inputVal={userData?.cnic}
+              inputVal={userData.cnic}
             />
             <InputField
               labelName="Address*"
@@ -243,8 +278,8 @@ export const AddUser = ({
               placeHolder="Enter the Date"
               type="date"
               name="date"
-              inputVal={userData.date}
               handlerChange={handlerChange}
+              inputVal={userData.date}
             />
             <InputField
               labelName="Password*"
@@ -252,7 +287,7 @@ export const AddUser = ({
               type="password"
               name="password"
               handlerChange={handlerChange}
-              // inputVal={userData.password}
+              inputVal={userData.password}
             />
             <InputField
               labelName="Confirm Password*"
@@ -260,41 +295,29 @@ export const AddUser = ({
               type="password"
               name="confirmPassword"
               handlerChange={handlerChange}
-              // inputVal={userData.confirmPassword}
+              inputVal={userData.confirmPassword}
             />
-
-            <div className=" flex flex-col  mt-3">
-              <label className=" text-gray-900 text-xs font-semibold">
-                Select Image*
-              </label>
-              <input
-                type="file"
-                className=" p-1 rounded bg-white text-gray-800  border border-gray-300 focus:indigo-400"
-                onChange={handleFileChange}
-                name="image"
-                accept="image/*"
-              />
-            </div>
-
             <OptionField
-              value={userData?.role}
+              value={userData.role}
               labelName="Role*"
               handlerChange={handlerChange}
               name="role"
               optionData={optionData}
-              inital="Plese Select User"
+              inital="Please Select User"
             />
           </div>
-          <div className="flex items-center  justify-center m-2 gap-2 text-xs ">
+          <div className="flex items-center justify-center m-2 gap-2 text-xs">
             <CancelBtn setModal={setModal} />
-            {loading ? (
-              <AddButton label={"Loading..."} loading={loading} />
-            ) : (
-              <AddButton
-                loading={loading}
-                label={viewType === "ADD" ? "Add User" : "Update User"}
-              />
-            )}
+            <AddButton
+              loading={loading}
+              label={
+                loading
+                  ? "Loading..."
+                  : viewType === "ADD"
+                  ? "Add User"
+                  : "Update User"
+              }
+            />
           </div>
         </form>
       </div>

@@ -18,7 +18,7 @@ export const ProcessReports = () => {
 
   const dispatch = useAppDispatch();
 
-  const currentDate = new Date().toISOString().split("T")[0]; // ISO formatted date
+  const currentDate = new Date().toISOString().split("T")[0]; 
 
   const initialState = {
     startDate: currentDate,
@@ -26,7 +26,20 @@ export const ProcessReports = () => {
     selectCustomer: "",
   };
 
+  const [pageNo, setPageNo] = useState(1);
+
+  const handleIncrementPageButton = () => {
+    setPageNo((prev) => prev + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+  };
+
   const [reportData, setReportData] = useState(initialState);
+
+    const [searchTerm, setSearchTerm] = useState("");
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -82,7 +95,7 @@ export const ProcessReports = () => {
     setTimeout(() => {
       dispatch(navigationSuccess("PROCESS REPORTS"));
     }, 1000);
-  }, []);
+  }, [dispatch]);
 
   if (loader) return <Loader />;
   return (
@@ -104,11 +117,14 @@ export const ProcessReports = () => {
           </span>
           <span>entries</span>
         </div>
-        <TableInputField />
+        <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
       </div>
 
       {/* Report Filters */}
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white">
+      <div className="max-h-[58vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
         <div className="flex items-center justify-between text-gray-800 mx-2">
           <div className="flex flex-1 px-6 py-2 gap-2 items-center justify-between">
             <InputField
@@ -126,44 +142,41 @@ export const ProcessReports = () => {
               name="endDate"
             />
             <InputField labelName="Employees" />
-            <div className="mt-6">
-              <button className="bg-indigo-500 text-white py-1 px-6 rounded hover:cursor-pointer hover:scale-105 duration-300">
-                Search
-              </button>
+            <div className="mt-4">
+              <div className="text-gray-800 flex items-center justify-end mx-7 py-2 font-semibold">
+                <span className="mr-1">From</span>
+                <span className="text-red-500 mr-1">
+                  {reportData.startDate}
+                </span>
+                <span className="mr-1">To</span>
+                <span className="text-red-500">{reportData.endDate}</span>
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Selected Date Range Display */}
-        <div className="text-gray-800 flex items-center justify-end mx-7 py-2 font-semibold">
-          <span className="mr-1">From</span>
-          <span className="text-red-500 mr-1">{reportData.startDate}</span>
-          <span className="mr-1">To</span>
-          <span className="text-red-500">{reportData.endDate}</span>
         </div>
 
         {/* Report Table */}
         <div
           id="myDiv"
-          className="w-full max-h-[28.6rem] overflow-hidden mx-auto"
+          className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto"
         >
-          <div className="grid grid-cols-7 bg-gray-200 text-gray-900 font-semibold rounded-t-lg border border-gray-500">
-            <span className="p-2 min-w-[50px]">Sr#</span>
-            <span className="p-2 text-left min-w-[150px]">Employee</span>
-            <span className="p-2 text-left min-w-[150px]">Task</span>
-            <span className="p-2 text-left min-w-[150px]">Start Date</span>
-            <span className="p-2 text-left min-w-[150px]">End Date</span>
-            <span className="p-2 text-left min-w-[150px]">Status</span>
-            <span className="p-2 text-left min-w-[150px]">Deadline Date</span>
+          <div className="grid grid-cols-7 bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[7px]">
+            <span className="">Sr#</span>
+            <span className="">Employee</span>
+            <span className="">Task</span>
+            <span className="">Start Date</span>
+            <span className="">End Date</span>
+            <span className="">Status</span>
+            <span className="">Deadline Date</span>
           </div>
-          <div className="grid grid-cols-7 border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200">
-            <span className="p-2 text-left">1</span>
-            <span className="p-2 text-left">Hamza</span>
-            <span className="p-2 text-left">Jamat Project</span>
-            <span className="p-2 text-left">2025-01-8</span>
-            <span className="p-2 text-left">2025-04-28</span>
-            <span className="p-2 text-left ">Complete</span>
-            <span className="p-2 text-left">2025-05-28</span>
+          <div className="grid grid-cols-7 border border-gray-600 text-gray-800   hover:bg-gray-100 transition duration-200 text-xs items-center justify-center p-[5px]">
+            <span className="px-2">1</span>
+            <span className="">Hamza</span>
+            <span className="">Jamat Project</span>
+            <span className="">2025-01-8</span>
+            <span className="">2025-04-28</span>
+            <span className="">Complete</span>
+            <span className="">2025-05-28</span>
           </div>
         </div>
       </div>
@@ -171,7 +184,11 @@ export const ProcessReports = () => {
       {/* Pagination and Footer */}
       <div className="flex items-center justify-between">
         <ShowDataNumber start={1} total={10} end={10} />
-        <Pagination />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
       </div>
 
       {/* Download Button */}
