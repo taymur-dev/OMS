@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { AddButton } from "../CustomButtons/AddButton";
 
@@ -16,51 +16,92 @@ import { useAppSelector } from "../../redux/Hooks";
 
 import { toast } from "react-toastify";
 
-type AddAttendanceProps = {
+type AddApplicantProps = {
   setModal: () => void;
+  refreshApplicants: () => void;
+};
+
+type Job = {
+  id: number;
+  job_title: string;
 };
 
 const initialState = {
-  applicantName: "",
+  applicant_name: "",
   fatherName: "",
   email: "",
-  contactNo: "",
-  dateApplied: "",
-  job: "",
+  applicant_contact: "",
+  applied_date: "",
+  job_id: "",
   interviewPhase: "",
+  status: "pending",
 };
-export const AddApplicant = ({ setModal }: AddAttendanceProps) => {
+export const AddApplicant = ({
+  setModal,
+  refreshApplicants,
+}: AddApplicantProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
   const token = currentUser?.token;
 
   const [addApplicant, setAddApplicant] = useState(initialState);
 
-  const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
+  const [jobs, setJobs] = useState<Job[]>([]);
+
+  const handlerChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setAddApplicant({ ...addApplicant, [name]: value });
+    setAddApplicant((prev) => ({ ...prev, [name]: value }));
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (addApplicant.applicant_contact.length !== 11) {
+      toast.error("Contact number must be exactly 11 digits");
+      return;
+    }
+
     try {
+      const payload = {
+        ...addApplicant,
+        applicant_status: "pending",
+      };
+
       const res = await axios.post(
-        `${BASE_URL}/admin/createCatagory`,
-        addApplicant,
+        `${BASE_URL}/api/admin/addapplicant`,
+        payload,
         { headers: { Authorization: token } }
       );
-      console.log(res.data);
 
       toast.success(res.data.message);
+      refreshApplicants();
       setModal();
     } catch (error) {
       console.log(error);
+      toast.error("Failed to add applicant");
     }
   };
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/api/admin/getjob`, {
+          headers: { Authorization: token },
+        });
+        setJobs(res.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchJobs();
+  }, [token]);
+
   return (
     <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-10">
         <div className="w-[42rem]   bg-white mx-auto rounded-xl border  border-indigo-500 ">
           <form onSubmit={handlerSubmitted}>
             <Title setModal={() => setModal()}>Add Applicant</Title>
@@ -69,8 +110,8 @@ export const AddApplicant = ({ setModal }: AddAttendanceProps) => {
                 labelName="Applicant Name*"
                 placeHolder="Enter the applicant name"
                 type="text"
-                name="applicantName"
-                inputVal={addApplicant.applicantName}
+                name="applicant_name"
+                value={addApplicant.applicant_name}
                 handlerChange={handlerChange}
               />
 
@@ -79,7 +120,7 @@ export const AddApplicant = ({ setModal }: AddAttendanceProps) => {
                 placeHolder="Enter the  father name"
                 type="text"
                 name="fatherName"
-                inputVal={addApplicant.fatherName}
+                value={addApplicant.fatherName}
                 handlerChange={handlerChange}
               />
 
@@ -88,43 +129,65 @@ export const AddApplicant = ({ setModal }: AddAttendanceProps) => {
                 placeHolder="Enter the  email"
                 type="text"
                 name="email"
-                inputVal={addApplicant.email}
+                value={addApplicant.email}
                 handlerChange={handlerChange}
               />
 
               <InputField
                 labelName="Contact No*"
-                placeHolder="Enter the  contact no"
-                type="number"
-                name="contactNo"
-                inputVal={addApplicant.contactNo}
-                handlerChange={handlerChange}
+                placeHolder="Enter 11 digit contact number"
+                type="text"
+                name="applicant_contact"
+                value={addApplicant.applicant_contact}
+                handlerChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "");
+                  if (value.length <= 11) {
+                    setAddApplicant((prev) => ({
+                      ...prev,
+                      applicant_contact: value,
+                    }));
+                  }
+                }}
               />
 
               <InputField
                 labelName="Applied Date*"
                 placeHolder="Enter the date"
                 type="date"
-                name="dateApplied"
-                inputVal={addApplicant.dateApplied}
+                name="applied_date"
+                value={addApplicant.applied_date}
                 handlerChange={handlerChange}
               />
 
-              <InputField
-                labelName="Job Title*"
-                placeHolder="Enter the job title "
-                type="text"
-                name="job"
-                inputVal={addApplicant.job}
-                handlerChange={handlerChange}
-              />
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-semibold">Job Title*</label>
+
+                <select
+                  name="job_id"
+                  value={addApplicant.job_id}
+                  onChange={(e) =>
+                    setAddApplicant({ ...addApplicant, job_id: e.target.value })
+                  }
+                  className="border rounded-md p-2 text-sm"
+                  required
+                >
+                  <option value="">Select Job</option>
+
+                  {Array.isArray(jobs) &&
+                    jobs.map((job) => (
+                      <option key={job.id} value={job.id}>
+                        {job.job_title}
+                      </option>
+                    ))}
+                </select>
+              </div>
 
               <InputField
                 labelName="Interview Phase*"
                 placeHolder="Enter the interview phase"
                 type="text"
                 name="interviewPhase"
-                inputVal={addApplicant.interviewPhase}
+                value={addApplicant.interviewPhase}
                 handlerChange={handlerChange}
               />
             </div>

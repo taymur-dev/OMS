@@ -26,7 +26,7 @@ type AttendanceT = {
 export const MarkAttendance = () => {
   const dispatch = useAppDispatch();
   const { currentUser } = useAppSelector((state) => state.officeState);
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
 
   const token = currentUser?.token;
   const userId = currentUser?.userId;

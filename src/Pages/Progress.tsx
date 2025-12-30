@@ -8,9 +8,12 @@ import { CustomButton } from "../Components/TableLayoutComponents/CustomButton";
 import { TableTitle } from "../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../Components/CustomButtons/DeleteButton";
+import { ViewButton } from "../Components/CustomButtons/ViewButton";
 
 import { AddProgress } from "../Components/ProgressModal/AddProgress";
 import { EditProgress } from "../Components/ProgressModal/EditProgress";
+import { ViewProgress } from "../Components/ProgressModal/ViewProgress";
+
 import { ConfirmationModal } from "../Components/Modal/ComfirmationModal";
 import { Loader } from "../Components/LoaderComponent/Loader";
 
@@ -20,7 +23,7 @@ import { navigationStart, navigationSuccess } from "../redux/NavigationSlice";
 
 const numbers = [5, 10, 15, 20];
 
-type PROGRESST = "ADD" | "EDIT" | "DELETE" | "";
+type PROGRESST = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
 export type ALLPROGRESST = {
   id: number;
@@ -34,12 +37,17 @@ export type ALLPROGRESST = {
 
 export const Progress = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
   const token = currentUser?.token;
 
   const [allProgress, setAllProgress] = useState<ALLPROGRESST[]>([]);
   const [isOpenModal, setIsOpenModal] = useState<PROGRESST>("");
+
+  const [viewProgressData, setViewProgressData] = useState<ALLPROGRESST | null>(
+    null
+  );
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedProgress, setSelectedProgress] = useState<ALLPROGRESST | null>(
@@ -95,6 +103,11 @@ export const Progress = () => {
   const handleEdit = (row: ALLPROGRESST) => {
     setSelectedProgress(row);
     setIsOpenModal("EDIT");
+  };
+
+  const handleView = (row: ALLPROGRESST) => {
+    setViewProgressData(row);
+    setIsViewModalOpen(true);
   };
 
   const handleChangeShowData = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -190,6 +203,8 @@ export const Progress = () => {
               <span className="flex justify-center gap-1">
                 <EditButton handleUpdate={() => handleEdit(item)} />
 
+                <ViewButton handleView={() => handleView(item)} />
+
                 <DeleteButton
                   handleDelete={() => {
                     setSelectedId(item.id);
@@ -230,6 +245,13 @@ export const Progress = () => {
           setModal={() => setIsOpenModal("")}
           progressData={selectedProgress}
           handleRefresh={handleGetAllProgress}
+        />
+      )}
+
+      {isViewModalOpen && viewProgressData && (
+        <ViewProgress
+          setIsOpenModal={() => setIsViewModalOpen(false)}
+          viewProgress={viewProgressData}
         />
       )}
 

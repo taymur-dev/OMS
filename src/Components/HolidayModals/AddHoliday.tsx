@@ -69,7 +69,7 @@ export const AddHoliday = ({
                 placeHolder="Enter the holiday notification"
                 type="text"
                 name="holiday"
-                inputVal={holiday.holiday}
+                value={holiday.holiday}
                 handlerChange={handlerChange}
               />
 
@@ -78,7 +78,7 @@ export const AddHoliday = ({
                 placeHolder="Enter the Company Name"
                 type="Date"
                 name="date"
-                inputVal={holiday.date}
+                value={holiday.date}
                 handlerChange={handlerChange}
               />
             </div>

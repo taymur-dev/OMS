@@ -14,8 +14,8 @@ type AddAttendanceProps = {
   setModal: () => void;
   handleGetALLattendance: () => void;
 };
-const currentDate =
-  new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
+const currentDate = new Date().toLocaleDateString("sv-SE");
+
 
 const reasonLeaveOption = [
   {
@@ -62,11 +62,15 @@ export const AddAttendance = ({
     setAddUserAttendance({ ...addUserAttendance, [name]: value.trim() });
   };
 
+  const isAbsentOrLeave =
+    addUserAttendance.attendanceStatus === "absent" ||
+    addUserAttendance.attendanceStatus === "leave";
+
   const handlerGetUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       });
       setAllUsers(res?.data?.users);
@@ -85,7 +89,7 @@ export const AddAttendance = ({
         addUserAttendance,
         {
           headers: {
-            Authorization: token,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -103,6 +107,17 @@ export const AddAttendance = ({
   useEffect(() => {
     handlerGetUsers();
   }, [handlerGetUsers]);
+
+  useEffect(() => {
+    if (isAbsentOrLeave) {
+      setAddUserAttendance((prev) => ({
+        ...prev,
+        clockIn: "",
+        clockOut: "",
+      }));
+    }
+  }, [isAbsentOrLeave]);
+
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
@@ -117,33 +132,7 @@ export const AddAttendance = ({
                 handlerChange={handlerChange}
                 optionData={allUsers}
               />
-              <InputField
-                labelName="Date*"
-                placeHolder="Enter the Company Name"
-                type="Date"
-                name="date"
-                inputVal={addUserAttendance.date ?? ""}
-                handlerChange={handlerChange}
-              />
 
-              <InputField
-                labelName="Clock In*"
-                placeHolder="Enter the Company Name"
-                type="time"
-                name="clockIn"
-                inputVal={addUserAttendance.clockIn}
-                handlerChange={handlerChange}
-              />
-              <InputField
-                labelName="Clock Out*"
-                placeHolder="Enter the Company Name"
-                type="time"
-                name="clockOut"
-                inputVal={addUserAttendance.clockOut}
-                handlerChange={handlerChange}
-              />
-            </div>
-            <div className="px-2">
               <OptionField
                 labelName="Attendance Status*"
                 name="attendanceStatus"
@@ -152,7 +141,36 @@ export const AddAttendance = ({
                 optionData={reasonLeaveOption}
                 inital="Please Select Status"
               />
+              <InputField
+                labelName="Date*"
+                placeHolder="Enter the Company Name"
+                type="Date"
+                name="date"
+                value={addUserAttendance.date ?? ""}
+                handlerChange={handlerChange}
+              />
+
+              <InputField
+                labelName="Clock In*"
+                placeHolder="Enter the Company Name"
+                type="time"
+                name="clockIn"
+                value={addUserAttendance.clockIn}
+                handlerChange={handlerChange}
+                disabled={isAbsentOrLeave}
+              />
+
+              <InputField
+                labelName="Clock Out*"
+                placeHolder="Enter the Company Name"
+                type="time"
+                name="clockOut"
+                value={addUserAttendance.clockOut}
+                handlerChange={handlerChange}
+                disabled={isAbsentOrLeave}
+              />
             </div>
+
             <div className="flex items-center justify-center m-2 gap-2 text-xs ">
               <CancelBtn setModal={() => setModal()} />
               <AddButton label={"Save Attendance"} loading={loading} />

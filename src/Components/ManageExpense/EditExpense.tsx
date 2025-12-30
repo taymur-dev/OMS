@@ -2,128 +2,142 @@ import React, { useEffect, useState, useCallback } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
-import { UserSelect } from "../InputFields/UserSelect";
 import { InputField } from "../InputFields/InputField";
+import { OptionField } from "../InputFields/OptionField";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
+import { toast } from "react-toastify";
 
-type allExpenseT = {
+type ExpenseCategoryT = { id: number; categoryName: string };
+
+type ExpenseT = {
   id: number;
   expenseName: string;
   expenseCategoryId: number;
   categoryName: string;
   addedBy: string;
   date: string;
-  expenseStatus: string;
   amount: number | string;
 };
 
-type AddAttendanceProps = {
+type EditExpenseProps = {
   setModal: () => void;
-  editExpense: allExpenseT | null;
+  editExpense: ExpenseT | null;
 };
 
-export const EditExpense = ({ setModal, editExpense }: AddAttendanceProps) => {
+export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-  const [addExpense, setAddExpense] = useState<allExpenseT | null>(editExpense);
-  const [allUsers, setAllUsers] = useState([]);
   const token = currentUser?.token;
+
+  const [expense, setExpense] = useState<ExpenseT | null>(editExpense);
+  const [categories, setCategories] = useState<ExpenseCategoryT[] | null>(null);
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
     const { name, value } = e.target;
-    setAddExpense((prev) => ({ ...prev, [name]: value } as allExpenseT));
+    setExpense((prev) => prev && { ...prev, [name]: value });
   };
 
-  const getAllUsers = useCallback(async () => {
+  const getAllCategories = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
-        headers: { Authorization: token },
+      const res = await axios.get(`${BASE_URL}/api/admin/getExpenseCategory`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      setAllUsers(res?.data?.users);
+      setCategories(res.data);
     } catch (error) {
-      console.log(error);
+      console.error("Failed to fetch categories:", error);
     }
   }, [token]);
 
-  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!addExpense) return;
+    if (!expense) return;
 
     try {
       await axios.put(
-        `${BASE_URL}/api/admin/updateExpense/${addExpense.id}`,
+        `${BASE_URL}/api/admin/updateExpense/${expense.id}`,
         {
-          expenseName: addExpense.expenseName,
-          expenseCategoryId: addExpense.expenseCategoryId,
-          amount: addExpense.amount,
-          date: addExpense.date,
+          expenseName: expense.expenseName,
+          expenseCategoryId: expense.expenseCategoryId,
+          amount: expense.amount,
+          addedBy: expense.addedBy,
+          date: expense.date,
         },
-        { headers: { Authorization: token } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      setModal(); // close modal after success
+      toast.success("Expense updated successfully!");
+      setModal();
     } catch (error) {
       console.error("Failed to update expense:", error);
+      toast.error("Failed to update expense");
     }
   };
 
   useEffect(() => {
-    getAllUsers();
-  }, [getAllUsers]);
+    getAllCategories();
+  }, [getAllCategories]);
 
   return (
-    <div>
-      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-500">
-          <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Update Expense</Title>
-            <div className="mx-2 flex-wrap gap-3">
-              <UserSelect
-                labelName="Employees*"
-                name="employeeName"
-                value={addExpense?.expenseName ?? ""}
-                handlerChange={handlerChange}
-                optionData={allUsers}
-              />
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-500 overflow-auto">
+        <form onSubmit={handleSubmit}>
+          <Title setModal={setModal}>Update Expense</Title>
+          <div className="mx-2 flex-wrap gap-3">
+            <OptionField
+              labelName="Expense Category*"
+              name="expenseCategoryId"
+              value={
+                expense?.expenseCategoryId
+                  ? String(expense.expenseCategoryId)
+                  : ""
+              }
+              handlerChange={handlerChange}
+              optionData={categories?.map((cat) => ({
+                id: cat.id,
+                label: cat.categoryName,
+                value: cat.id,
+              }))}
+              inital="Please Select Category"
+            />
 
-              <InputField
-                labelName="Expense Category*"
-                name="categoryName"
-                handlerChange={handlerChange}
-                inputVal={addExpense?.categoryName ?? ""}
-              />
+            <InputField
+              labelName="Expense Name*"
+              name="expenseName"
+              handlerChange={handlerChange}
+              value={expense?.expenseName ?? ""}
+            />
 
-              <InputField
-                labelName="Amount*"
-                name="amount"
-                handlerChange={handlerChange}
-                inputVal={addExpense?.amount ? String(addExpense.amount) : ""}
-              />
+            <InputField
+              labelName="Amount*"
+              name="amount"
+              type="number"
+              handlerChange={handlerChange}
+              value={expense?.amount ? String(expense.amount) : ""}
+            />
 
-              <InputField
-                labelName="Add By*"
-                name="addedBy"
-                handlerChange={handlerChange}
-                inputVal={addExpense?.addedBy ?? ""}
-              />
+            <InputField
+              labelName="Added By*"
+              name="addedBy"
+              handlerChange={handlerChange}
+              value={expense?.addedBy ?? ""}
+            />
 
-              <InputField
-                labelName="Date*"
-                name="date"
-                handlerChange={handlerChange}
-                inputVal={addExpense?.date?.slice(0, 10) ?? ""}
-              />
-            </div>
+            <InputField
+              labelName="Date*"
+              name="date"
+              type="date"
+              handlerChange={handlerChange}
+              value={expense?.date?.slice(0, 10) ?? ""}
+            />
+          </div>
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Update Expense"} />
-            </div>
-          </form>
-        </div>
+          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Update Expense" />
+          </div>
+        </form>
       </div>
     </div>
   );

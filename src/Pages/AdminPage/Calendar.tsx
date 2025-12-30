@@ -26,7 +26,7 @@ type CALENDART = "ADD" | "EDIT" | "DELETE" | "";
 export const Calendar = () => {
   const { currentUser } = useAppSelector((state) => state?.officeState);
 
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
 
   const dispatch = useAppDispatch();
 
@@ -52,7 +52,7 @@ export const Calendar = () => {
 
   const handleGetAllCalendar = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getCalendarSession`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getCalendarSession`, {
         headers: {
           Authorization: token,
         },
@@ -110,14 +110,20 @@ export const Calendar = () => {
         </div>
         <div className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto">
           {/* Header */}
-          <div className="grid grid-cols-[1fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]">
+          <div
+            className="grid grid-cols-[1fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold border
+           border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
+          >
             <span className="">Sr#</span>
             <span className="">Year</span>
             <span className="">Month</span>
           </div>
 
           {/* Row */}
-          <div className="grid grid-cols-[1fr_1fr_1fr] border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]">
+          <div
+            className="grid grid-cols-[1fr_1fr_1fr] border border-gray-600 text-gray-800  hover:bg-gray-100
+           transition duration-200 text-sm items-center justify-center p-[7px]"
+          >
             <span className="px-2 ">1</span>
             <span className=" ">2025</span>
             <span className="">April</span>
@@ -135,7 +141,10 @@ export const Calendar = () => {
       </div>
 
       {isOpenModal === "ADD" && (
-        <AddCalendarSession setModal={() => handleToggleViewModal("")} />
+        <AddCalendarSession
+          setModal={() => handleToggleViewModal("")}
+          refreshCalendar={handleGetAllCalendar}
+        />
       )}
     </div>
   );

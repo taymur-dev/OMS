@@ -143,7 +143,7 @@ export const AddEmployeeLifeLine = ({
               type="text"
               name="email"
               handlerChange={handlerChange}
-              inputVal={addEmployee.email}
+              value={addEmployee.email}
             />
             <InputField
               labelName="Employee Contact*"
@@ -151,7 +151,7 @@ export const AddEmployeeLifeLine = ({
               type="number"
               name="contact"
               handlerChange={handlerChange}
-              inputVal={addEmployee.contact}
+              value={addEmployee.contact}
             />
             <InputField
               labelName="Employee Position*"
@@ -159,7 +159,7 @@ export const AddEmployeeLifeLine = ({
               type="text"
               name="position"
               handlerChange={handlerChange}
-              inputVal={addEmployee.position}
+              value={addEmployee.position}
             />
             <InputField
               labelName="Date*"
@@ -167,7 +167,7 @@ export const AddEmployeeLifeLine = ({
               type="date"
               name="date"
               handlerChange={handlerChange}
-              inputVal={addEmployee.date}
+              value={addEmployee.date}
             />
           </div>
 

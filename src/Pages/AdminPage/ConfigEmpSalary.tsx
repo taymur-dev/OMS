@@ -23,7 +23,7 @@ const numbers = [10, 25, 50, 10];
 type CONFIGT = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
 export const ConfigEmpSalary = () => {
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
 
   const dispatch = useAppDispatch();
 

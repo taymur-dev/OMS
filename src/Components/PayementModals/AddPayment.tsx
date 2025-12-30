@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useCallback } from "react";
 
 import { AddButton } from "../CustomButtons/AddButton";
 
@@ -57,28 +57,28 @@ export const AddPayment = ({
     setAddProgress({ ...addProgress, [name]: value });
   };
 
-  const getAllCustomers = async () => {
+  const getAllCustomers = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getAllCustomers`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getAllCustomers`, {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`
         },
       });
       setAllCustomers(res?.data);
     } catch (error) {
       console.log(error);
     }
-  };
+  } , [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        `${BASE_URL}/admin/addPayment`,
+        `${BASE_URL}/api/admin/addPayment`,
         addProgress,
         {
           headers: {
-            Authorization: token,
+            Authorization: `Bearer ${token}`
           },
         }
       );
@@ -93,7 +93,7 @@ export const AddPayment = ({
 
   useEffect(() => {
     getAllCustomers();
-  }, []);
+  }, [getAllCustomers]);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
@@ -144,14 +144,14 @@ export const AddPayment = ({
                 labelName="Description*"
                 name="description"
                 handlerChange={handlerChange}
-                inputVal={addProgress.description}
+                value={addProgress.description}
               />
 
               <InputField
                 labelName="Amount*"
                 name="amount"
                 handlerChange={handlerChange}
-                inputVal={addProgress.amount}
+                value={addProgress.amount}
               />
 
               <InputField
@@ -159,7 +159,7 @@ export const AddPayment = ({
                 name="date"
                 type="date"
                 handlerChange={handlerChange}
-                inputVal={addProgress.date}
+                value={addProgress.date}
               />
             </div>
 

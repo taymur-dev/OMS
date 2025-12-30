@@ -1,61 +1,50 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { InputField } from "../../Components/InputFields/InputField";
+import { OptionField } from "../../Components/InputFields/OptionField";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
-import { OptionField } from "../../Components/InputFields/OptionField";
 import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
-import { Loader } from "../../Components/LoaderComponent/Loader";
 
 type CustomerT = {
   id: number;
   customerName: string;
 };
 
+type SaleReportT = {
+  id: number;
+  customerName: string;
+  projectName: string;
+  date: string;
+};
+
 const numbers = [10, 25, 50, 100];
 
 export const SalesReports = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-
-  const { loader } = useAppSelector((state) => state.NavigateSate);
-
+  const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
 
   const token = currentUser?.token;
 
   const [selectedValue, setSelectedValue] = useState(10);
-
   const [getCustomers, setGetCustomers] = useState<CustomerT[] | null>(null);
-
-    const [searchTerm, setSearchTerm] = useState("");
-
-
-  const currentDate = new Date().toISOString().split("T")[0]; 
-
-  const initialState = {
-    startDate: currentDate,
-    endDate: currentDate,
+  const [reportData, setReportData] = useState({
+    startDate: new Date().toISOString().split("T")[0],
+    endDate: new Date().toISOString().split("T")[0],
     customerName: "",
-  };
-
+  });
   const [pageNo, setPageNo] = useState(1);
-
-  const handleIncrementPageButton = () => {
-    setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
-  };
-
-  const [reportData, setReportData] = useState(initialState);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [salesReports, setSalesReports] = useState<SaleReportT[]>([]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -64,24 +53,52 @@ export const SalesReports = () => {
     setReportData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleChangeShowData = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setSelectedValue(Number(event.target.value));
+  const handleChangeShowData = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedValue(Number(e.target.value));
+    setPageNo(1);
   };
 
-  const handleGetALLCustomers = useCallback (async () => {
+  const handleIncrementPageButton = () => setPageNo((p) => p + 1);
+  const handleDecrementPageButton = () => setPageNo((p) => Math.max(p - 1, 1));
+
+  const handleGetALLCustomers = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getAllCustomers`, {
-        headers: {
-          Authorization: token,
-        },
+      const res = await axios.get(`${BASE_URL}/api/admin/getAllCustomers`, {
+        headers: { Authorization: token },
       });
       setGetCustomers(res.data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
-  } , [token]);
+  }, [token]);
+
+  const handleGetSalesReports = useCallback(async () => {
+    try {
+      dispatch(navigationStart());
+      const res = await axios.get(`${BASE_URL}/api/admin/getSales`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSalesReports(
+        res.data.map(
+          (sale: {
+            id: number;
+            customerName: string;
+            projectName: string;
+            date?: string;
+          }) => ({
+            id: sale.id,
+            customerName: sale.customerName,
+            projectName: sale.projectName,
+            date: sale.date || new Date().toISOString().split("T")[0],
+          })
+        )
+      );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      dispatch(navigationSuccess("SALE REPORTS"));
+    }
+  }, [dispatch, token]);
 
   const printDiv = () => {
     const printStyles = `
@@ -96,12 +113,11 @@ export const SalesReports = () => {
       thead { background-color: #ccc; color: #000; }
       thead th, tbody td { border: 2px solid #000; font-size: 10pt; text-align: left; }
       tbody tr:nth-child(even) { background-color: #f9f9f9; }
-      .footer { position: fixed; bottom: 0; width: 100%; text-align: center; font-size: 10pt; padding: 10px 0; border-top: 1px solid #ccc; }
+      .footer { position: fixed; bottom: 0; width: 100%; text-align: center; font-size: 10pt; padding: 10px 0;
+       border-top: 1px solid #ccc; }
       @media print { .no-print { display: none; } }
     `;
-
     const content = document.getElementById("myDiv")?.outerHTML || "";
-
     document.body.innerHTML = `
       <div class="print-container">
         <div class="print-header">
@@ -116,38 +132,59 @@ export const SalesReports = () => {
         <div class="footer"></div>
       </div>
     `;
-
     const style = document.createElement("style");
     style.type = "text/css";
     style.appendChild(document.createTextNode(printStyles));
     document.head.appendChild(style);
-
     window.print();
-    location.reload(); // restore full pag
+    location.reload();
   };
+
   useEffect(() => {
     handleGetALLCustomers();
-
+    handleGetSalesReports();
     document.title = "(OMS) SALE REPORTS";
     dispatch(navigationStart());
-    setTimeout(() => {
-      dispatch(navigationSuccess("SALE REPORTS"));
-    }, 1000);
-  }, [dispatch , handleGetALLCustomers]);
+    setTimeout(() => dispatch(navigationSuccess("SALE REPORTS")), 1000);
+  }, [dispatch, handleGetALLCustomers, handleGetSalesReports]);
+
+  const filteredReports = useMemo(() => {
+    return salesReports
+      .filter(
+        (report) =>
+          report.customerName
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          report.projectName.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .filter((report) =>
+        reportData.customerName
+          ? report.customerName ===
+            getCustomers?.find(
+              (c) => c.id.toString() === reportData.customerName
+            )?.customerName
+          : true
+      )
+      .filter(
+        (report) =>
+          report.date >= reportData.startDate &&
+          report.date <= reportData.endDate
+      );
+  }, [salesReports, searchTerm, reportData, getCustomers]);
 
   if (loader) return <Loader />;
+
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Sales Report" activeFile="Sales Report" />
 
-      {/* Top Controls */}
       <div className="flex items-center justify-between text-gray-800 py-2 mx-2">
         <div>
           <span>Show</span>
           <span className="bg-gray-200 rounded mx-1 p-1">
             <select value={selectedValue} onChange={handleChangeShowData}>
-              {numbers.map((num, index) => (
-                <option key={index} value={num}>
+              {numbers.map((num) => (
+                <option key={num} value={num}>
                   {num}
                 </option>
               ))}
@@ -156,26 +193,28 @@ export const SalesReports = () => {
           <span>entries</span>
         </div>
         <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-          />
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
       </div>
 
-      {/* Report Filters */}
-      <div className="max-h-[58vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
+      <div
+        className="max-h-[58vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white
+       overflow-hidden flex flex-col"
+      >
         <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div className="flex flex-1 px-6 py-2 gap-2 items-center justify-between">
+          <div className="flex flex-1 py-1 gap-1 items-center justify-center">
             <InputField
               labelName="From"
               type="date"
-              inputVal={reportData.startDate}
+              value={reportData.startDate}
               handlerChange={handleChange}
               name="startDate"
             />
             <InputField
               labelName="To"
               type="date"
-              inputVal={reportData.endDate}
+              value={reportData.endDate}
               handlerChange={handleChange}
               name="endDate"
             />
@@ -191,8 +230,9 @@ export const SalesReports = () => {
               inital="Please Select Customer"
               handlerChange={handleChange}
             />
-            <div className="mt-4">
-              <div className="text-gray-800 flex items-center justify-end mx-7 py-2 font-semibold">
+
+            <div className="w-full flex justify-end mt-4">
+              <div className="text-gray-800 flex items-center py-2 font-semibold">
                 <span className="mr-1">From</span>
                 <span className="text-red-500 mr-1">
                   {reportData.startDate}
@@ -204,29 +244,43 @@ export const SalesReports = () => {
           </div>
         </div>
 
-        {/* Report Table */}
         <div
           id="myDiv"
-          className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto"
+          className="w-full max-h-[28.4rem] overflow-y-auto mx-auto"
         >
-          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[7px]">
+          <div
+            className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold border border-gray-600 
+          text-sm sticky top-0 z-10 p-[7px]"
+          >
             <span className="">Sr#</span>
             <span className="">Customer</span>
             <span className="">Project</span>
             <span className="">Date</span>
           </div>
-          <div className="grid grid-cols-4 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[5px]">
-            <span className="">1</span>
-            <span className="">Hamza</span>
-            <span className="">Jamat Project</span>
-            <span className="">2025-04-28</span>
-          </div>
+
+          {filteredReports
+            .slice((pageNo - 1) * selectedValue, pageNo * selectedValue)
+            .map((report, index) => (
+              <div
+                key={report.id}
+                className="grid grid-cols-4 border border-gray-600 text-gray-800 hover:bg-gray-100 
+                transition duration-200 text-sm items-center justify-center p-[5px]"
+              >
+                <span>{(pageNo - 1) * selectedValue + index + 1}</span>
+                <span>{report.customerName}</span>
+                <span>{report.projectName}</span>
+                <span>{report.date}</span>
+              </div>
+            ))}
         </div>
       </div>
 
-      {/* Pagination and Footer */}
       <div className="flex items-center justify-between">
-        <ShowDataNumber start={1} total={10} end={10} />
+        <ShowDataNumber
+          start={(pageNo - 1) * selectedValue + 1}
+          end={Math.min(pageNo * selectedValue, filteredReports.length)}
+          total={filteredReports.length}
+        />
         <Pagination
           pageNo={pageNo}
           handleDecrementPageButton={handleDecrementPageButton}
@@ -234,7 +288,6 @@ export const SalesReports = () => {
         />
       </div>
 
-      {/* Download Button */}
       <div className="flex items-center justify-center mt-4">
         <button
           onClick={printDiv}

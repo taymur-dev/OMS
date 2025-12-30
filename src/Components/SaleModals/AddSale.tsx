@@ -1,15 +1,9 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useEffect, useState, useCallback } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
-
 import { CancelBtn } from "../CustomButtons/CancelBtn";
-
 import { Title } from "../Title";
-
 import axios from "axios";
-
 import { BASE_URL } from "../../Content/URL";
-
 import { useAppSelector } from "../../redux/Hooks";
 import { OptionField } from "../InputFields/OptionField";
 import { toast } from "react-toastify";
@@ -28,71 +22,59 @@ type ProjectT = {
   id: number;
   projectName: string;
 };
+
 const initialState = {
   customerId: "",
   projectId: "",
+  saleDate: new Date().toISOString().split("T")[0],
 };
+
 export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
   const [addSale, setAddSale] = useState(initialState);
-
   const [allProjects, setAllProjects] = useState<ProjectT[] | null>(null);
-
   const [allCustomers, setAllCustomers] = useState<CustomerT[] | null>(null);
 
   const token = currentUser?.token;
 
-  console.log("=>", addSale);
-
   const handlerChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
-    e.preventDefault();
-
     const { name, value } = e.target;
-
     setAddSale({ ...addSale, [name]: value });
   };
 
-  const handleGetProjects = async () => {
+  const handleGetProjects = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getProjects`, {
-        headers: {
-          Authorization: token,
-        },
+      const res = await axios.get(`${BASE_URL}/api/admin/getProjects`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      setAllProjects(res?.data);
+      setAllProjects(res.data);
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [token]);
 
-  const getAllCustomers = async () => {
+  const getAllCustomers = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getAllCustomers`, {
-        headers: {
-          Authorization: token,
-        },
+      const res = await axios.get(`${BASE_URL}/api/admin/getAllCustomers`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       setAllCustomers(res.data);
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BASE_URL}/admin/addSales`, addSale, {
-        headers: {
-          Authorization: token,
-        },
+      await axios.post(`${BASE_URL}/api/admin/addSale`, addSale, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(res.data);
       handleGetsales();
-      toast.success("Sale added sucessfully");
+      toast.success("Sale added successfully");
       setModal();
     } catch (error) {
       console.log(error);
@@ -102,15 +84,16 @@ export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {
   useEffect(() => {
     handleGetProjects();
     getAllCustomers();
-  }, []);
+  }, [getAllCustomers, handleGetProjects]);
 
   return (
     <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
+      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+        <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-500">
           <form onSubmit={handlerSubmitted}>
             <Title setModal={() => setModal()}>Add Sale</Title>
-            <div className="mx-2 flex-wrap gap-3  ">
+
+            <div className="mx-2 flex-wrap gap-3">
               <OptionField
                 labelName="Customer*"
                 name="customerId"
@@ -136,9 +119,20 @@ export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {
                 }))}
                 inital="Please Select Project"
               />
+
+              <div className="flex flex-col my-2">
+                <label className="text-sm font-medium mb-1">Date*</label>
+                <input
+                  type="date"
+                  name="saleDate"
+                  value={addSale?.saleDate?.slice(0, 10) ?? ""}
+                  onChange={handlerChange}
+                  className="border rounded p-1"
+                />
+              </div>
             </div>
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
+            <div className="flex items-center justify-center m-2 gap-2 text-xs">
               <CancelBtn setModal={() => setModal()} />
               <AddButton label={"Save Sale"} />
             </div>

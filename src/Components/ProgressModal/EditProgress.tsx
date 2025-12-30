@@ -184,14 +184,14 @@ export const EditProgress = ({
               name="date"
               type="date"
               handlerChange={handlerChange}
-              inputVal={updateProgress.date}
+              value={updateProgress.date}
             />
 
             <InputField
               labelName="Note*"
               name="note"
               handlerChange={handlerChange}
-              inputVal={updateProgress.note}
+              value={updateProgress.note}
             />
           </div>
 

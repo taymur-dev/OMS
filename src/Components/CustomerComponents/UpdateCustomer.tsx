@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { InputField } from "../InputFields/InputField";
 import { Title } from "../Title";
 import { AddButton } from "../CustomButtons/AddButton";
@@ -29,46 +29,15 @@ export const UpdateCustomer = ({
   handleGetAllCustomers,
   customerDetail,
 }: AddCustomerProps) => {
-  const [customerData, setCustomerData] = useState(customerDetail);
+  const [customerData, setCustomerData] = useState<CustomerT | null>(null);
   const { currentUser } = useAppSelector((state) => state?.officeState);
   const token = currentUser?.token;
-
-  // const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   e.preventDefault();
-  //   const { name, value } = e.target;
-  //   setCustomerData({ ...customerData, [name]: value } as CustomerT);
-  // };
-
-  // const handlerSubmitted = async (
-  //   e: React.FormEvent<HTMLFormElement>,
-  //   customerId: number | null
-  // ) => {
-  //   e.preventDefault();
-  //   try {
-  //     const res = await axios.patch(
-  //       `${BASE_URL}/api/admin/updateCustomer/${customerId}`,
-  //       customerData,
-  //       {
-  //         headers: {
-  //           Authorization: token,
-  //         },
-  //       }
-  //     );
-  //     console.log(res.data.message);
-  //     setIsOpenModal();
-  //     toast.success(res.data.message);
-  //     handleGetAllCustomers();
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const { name } = e.target;
     let value = e.target.value;
 
-    // Capitalize first letter of names and addresses
     if (
       name === "customerName" ||
       name === "customerAddress" ||
@@ -78,13 +47,18 @@ export const UpdateCustomer = ({
       value = value.replace(/\b\w/g, (char) => char.toUpperCase());
     }
 
-    // Limit contact to 11 digits
     if (name === "customerContact") {
       value = value.replace(/\D/g, "").slice(0, 11);
     }
 
     setCustomerData({ ...customerData, [name]: value } as CustomerT);
   };
+
+  useEffect(() => {
+    if (customerDetail) {
+      setCustomerData(customerDetail);
+    }
+  }, [customerDetail]);
 
   const handlerSubmitted = async (
     e: React.FormEvent<HTMLFormElement>,
@@ -102,7 +76,6 @@ export const UpdateCustomer = ({
       companyAddress,
     } = customerData;
 
-    // Frontend validation
     if (
       !customerName ||
       !customerAddress ||
@@ -144,12 +117,12 @@ export const UpdateCustomer = ({
           <Title setModal={() => setIsOpenModal()}>Update Customer</Title>
           <div className="mx-2  flex-wrap gap-3  ">
             <InputField
-              labelName=" Customer Name*"
+              labelName="Customer Name*"
               placeHolder="Enter the Customer Name"
               type="text"
               name="customerName"
               handlerChange={handlerChange}
-              inputVal={customerData?.customerName}
+              value={customerData?.customerName || ""}
             />
             <InputField
               labelName="Customer Address*"
@@ -157,7 +130,7 @@ export const UpdateCustomer = ({
               type="text"
               name="customerAddress"
               handlerChange={handlerChange}
-              inputVal={customerData?.customerAddress}
+              value={customerData?.customerAddress}
             />
 
             <InputField
@@ -166,7 +139,7 @@ export const UpdateCustomer = ({
               type="number"
               name="customerContact"
               handlerChange={handlerChange}
-              inputVal={customerData?.customerContact}
+              value={customerData?.customerContact}
             />
             <InputField
               labelName="Company Name*"
@@ -174,7 +147,7 @@ export const UpdateCustomer = ({
               type="text"
               name="companyName"
               handlerChange={handlerChange}
-              inputVal={customerData?.companyName}
+              value={customerData?.companyName}
             />
           </div>
           <div className="px-2">
@@ -183,7 +156,7 @@ export const UpdateCustomer = ({
               placeHolder="Enter the Company Address"
               type="text"
               name="companyAddress"
-              inputVal={customerData?.companyAddress}
+              value={customerData?.companyAddress}
               handlerChange={handlerChange}
             />
           </div>

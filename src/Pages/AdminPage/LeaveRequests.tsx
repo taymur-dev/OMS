@@ -3,10 +3,7 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
-import {
-  navigationStart,
-  navigationSuccess,
-} from "../../redux/NavigationSlice";
+import { navigationStart, navigationSuccess } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import { AddLeave } from "../../Components/LeaveModals/AddLeave";
 import { UpdateLeave } from "../../Components/LeaveModals/UpdateLeave";
@@ -35,7 +32,7 @@ type ISOPENMODALT = "ADDLEAVE" | "VIEW" | "UPDATE";
 export const LeaveRequests = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
 
   const [isOpenModal, setIsOpenModal] = useState<ISOPENMODALT | "">("");
@@ -47,16 +44,24 @@ export const LeaveRequests = () => {
   const [viewLeave, setViewLeave] = useState<ADDLEAVET | null>(null);
 
   const handleGetAllLeaves = useCallback(async () => {
+    if (!currentUser) return;
+
     try {
-      const res = await axios.get(`${BASE_URL}/api/admin/getUsersLeaves`, {
-        headers: { Authorization: token },
+      const url =
+        currentUser.role === "admin"
+          ? `${BASE_URL}/api/admin/getUsersLeaves`
+          : `${BASE_URL}/api/user/getMyLeaves`;
+
+      const res = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("Fetched leaves:", res.data);
+
       setAllLeaves(res.data);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching leaves:", error);
+      setAllLeaves([]);
     }
-  }, [token]);
+  }, [currentUser, token]);
 
   const handleRefresh = useCallback(
     async (updatedLeave?: ADDLEAVET) => {
@@ -122,13 +127,13 @@ export const LeaveRequests = () => {
       <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
         <div className="flex items-center justify-between mx-2 text-gray-800">
           <span>
-            Total Number of Users on Leaves:{" "}
+            Total Leaves:{" "}
             <span className="text-2xl text-blue-500 font-semibold font-sans">
               {filteredLeaves.length}
             </span>
           </span>
           <CustomButton
-            label="Add User Leave"
+            label="Add Leave"
             handleToggle={() => handleToggleViewModal("ADDLEAVE")}
           />
         </div>
@@ -160,7 +165,7 @@ export const LeaveRequests = () => {
            border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
           >
             <span>Sr#</span>
-            <span>Employee Name</span>
+            {currentUser?.role === "admin" && <span>Employee Name</span>}
             <span>Subject Leave</span>
             <span>Status</span>
             <span className="text-center w-28">Actions</span>
@@ -173,11 +178,16 @@ export const LeaveRequests = () => {
                 hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
             >
               <span className="text-left">{startIndex + index + 1}</span>
-              <span className="text-left">{leave.name}</span>
+              {currentUser?.role === "admin" && (
+                <span className="text-left">{leave.name}</span>
+              )}
               <span className="text-left">{leave.leaveSubject}</span>
               <span className="text-left">{leave.leaveStatus}</span>
               <span className="text-left flex items-center gap-1">
-                <EditButton handleUpdate={() => handleClickEditButton(leave)} />
+                {(currentUser?.role === "admin" ||
+                  leave.name === currentUser?.name) && (
+                  <EditButton handleUpdate={() => handleClickEditButton(leave)} />
+                )}
                 <ViewButton
                   handleView={() => {
                     setViewLeave(leave);
@@ -220,7 +230,7 @@ export const LeaveRequests = () => {
         />
       )}
 
-      {isOpenModal === "UPDATE" && (
+      {isOpenModal === "UPDATE" && EditLeave && (
         <UpdateLeave
           setModal={() => setIsOpenModal("")}
           EditLeave={EditLeave}
@@ -228,7 +238,7 @@ export const LeaveRequests = () => {
         />
       )}
 
-      {isOpenModal === "VIEW" && (
+      {isOpenModal === "VIEW" && viewLeave && (
         <ViewLeave setIsOpenModal={() => setIsOpenModal("")} data={viewLeave} />
       )}
     </div>

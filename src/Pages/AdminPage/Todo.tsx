@@ -25,7 +25,7 @@ const numbers = [10, 25, 50];
 
 export const Todo = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
 
   const [allTodos, setAllTodos] = useState<ALLTODOT[]>([]);
@@ -40,26 +40,23 @@ export const Todo = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  // Pagination handlers
   const handleIncrementPageButton = () => setPageNo((prev) => prev + 1);
   const handleDecrementPageButton = () =>
     setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
 
-  // Toggle modal
   const toggleModal = (type: TODOT) => {
     setModalType((prev) => (prev === type ? "" : type));
   };
 
-  // Fetch all todos
   const getAllTodos = useCallback(async () => {
     try {
       const res =
         currentUser?.role === "admin"
           ? await axios.get(`${BASE_URL}/api/admin/getTodos`, {
-              headers: { Authorization: token },
+              headers: { Authorization: `Bearer ${token}` },
             })
           : await axios.get(`${BASE_URL}/api/user/getTodo/${id}`, {
-              headers: { Authorization: token },
+              headers: { Authorization: `Bearer ${token}` },
             });
 
       const sortedTodos = res.data.sort(
@@ -87,16 +84,15 @@ export const Todo = () => {
       await axios.patch(
         `${BASE_URL}/api/admin/deleteTodo/${catchId}`,
         {},
-        { headers: { Authorization: token } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      setAllTodos((prev) => prev.filter((t) => t.id !== catchId));
+      await getAllTodos();
       toggleModal("");
     } catch (error) {
       console.log(error);
     }
   };
 
-  // Update Todo callback
   const handleUpdateTodo = (updatedTodo: TodoType) => {
     setAllTodos((prev) =>
       prev.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo))
@@ -112,7 +108,6 @@ export const Todo = () => {
     }, 1000);
   }, [dispatch, getAllTodos]);
 
-  // Filtered and paginated todos
   const filteredTodos = useMemo(() => {
     return allTodos.filter(
       (todo) =>
@@ -133,7 +128,10 @@ export const Todo = () => {
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Todo's" activeFile="All Todos list" />
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col ">
+      <div
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white
+       overflow-hidden flex flex-col "
+      >
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Todos:{" "}
@@ -155,7 +153,7 @@ export const Todo = () => {
                 value={rowsPerPage}
                 onChange={(e) => {
                   setRowsPerPage(Number(e.target.value));
-                  setPageNo(1); // reset page
+                  setPageNo(1);
                 }}
               >
                 {numbers.map((num, index) => (
@@ -175,9 +173,12 @@ export const Todo = () => {
         </div>
 
         <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
-          <div className="grid grid-cols-[0.5fr_1fr_2fr_1fr_1fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]">
+          <div
+            className="grid grid-cols-[0.5fr_1fr_2fr_1fr_1fr_1fr_1fr] bg-gray-200 text-gray-900
+           font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
+          >
             <span>Sr#</span>
-            <span>Employee</span>
+            {currentUser?.role === "admin" && <span>Employee</span>}
             <span>Tasks</span>
             <span>Start Date</span>
             <span>End Date</span>
@@ -192,13 +193,16 @@ export const Todo = () => {
           ) : (
             paginatedTodos.map((todo, index) => (
               <div
-                className="grid grid-cols-[0.5fr_1fr_2fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
+                className="grid grid-cols-[0.5fr_1fr_2fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800
+                 hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
                 key={todo.id}
               >
                 <span className="px-2">
                   {(pageNo - 1) * rowsPerPage + index + 1}
                 </span>
-                <span>{todo?.name || todo?.employee_id}</span>
+                {currentUser?.role === "admin" && (
+                  <span>{todo.employeeName ?? "-"}</span>
+                )}
                 <span>{todo.task}</span>
                 <span>{todo.startDate.slice(0, 10)}</span>
                 <span>{todo.endDate.slice(0, 10)}</span>

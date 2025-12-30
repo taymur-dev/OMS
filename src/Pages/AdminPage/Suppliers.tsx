@@ -36,7 +36,7 @@ interface Supplier {
 }
 
 export const Suppliers = () => {
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 

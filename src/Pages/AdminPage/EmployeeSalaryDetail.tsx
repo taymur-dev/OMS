@@ -10,8 +10,6 @@ import { useEffect, useState } from "react";
 
 import { AddQuotation } from "../../Components/QuotationModal/AddQuotation";
 
-import { EditQuotation } from "../../Components/QuotationModal/EditQuotation";
-
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 
 import {
@@ -25,7 +23,7 @@ const numbers = [10, 25, 50, 100];
 
 type LoanT = "ADD" | "VIEW" | "EDIT" | "";
 export const EmployeeSalaryDetail = () => {
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
 
   const dispatch = useAppDispatch();
 
@@ -132,9 +130,6 @@ export const EmployeeSalaryDetail = () => {
 
       {isOpenModal === "ADD" && (
         <AddQuotation setModal={() => handleToggleViewModal("")} />
-      )}
-      {isOpenModal === "EDIT" && (
-        <EditQuotation setModal={() => handleToggleViewModal("")} />
       )}
     </div>
   );

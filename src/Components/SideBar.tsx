@@ -59,7 +59,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
 
   const getAllTodos = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getTodos`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getTodos`, {
         headers: {
           Authorization: token,
         },

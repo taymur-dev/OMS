@@ -52,11 +52,11 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
     setAddExpense({ ...addExpense, [name]: value });
   };
 
-  const getAllUsers = useCallback( async () => {
+  const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getExpenseCategory`, {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       });
       setAllExpenseCategory(res?.data);
@@ -64,16 +64,20 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
     } catch (error) {
       console.log(error);
     }
-  } , [token]);
+  }, [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BASE_URL}/api/admin/addExpense`, addExpense, {
-        headers: {
-          Authorization: token,
-        },
-      });
+      const res = await axios.post(
+        `${BASE_URL}/api/admin/addExpense`,
+        addExpense,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       console.log(res.data);
       setModal();
       toast.success("Expense added successfully");
@@ -92,12 +96,6 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
           <form onSubmit={handlerSubmitted}>
             <Title setModal={() => setModal()}>Add Expense</Title>
             <div className="mx-2 flex-wrap gap-3  ">
-              <InputField
-                labelName="Expense Name*"
-                name="expenseName"
-                handlerChange={handlerChange}
-                inputVal={addExpense.expenseName}
-              />
               <OptionField
                 labelName="Expense Category"
                 name="expenseCategoryId"
@@ -112,18 +110,25 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
               />
 
               <InputField
+                labelName="Expense Name*"
+                name="expenseName"
+                handlerChange={handlerChange}
+                value={addExpense.expenseName}
+              />
+
+              <InputField
                 labelName="Amount*"
                 name="amount"
                 type="number"
                 handlerChange={handlerChange}
-                inputVal={addExpense.amount}
+                value={addExpense.amount}
               />
 
               <InputField
                 labelName="Added By*"
                 name="addedBy"
                 handlerChange={handlerChange}
-                inputVal={addExpense.addedBy}
+                value={addExpense.addedBy}
               />
 
               <InputField
@@ -131,7 +136,7 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
                 name="date"
                 type="date"
                 handlerChange={handlerChange}
-                inputVal={addExpense.date}
+                value={addExpense.date}
               />
             </div>
 

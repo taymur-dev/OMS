@@ -10,14 +10,17 @@ import { useAppSelector } from "../../redux/Hooks";
 
 type AddAttendanceProps = {
   setModal: () => void;
+  refreshCalendar: () => void;
 };
 
-// Initial state with Date object
 const initialState = {
-  startingMonth: new Date(), // Default to current date
+  startingMonth: new Date(),
 };
 
-export const AddCalendarSession = ({ setModal }: AddAttendanceProps) => {
+export const AddCalendarSession = ({
+  setModal,
+  refreshCalendar,
+}: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
@@ -25,7 +28,6 @@ export const AddCalendarSession = ({ setModal }: AddAttendanceProps) => {
     startingMonth: Date | null;
   }>(initialState);
 
-  // This handler is now for DatePicker only
   const handlerChange = (e: {
     target: { name: string; value: Date | null };
   }) => {
@@ -37,17 +39,26 @@ export const AddCalendarSession = ({ setModal }: AddAttendanceProps) => {
     e.preventDefault();
 
     try {
+      if (!addCalendar.startingMonth) {
+        alert("Please select a month");
+        return;
+      }
+
+      const year = addCalendar.startingMonth.getFullYear().toString();
+      const month = addCalendar.startingMonth.toLocaleString("default", {
+        month: "long",
+      });
+
       const formattedData = {
-        ...addCalendar,
-        // Send only year-month string like '2025-05'
-        startingMonth: addCalendar.startingMonth
-          ? addCalendar.startingMonth.toISOString().slice(0, 7)
-          : null,
+        year,
+        month,
+        calendarStatus: "Active",
       };
 
-      console.log(formattedData, "date");
+      console.log(formattedData, "data to send");
+
       const res = await axios.post(
-        `${BASE_URL}/admin/addCalendarSession`,
+        `${BASE_URL}/api/admin/addCalendarSession`,
         formattedData,
         {
           headers: {
@@ -55,7 +66,10 @@ export const AddCalendarSession = ({ setModal }: AddAttendanceProps) => {
           },
         }
       );
+
       console.log(res.data);
+      refreshCalendar();
+      setModal();
     } catch (error) {
       console.log(error);
     }

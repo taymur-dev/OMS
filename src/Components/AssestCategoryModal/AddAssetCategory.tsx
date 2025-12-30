@@ -1,37 +1,29 @@
 import React, { useState } from "react";
-
 import { AddButton } from "../CustomButtons/AddButton";
-
 import { CancelBtn } from "../CustomButtons/CancelBtn";
-
 import { InputField } from "../InputFields/InputField";
-
 import { Title } from "../Title";
-
 import axios from "axios";
-
 import { BASE_URL } from "../../Content/URL";
-
 import { useAppSelector } from "../../redux/Hooks";
-
 import { toast } from "react-toastify";
 
-type AddAttendanceProps = {
+type AddAssetCategoryProps = {
   setModal: () => void;
+  refreshCategories: () => void;
 };
 
 const initialState = {
-  categoryName: "",
+  category_name: "",
 };
-export const AddAssetCategory = ({ setModal }: AddAttendanceProps) => {
-  const { currentUser } = useAppSelector((state) => state.officeState);
 
+export const AddAssetCategory = ({ setModal, refreshCategories }: AddAssetCategoryProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
   const [addCategory, setAddCategory] = useState(initialState);
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
     const { name, value } = e.target;
     setAddCategory({ ...addCategory, [name]: value });
   };
@@ -40,38 +32,42 @@ export const AddAssetCategory = ({ setModal }: AddAttendanceProps) => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        `${BASE_URL}/api/admin/createCategory`,
+        `${BASE_URL}/api/admin/createAssetCategory`,
         addCategory,
-        { headers: { Authorization: token } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log(res.data);
 
       toast.success(res.data.message);
-      setModal();
+
+      refreshCategories(); 
+      setAddCategory(initialState); 
+      setModal(); 
     } catch (error) {
       console.log(error);
+      toast.error("Failed to add category");
     }
   };
+
   return (
     <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
+      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+        <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-500">
           <form onSubmit={handlerSubmitted}>
             <Title setModal={() => setModal()}>Add Asset Category</Title>
-            <div className="mx-2   flex-wrap gap-3  ">
+            <div className="mx-2 flex-wrap gap-3">
               <InputField
                 labelName="Category Name*"
                 placeHolder="Enter the Project Category"
                 type="text"
-                name="categoryName"
-                inputVal={addCategory.categoryName}
+                name="category_name"
+                value={addCategory.category_name}
                 handlerChange={handlerChange}
               />
             </div>
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
+            <div className="flex items-center justify-center m-2 gap-2 text-xs">
               <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Save Category"} />
+              <AddButton label="Save Category" />
             </div>
           </form>
         </div>

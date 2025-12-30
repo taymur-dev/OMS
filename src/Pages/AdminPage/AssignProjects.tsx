@@ -5,9 +5,13 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+import { ViewButton } from "../../Components/CustomButtons/ViewButton";
+
 import { useEffect, useState, useCallback } from "react";
 import { AddAssignProject } from "../../Components/AssignProjectModal/AddAssignProject";
 import { EditAssignProject } from "../../Components/AssignProjectModal/EditAssignProject";
+import { ViewAssignProject } from "../../Components/AssignProjectModal/ViewAssignProject";
+
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
@@ -20,7 +24,12 @@ import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 100];
 
-type ASSIGNPROJECTT = "ADDPROJECT" | "EDITPROJECT" | "DELETEPROJECT" | "";
+type ASSIGNPROJECTT =
+  | "ADDPROJECT"
+  | "EDITPROJECT"
+  | "DELETEPROJECT"
+  | "VIEWPROJECT"
+  | "";
 
 export type ALLASSIGNPROJECTT = {
   id: number;
@@ -32,9 +41,11 @@ export type ALLASSIGNPROJECTT = {
 
 export const AssignProjects = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-  const isAdmin = currentUser?.role;
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
+
+  const isAdmin = currentUser?.role === "admin";
+  const token = currentUser?.token;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [allAssignProjects, setAllAssignProjects] = useState<
@@ -45,21 +56,31 @@ export const AssignProjects = () => {
   const [pageNo, setPageNo] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
 
-  const token = currentUser?.token;
-
   const handleGetAllAssignProjects = useCallback(async () => {
+    if (!token || !currentUser) return;
+
     try {
-      const res = await axios.get(`${BASE_URL}/api/admin/getAssignProjects`, {
-        headers: { Authorization: token },
+      const url =
+        currentUser.role === "admin"
+          ? `${BASE_URL}/api/admin/getAssignProjects`
+          : `${BASE_URL}/api/user/getMyAssignProjects`;
+
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-      const sortedData = (res.data || []).sort(
-        (a: ALLASSIGNPROJECTT, b: ALLASSIGNPROJECTT) => a.id - b.id
+
+      setAllAssignProjects(
+        Array.isArray(res.data)
+          ? res.data.sort((a, b) => a.id - b.id)
+          : []
       );
-      setAllAssignProjects(sortedData);
     } catch (error) {
-      console.log(error);
+      console.error("Failed to fetch assign projects:", error);
+      setAllAssignProjects([]);
     }
-  }, [token]);
+  }, [token, currentUser]);
 
   const handleUpdateAssignProject = (updatedProject: ALLASSIGNPROJECTT) => {
     setAllAssignProjects((prev) =>
@@ -68,10 +89,15 @@ export const AssignProjects = () => {
   };
 
   const handleDeleteAssignProject = async (id: number) => {
+    if (!token) return;
+
     try {
-      await axios.delete(`${BASE_URL}/api/admin/deleteAssignProject/${id}`, {
-        headers: { Authorization: token },
-      });
+      await axios.delete(
+        `${BASE_URL}/api/admin/deleteAssignProject/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       handleGetAllAssignProjects();
       setIsOpenModal("");
     } catch (error) {
@@ -82,27 +108,20 @@ export const AssignProjects = () => {
   useEffect(() => {
     handleGetAllAssignProjects();
     document.title = "(OMS) ASSIGN PROJECTS";
+
     dispatch(navigationStart());
     setTimeout(() => {
       dispatch(navigationSuccess("Assign project"));
-    }, 1000);
+    }, 500);
   }, [dispatch, handleGetAllAssignProjects]);
 
-  const handleIncrementPageButton = () => setPageNo((prev) => prev + 1);
-  const handleDecrementPageButton = () =>
-    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
-
-  const handleToggleViewModal = (active: ASSIGNPROJECTT) => {
-    setIsOpenModal((prev) => (prev === active ? "" : active));
-  };
-
-  const filteredProjects: ALLASSIGNPROJECTT[] = allAssignProjects.filter(
+  const filteredProjects = allAssignProjects.filter(
     (p) =>
       p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.projectName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const paginatedProjects: ALLASSIGNPROJECTT[] = filteredProjects.slice(
+  const paginatedProjects = filteredProjects.slice(
     (pageNo - 1) * entriesPerPage,
     pageNo * entriesPerPage
   );
@@ -112,99 +131,115 @@ export const AssignProjects = () => {
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Assign Project" activeFile="Assign Project list" />
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col ">
-        <div className="flex text-gray-800 items-center justify-between mx-2">
+
+      <div className="max-h-[74.5vh] shadow-lg border-t-2 rounded border-indigo-500 bg-white flex flex-col">
+        <div className="flex items-center justify-between mx-2">
           <span>
-            Total number of Attendance :{" "}
-            <span className="text-2xl text-blue-500 font-semibold font-sans">
-              [{allAssignProjects.length}]
+            Total Assign Projects:{" "}
+            <span className="text-2xl text-blue-500 font-semibold">
+              [{filteredProjects.length}]
             </span>
           </span>
-          {isAdmin === "admin" && (
+
+          {isAdmin && (
             <CustomButton
-              label=" Add Assign Project"
-              handleToggle={() => handleToggleViewModal("ADDPROJECT")}
+              label="Add Assign Project"
+              handleToggle={() => setIsOpenModal("ADDPROJECT")}
             />
           )}
         </div>
 
-        <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div>
+        <div className="flex justify-between mx-2">
+          <div className="flex items-center gap-2">
             <span>Show</span>
-            <span className="bg-gray-200 rounded mx-1 p-1">
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setPageNo(1); // reset page to 1
-                }}
-              >
-                {numbers.map((num) => (
-                  <option key={num} value={num}>
-                    {num}
-                  </option>
-                ))}
-              </select>
-            </span>
+            <select
+              value={entriesPerPage}
+              onChange={(e) => {
+                setEntriesPerPage(Number(e.target.value));
+                setPageNo(1);
+              }}
+              className="bg-gray-200 rounded px-2 py-1"
+            >
+              {numbers.map((num) => (
+                <option key={num}>{num}</option>
+              ))}
+            </select>
             <span>entries</span>
           </div>
+
           <TableInputField
             searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
+            setSearchTerm={(term) => {
+              setSearchTerm(term);
+              setPageNo(1);
+            }}
           />
         </div>
 
-        <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
-          <div
-            className="grid grid-cols-[0.5fr_1fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold
-           border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
-          >
+        <div className="overflow-y-auto">
+          <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr] bg-gray-200 font-semibold p-2 sticky top-0">
             <span>Sr#</span>
-            <span>Users</span>
+            <span>User</span>
             <span>Project</span>
-            <span>Actions</span>
+            <span className="text-center">Actions</span>
           </div>
 
-          {paginatedProjects.map(
-            (allAssign: ALLASSIGNPROJECTT, index: number) => (
-              <div
-                className="grid grid-cols-[0.5fr_1fr_1fr_1fr] border border-gray-600
-                 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
-                key={allAssign.id}
-              >
-                <span>{(pageNo - 1) * entriesPerPage + index + 1}</span>
-                <span>{allAssign.name}</span>
-                <span>{allAssign.projectName}</span>
-                <span className="flex items-center gap-1">
+          {paginatedProjects.map((item, index) => (
+            <div
+              key={item.id}
+              className="grid grid-cols-[0.5fr_1fr_1fr_1fr] p-2 border hover:bg-gray-100"
+            >
+              <span>{(pageNo - 1) * entriesPerPage + index + 1}</span>
+              <span>{item.name}</span>
+              <span>{item.projectName}</span>
+
+              <span className="flex justify-center gap-1">
+                {isAdmin && (
                   <EditButton
                     handleUpdate={() => {
-                      setEditData(allAssign);
-                      handleToggleViewModal("EDITPROJECT");
+                      setEditData(item);
+                      setIsOpenModal("EDITPROJECT");
                     }}
                   />
+                )}
+
+                <ViewButton
+                  handleView={() => {
+                    setEditData(item);
+                    setIsOpenModal("VIEWPROJECT");
+                  }}
+                />
+
+                {isAdmin && (
                   <DeleteButton
                     handleDelete={() => {
-                      setEditData(allAssign);
-                      handleToggleViewModal("DELETEPROJECT");
+                      setEditData(item);
+                      setIsOpenModal("DELETEPROJECT");
                     }}
                   />
-                </span>
-              </div>
-            )
-          )}
+                )}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between mt-2">
         <ShowDataNumber
           start={(pageNo - 1) * entriesPerPage + 1}
           end={Math.min(pageNo * entriesPerPage, filteredProjects.length)}
           total={filteredProjects.length}
         />
+
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          handleDecrementPageButton={() =>
+            setPageNo((p) => Math.max(p - 1, 1))
+          }
+          handleIncrementPageButton={() =>
+            pageNo * entriesPerPage < filteredProjects.length &&
+            setPageNo((p) => p + 1)
+          }
         />
       </div>
 
@@ -217,22 +252,29 @@ export const AssignProjects = () => {
 
       {isOpenModal === "EDITPROJECT" && editData && (
         <EditAssignProject
-          setModal={() => handleToggleViewModal("")}
+          setModal={() => setIsOpenModal("")}
           editData={editData}
           onUpdate={(updatedProject) => {
             handleUpdateAssignProject({
               ...editData,
               ...updatedProject,
             });
-            handleToggleViewModal("");
+            setIsOpenModal("");
           }}
+        />
+      )}
+
+      {isOpenModal === "VIEWPROJECT" && editData && (
+        <ViewAssignProject
+          setIsOpenModal={() => setIsOpenModal("")}
+          viewProject={editData}
         />
       )}
 
       {isOpenModal === "DELETEPROJECT" && editData && (
         <ConfirmationModal
-          isOpen={() => handleToggleViewModal("DELETEPROJECT")}
-          onClose={() => handleToggleViewModal("")}
+          isOpen={() => {}}
+          onClose={() => setIsOpenModal("")}
           onConfirm={() => handleDeleteAssignProject(editData.id)}
         />
       )}

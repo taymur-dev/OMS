@@ -147,7 +147,7 @@ export const UpdateSupplier = ({
               type="text"
               name="supplierName"
               handlerChange={handlerChange}
-              inputVal={updateSupplier.supplierName}
+              value={updateSupplier.supplierName}
             />
             <InputField
               labelName="Supplier Email*"
@@ -155,7 +155,7 @@ export const UpdateSupplier = ({
               type="email"
               name="supplierEmail"
               handlerChange={handlerChange}
-              inputVal={updateSupplier.supplierEmail}
+              value={updateSupplier.supplierEmail}
             />
             <InputField
               labelName="Supplier Contact*"
@@ -163,7 +163,7 @@ export const UpdateSupplier = ({
               type="text"
               name="supplierContact"
               handlerChange={handlerChange}
-              inputVal={updateSupplier.supplierContact}
+              value={updateSupplier.supplierContact}
             />
             <TextareaField
               labelName="Supplier Address*"

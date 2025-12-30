@@ -4,150 +4,162 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { InputField } from "../InputFields/InputField";
 import { Title } from "../Title";
 import { TextareaField } from "../InputFields/TextareaField";
+import { UserSelect } from "../InputFields/UserSelect";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
-import { UserSelect } from "../InputFields/UserSelect";
 
-type AddAttendanceProps = {
+type AddLeaveProps = {
   setModal: () => void;
   refreshLeaves: () => void;
 };
 
-const currentDate =
-  new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
+type AddLeaveType = {
+  employee_id: string;
+  leaveSubject: string;
+  date: string;
+  leaveReason: string;
+};
 
-const initialState = {
-  employeeName: "",
+type UserT = {
+  id: number;
+  employeeName?: string;
+  name?: string;
+  loginStatus?: string;
+};
+
+const initialState: AddLeaveType = {
+  employee_id: "",
   leaveSubject: "",
-  date: currentDate,
+  date: new Date().toISOString().split("T")[0],
   leaveReason: "",
 };
 
-export const AddLeave = ({ setModal, refreshLeaves }: AddAttendanceProps) => {
+export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-
-  const isAdmin = currentUser?.role;
-
   const token = currentUser?.token;
+  const isAdmin = currentUser?.role === "admin";
 
-  const [allUsers, setAllUsers] = useState([]);
+  const [addLeave, setAddLeave] = useState<AddLeaveType>(initialState);
+  const [allUsers, setAllUsers] = useState<UserT[]>([]);
 
-  const [addLeave, setAddLeave] = useState(initialState);
+  const getAllUsers = useCallback(async () => {
+    if (!token) return;
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setAllUsers(res.data?.users ?? []);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (!currentUser || !token) return;
+
+    if (!isAdmin) {
+      setAddLeave((prev) => ({
+        ...prev,
+        employee_id: String(currentUser.id),
+      }));
+    } else {
+      getAllUsers();
+    }
+  }, [currentUser, token, isAdmin, getAllUsers]);
 
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
-    e.preventDefault();
     const { name, value } = e.target;
-    setAddLeave({ ...addLeave, [name]: value });
+    setAddLeave((prev) => ({ ...prev, [name]: value }));
   };
-  const { employeeName, ...leaveData } = addLeave;
-
-  console.log(leaveData);
-
-  const getAllUsers = useCallback(async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      setAllUsers(res?.data?.users);
-    } catch (error) {
-      console.log(error);
-    }
-  }, [token]);
-  console.log("submitted", addLeave);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
-      const res = await axios.post(
-        `${BASE_URL}/api/admin/addLeave/${employeeName}`,
-        { employeeName, ...leaveData },
+      await axios.post(
+        `${BASE_URL}/api/addLeave`,
         {
-          headers: {
-            Authorization: token,
-          },
+          leaveSubject: addLeave.leaveSubject,
+          date: addLeave.date,
+          leaveReason: addLeave.leaveReason,
+          ...(isAdmin && { employee_id: addLeave.employee_id }),
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log(res.data);
+
       refreshLeaves();
       setModal();
-    } catch (error) {
-      console.log(error);
+      setAddLeave(initialState);
+    } catch (err) {
+      console.error("Add leave failed:", err);
+      alert("Failed to add leave");
     }
   };
 
-  useEffect(() => {
-    getAllUsers();
-  }, [getAllUsers]);
+  const userOptions = allUsers
+    .filter((u) => u.loginStatus === "Y")
+    .map((u) => ({
+      id: u.id,
+      value: String(u.id),
+      label: u.employeeName || u.name || "User",
+      name: u.employeeName || u.name || "User",
+      loginStatus: u.loginStatus || "Y",
+      projectName: "",
+    }));
+
   return (
-    <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border  border-indigo-500 ">
-          <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Add Leave</Title>
-            <div className="mx-2   flex-wrap gap-3  ">
-              {isAdmin === "admin" && (
-                <UserSelect
-                  labelName="Employee Name*"
-                  name="employeeName"
-                  value={addLeave.employeeName}
-                  handlerChange={handlerChange}
-                  optionData={allUsers}
-                />
-              )}
+    <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
+      <div className="w-[42rem] bg-white rounded-xl border border-indigo-500">
+        <form onSubmit={handlerSubmitted}>
+          <Title setModal={setModal}>Add Leave</Title>
 
-              {isAdmin === "user" && (
-                <InputField
-                  labelName="Employee*"
-                  name=""
-                  placeHolder="Enter Leave subject"
-                  inputVal={
-                    currentUser?.role === "user" ? currentUser?.name : ""
-                  }
-                  handlerChange={handlerChange}
-                />
-              )}
-
-              <InputField
-                labelName="Subject Leave*"
-                name="leaveSubject"
-                placeHolder="Enter Leave subject"
-                inputVal={addLeave.leaveSubject}
+          <div className="mx-2 space-y-2">
+            {isAdmin && (
+              <UserSelect
+                labelName="Employee*"
+                name="employee_id"
+                value={addLeave.employee_id}
                 handlerChange={handlerChange}
+                optionData={userOptions}
               />
-              <InputField
-                labelName="Date*"
-                placeHolder="Enter the Company Name"
-                type="Date"
-                name="date"
-                inputVal={addLeave.date}
-                handlerChange={handlerChange}
-              />
+            )}
 
-              <TextareaField
-                labelName="Leave Reason*"
-                placeHolder="Enter the Leave Reason"
-                name="leaveReason"
-                inputVal={addLeave.leaveReason}
-                handlerChange={handlerChange}
-              />
-            </div>
+            <InputField
+              labelName="Leave Subject*"
+              name="leaveSubject"
+              value={addLeave.leaveSubject}
+              handlerChange={handlerChange}
+            />
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Save Leave"} />
-            </div>
-          </form>
-        </div>
+            <InputField
+              labelName="Date*"
+              type="date"
+              name="date"
+              value={addLeave.date}
+              handlerChange={handlerChange}
+            />
+
+            <TextareaField
+              labelName="Leave Reason*"
+              name="leaveReason"
+              inputVal={addLeave.leaveReason}
+              handlerChange={handlerChange}
+            />
+          </div>
+
+          <div className="flex justify-center gap-2 m-2">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Save Leave" />
+          </div>
+        </form>
       </div>
     </div>
   );
 };
-
-

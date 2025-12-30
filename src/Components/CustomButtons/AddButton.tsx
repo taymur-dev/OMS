@@ -4,8 +4,9 @@ import { ClipLoader } from "react-spinners";
 type ButtonProps<T = void> = {
   label: string;
   handleClick?: (e: React.MouseEvent<HTMLButtonElement>, param?: T) => void;
-  param?: T; // Optional parameter
+  param?: T;
   loading?: boolean;
+  disabled?: boolean;
 };
 
 export const AddButton = <T,>({

@@ -22,7 +22,7 @@ const numbers = [10, 25, 50, 100];
 
 type LoanT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
 export const OverTime = () => {
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
 
   const dispatch = useAppDispatch();
 

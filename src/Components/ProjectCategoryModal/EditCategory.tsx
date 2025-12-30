@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { InputField } from "../InputFields/InputField";
@@ -27,7 +27,15 @@ export const EditCategory = ({
 }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
-  const [updateCategory, setUpdateCategory] = useState(selectCategory);
+  const [updateCategory, setUpdateCategory] = useState<selectCategory | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (selectCategory) {
+      setUpdateCategory(selectCategory);
+    }
+  }, [selectCategory]);
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -68,7 +76,7 @@ export const EditCategory = ({
                 placeHolder="Enter the Project Category"
                 type="text"
                 name="categoryName"
-                inputVal={updateCategory?.categoryName}
+                value={updateCategory?.categoryName}
                 handlerChange={handlerChange}
               />
             </div>

@@ -37,7 +37,7 @@ type LifeLine = {
 };
 
 export const EmployeeLifeline = () => {
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
 
   const [isOpenModal, setIsOpenModal] = useState<LoanT>("");

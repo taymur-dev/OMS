@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
@@ -11,12 +10,14 @@ type EditCategoryProps = {
   setModal: () => void;
   categoryId: number;
   categoryName: string;
+  refreshTable?: () => void;
 };
 
 export const EditCategory = ({
   setModal,
   categoryId,
   categoryName,
+  refreshTable,
 }: EditCategoryProps) => {
   const [updateCategory, setUpdateCategory] = useState({
     expenseCategory: categoryName,
@@ -27,6 +28,10 @@ export const EditCategory = ({
     setUpdateCategory({ ...updateCategory, [name]: value });
   };
 
+  useEffect(() => {
+    setUpdateCategory({ expenseCategory: categoryName });
+  }, [categoryName]);
+
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -34,12 +39,13 @@ export const EditCategory = ({
       const res = await axios.put(
         `${BASE_URL}/api/admin/updateExpenseCategory/${categoryId}`,
         {
-          expenseCategory: updateCategory.expenseCategory,
+          categoryName: updateCategory.expenseCategory,
         }
       );
 
       if (res.status === 200) {
-        setModal(); // close modal
+        refreshTable?.();
+        setModal();
       }
     } catch (error) {
       console.error("Update failed:", error);
@@ -56,7 +62,7 @@ export const EditCategory = ({
             <InputField
               labelName="Expense Category*"
               name="expenseCategory"
-              inputVal={updateCategory.expenseCategory}
+              value={updateCategory.expenseCategory}
               handlerChange={handlerChange}
             />
           </div>

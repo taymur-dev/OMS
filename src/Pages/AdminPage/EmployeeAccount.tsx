@@ -21,7 +21,7 @@ const numbers = [10, 25, 50, 10];
 type EMPLOYEEACOUNTT = "ADDPAYMENT" | "ADDREFUND" | "VIEW" | "";
 
 export const EmployeeAccount = () => {
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
 
   const dispatch = useAppDispatch();
 

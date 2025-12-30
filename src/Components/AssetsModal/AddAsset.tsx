@@ -1,44 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import { AddButton } from "../CustomButtons/AddButton";
-
 import { CancelBtn } from "../CustomButtons/CancelBtn";
-
 import { InputField } from "../InputFields/InputField";
-
 import { Title } from "../Title";
-
 import axios from "axios";
-
 import { BASE_URL } from "../../Content/URL";
-
 import { useAppSelector } from "../../redux/Hooks";
-
 import { toast } from "react-toastify";
 import { OptionField } from "../InputFields/OptionField";
 import { TextareaField } from "../InputFields/TextareaField";
 
-type AddAttendanceProps = {
+type AddAssetProps = {
   setModal: () => void;
+  refreshAssets: () => void;
 };
 
-const optionData = [
-  { id: 1, label: "Approved", value: "approved" },
-  { id: 2, label: "Rejected", value: "rejected" },
-];
+interface Category {
+  id: number;
+  category_name: string;
+}
 
 const initialState = {
-  assetName: "",
-  assetCategory: "",
+  asset_name: "",
+  category_id: "",
   description: "",
   date: "",
 };
-export const AddAsset = ({ setModal }: AddAttendanceProps) => {
-  const { currentUser } = useAppSelector((state) => state.officeState);
 
+export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
   const [addAsset, setAddAsset] = useState(initialState);
+  const [categories, setCategories] = useState<
+    { id: number; label: string; value: string }[]
+  >([]);
 
   const handlerChange = (
     e: React.ChangeEvent<
@@ -50,52 +47,96 @@ export const AddAsset = ({ setModal }: AddAttendanceProps) => {
     setAddAsset({ ...addAsset, [name]: value });
   };
 
+  const fetchCategories = useCallback(async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/assetCategories`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      console.log("Categories API response:", res.data);
+
+      let categoryArray: Category[] = [];
+
+      if (Array.isArray(res.data)) {
+        categoryArray = res.data;
+      } else if (Array.isArray(res.data.categories)) {
+        categoryArray = res.data.categories;
+      } else if (Array.isArray(res.data.data)) {
+        categoryArray = res.data.data;
+      }
+
+      if (categoryArray.length === 0) {
+        toast.warn("No categories found");
+        setCategories([]);
+        return;
+      }
+
+      const options = categoryArray.map((cat: Category) => ({
+        id: cat.id,
+        label: cat.category_name,
+        value: String(cat.id),
+      }));
+
+      setCategories(options);
+    } catch (error) {
+      console.error("Failed to fetch categories", error);
+      toast.error("Failed to load categories");
+      setCategories([]);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        `${BASE_URL}/api/admin/createCatagory`,
+        `${BASE_URL}/api/admin/createassets`,
         addAsset,
         {
           headers: { Authorization: token },
         }
       );
       console.log(res.data);
-
       toast.success(res.data.message);
+      refreshAssets();
       setModal();
     } catch (error) {
       console.log(error);
+      toast.error("Failed to add asset");
     }
   };
+
   return (
     <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem]   bg-white mx-auto rounded-xl border  border-indigo-500 ">
+      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+        <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-500">
           <form onSubmit={handlerSubmitted}>
             <Title setModal={() => setModal()}>Add Asset</Title>
-            <div className="mx-2   flex-wrap gap-3  ">
+            <div className="mx-2 flex-wrap gap-3">
+              <OptionField
+                labelName="Asset Category"
+                name="category_id"
+                value={addAsset.category_id}
+                handlerChange={handlerChange}
+                optionData={categories}
+                inital="Select Category"
+              />
+
               <InputField
                 labelName="Asset Name*"
                 placeHolder="Enter the asset name"
                 type="text"
-                name="assetName"
-                inputVal={addAsset.assetName}
+                name="asset_name"
+                value={addAsset.asset_name}
                 handlerChange={handlerChange}
-              />
-
-              <OptionField
-                labelName="Asset Category"
-                name=" assetCategory"
-                value={addAsset.assetCategory}
-                handlerChange={handlerChange}
-                optionData={optionData}
-                inital="Pending"
               />
 
               <TextareaField
                 labelName="Description*"
-                placeHolder="write the asset description"
+                placeHolder="Write the asset description"
                 name="description"
                 inputVal={addAsset.description}
                 handlerChange={handlerChange}
@@ -103,15 +144,15 @@ export const AddAsset = ({ setModal }: AddAttendanceProps) => {
 
               <InputField
                 labelName="Created Date*"
-                placeHolder="Enter the  created date"
+                placeHolder="Enter the created date"
                 type="date"
                 name="date"
-                inputVal={addAsset.date}
+                value={addAsset.date}
                 handlerChange={handlerChange}
               />
             </div>
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
+            <div className="flex items-center justify-center m-2 gap-2 text-xs">
               <CancelBtn setModal={() => setModal()} />
               <AddButton label={"Save Asset"} />
             </div>

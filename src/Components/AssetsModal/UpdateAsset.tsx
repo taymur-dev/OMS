@@ -1,101 +1,137 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect, useCallback } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
-
 import { CancelBtn } from "../CustomButtons/CancelBtn";
-
 import { InputField } from "../InputFields/InputField";
-
-import { Title } from "../Title";
-
-import axios from "axios";
-
-import { BASE_URL } from "../../Content/URL";
-
-import { useAppSelector } from "../../redux/Hooks";
-
-import { toast } from "react-toastify";
 import { OptionField } from "../InputFields/OptionField";
 import { TextareaField } from "../InputFields/TextareaField";
+import { Title } from "../Title";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+import { toast } from "react-toastify";
 
-type AddAttendanceProps = {
+type UpdateAssetProps = {
   setModal: () => void;
+  assetData: {
+    id: number;
+    asset_name: string;
+    category_id: string;
+    description: string;
+    date: string;
+  };
+  refreshAssets: () => void;
 };
 
-const optionData = [
-  { id: 1, label: "Approved", value: "approved" },
-  { id: 2, label: "Rejected", value: "rejected" },
-];
+interface Category {
+  id: number;
+  category_name: string;
+}
 
-const initialState = {
-  assetName: "",
-  assetCategory: "",
-  description: "",
-  date: "",
-};
-export const UpdateAsset = ({ setModal }: AddAttendanceProps) => {
+export const UpdateAsset = ({ setModal, assetData, refreshAssets }: UpdateAssetProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-
   const token = currentUser?.token;
 
-  const [updateAsset, setUpdateAsset] = useState(initialState);
+  const [updateAsset, setUpdateAsset] = useState({
+    asset_name: assetData.asset_name,
+    category_id: assetData.category_id,
+    description: assetData.description,
+    date: assetData.date,
+  });
+
+  const [categories, setCategories] = useState<{ id: number; label: string; value: string }[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
 
   const handlerChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
-    e.preventDefault();
     const { name, value } = e.target;
-    setUpdateAsset({ ...updateAsset, [name]: value });
+    setUpdateAsset((prev) => ({ ...prev, [name]: value }));
   };
+
+  const fetchCategories = useCallback(async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/assetCategories`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      let categoryArray: Category[] = [];
+
+      if (Array.isArray(res.data)) categoryArray = res.data;
+      else if (Array.isArray(res.data.categories)) categoryArray = res.data.categories;
+      else if (Array.isArray(res.data.data)) categoryArray = res.data.data;
+
+      const options = categoryArray.map((cat: Category) => ({
+        id: cat.id,
+        label: cat.category_name,
+        value: String(cat.id),
+      }));
+
+      setCategories(options);
+
+      const exists = options.find((opt) => opt.value === String(assetData.category_id));
+      if (!exists && options.length > 0) {
+        setUpdateAsset((prev) => ({ ...prev, category_id: options[0].value }));
+      }
+    } catch (error) {
+      console.error("Failed to fetch categories", error);
+      toast.error("Failed to load categories");
+      setCategories([]);
+    } finally {
+      setLoadingCategories(false);
+    }
+  }, [token, assetData.category_id]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${BASE_URL}/api/admin/createCatagory`,
+      const res = await axios.put(
+        `${BASE_URL}/api/admin/updateasset/${assetData.id}`,
         updateAsset,
-        {
-          headers: { Authorization: token },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log(res.data);
-
       toast.success(res.data.message);
+      refreshAssets();
       setModal();
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Failed to update asset");
     }
   };
+
   return (
     <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem]   bg-white mx-auto rounded-xl border  border-indigo-500 ">
+      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+        <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-500">
           <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Update Asset</Title>
-            <div className="mx-2   flex-wrap gap-3  ">
+            <Title setModal={setModal}>Update Asset</Title>
+            <div className="mx-2 flex-wrap gap-3">
+              {!loadingCategories && categories.length > 0 && (
+                <OptionField
+                  labelName="Asset Category"
+                  name="category_id"
+                  value={updateAsset.category_id}
+                  handlerChange={handlerChange}
+                  optionData={categories}
+                  inital="Select Category"
+                />
+              )}
+
               <InputField
                 labelName="Asset Name*"
                 placeHolder="Enter the asset name"
                 type="text"
-                name="assetName"
-                inputVal={updateAsset.assetName}
+                name="asset_name"
+                value={updateAsset.asset_name}
                 handlerChange={handlerChange}
-              />
-
-              <OptionField
-                labelName="Asset Category"
-                name=" assetCategory"
-                value={updateAsset.assetCategory}
-                handlerChange={handlerChange}
-                optionData={optionData}
-                inital="Pending"
               />
 
               <TextareaField
                 labelName="Description*"
-                placeHolder="write the asset description"
+                placeHolder="Write the asset description"
                 name="description"
                 inputVal={updateAsset.description}
                 handlerChange={handlerChange}
@@ -103,17 +139,17 @@ export const UpdateAsset = ({ setModal }: AddAttendanceProps) => {
 
               <InputField
                 labelName="Created Date*"
-                placeHolder="Enter the  created date"
+                placeHolder="Enter the created date"
                 type="date"
                 name="date"
-                inputVal={updateAsset.date}
+                value={updateAsset.date}
                 handlerChange={handlerChange}
               />
             </div>
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"update Asset"} />
+            <div className="flex items-center justify-center m-2 gap-2 text-xs">
+              <CancelBtn setModal={setModal} />
+              <AddButton label={"Update Asset"} />
             </div>
           </form>
         </div>

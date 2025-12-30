@@ -95,14 +95,6 @@ export const AddProject = ({
           <form onSubmit={handlerSubmitted}>
             <Title setModal={() => setModal()}>Add Project</Title>
             <div className="mx-2   flex-wrap gap-3  ">
-              <InputField
-                labelName="Project Name*"
-                placeHolder="Enter the Project Name"
-                type="text"
-                name="projectName"
-                inputVal={addProject.projectName}
-                handlerChange={handlerChange}
-              />
               <OptionField
                 labelName="Project Category*"
                 name="projectCategory"
@@ -114,6 +106,15 @@ export const AddProject = ({
                   value: category.categoryName,
                 }))}
                 inital="Select Project Category"
+              />
+
+              <InputField
+                labelName="Project Name*"
+                placeHolder="Enter the Project Name"
+                type="text"
+                name="projectName"
+                value={addProject.projectName}
+                handlerChange={handlerChange}
               />
 
               <TextareaField
@@ -128,7 +129,7 @@ export const AddProject = ({
                 placeHolder="Enter the Start Date"
                 type="Date"
                 name="startDate"
-                inputVal={addProject.startDate}
+                value={addProject.startDate}
                 handlerChange={handlerChange}
               />
 
@@ -137,7 +138,7 @@ export const AddProject = ({
                 placeHolder="Enter the End Date"
                 type="date"
                 name="endDate"
-                inputVal={addProject.endDate}
+                value={addProject.endDate}
                 handlerChange={handlerChange}
               />
             </div>

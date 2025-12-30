@@ -95,7 +95,7 @@ export const EditConfigTime = ({
                 labelName="Configure Time*"
                 name="configureTime"
                 type="time"
-                inputVal={updateConfig?.configureTime ?? ""}
+                value={updateConfig?.configureTime ?? ""}
                 handlerChange={handlerChange}
               />
             </div>

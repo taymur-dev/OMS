@@ -1,116 +1,112 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 import { AddButton } from "../CustomButtons/AddButton";
-
 import { CancelBtn } from "../CustomButtons/CancelBtn";
-
 import { InputField } from "../InputFields/InputField";
-
+import { TextareaField } from "../InputFields/TextareaField";
 import { Title } from "../Title";
 
-import axios from "axios";
-
 import { BASE_URL } from "../../Content/URL";
-
 import { useAppSelector } from "../../redux/Hooks";
 
-import { toast } from "react-toastify";
-import { OptionField } from "../InputFields/OptionField";
+type Job = {
+  id: number;
+  job_title: string;
+  description: string;
+};
 
-type AddAttendanceProps = {
+type UpdateJobProps = {
+  job: Job;
   setModal: () => void;
+  refreshJobs: () => void;
 };
 
-const optionData = [
-  { id: 1, label: "Approved", value: "approved" },
-  { id: 2, label: "Rejected", value: "rejected" },
-];
-
-const initialState = {
-  jobCreated: "",
-  jobTitle: "",
-  date: "",
-  status: "",
-};
-export const UpdateJob = ({ setModal }: AddAttendanceProps) => {
+export const UpdateJob: React.FC<UpdateJobProps> = ({ job, setModal , refreshJobs }) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-
   const token = currentUser?.token;
 
-  const [addJob, setAddJob] = useState(initialState);
+  const [formData, setFormData] = useState({
+    job_title: "",
+    description: "",
+  });
 
-  const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  useEffect(() => {
+    setFormData({
+      job_title: job.job_title,
+      description: job.description,
+    });
+  }, [job]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    e.preventDefault();
     const { name, value } = e.target;
-    setAddJob({ ...addJob, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const res = await axios.post(`${BASE_URL}/admin/createCatagory`, addJob, {
-        headers: { Authorization: token },
-      });
-      console.log(res.data);
 
-      toast.success(res.data.message);
+    if (!formData.job_title || !formData.description) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    try {
+      const payload = {
+        job_title: formData.job_title,
+        description: formData.description,
+      };
+
+      const res = await axios.put(
+        `${BASE_URL}/api/admin/updatejob/${job.id}`,
+        payload,
+        {
+          headers: { Authorization: token },
+        }
+      );
+
+      toast.success(res.data.message || "Job updated successfully");
+      refreshJobs ();
       setModal();
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Failed to update job");
     }
   };
+
   return (
-    <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem]   bg-white mx-auto rounded-xl border  border-indigo-500 ">
-          <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Update Job</Title>
-            <div className="mx-2   flex-wrap gap-3  ">
-              <InputField
-                labelName="Created By*"
-                placeHolder="Enter the applicant name"
-                type="text"
-                name="jobCreated"
-                inputVal={currentUser?.name}
-                handlerChange={handlerChange}
-              />
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+      <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-500">
+        <form onSubmit={handleSubmit}>
+          <Title setModal={setModal}>Update Job</Title>
 
-              <InputField
-                labelName="Job Title*"
-                placeHolder="Enter the job title"
-                type="text"
-                name=" jobTitle"
-                inputVal={addJob.jobTitle}
-                handlerChange={handlerChange}
-              />
+          <div className="mx-4 flex flex-col gap-3">
+            <InputField
+              labelName="Job Title*"
+              placeHolder="Enter job title"
+              type="text"
+              name="job_title"
+              value={formData.job_title}
+              handlerChange={handleChange}
+            />
 
-              <InputField
-                labelName="Created Date*"
-                placeHolder="Enter the  created date"
-                type="date"
-                name="date"
-                inputVal={addJob.date}
-                handlerChange={handlerChange}
-              />
+            <TextareaField
+              labelName="Job Description*"
+              placeHolder="Enter job description"
+              name="description"
+              inputVal={formData.description}
+              handlerChange={handleChange}
+            />
+          </div>
 
-              <OptionField
-                labelName="Status"
-                name="status"
-                value={addJob.status}
-                handlerChange={handlerChange}
-                optionData={optionData}
-                inital="Pending"
-              />
-            </div>
-
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Update Job"} />
-            </div>
-          </form>
-        </div>
+          <div className="flex items-center justify-center m-4 gap-2 text-xs">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Update Job" />
+          </div>
+        </form>
       </div>
     </div>
   );

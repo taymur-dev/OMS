@@ -63,7 +63,6 @@ export const UpdateAttendance = ({
 
   const [allUsers, setAllUsers] = useState<OptionType[]>([]);
 
-  // Handle input/select changes
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -150,29 +149,7 @@ export const UpdateAttendance = ({
               handlerChange={handlerChange}
               optionData={userOptions}
             />
-            <InputField
-              labelName="Date*"
-              type="date"
-              name="date"
-              inputVal={addUserAttendance?.date?.slice(0, 10) ?? ""}
-              handlerChange={handlerChange}
-            />
-            <InputField
-              labelName="Clock In*"
-              type="time"
-              name="clockIn"
-              inputVal={addUserAttendance?.clockIn ?? ""}
-              handlerChange={handlerChange}
-            />
-            <InputField
-              labelName="Clock Out*"
-              type="time"
-              name="clockOut"
-              inputVal={addUserAttendance?.clockOut ?? ""}
-              handlerChange={handlerChange}
-            />
-          </div>
-          <div className="px-2">
+
             <OptionField
               labelName="Attendance Status*"
               name="attendanceStatus"
@@ -181,7 +158,37 @@ export const UpdateAttendance = ({
               optionData={reasonLeaveOption}
               inital="Please Select Attendance Status"
             />
+            <InputField
+              labelName="Date*"
+              type="date"
+              name="date"
+              value={addUserAttendance?.date?.slice(0, 10) ?? ""}
+              handlerChange={handlerChange}
+            />
+            <InputField
+              labelName="Clock In*"
+              type="time"
+              name="clockIn"
+              value={addUserAttendance?.clockIn ?? ""}
+              handlerChange={handlerChange}
+              disabled={
+                addUserAttendance?.attendanceStatus === "absent" ||
+                addUserAttendance?.attendanceStatus === "leave"
+              }
+            />
+            <InputField
+              labelName="Clock Out*"
+              type="time"
+              name="clockOut"
+              value={addUserAttendance?.clockOut ?? ""}
+              handlerChange={handlerChange}
+              disabled={
+                addUserAttendance?.attendanceStatus === "absent" ||
+                addUserAttendance?.attendanceStatus === "leave"
+              }
+            />
           </div>
+
           <div className="flex items-center justify-center m-2 gap-2 text-xs">
             <CancelBtn setModal={() => setModal()} />
             <AddButton label="Update Attendance" />

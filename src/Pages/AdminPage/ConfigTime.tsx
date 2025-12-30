@@ -29,7 +29,7 @@ type ALLCONFIGT = {
 
 export const ConfigTime = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
   const token = currentUser?.token;
 

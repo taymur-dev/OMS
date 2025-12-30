@@ -66,7 +66,10 @@ export const AddUser = ({
 
   useEffect(() => {
     if (initialValues) {
-      setUserData(initialValues);
+      setUserData({
+        ...initialValues,
+        role: initialValues.role?.toLowerCase() === "admin" ? "Admin" : "User",
+      });
     }
   }, [initialValues]);
 
@@ -239,7 +242,7 @@ export const AddUser = ({
               type="text"
               name="name"
               handlerChange={handlerChange}
-              inputVal={userData.name}
+              value={userData.name}
             />
             <InputField
               labelName="Email*"
@@ -247,7 +250,7 @@ export const AddUser = ({
               type="email"
               name="email"
               handlerChange={handlerChange}
-              inputVal={userData.email}
+              value={userData.email}
             />
             <InputField
               labelName="Phone Number*"
@@ -255,7 +258,7 @@ export const AddUser = ({
               type="number"
               name="contact"
               handlerChange={handlerChange}
-              inputVal={userData.contact}
+              value={userData.contact}
             />
             <InputField
               labelName="CNIC*"
@@ -263,7 +266,7 @@ export const AddUser = ({
               type="text"
               name="cnic"
               handlerChange={handlerChange}
-              inputVal={userData.cnic}
+              value={userData.cnic}
             />
             <InputField
               labelName="Address*"
@@ -271,7 +274,7 @@ export const AddUser = ({
               type="text"
               name="address"
               handlerChange={handlerChange}
-              inputVal={userData.address}
+              value={userData.address}
             />
             <InputField
               labelName="Joining Date*"
@@ -279,7 +282,7 @@ export const AddUser = ({
               type="date"
               name="date"
               handlerChange={handlerChange}
-              inputVal={userData.date}
+              value={userData.date}
             />
             <InputField
               labelName="Password*"
@@ -287,7 +290,7 @@ export const AddUser = ({
               type="password"
               name="password"
               handlerChange={handlerChange}
-              inputVal={userData.password}
+              value={userData.password}
             />
             <InputField
               labelName="Confirm Password*"
@@ -295,7 +298,7 @@ export const AddUser = ({
               type="password"
               name="confirmPassword"
               handlerChange={handlerChange}
-              inputVal={userData.confirmPassword}
+              value={userData.confirmPassword}
             />
             <OptionField
               value={userData.role}

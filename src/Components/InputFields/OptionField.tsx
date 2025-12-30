@@ -1,6 +1,6 @@
 type option = {
   id: number;
-  label: string | number;
+  label: string;
   value: string | number;
 };
 
@@ -8,9 +8,9 @@ type OptionFieldProps = {
   labelName: string;
   handlerChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   name: string;
-  value: string;
-  optionData: option[] | undefined;
-  inital: string;
+  value: string | number;
+  optionData?: option[];
+  inital?: string;
 };
 
 export const OptionField = ({
@@ -31,8 +31,9 @@ export const OptionField = ({
         onChange={handlerChange}
         name={name}
         className="
-          p-3
-          rounded-lg
+          p-2
+          mb-2
+          rounded
           bg-white
           text-gray-900
           border

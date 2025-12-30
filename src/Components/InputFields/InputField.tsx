@@ -4,7 +4,8 @@ type InputFieldProps = {
   placeHolder?: string;
   handlerChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   name?: string;
-  inputVal?: string;
+  value?: string;
+  disabled?: boolean;
 };
 export const InputField = ({
   type,
@@ -12,7 +13,8 @@ export const InputField = ({
   placeHolder,
   handlerChange,
   name,
-  inputVal,
+  value,
+  disabled,
 }: InputFieldProps) => {
   return (
     <div>
@@ -22,11 +24,14 @@ export const InputField = ({
         </label>
         <input
           type={type}
-          className=" p-1 rounded bg-white text-gray-800  border border-gray-300 focus:indigo-400"
+          className={`p-1 rounded border border-gray-300 text-gray-800
+    ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"}
+    focus:indigo-400`}
           placeholder={placeHolder}
           onChange={handlerChange}
           name={name}
-          value={inputVal}
+          value={value}
+          disabled={disabled}
         />
       </div>
     </div>

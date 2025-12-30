@@ -109,7 +109,7 @@ export const UpdateLeave = ({
               placeHolder="Enter the Leave Subject"
               type="text"
               name="leaveSubject"
-              inputVal={updateLeave.leaveSubject}
+              value={updateLeave.leaveSubject}
               handlerChange={handleChange}
             />
 
@@ -117,7 +117,7 @@ export const UpdateLeave = ({
               labelName="Date*"
               type="date"
               name="date"
-              inputVal={updateLeave.date}
+              value={updateLeave.date}
               handlerChange={handleChange}
             />
 

@@ -60,7 +60,7 @@ export const AddProjectCategory = ({
                 placeHolder="Enter the Project Category"
                 type="text"
                 name="categoryName"
-                inputVal={addCategory.categoryName}
+                value={addCategory.categoryName}
                 handlerChange={handlerChange}
               />
             </div>

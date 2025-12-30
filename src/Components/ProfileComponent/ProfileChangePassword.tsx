@@ -84,7 +84,7 @@ export const ProfileChangePassword = ({
                 placeHolder="Enter the old password"
                 type="password"
                 name="oldPassword"
-                inputVal={changePassword.oldPassword}
+                value={changePassword.oldPassword}
                 handlerChange={handlerChange}
               />
 
@@ -93,7 +93,7 @@ export const ProfileChangePassword = ({
                 placeHolder="Enter the new password"
                 type="password"
                 name="newPassword"
-                inputVal={changePassword.newPassword}
+                value={changePassword.newPassword}
                 handlerChange={handlerChange}
               />
             </div>

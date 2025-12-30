@@ -104,7 +104,7 @@ export const AddAssignProject = ({
 
     console.log(res.data);
     handleGetAllAssignProjects();
-    setModal(); // close modal after successful save
+    setModal(); 
   } catch (error) {
     console.log(error);
   }

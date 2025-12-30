@@ -15,7 +15,7 @@ const persistedReducer = persistReducer(persistConfig, userSlicerReducer);
 export const store = configureStore({
   reducer: {
     officeState: persistedReducer,
-    NavigateSate: NavigateSliceReducer,
+    NavigateState: NavigateSliceReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

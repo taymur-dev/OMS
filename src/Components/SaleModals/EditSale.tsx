@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 import { AddButton } from "../CustomButtons/AddButton";
 
@@ -19,6 +19,7 @@ type ADDSALET = {
   projectName: string;
   customerId: number;
   customerName: string;
+  saleDate: string;
 };
 
 type CustomerT = {
@@ -54,6 +55,12 @@ export const EditSale = ({
 
   const token = currentUser?.token;
 
+  useEffect(() => {
+    if (seleteSale) {
+      setUpdateSale(seleteSale);
+    }
+  }, [seleteSale]);
+
   const handlerChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
@@ -64,9 +71,9 @@ export const EditSale = ({
     setUpdateSale({ ...updateSale, [name]: value } as ADDSALET);
   };
 
-  const handleGetProjects = async () => {
+  const handleGetProjects = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getProjects`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getProjects`, {
         headers: {
           Authorization: token,
         },
@@ -75,13 +82,13 @@ export const EditSale = ({
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [token]);
 
-  const getAllCustomers = async () => {
+  const getAllCustomers = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getAllCustomers`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getAllCustomers`, {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -89,20 +96,21 @@ export const EditSale = ({
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const res = await axios.put(
-        `${BASE_URL}/admin/updateSalesData/${updateSale?.customerId}/${updateSale?.projectId}/${updateSale?.id}`,
+        `${BASE_URL}/api/admin/updateSalesData/${updateSale?.id}`,
         updateSale,
         {
-          headers: { Authorization: token },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       console.log(res.data);
       handleGetsales();
+      setModal();
     } catch (error) {
       console.log(error);
     }
@@ -111,7 +119,7 @@ export const EditSale = ({
   useEffect(() => {
     handleGetProjects();
     getAllCustomers();
-  }, []);
+  }, [getAllCustomers, handleGetProjects]);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
@@ -121,8 +129,8 @@ export const EditSale = ({
             <div className="mx-2 flex-wrap gap-3  ">
               <OptionField
                 labelName="Customer*"
-                name="customerName"
-                value={updateSale?.customerName ?? ""}
+                name="customerId"
+                value={updateSale?.customerId ?? ""}
                 handlerChange={handlerChange}
                 optionData={allCustomers?.map((customer) => ({
                   id: customer.id,
@@ -134,8 +142,8 @@ export const EditSale = ({
 
               <OptionField
                 labelName="Project*"
-                name="projectName"
-                value={updateSale?.projectName ?? ""}
+                name="projectId"
+                value={updateSale?.projectId ?? ""}
                 handlerChange={handlerChange}
                 optionData={allProjects?.map((project) => ({
                   id: project.id,
@@ -144,6 +152,17 @@ export const EditSale = ({
                 }))}
                 inital="Please Select Project"
               />
+
+              <div className="flex flex-col my-2">
+                <label className="text-sm font-medium mb-1">Date*</label>
+                <input
+                  type="date"
+                  name="saleDate"
+                  value={updateSale?.saleDate?.slice(0, 10) ?? ""}
+                  onChange={handlerChange}
+                  className="border rounded p-1"
+                />
+              </div>
             </div>
 
             <div className="flex items-center justify-center m-2 gap-2 text-xs ">

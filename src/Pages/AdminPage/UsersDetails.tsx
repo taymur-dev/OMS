@@ -47,7 +47,7 @@ export const UsersDetails = () => {
 
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
 
   const [viewUserDetail, setViewUserDetail] = useState<UserType>(

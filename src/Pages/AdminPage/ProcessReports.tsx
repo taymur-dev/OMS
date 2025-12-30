@@ -1,149 +1,198 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import axios from "axios";
+
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { InputField } from "../../Components/InputFields/InputField";
+import { OptionField } from "../../Components/InputFields/OptionField";
+import { Loader } from "../../Components/LoaderComponent/Loader";
+
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
-import { Loader } from "../../Components/LoaderComponent/Loader";
+import { BASE_URL } from "../../Content/URL";
 
 const itemsPerPageOptions = [10, 25, 50];
 
-export const ProcessReports = () => {
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+export type PROCESST = {
+  id: number;
+  employee_id: number;
+  employeeName: string;
+  task: string;
+  startDate: string;
+  endDate: string;
+  deadline: string;
+};
 
+export const ProcessReports = () => {
   const dispatch = useAppDispatch();
 
-  const currentDate = new Date().toISOString().split("T")[0]; 
+  const { loader } = useAppSelector((state) => state.NavigateState);
+  const { currentUser } = useAppSelector((state) => state.officeState);
+  const token = currentUser?.token;
+  const userId = currentUser?.userId;
 
-  const initialState = {
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  const [reportData, setReportData] = useState({
     startDate: currentDate,
     endDate: currentDate,
-    selectCustomer: "",
-  };
+    employeeId: "",
+  });
 
+  const [allTasks, setAllTasks] = useState<PROCESST[]>([]);
   const [pageNo, setPageNo] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const handleIncrementPageButton = () => {
-    setPageNo((prev) => prev + 1);
-  };
+  const getProcessReports = useCallback(async () => {
+    if (!token || !currentUser) return;
 
-  const handleDecrementPageButton = () => {
-    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
-  };
+    try {
+      const url =
+        currentUser.role === "admin"
+          ? `${BASE_URL}/api/admin/getTodos`
+          : `${BASE_URL}/api/user/getTodo/${userId}`;
 
-  const [reportData, setReportData] = useState(initialState);
+      const res = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    const [searchTerm, setSearchTerm] = useState("");
+      setAllTasks(Array.isArray(res.data) ? res.data : []);
+    } catch (error) {
+      console.error("Failed to load process report", error);
+      setAllTasks([]);
+    }
+  }, [token, currentUser, userId]);
 
+  const filteredTasks = useMemo(() => {
+    return allTasks.filter((item) => {
+      const start = item.startDate.slice(0, 10);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const inDateRange =
+        start >= reportData.startDate && start <= reportData.endDate;
+
+      const matchesSearch =
+        item.task?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.employeeName?.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesEmployee =
+        !reportData.employeeId ||
+        item.employee_id === Number(reportData.employeeId);
+
+      return inDateRange && matchesSearch && matchesEmployee;
+    });
+  }, [allTasks, reportData, searchTerm]);
+
+  const totalItems = filteredTasks.length;
+  const startIndex = (pageNo - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const paginatedData = filteredTasks.slice(startIndex, endIndex);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setReportData((prev) => ({ ...prev, [name]: value }));
+    setPageNo(1);
   };
 
-  const printDiv = () => {
-    const printStyles = `
-      @page { size: A4 portrait; }
-      body { font-family: Arial, sans-serif; font-size: 11pt; color: #000; }
-      .print-container { width: 100%; padding: 0; }
-      .print-header { text-align: center; }
-      .print-header h1 { font-size: 25pt; font-weight: bold; }
-      .print-header h2 { font-size: 20pt; font-weight: normal; }
-      .date-range { text-align: left; font-size: 14pt; display: flex; justify-content: space-between; }
-      table { width: 100%; border-collapse: collapse; border: 2px solid #000; }
-      thead { background-color: #ccc; color: #000; }
-      thead th, tbody td { border: 2px solid #000; font-size: 10pt; text-align: left; }
-      tbody tr:nth-child(even) { background-color: #f9f9f9; }
-      .footer { position: fixed; bottom: 0; width: 100%; text-align: center; font-size: 10pt; padding: 10px 0; border-top: 1px solid #ccc; }
-      @media print { .no-print { display: none; } }
-    `;
+  const employeeOptions = useMemo(() => {
+    const map = new Map<number, string>();
 
-    const content = document.getElementById("myDiv")?.outerHTML || "";
+    allTasks.forEach((t) => {
+      map.set(t.employee_id, t.employeeName);
+    });
 
-    document.body.innerHTML = `
-      <div class="print-container">
-        <div class="print-header">
-          <h1>Office Management System</h1>
-          <h2>Sales Report</h2>
-        </div>
-        <div class="date-range">
-          <strong>From: ${reportData.startDate}</strong>
-          <strong>To: ${reportData.endDate}</strong>
-        </div>
-        ${content}
-        <div class="footer"></div>
-      </div>
-    `;
+    return Array.from(map.entries()).map(([id, name]) => ({
+      id,
+      label: name,
+      value: id,
+    }));
+  }, [allTasks]);
 
-    const style = document.createElement("style");
-    style.type = "text/css";
-    style.appendChild(document.createTextNode(printStyles));
-    document.head.appendChild(style);
-
-    window.print();
-    location.reload(); // restore full pag
-  };
+  const printDiv = () => window.print();
 
   useEffect(() => {
     document.title = "(OMS) PROCESS REPORTS";
     dispatch(navigationStart());
+    getProcessReports();
+
     setTimeout(() => {
       dispatch(navigationSuccess("PROCESS REPORTS"));
-    }, 1000);
-  }, [dispatch]);
+    }, 800);
+  }, [dispatch, getProcessReports]);
 
   if (loader) return <Loader />;
+
   return (
     <div className="w-full mx-2">
-      <TableTitle tileName="Task Report" activeFile="Sales Report" />
+      <TableTitle tileName="Task Report" activeFile="Process Report" />
 
-      {/* Top Controls */}
       <div className="flex items-center justify-between text-gray-800 py-2 mx-2">
         <div>
           <span>Show</span>
           <span className="bg-gray-200 rounded mx-1 p-1">
-            <select>
-              {itemsPerPageOptions.map((num, index) => (
-                <option key={index} value={num}>
-                  {num}
-                </option>
+            <select
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setPageNo(1);
+              }}
+            >
+              {itemsPerPageOptions.map((num) => (
+                <option key={num}>{num}</option>
               ))}
             </select>
           </span>
           <span>entries</span>
         </div>
+
         <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-          />
+          searchTerm={searchTerm}
+          setSearchTerm={(term) => {
+            setSearchTerm(term);
+            setPageNo(1);
+          }}
+        />
       </div>
 
-      {/* Report Filters */}
-      <div className="max-h-[58vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
-        <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div className="flex flex-1 px-6 py-2 gap-2 items-center justify-between">
+      <div className="max-h-[58vh] shadow-lg border-t-2 border-indigo-500 bg-white rounded overflow-hidden flex flex-col">
+        <div className="flex items-center justify-between mx-2">
+          <div className="flex flex-1 py-1 gap-2 items-center justify-center">
             <InputField
               labelName="From"
               type="date"
-              inputVal={reportData.startDate}
-              handlerChange={handleChange}
               name="startDate"
+              value={reportData.startDate}
+              handlerChange={handleChange}
             />
+
             <InputField
               labelName="To"
               type="date"
-              inputVal={reportData.endDate}
-              handlerChange={handleChange}
               name="endDate"
+              value={reportData.endDate}
+              handlerChange={handleChange}
             />
-            <InputField labelName="Employees" />
-            <div className="mt-4">
-              <div className="text-gray-800 flex items-center justify-end mx-7 py-2 font-semibold">
+
+            {currentUser?.role === "admin" && (
+              <OptionField
+                labelName="Employee"
+                name="employeeId"
+                value={reportData.employeeId}
+                optionData={employeeOptions}
+                inital="Select Employee"
+                handlerChange={handleChange}
+              />
+            )}
+
+            <div className="w-full flex justify-end mt-4">
+              <div className="flex items-center font-semibold text-gray-800">
                 <span className="mr-1">From</span>
                 <span className="text-red-500 mr-1">
                   {reportData.startDate}
@@ -155,47 +204,59 @@ export const ProcessReports = () => {
           </div>
         </div>
 
-        {/* Report Table */}
-        <div
-          id="myDiv"
-          className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto"
-        >
-          <div className="grid grid-cols-7 bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[7px]">
-            <span className="">Sr#</span>
-            <span className="">Employee</span>
-            <span className="">Task</span>
-            <span className="">Start Date</span>
-            <span className="">End Date</span>
-            <span className="">Status</span>
-            <span className="">Deadline Date</span>
+        <div id="myDiv" className="w-full max-h-[28.4rem] overflow-y-auto">
+          <div className="grid grid-cols-7 bg-gray-200 font-semibold sticky top-0 p-2">
+            <span>Sr#</span>
+            <span>Employee</span>
+            <span>Task</span>
+            <span>Start</span>
+            <span>End</span>
+            <span>Deadline</span>
           </div>
-          <div className="grid grid-cols-7 border border-gray-600 text-gray-800   hover:bg-gray-100 transition duration-200 text-xs items-center justify-center p-[5px]">
-            <span className="px-2">1</span>
-            <span className="">Hamza</span>
-            <span className="">Jamat Project</span>
-            <span className="">2025-01-8</span>
-            <span className="">2025-04-28</span>
-            <span className="">Complete</span>
-            <span className="">2025-05-28</span>
-          </div>
+
+          {paginatedData.length === 0 ? (
+            <div className="text-center py-4 text-gray-600">
+              No records found
+            </div>
+          ) : (
+            paginatedData.map((item, index) => (
+              <div
+                key={item.id}
+                className="grid grid-cols-7 border p-2 text-sm hover:bg-gray-100"
+              >
+                <span>{startIndex + index + 1}</span>
+                <span>{item.employeeName}</span>
+                <span>{item.task}</span>
+                <span>{item.startDate.slice(0, 10)}</span>
+                <span>{item.endDate.slice(0, 10)}</span>
+                <span>{item.deadline?.slice(0, 10)}</span>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
-      {/* Pagination and Footer */}
       <div className="flex items-center justify-between">
-        <ShowDataNumber start={1} total={10} end={10} />
+        <ShowDataNumber
+          start={startIndex + 1}
+          end={endIndex}
+          total={totalItems}
+        />
+
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+          handleIncrementPageButton={() =>
+            pageNo * itemsPerPage < totalItems && setPageNo((p) => p + 1)
+          }
         />
       </div>
 
-      {/* Download Button */}
       <div className="flex items-center justify-center mt-4">
         <button
           onClick={printDiv}
-          className="bg-green-500 text-white py-2 px-4 rounded font-semibold hover:cursor-pointer"
+          className="bg-green-500 text-white py-2 px-4 rounded 
+        font-semibold hover:cursor-pointer"
         >
           Download
         </button>

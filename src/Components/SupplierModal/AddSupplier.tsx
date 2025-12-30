@@ -118,7 +118,7 @@ AddCustomerProps) => {
               type="text"
               name="supplierName"
               handlerChange={handlerChange}
-              inputVal={supplierData.supplierName}
+              value={supplierData.supplierName}
             />
             <InputField
               labelName="Supplier Email*"
@@ -126,7 +126,7 @@ AddCustomerProps) => {
               type="email"
               name="supplierEmail"
               handlerChange={handlerChange}
-              inputVal={supplierData.supplierEmail}
+              value={supplierData.supplierEmail}
             />
 
             <InputField
@@ -135,7 +135,7 @@ AddCustomerProps) => {
               type="number"
               name="supplierContact"
               handlerChange={handlerChange}
-              inputVal={supplierData.supplierContact}
+              value={supplierData.supplierContact}
             />
             <TextareaField
               labelName="Supplier Address*"

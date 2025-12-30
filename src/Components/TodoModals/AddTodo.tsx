@@ -1,28 +1,36 @@
-import React, { useEffect, useState , useCallback } from "react";
-
+import React, { useEffect, useState, useCallback } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
-
 import { CancelBtn } from "../CustomButtons/CancelBtn";
-
 import { Title } from "../Title";
-
 import { UserSelect } from "../InputFields/UserSelect";
-
-import axios from "axios";
-
-import { BASE_URL } from "../../Content/URL";
-
-import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../InputFields/InputField";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
 import { toast } from "react-toastify";
 
-type AddAttendanceProps = {
+type AddTodoProps = {
   setModal: () => void;
   getAllTodos: () => void;
 };
 
-const currentDate =
-  new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
+type UserT = {
+  id: number;
+  name?: string;
+  employeeName?: string;
+  loginStatus?: string;
+};
+
+type UserOption = {
+  id: number;
+  value: string;
+  label: string;
+  name: string; // required
+  loginStatus: string; // required
+  projectName: string; // required
+};
+
+const currentDate = new Date().toISOString().slice(0, 10);
 
 const initialState = {
   employee_id: "",
@@ -32,126 +40,146 @@ const initialState = {
   endDate: currentDate,
   deadline: currentDate,
 };
-export const AddTodo = ({ setModal, getAllTodos }: AddAttendanceProps) => {
+
+export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
+  const token = currentUser?.token;
+  const isAdmin = currentUser?.role === "admin";
 
   const [addTodo, setAddTodo] = useState(initialState);
+  const [allUsers, setAllUsers] = useState<UserT[]>([]);
 
-  const [allUsers, setAllUsers] = useState([]);
+  useEffect(() => {
+    if (!isAdmin && currentUser?.id) {
+      setAddTodo((prev) => ({
+        ...prev,
+        employee_id: currentUser.id.toString(),
+      }));
+    }
+  }, [currentUser, isAdmin]);
 
-  const token = currentUser?.token;
-
-  const isAdmin = currentUser?.role;
-
-  console.log("res", isAdmin);
-
-  const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
-  ) => {
-    e.preventDefault();
-
-    const { name, value } = e.target;
-
-    setAddTodo({ ...addTodo, [name]: value });
-  };
-
-  const getAllUsers = useCallback (async () => {
+  const getAllUsers = useCallback(async () => {
+    if (!token || !isAdmin) return;
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
-        headers: {
-          Authorization: token,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-      setAllUsers(res?.data?.users);
-    } catch (error) {
-      console.log(error);
+      setAllUsers(res.data?.users ?? []);
+    } catch (err) {
+      console.error("Error fetching users:", err);
     }
-  } , [token]);
-
-  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post(`${BASE_URL}/api/admin/createTodo`, addTodo, {
-        headers: {
-          Authorization: token,
-        },
-      });
-
-      console.log(res.data);
-      setModal();
-      getAllTodos();
-      toast.success("Todo submitted successfully");
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  }, [token, isAdmin]);
 
   useEffect(() => {
     getAllUsers();
   }, [getAllUsers]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setAddTodo((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (
+      !addTodo.task ||
+      !addTodo.startDate ||
+      !addTodo.endDate ||
+      !addTodo.deadline
+    ) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
+    try {
+      await axios.post(`${BASE_URL}/api/admin/createTodo`, addTodo, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      toast.success("Todo added successfully");
+      getAllTodos();
+      setModal();
+      setAddTodo(initialState);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to add todo");
+    }
+  };
+
+  // Admin user options, fully typed with defaults
+  const userOptions: UserOption[] = allUsers.map((u) => ({
+    id: u.id,
+    value: String(u.id),
+    label: u.employeeName || u.name || "User",
+    name: u.employeeName || u.name || "User", // required string
+    loginStatus: u.loginStatus ?? "Y", // required string
+    projectName: "", // required string
+  }));
+
   return (
-    <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
-          <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Add Todo</Title>
-            <div className="mx-2 flex-wrap gap-3  ">
-              {currentUser?.role === "admin" && (
-                <UserSelect
-                  labelName="Employees*"
-                  name="employee_id"
-                  value={addTodo.employee_id}
-                  handlerChange={handlerChange}
-                  optionData={allUsers}
-                />
-              )}
-              <InputField
-                labelName="Task*"
-                name="task"
-                handlerChange={handlerChange}
-                inputVal={addTodo.task}
+    <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
+      <div className="w-[42rem] max-h-[28rem] bg-white rounded-xl border border-indigo-500 overflow-auto">
+        <form onSubmit={handleSubmit}>
+          <Title setModal={setModal}>Add Todo</Title>
+
+          <div className="mx-2 flex flex-col gap-3">
+            {isAdmin && (
+              <UserSelect
+                labelName="Employees*"
+                name="employee_id"
+                value={addTodo.employee_id}
+                handlerChange={handleChange}
+                optionData={userOptions}
               />
+            )}
 
+            <InputField
+              labelName="Task*"
+              name="task"
+              value={addTodo.task}
+              handlerChange={handleChange}
+            />
+
+            <InputField
+              labelName="Note*"
+              name="note"
+              value={addTodo.note}
+              handlerChange={handleChange}
+            />
+
+            <div className="flex flex-wrap gap-4">
               <InputField
-                labelName="Note*"
-                name="note"
-                handlerChange={handlerChange}
-                inputVal={addTodo.note}
+                labelName="Start Date*"
+                name="startDate"
+                type="date"
+                value={addTodo.startDate}
+                handlerChange={handleChange}
               />
-
-              <div className="flex items-center justify-center gap-16">
-                <InputField
-                  labelName="Start Date*"
-                  type="date"
-                  name="startDate"
-                  handlerChange={handlerChange}
-                  inputVal={addTodo.startDate}
-                />
-
-                <InputField
-                  labelName="End Date*"
-                  type="date"
-                  name="endDate"
-                  handlerChange={handlerChange}
-                  inputVal={addTodo.endDate}
-                />
-
-                <InputField
-                  labelName="Deadline*"
-                  type="date"
-                  name="deadline"
-                  handlerChange={handlerChange}
-                  inputVal={addTodo.deadline}
-                />
-              </div>
+              <InputField
+                labelName="End Date*"
+                name="endDate"
+                type="date"
+                value={addTodo.endDate}
+                handlerChange={handleChange}
+              />
+              <InputField
+                labelName="Deadline*"
+                name="deadline"
+                type="date"
+                value={addTodo.deadline}
+                handlerChange={handleChange}
+              />
             </div>
+          </div>
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Save Todo"} />
-            </div>
-          </form>
-        </div>
+          <div className="flex justify-center gap-2 m-2">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Save Todo" />
+          </div>
+        </form>
       </div>
     </div>
   );

@@ -207,7 +207,7 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
               name="date"
               type="date"
               handlerChange={handlerChange}
-              inputVal={addProgress.date}
+              value={addProgress.date}
             />
 
             <TextareaField

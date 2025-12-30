@@ -7,7 +7,7 @@ import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { useEffect, useState, useCallback } from "react";
 import { AddCategory } from "../../Components/ExpenseCategoryModal/AddCategory";
-import { EditCategory } from "../../Components/ProjectCategoryModal/EditCategory";
+import { EditCategory } from "../../Components/ExpenseCategoryModal/EditCategory";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
@@ -19,7 +19,7 @@ import {
 } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 
-const numbers = [10, 25, 50, 10];
+const numbers = [10, 25, 50, 100];
 
 type EXPENSECATEGORYT = "ADD" | "EDIT" | "DELETE" | "";
 
@@ -30,90 +30,89 @@ type AllExpenseCategoryT = {
 
 export const ExpensesCatogries = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-
-  const { loader } = useAppSelector((state) => state.NavigateSate);
-
+  const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
-
   const token = currentUser?.token;
 
   const [isOpenModal, setIsOpenModal] = useState<EXPENSECATEGORYT>("");
-
   const [catchId, setCatchId] = useState<number>();
-
   const [allExpenseCategory, setAllExpenseCategory] = useState<
     AllExpenseCategoryT[] | null
   >(null);
-
   const [selectCategory, setSelectCategory] =
     useState<AllExpenseCategoryT | null>(null);
+
+  const [pageNo, setPageNo] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleToggleViewModal = (active: EXPENSECATEGORYT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
 
-  const [pageNo, setPageNo] = useState(1);
-
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const handleIncrementPageButton = () => {
-    setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
+  const handleIncrementPageButton = () => setPageNo((prev) => prev + 1);
+  const handleDecrementPageButton = () =>
     setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
-  };
 
   const handlegetExpenseCategory = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getExpenseCategory`, {
-        headers: {
-          Authorization: token,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(res.data);
-      setAllExpenseCategory(res.data);
+
+      const sortedCategories = res.data.sort(
+        (a: AllExpenseCategoryT, b: AllExpenseCategoryT) => a.id - b.id
+      );
+      setAllExpenseCategory(sortedCategories);
     } catch (error) {
       console.log(error);
     }
   }, [token]);
 
   const handleClickEditButton = (data: AllExpenseCategoryT) => {
-    handleToggleViewModal("EDIT");
     setSelectCategory(data);
+    handleToggleViewModal("EDIT");
   };
 
   const handleClickDeleteButton = (id: number) => {
-    handleToggleViewModal("DELETE");
     setCatchId(id);
+    handleToggleViewModal("DELETE");
   };
+
   const handleDeleteCategory = async () => {
     try {
-      const res = await axios.patch(
+      await axios.patch(
         `${BASE_URL}/api/admin/deleteExpenseCategory/${catchId}`,
         {},
         {
-          headers: {
-            Authorization: token,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       toast.info("Category has been deleted successfully");
-      console.log(res.data);
       handlegetExpenseCategory();
+      handleToggleViewModal("");
     } catch (error) {
       console.log(error);
     }
   };
+
   useEffect(() => {
     handlegetExpenseCategory();
-    document.title = "(OMS)EXPENSE CATEGORY";
+    document.title = "(OMS) EXPENSE CATEGORY";
     dispatch(navigationStart());
-    setTimeout(() => {
-      dispatch(navigationSuccess("EXPENSE CATEGORY"));
-    }, 1000);
+    setTimeout(() => dispatch(navigationSuccess("EXPENSE CATEGORY")), 1000);
   }, [dispatch, handlegetExpenseCategory]);
+
   if (loader) return <Loader />;
+
+  const filteredCategories = allExpenseCategory?.filter((category) =>
+    category.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const paginatedCategories = filteredCategories?.slice(
+    (pageNo - 1) * itemsPerPage,
+    pageNo * itemsPerPage
+  );
 
   return (
     <div className="w-full mx-2">
@@ -121,12 +120,16 @@ export const ExpensesCatogries = () => {
         tileName="Expense Category List"
         activeFile="Expense Category list"
       />
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col ">
+
+      <div
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white
+       overflow-hidden flex flex-col "
+      >
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
-            Total number of Attendance :{" "}
+            Total number of Categories :{" "}
             <span className="text-2xl text-blue-500 font-semibold font-sans">
-              [10]
+              [{filteredCategories?.length || 0}]
             </span>
           </span>
           <CustomButton
@@ -134,13 +137,22 @@ export const ExpensesCatogries = () => {
             handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
+
         <div className="flex items-center justify-between text-gray-800 mx-2">
           <div>
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
-              <select>
+              <select
+                value={itemsPerPage}
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value));
+                  setPageNo(1);
+                }}
+              >
                 {numbers.map((num) => (
-                  <option key={num}>{num}</option>
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
                 ))}
               </select>
             </span>
@@ -148,27 +160,37 @@ export const ExpensesCatogries = () => {
           </div>
           <TableInputField
             searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
+            setSearchTerm={(value) => {
+              setSearchTerm(value);
+              setPageNo(1);
+            }}
           />
         </div>
+
         <div className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto">
-          <div className="grid grid-cols-[0.5fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]">
-            <span className="">Sr#</span>
-            <span className="">Category Name</span>
+          <div
+            className="grid grid-cols-[0.5fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold
+           border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
+          >
+            <span>Sr#</span>
+            <span>Category Name</span>
             <span className="text-center w-28">Actions</span>
           </div>
-          {allExpenseCategory?.map((category, index) => (
+
+          {paginatedCategories?.map((category, index) => (
             <div
-              className="grid grid-cols-[0.5fr_1fr_1fr] border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
               key={category.id}
+              className="grid grid-cols-[0.5fr_1fr_1fr] border border-gray-600 text-gray-800
+               hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
             >
-              <span className="px-2 ">{index + 1}</span>
-              <span className="">{category.categoryName}</span>
-              <span className=" flex items-center  gap-1">
+              <span className="px-2">
+                {(pageNo - 1) * itemsPerPage + index + 1}
+              </span>
+              <span>{category.categoryName}</span>
+              <span className="flex items-center gap-1">
                 <EditButton
                   handleUpdate={() => handleClickEditButton(category)}
                 />
-
                 <DeleteButton
                   handleDelete={() => handleClickDeleteButton(category.id)}
                 />
@@ -179,7 +201,11 @@ export const ExpensesCatogries = () => {
       </div>
 
       <div className="flex items-center justify-between">
-        <ShowDataNumber start={1} total={10} end={1 + 9} />
+        <ShowDataNumber
+          start={(pageNo - 1) * itemsPerPage + 1}
+          end={Math.min(pageNo * itemsPerPage, filteredCategories?.length || 0)}
+          total={filteredCategories?.length || 0}
+        />
         <Pagination
           pageNo={pageNo}
           handleDecrementPageButton={handleDecrementPageButton}
@@ -188,14 +214,18 @@ export const ExpensesCatogries = () => {
       </div>
 
       {isOpenModal === "ADD" && (
-        <AddCategory setModal={() => handleToggleViewModal("")} />
+        <AddCategory
+          setModal={() => handleToggleViewModal("")}
+          refreshTable={handlegetExpenseCategory}
+        />
       )}
 
-      {isOpenModal === "EDIT" && (
+      {isOpenModal === "EDIT" && selectCategory && (
         <EditCategory
           setModal={() => handleToggleViewModal("")}
-          selectCategory={selectCategory}
-          getAllCategories={handlegetExpenseCategory}
+          categoryId={selectCategory.id}
+          categoryName={selectCategory.categoryName}
+          refreshTable={handlegetExpenseCategory}
         />
       )}
 
@@ -204,7 +234,7 @@ export const ExpensesCatogries = () => {
           isOpen={() => handleToggleViewModal("DELETE")}
           onClose={() => handleToggleViewModal("")}
           onConfirm={() => handleDeleteCategory()}
-          message="Are you sure to want delete this category?"
+          message="Are you sure you want to delete this category?"
         />
       )}
     </div>

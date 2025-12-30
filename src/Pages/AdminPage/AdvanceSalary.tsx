@@ -6,7 +6,6 @@ import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { useEffect, useState } from "react";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
-import { EditQuotation } from "../../Components/QuotationModal/EditQuotation";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
   navigationStart,
@@ -20,7 +19,7 @@ const numbers = [10, 25, 50, 100];
 
 type AdvanceSalaryT = "ADD" | "VIEW" | "EDIT" | "";
 export const AdvanceSalary = () => {
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
 
   const dispatch = useAppDispatch();
 
@@ -133,9 +132,7 @@ export const AdvanceSalary = () => {
       {isOpenModal === "ADD" && (
         <AddAdvanceSalary setModal={() => handleToggleViewModal("")} />
       )}
-      {isOpenModal === "EDIT" && (
-        <EditQuotation setModal={() => handleToggleViewModal("")} />
-      )}
+     
     </div>
   );
 };

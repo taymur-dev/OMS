@@ -7,17 +7,17 @@ import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 
-type AddAttendanceProps = {
+type AddCategoryProps = {
   setModal: () => void;
+  refreshTable: () => void; // new prop to refresh parent table
 };
 
 const initialState = {
   categoryName: "",
 };
 
-export const AddCategory = ({ setModal }: AddAttendanceProps) => {
+export const AddCategory = ({ setModal, refreshTable }: AddCategoryProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-
   const token = currentUser?.token;
 
   const [addCategory, setAddCategory] = useState(initialState);
@@ -25,7 +25,7 @@ export const AddCategory = ({ setModal }: AddAttendanceProps) => {
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setAddCategory({ ...addCategory, [name]: value.trim() });
+    setAddCategory({ ...addCategory, [name]: value });
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -36,11 +36,14 @@ export const AddCategory = ({ setModal }: AddAttendanceProps) => {
         addCategory,
         {
           headers: {
-            Authorization: token,
+            Authorization: `Bearer ${token}`,
           },
         }
-      );
-      console.log(res.data);
+            );
+
+      refreshTable();
+      console.log(res.data)
+      setModal();
     } catch (error) {
       console.log(error);
     }
@@ -48,19 +51,19 @@ export const AddCategory = ({ setModal }: AddAttendanceProps) => {
 
   return (
     <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border  border-indigo-500 ">
+      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+        <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-500">
           <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Add Employee Category</Title>
-            <div className="mx-2   flex-wrap gap-3  ">
+            <Title setModal={() => setModal()}>Add Expense Category</Title>
+            <div className="mx-2 flex-wrap gap-3">
               <InputField
                 labelName="Expense Category*"
                 name="categoryName"
-                inputVal={addCategory.categoryName}
+                value={addCategory.categoryName}
                 handlerChange={handlerChange}
               />
             </div>
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
+            <div className="flex items-center justify-center m-2 gap-2 text-xs">
               <CancelBtn setModal={() => setModal()} />
               <AddButton label={"Save Category"} />
             </div>

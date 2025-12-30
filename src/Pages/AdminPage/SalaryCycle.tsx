@@ -22,7 +22,7 @@ const numbers = [10, 25, 50, 10];
 type SALARYCYCLET = "ADD" | "EDIT" | "DELETE" | "";
 
 export const SalaryCycle = () => {
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
 
   const dispatch = useAppDispatch();
 

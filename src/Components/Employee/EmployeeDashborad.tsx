@@ -18,7 +18,7 @@ import {
 import { Loader } from "../LoaderComponent/Loader";
 
 export const EmployeeDashborad = () => {
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
 
   useEffect(() => {

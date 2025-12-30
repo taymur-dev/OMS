@@ -6,7 +6,7 @@ import { CiViewList } from "react-icons/ci";
 import { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/Hooks";
 import { navigationStart, navigationSuccess } from "../redux/NavigationSlice";
-import { Loader } from "./LoaderComponent/Loader";
+// import { Loader } from "./LoaderComponent/Loader";
 import axios from "axios";
 import { BASE_URL } from "../Content/URL";
 import { OptionField } from "./InputFields/OptionField";
@@ -16,6 +16,18 @@ import { DndContext, DragEndEvent } from "@dnd-kit/core";
 
 type CategoryT = { id: number; categoryName: string };
 type DummyDataT = { id: string; projectName: string; status: string };
+
+type UserT = {
+  id: number;
+  name?: string;
+  email?: string;
+  loginStatus: "Y" | "N";
+};
+
+type TodoT = {
+  id: number;
+  todoStatus: "Y" | "N";
+};
 
 const columsData = [
   { id: "newProject", title: "New Project" },
@@ -37,17 +49,17 @@ const dummyProjects: DummyDataT[] = [
 ];
 
 export const MainContent = () => {
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  // const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
   const dispatch = useAppDispatch();
   const token = currentUser?.token;
 
-  const [allUsers, setAllUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState<UserT[]>([]);
   const [allCategory, setAllCategory] = useState<CategoryT[] | null>(null);
   const [formData, setFormData] = useState({ categoryName: "" });
   const [allAssignProjects, setAllAssignProjects] = useState([]);
-  const [allTodos, setAllTodos] = useState([]);
-  const [allExpenses, setAllExpenses] = useState([]);
+  const [allTodos, setAllTodos] = useState<TodoT[]>([]);
+  const [totalExpenseAmount, setTotalExpenseAmount] = useState(0);
   const [expenseCategory, setExpenseCategory] = useState([]);
   const [dummyData, setDummyData] = useState<DummyDataT[]>(dummyProjects);
 
@@ -56,6 +68,7 @@ export const MainContent = () => {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
         headers: { Authorization: token },
       });
+
       setAllUsers(res?.data?.users);
     } catch (error) {
       console.log(error);
@@ -76,7 +89,7 @@ export const MainContent = () => {
   const handlegetTodos = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getTodos`, {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setAllTodos(res.data);
     } catch (error) {
@@ -84,23 +97,24 @@ export const MainContent = () => {
     }
   }, [token]);
 
-  const handleGetExpenses = useCallback(async () => {
+  const handleGetExpenseCategory = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getExpense`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getExpenseCategory`, {
         headers: { Authorization: token },
       });
-      setAllExpenses(res.data);
+      setExpenseCategory(res.data);
     } catch (error) {
       console.log(error);
     }
   }, [token]);
 
-  const handleGetExpenseCategory = useCallback(async () => {
+  const handleGetTotalExpense = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getExpenseCategory`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getTotalExpense`, {
         headers: { Authorization: token },
       });
-      setExpenseCategory(res.data);
+
+      setTotalExpenseAmount(Number(res.data.totalExpense));
     } catch (error) {
       console.log(error);
     }
@@ -144,28 +158,31 @@ export const MainContent = () => {
     getAllUsers();
     handlegetAssignProjects();
     handlegetTodos();
-    handleGetExpenses();
+    handleGetTotalExpense();
     handleGetExpenseCategory();
     handleGetProjectsCategory();
   }, [
     getAllUsers,
     handlegetAssignProjects,
     handlegetTodos,
-    handleGetExpenses,
+    handleGetTotalExpense,
     handleGetExpenseCategory,
     handleGetProjectsCategory,
   ]);
 
-  if (loader)
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
-        <Loader />
-      </div>
-    );
+  // if (loader)
+  //   return (
+  //     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+  //       <Loader />
+  //     </div>
+  //   );
+
+  const activeUsers = allUsers.filter((user) => user.loginStatus === "Y");
+
+  const activeTodos = allTodos.filter((todo) => todo.todoStatus === "Y");
 
   return (
     <div className="w-full h-full overflow-y-hidden p-1 space-y-6">
-      {/* Filter */}
       <form className="flex-1 flex-col sm:flex-row gap-4">
         <div className="ml-232  w-108  pt-1 pb-2  pr-2 pl-2">
           <OptionField
@@ -183,7 +200,6 @@ export const MainContent = () => {
         </div>
       </form>
 
-      {/* Kanban Columns */}
       <div className="flex flex-col lg:flex-row gap-0 ml-6">
         <DndContext onDragEnd={handleDragEnd}>
           {columsData.map((column) => (
@@ -200,7 +216,7 @@ export const MainContent = () => {
         <Card
           titleName="Users"
           totalUser="Total Users"
-          totalNumber={allUsers.length}
+          totalNumber={activeUsers.length}
           icon={<BiUser className="text-3xl" />}
           style="bg-gradient-to-r from-purple-500 to-indigo-700 text-white ml-[1.2cm]"
         />
@@ -215,8 +231,8 @@ export const MainContent = () => {
 
         <Card
           titleName="Todo's"
-          totalUser="Total Todo's"
-          totalNumber={allTodos.length}
+          totalUser="Active Todo's"
+          totalNumber={activeTodos.length}
           icon={<LuListTodo className="text-3xl" />}
           style="bg-gradient-to-r from-yellow-400 to-orange-600 text-white"
         />
@@ -231,8 +247,8 @@ export const MainContent = () => {
 
         <Card
           titleName="Total Expense"
-          totalUser="Total Expense Items"
-          totalNumber={allExpenses.length}
+          totalNumber={totalExpenseAmount}
+          isCurrency={true}
           icon={<GiTakeMyMoney className="text-3xl" />}
           style="bg-gradient-to-r from-cyan-600 to-cyan-800 text-white mr-[1.6cm]"
         />

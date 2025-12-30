@@ -110,7 +110,7 @@ export const AddCustomer = ({
               type="text"
               name="customerName"
               handlerChange={handlerChange}
-              inputVal={customerData.customerName}
+              value={customerData.customerName}
             />
 
             <InputField
@@ -119,7 +119,7 @@ export const AddCustomer = ({
               type="text"
               name="customerAddress"
               handlerChange={handlerChange}
-              inputVal={customerData.customerAddress}
+              value={customerData.customerAddress}
             />
 
             <InputField
@@ -128,7 +128,7 @@ export const AddCustomer = ({
               type="number"
               name="customerContact"
               handlerChange={handlerChange}
-              inputVal={customerData.customerContact}
+              value={customerData.customerContact}
             />
 
             <InputField
@@ -137,7 +137,7 @@ export const AddCustomer = ({
               type="text"
               name="companyName"
               handlerChange={handlerChange}
-              inputVal={customerData.companyName}
+              value={customerData.companyName}
             />
           </div>
 
@@ -148,7 +148,7 @@ export const AddCustomer = ({
               type="text"
               name="companyAddress"
               handlerChange={handlerChange}
-              inputVal={customerData.companyAddress}
+              value={customerData.companyAddress}
             />
           </div>
 

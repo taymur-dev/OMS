@@ -20,7 +20,7 @@ const initialState = {
 export const Login = () => {
   const { currentUser, error } = useAppSelector((state) => state.officeState);
 
-  const { loader } = useAppSelector((state) => state.NavigateSate);
+  const { loader } = useAppSelector((state) => state.NavigateState);
 
   const [formData, setFormData] = useState(initialState);
 
@@ -96,7 +96,7 @@ export const Login = () => {
             placeHolder="Abc@gmail.com..."
             name={"email"}
             handlerChange={handlerChange}
-            inputVal={formData.email}
+            value={formData.email}
           />
           <InputField
             type="password"
@@ -104,7 +104,7 @@ export const Login = () => {
             placeHolder="Password..."
             name={"password"}
             handlerChange={handlerChange}
-            inputVal={formData.password}
+            value={formData.password}
           />
 
           <button

@@ -1,116 +1,96 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 import { AddButton } from "../CustomButtons/AddButton";
-
 import { CancelBtn } from "../CustomButtons/CancelBtn";
-
 import { InputField } from "../InputFields/InputField";
-
+import { TextareaField } from "../InputFields/TextareaField";
 import { Title } from "../Title";
 
-import axios from "axios";
-
 import { BASE_URL } from "../../Content/URL";
-
 import { useAppSelector } from "../../redux/Hooks";
 
-import { toast } from "react-toastify";
-import { OptionField } from "../InputFields/OptionField";
-
-type AddAttendanceProps = {
+type AddJobsProps = {
   setModal: () => void;
+  refreshJobs: () => void;
 };
 
-const optionData = [
-  { id: 1, label: "Approved", value: "approved" },
-  { id: 2, label: "Rejected", value: "rejected" },
-];
-
-const initialState = {
-  jobCreated: "",
-  jobTitle: "",
-  date: "",
-  status: "",
+type AddJobState = {
+  job_title: string;
+  description: string;
 };
-export const AddJob = ({ setModal }: AddAttendanceProps) => {
+
+const initialState: AddJobState = {
+  job_title: "",
+  description: "",
+};
+
+export const AddJob = ({ setModal, refreshJobs }: AddJobsProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-
   const token = currentUser?.token;
 
   const [addJob, setAddJob] = useState(initialState);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    e.preventDefault();
     const { name, value } = e.target;
     setAddJob({ ...addJob, [name]: value });
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!addJob.job_title || !addJob.description) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
     try {
-      const res = await axios.post(`${BASE_URL}/admin/createCatagory`, addJob, {
+      const res = await axios.post(`${BASE_URL}/api/admin/addjob`, addJob, {
         headers: { Authorization: token },
       });
-      console.log(res.data);
 
-      toast.success(res.data.message);
+      toast.success(res.data.message || "Job added successfully");
+      refreshJobs();
       setModal();
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Something went wrong");
     }
   };
+
   return (
-    <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem]   bg-white mx-auto rounded-xl border  border-indigo-500 ">
-          <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Add Job</Title>
-            <div className="mx-2   flex-wrap gap-3  ">
-              <InputField
-                labelName="Created By*"
-                placeHolder="Enter the applicant name"
-                type="text"
-                name="jobCreated"
-                inputVal={currentUser?.name}
-                handlerChange={handlerChange}
-              />
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+      <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-500">
+        <form onSubmit={handlerSubmitted}>
+          <Title setModal={setModal}>Add Job</Title>
 
-              <InputField
-                labelName="Job Title*"
-                placeHolder="Enter the job title"
-                type="text"
-                name=" jobTitle"
-                inputVal={addJob.jobTitle}
-                handlerChange={handlerChange}
-              />
+          <div className="mx-4 flex flex-col gap-3">
+            <InputField
+              labelName="Job Title*"
+              placeHolder="Enter job title"
+              type="text"
+              name="job_title"
+              value={addJob.job_title}
+              handlerChange={handlerChange}
+            />
 
-              <InputField
-                labelName="Created Date*"
-                placeHolder="Enter the  created date"
-                type="date"
-                name="date"
-                inputVal={addJob.date}
-                handlerChange={handlerChange}
-              />
+            <TextareaField
+              labelName="Job Description*"
+              placeHolder="Enter job description"
+              name="description"
+              inputVal={addJob.description}
+              handlerChange={handlerChange}
+            />
+          </div>
 
-              <OptionField
-                labelName="Status"
-                name="status"
-                value={addJob.status}
-                handlerChange={handlerChange}
-                optionData={optionData}
-                inital="Pending"
-              />
-            </div>
-
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Save Job"} />
-            </div>
-          </form>
-        </div>
+          <div className="flex items-center justify-center m-4 gap-2 text-xs">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Save Job" />
+          </div>
+        </form>
       </div>
     </div>
   );

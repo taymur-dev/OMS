@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { InputField } from "../InputFields/InputField";
@@ -7,7 +7,6 @@ import { useAppSelector } from "../../redux/Hooks";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { toast } from "react-toastify";
-
 
 export type HolidayType = {
   id: number;
@@ -20,7 +19,6 @@ type UpdateHolidayProps = {
   handleGetAllHodidays: () => void;
   editHoliday: HolidayType | null;
 };
-
 
 export const UpdateHoliday = ({
   setModal,
@@ -37,6 +35,16 @@ export const UpdateHoliday = ({
   };
 
   const [holidayData, setHolidayData] = useState<HolidayType>(initialState);
+
+  useEffect(() => {
+    if (editHoliday) {
+      setHolidayData({
+        id: editHoliday.id,
+        date: editHoliday.date,
+        holiday: editHoliday.holiday,
+      });
+    }
+  }, [editHoliday]);
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -76,7 +84,6 @@ export const UpdateHoliday = ({
     }
   };
 
-
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-500">
@@ -89,7 +96,7 @@ export const UpdateHoliday = ({
               placeHolder="Enter holiday title"
               type="text"
               name="holiday"
-              inputVal={holidayData.holiday}
+              value={holidayData.holiday}
               handlerChange={handlerChange}
             />
 
@@ -98,7 +105,7 @@ export const UpdateHoliday = ({
               placeHolder="Select date"
               type="date"
               name="date"
-              inputVal={holidayData.date}
+              value={holidayData.date}
               handlerChange={handlerChange}
             />
           </div>

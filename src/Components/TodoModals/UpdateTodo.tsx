@@ -11,12 +11,29 @@ import { useAppSelector } from "../../redux/Hooks";
 export type TodoType = {
   id: number;
   employee_id: number;
+  employeeName?: string;
   name: string;
   task: string;
   startDate: string;
   endDate: string;
   note: string;
   deadline: string;
+};
+
+type UserT = {
+  id: number;
+  name?: string;
+  employeeName?: string;
+  loginStatus?: string;
+};
+
+type UserOption = {
+  id: number;
+  value: string;
+  label: string;
+  name: string;
+  loginStatus: string;
+  projectName: string;
 };
 
 type UpdateTodoProps = {
@@ -34,8 +51,9 @@ export const UpdateTodo = ({
   const token = currentUser?.token;
 
   const [todo, setTodo] = useState<TodoType | null>(seleteTodo);
-  const [allUsers, setAllUsers] = useState<{ id: number; name: string }[]>([]);
+  const [allUsers, setAllUsers] = useState<UserT[]>([]);
 
+  // Handle input/select changes
   const handlerChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
@@ -47,16 +65,22 @@ export const UpdateTodo = ({
     );
   };
 
+  // Fetch all users
   const getAllUsers = useCallback(async () => {
+    if (!token) return;
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer ${token}` },
       });
-      setAllUsers(res?.data?.users);
+      setAllUsers(res?.data?.users ?? []);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch users:", error);
     }
   }, [token]);
+
+  useEffect(() => {
+    getAllUsers();
+  }, [getAllUsers]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,7 +97,7 @@ export const UpdateTodo = ({
           endDate: todo.endDate,
           deadline: todo.deadline,
         },
-        { headers: { Authorization: token } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       onUpdate({ ...todo });
@@ -83,39 +107,40 @@ export const UpdateTodo = ({
     }
   };
 
-  useEffect(() => {
-    getAllUsers();
-  }, [getAllUsers]);
+  const userOptions: UserOption[] = allUsers.map((u) => ({
+    id: u.id,
+    value: String(u.id),
+    label: u.employeeName || u.name || "User",
+    name: u.employeeName || u.name || "User",
+    loginStatus: u.loginStatus || "",
+    projectName: "",
+  }));
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-500">
+      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-500 overflow-auto">
         <form onSubmit={handleSubmit}>
           <Title setModal={setModal}>Update Todo</Title>
-          <div className="mx-2 flex-wrap gap-3">
+          <div className="mx-2 flex flex-col gap-3">
             <UserSelect
               labelName="Employees*"
               name="employee_id"
               value={todo?.employee_id?.toString() || ""}
               handlerChange={handlerChange}
-              optionData={allUsers.map((u) => ({
-                id: u.id,
-                name: u.name,
-                loginStatus: "",
-                projectName: "",
-              }))}
+              optionData={userOptions}
             />
+
             <InputField
               labelName="Task*"
               name="task"
               handlerChange={handlerChange}
-              inputVal={todo?.task}
+              value={todo?.task}
             />
             <InputField
               labelName="Note*"
               name="note"
               handlerChange={handlerChange}
-              inputVal={todo?.note}
+              value={todo?.note}
             />
 
             <div className="flex items-center justify-center gap-6">
@@ -124,21 +149,21 @@ export const UpdateTodo = ({
                 type="date"
                 name="startDate"
                 handlerChange={handlerChange}
-                inputVal={todo?.startDate}
+                value={todo?.startDate}
               />
               <InputField
                 labelName="End Date*"
                 type="date"
                 name="endDate"
                 handlerChange={handlerChange}
-                inputVal={todo?.endDate}
+                value={todo?.endDate}
               />
               <InputField
                 labelName="Deadline*"
                 type="date"
                 name="deadline"
                 handlerChange={handlerChange}
-                inputVal={todo?.deadline}
+                value={todo?.deadline}
               />
             </div>
           </div>

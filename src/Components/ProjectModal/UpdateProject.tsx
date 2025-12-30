@@ -97,7 +97,7 @@ export const UpdateProject = ({
               placeHolder="Enter the Project Name"
               type="text"
               name="projectName"
-              inputVal={updateProject?.projectName}
+              value={updateProject?.projectName}
               handlerChange={handlerChange}
             />
 
@@ -127,7 +127,7 @@ export const UpdateProject = ({
               placeHolder="Enter the Start Date"
               type="date"
               name="startDate"
-              inputVal={updateProject?.startDate ?? ""}
+              value={updateProject?.startDate ?? ""}
               handlerChange={handlerChange}
             />
 
@@ -136,7 +136,7 @@ export const UpdateProject = ({
               placeHolder="Enter the End Date"
               type="date"
               name="endDate"
-              inputVal={updateProject?.endDate ?? ""}
+              value={updateProject?.endDate ?? ""}
               handlerChange={handlerChange}
             />
           </div>
