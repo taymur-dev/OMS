@@ -36,13 +36,13 @@ export const AddSalaryCycle = ({ setModal }: AddAttendanceProps) => {
               <InputField
                 labelName="Year*"
                 name="salaryYear"
-                inputVal={addSalaryCycle?.salaryYear}
+                value={addSalaryCycle?.salaryYear}
                 handlerChange={handlerChange}
               />
               <InputField
                 labelName="Month*"
                 name="salaryMonth"
-                inputVal={addSalaryCycle?.salaryMonth}
+                value={addSalaryCycle?.salaryMonth}
                 handlerChange={handlerChange}
               />
             </div>

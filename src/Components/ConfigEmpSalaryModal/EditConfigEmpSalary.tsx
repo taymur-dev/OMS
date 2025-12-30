@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { AddButton } from "../CustomButtons/AddButton";
 
@@ -48,7 +48,7 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
     setAddConfigEmployee({ ...addConfigEmployee, [name]: value });
   };
 
-  const getAllUsers = async () => {
+  const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
         headers: {
@@ -59,13 +59,13 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
     } catch (error) {
       console.log(error);
     }
-  };
+  } , [token]);
 
   const handlerSubmitted = async () => {};
 
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [getAllUsers]);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
@@ -86,7 +86,7 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
                 name="employeeSalary"
                 type="number"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.employeeSalary}
+              value={addConfigEmployee.employeeSalary}
               />
 
               <InputField
@@ -94,7 +94,7 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
                 name="overtimeAllowance"
                 type="number"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.overtimeAllowance}
+                value={addConfigEmployee.overtimeAllowance}
               />
 
               <InputField
@@ -102,7 +102,7 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
                 name="projectAllowance"
                 type="number"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.projectAllowance}
+                value={addConfigEmployee.projectAllowance}
               />
 
               <InputField
@@ -110,7 +110,7 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
                 name="empMonthAllowance"
                 type="number"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.empMonthAllowance}
+                value={addConfigEmployee.empMonthAllowance}
               />
 
               <InputField
@@ -118,7 +118,7 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
                 name="medicalAllowance"
                 type="number"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.medicalAllowance}
+                value={addConfigEmployee.medicalAllowance}
               />
 
               <InputField
@@ -126,7 +126,7 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
                 name="date"
                 type="date"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.date}
+                value={addConfigEmployee.date}
               />
 
               <InputField
@@ -134,7 +134,7 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
                 name="withEffectDate"
                 type="number"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.withEffectDate}
+                value={addConfigEmployee.withEffectDate}
               />
             </div>
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { AddButton } from "../CustomButtons/AddButton";
 
@@ -54,7 +54,7 @@ export const AddLoan = ({ setModal }: AddAttendanceProps) => {
     setAddLoan({ ...addLoan, [name]: value });
   };
 
-  const getAllUsers = async () => {
+  const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
         headers: {
@@ -65,7 +65,7 @@ export const AddLoan = ({ setModal }: AddAttendanceProps) => {
     } catch (error) {
       console.log(error);
     }
-  };
+  } , [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -87,7 +87,7 @@ export const AddLoan = ({ setModal }: AddAttendanceProps) => {
 
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [getAllUsers]);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
@@ -109,7 +109,7 @@ export const AddLoan = ({ setModal }: AddAttendanceProps) => {
                   labelName="Employee*"
                   name="employeeId"
                   handlerChange={handlerChange}
-                  inputVal={
+                  value={
                     currentUser?.role === "user"
                       ? currentUser.name
                       : addLoan.employeeId
@@ -121,7 +121,7 @@ export const AddLoan = ({ setModal }: AddAttendanceProps) => {
                 type="date"
                 name="applyDate"
                 handlerChange={handlerChange}
-                inputVal={addLoan.applyDate}
+                value={addLoan.applyDate}
               />
 
               <InputField
@@ -129,7 +129,7 @@ export const AddLoan = ({ setModal }: AddAttendanceProps) => {
                 type="number"
                 name="loanAmount"
                 handlerChange={handlerChange}
-                inputVal={addLoan.loanAmount}
+                value={addLoan.loanAmount}
               />
 
               <InputField
@@ -137,7 +137,7 @@ export const AddLoan = ({ setModal }: AddAttendanceProps) => {
                 type="number"
                 name="installments"
                 handlerChange={handlerChange}
-                inputVal={addLoan.installments}
+                value={addLoan.installments}
               />
 
               <InputField
@@ -145,14 +145,14 @@ export const AddLoan = ({ setModal }: AddAttendanceProps) => {
                 type="number"
                 name="paidAmount"
                 handlerChange={handlerChange}
-                inputVal={addLoan.paidAmount}
+                value={addLoan.paidAmount}
               />
 
               <InputField
                 labelName="Remaining Amount*"
                 name="remainingAmount"
                 handlerChange={handlerChange}
-                inputVal={addLoan.remainingAmount}
+                value={addLoan.remainingAmount}
               />
             </div>
 

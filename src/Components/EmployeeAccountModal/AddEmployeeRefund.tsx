@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { AddButton } from "../CustomButtons/AddButton";
 
@@ -65,7 +65,7 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
     setAddConfigEmployee({ ...addConfigEmployee, [name]: value });
   };
 
-  const getAllUsers = async () => {
+  const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
         headers: {
@@ -76,13 +76,13 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
     } catch (error) {
       console.log(error);
     }
-  };
+  } , [token]);
 
   const handlerSubmitted = async () => {};
 
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [getAllUsers]);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
@@ -103,7 +103,7 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
                 name="employeeName"
                 type="text"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.employeeName}
+                value={addConfigEmployee.employeeName}
               />
 
               <InputField
@@ -111,7 +111,7 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
                 name="employeeContact"
                 type="number"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.employeeContact}
+                value={addConfigEmployee.employeeContact}
               />
 
               <InputField
@@ -119,7 +119,7 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
                 name="employeeEmail"
                 type="email"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.employeeEmail}
+                value={addConfigEmployee.employeeEmail}
               />
 
               <InputField
@@ -127,7 +127,7 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
                 name="withdrawAccount"
                 type="number"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.withdrawAccount}
+                value={addConfigEmployee.withdrawAccount}
               />
 
               <InputField
@@ -135,7 +135,7 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
                 name=" withdrawAccount"
                 type="number"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.withdrawAccount}
+                value={addConfigEmployee.withdrawAccount}
               />
 
               <OptionField
@@ -156,7 +156,7 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
                 name="paymentDate"
                 type="text"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.paymentAccount}
+                value={addConfigEmployee.paymentAccount}
               />
 
               <InputField
@@ -164,7 +164,7 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
                 name="refundAccount"
                 type="text"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.refundAccount}
+                value={addConfigEmployee.refundAccount}
               />
 
               <InputField
@@ -172,7 +172,7 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
                 name="balance"
                 type="number"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.balance}
+                value={addConfigEmployee.balance}
               />
 
               <InputField
@@ -180,7 +180,7 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
                 name="date"
                 type="date"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.date}
+                value={addConfigEmployee.date}
               />
 
               <InputField
@@ -188,7 +188,7 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
                 name="depositeBy"
                 type="number"
                 handlerChange={handlerChange}
-                inputVal={addConfigEmployee.depositeBy}
+                value={addConfigEmployee.depositeBy}
               />
             </div>
 

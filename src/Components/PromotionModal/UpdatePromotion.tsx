@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useCallback } from "react";
 
 import { InputField } from "../InputFields/InputField";
 
@@ -78,7 +78,7 @@ export const UpdatePromotion = ({ setModal }: updatePromotionProps) => {
     setAddPromotion({ ...addPromotion, [name]: value });
   };
 
-  const getAllUsers = async () => {
+  const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
         headers: {
@@ -90,7 +90,7 @@ export const UpdatePromotion = ({ setModal }: updatePromotionProps) => {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(axiosError.response?.data.message);
     }
-  };
+  } , [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -114,7 +114,7 @@ export const UpdatePromotion = ({ setModal }: updatePromotionProps) => {
   };
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [getAllUsers]);
   return (
     <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
       <div className="w-[42rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
@@ -134,7 +134,7 @@ export const UpdatePromotion = ({ setModal }: updatePromotionProps) => {
               type="text"
               name="currentDesignation"
               handlerChange={handlerChange}
-              inputVal={addPromotion?.currentDesignation}
+              value={addPromotion?.currentDesignation}
             />
             <InputField
               labelName="Requested Designation*"
@@ -142,7 +142,7 @@ export const UpdatePromotion = ({ setModal }: updatePromotionProps) => {
               type="text"
               name="requestDesignation"
               handlerChange={handlerChange}
-              inputVal={addPromotion.requestDesignation}
+            value={addPromotion.requestDesignation}
             />
             <TextareaField
               labelName="Note*"
@@ -158,7 +158,7 @@ export const UpdatePromotion = ({ setModal }: updatePromotionProps) => {
               type="date"
               name="date"
               handlerChange={handlerChange}
-              inputVal={addPromotion.date}
+              value={addPromotion.date}
             />
           </div>
           {addPromotion.approvalStatus === "" ||

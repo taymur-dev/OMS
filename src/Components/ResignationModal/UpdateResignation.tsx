@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { InputField } from "../InputFields/InputField";
 
@@ -74,7 +74,7 @@ export const UpdateResignation = ({ setModal }: updatePromotionProps) => {
     setAddPromotion({ ...addPromotion, [name]: value });
   };
 
-  const getAllUsers = async () => {
+  const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
         headers: {
@@ -86,7 +86,7 @@ export const UpdateResignation = ({ setModal }: updatePromotionProps) => {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(axiosError.response?.data.message);
     }
-  };
+  } , [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -110,7 +110,7 @@ export const UpdateResignation = ({ setModal }: updatePromotionProps) => {
   };
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [getAllUsers]);
   return (
     <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
       <div className="w-[42rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
@@ -132,7 +132,7 @@ export const UpdateResignation = ({ setModal }: updatePromotionProps) => {
               type="text"
               name="currentDesignation"
               handlerChange={handlerChange}
-              inputVal={addPromotion?.designation}
+              value={addPromotion?.designation}
             />
 
             <TextareaField
@@ -149,7 +149,7 @@ export const UpdateResignation = ({ setModal }: updatePromotionProps) => {
               type="date"
               name="date"
               handlerChange={handlerChange}
-              inputVal={addPromotion.date}
+              value={addPromotion.date}
             />
           </div>
           {addPromotion.approvalStatus === "" ||

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { AddButton } from "../CustomButtons/AddButton";
 
@@ -58,7 +58,7 @@ export const UpdateOverTime = ({ setModal }: AddAttendanceProps) => {
     setAddOverTime({ ...addOverTime, [name]: value });
   };
 
-  const getAllUsers = async () => {
+  const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
         headers: {
@@ -69,7 +69,7 @@ export const UpdateOverTime = ({ setModal }: AddAttendanceProps) => {
     } catch (error) {
       console.log(error);
     }
-  };
+  } , [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -95,7 +95,7 @@ export const UpdateOverTime = ({ setModal }: AddAttendanceProps) => {
 
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [getAllUsers]);
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
@@ -117,7 +117,7 @@ export const UpdateOverTime = ({ setModal }: AddAttendanceProps) => {
                   labelName="Employee*"
                   name="employeeId"
                   handlerChange={handlerChange}
-                  inputVal={
+                  value={
                     currentUser?.role === "user"
                       ? currentUser.name
                       : addOverTime.employeeId
@@ -130,14 +130,14 @@ export const UpdateOverTime = ({ setModal }: AddAttendanceProps) => {
                 type="date"
                 name="date"
                 handlerChange={handlerChange}
-                inputVal={addOverTime.date}
+                value={addOverTime.date}
               />
 
               <InputField
                 labelName="Over time*"
                 name="time"
                 handlerChange={handlerChange}
-                inputVal={addOverTime.time}
+                value={addOverTime.time}
               />
 
               <TextareaField

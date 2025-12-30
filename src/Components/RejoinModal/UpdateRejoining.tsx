@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { InputField } from "../InputFields/InputField";
 
@@ -83,7 +83,7 @@ export const UpdateRejoining = ({ setModal }: AddPromotionProps) => {
     setAddRejoining({ ...addRejoining, [name]: value });
   };
 
-  const getAllUsers = async () => {
+  const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
         headers: {
@@ -95,7 +95,7 @@ export const UpdateRejoining = ({ setModal }: AddPromotionProps) => {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(axiosError.response?.data.message);
     }
-  };
+  } , [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -119,7 +119,7 @@ export const UpdateRejoining = ({ setModal }: AddPromotionProps) => {
   };
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [getAllUsers]);
   return (
     <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
       <div className="w-[42rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
@@ -139,7 +139,7 @@ export const UpdateRejoining = ({ setModal }: AddPromotionProps) => {
               type="text"
               name="designation"
               handlerChange={handlerChange}
-              inputVal={addRejoining?.designation}
+              value={addRejoining?.designation}
             />
             <InputField
               labelName="Resignation Date*"
@@ -147,7 +147,7 @@ export const UpdateRejoining = ({ setModal }: AddPromotionProps) => {
               type="text"
               name="resignationDate"
               handlerChange={handlerChange}
-              inputVal={addRejoining.resignationDate}
+              value={addRejoining.resignationDate}
             />
             <TextareaField
               labelName="Note*"
@@ -163,7 +163,7 @@ export const UpdateRejoining = ({ setModal }: AddPromotionProps) => {
               type="date"
               name="rejoinDate"
               handlerChange={handlerChange}
-              inputVal={addRejoining.rejoinDate}
+              value={addRejoining.rejoinDate}
             />
           </div>
 
