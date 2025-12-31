@@ -12,6 +12,8 @@ import { useAppSelector } from "../../redux/Hooks";
 type Option = {
   id: number;
   name: string;
+  value: string;
+  label: string;
   projectName: string;
   loginStatus: string;
 };
@@ -111,47 +113,46 @@ export const EditAssignProject = ({
     }
   }, [token]);
 
-const handlerSubmitted = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handlerSubmitted = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  if (!formData.employee_id || !formData.projectId) {
-    alert("Please select employee and project");
-    return;
-  }
+    if (!formData.employee_id || !formData.projectId) {
+      alert("Please select employee and project");
+      return;
+    }
 
-  try {
-    await axios.put(
-      `${BASE_URL}/api/admin/editAssignProject/${editData.id}`,
-      {
+    try {
+      await axios.put(
+        `${BASE_URL}/api/admin/editAssignProject/${editData.id}`,
+        {
+          employee_id: Number(formData.employee_id),
+          projectId: Number(formData.projectId),
+        },
+        {
+          headers: { Authorization: token },
+        }
+      );
+
+      const selectedUser = allUsers.find(
+        (u) => u.id === Number(formData.employee_id)
+      );
+      const selectedProject = allProjects.find(
+        (p) => p.id === Number(formData.projectId)
+      );
+
+      onUpdate({
+        id: editData.id,
         employee_id: Number(formData.employee_id),
         projectId: Number(formData.projectId),
-      },
-      {
-        headers: { Authorization: token },
-      }
-    );
+        name: selectedUser?.name || "",
+        projectName: selectedProject?.projectName || "",
+      });
 
-    const selectedUser = allUsers.find(
-      (u) => u.id === Number(formData.employee_id)
-    );
-    const selectedProject = allProjects.find(
-      (p) => p.id === Number(formData.projectId)
-    );
-
-    onUpdate({
-      id: editData.id,
-      employee_id: Number(formData.employee_id),
-      projectId: Number(formData.projectId),
-      name: selectedUser?.name || "",
-      projectName: selectedProject?.projectName || "",
-    });
-
-    setModal();
-  } catch (error) {
-    console.log(error);
-  }
-};
-
+      setModal();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getAllUsers();

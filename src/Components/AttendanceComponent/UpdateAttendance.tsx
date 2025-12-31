@@ -74,7 +74,6 @@ export const UpdateAttendance = ({
     );
   };
 
-  // Fetch all users
   const handlerGetUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
@@ -93,7 +92,6 @@ export const UpdateAttendance = ({
     handlerGetUsers();
   }, [handlerGetUsers]);
 
-  // Submit update
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!addUserAttendance) return;
@@ -129,12 +127,11 @@ export const UpdateAttendance = ({
     }
   };
 
-  const userOptions: OptionType[] = allUsers.map((user) => ({
-    id: user.id,
-    name: user.name,
-    loginStatus: user.loginStatus ?? "",
-    projectName: user.projectName ?? "",
-  }));
+  const userOptions = allUsers.map((user) => ({
+  value: user.id,     
+  label: user.name,  
+}));
+
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
