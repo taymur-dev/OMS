@@ -62,7 +62,7 @@ export const AddCalendarSession = ({
         formattedData,
         {
           headers: {
-            Authorization: token,
+            Authorization: `Bearer: ${token}`,
           },
         }
       );
