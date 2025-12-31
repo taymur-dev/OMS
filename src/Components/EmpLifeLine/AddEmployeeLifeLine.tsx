@@ -25,6 +25,7 @@ type UserOption = {
   name: string;
   loginStatus: string;
   projectName: string;
+  role: string;
 };
 
 type LifeLine = {
@@ -91,7 +92,13 @@ export const AddEmployeeLifeLine = ({
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
         headers: { Authorization: token },
       });
-      setAllUsers(res.data.users);
+
+      const filteredUsers = res.data.users.filter(
+        (user: { role: string; loginStatus: string }) =>
+          user.role === "user" && user.loginStatus === "Y"
+      );
+
+      setAllUsers(filteredUsers);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(axiosError.response?.data.message);
@@ -104,7 +111,7 @@ export const AddEmployeeLifeLine = ({
       const res = await axios.post(
         `${BASE_URL}/api/admin/addEmpll`,
         addEmployee,
-        { headers: { Authorization: token } }
+        { headers: { Authorization: `Bearer: ${token}` } }
       );
 
       if (res.data?.newLifeLine) {
@@ -134,9 +141,13 @@ export const AddEmployeeLifeLine = ({
               labelName="Select Employee*"
               name="employee_id"
               handlerChange={handleEmployeeSelect}
-              optionData={allUsers}
+              optionData={allUsers.map((user) => ({
+                value: user.id.toString(),
+                label: user.name,
+              }))}
               value={addEmployee.employee_id}
             />
+
             <InputField
               labelName="Employee Email*"
               placeHolder="Enter the Employee Email"

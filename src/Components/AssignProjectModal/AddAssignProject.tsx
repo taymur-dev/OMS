@@ -15,6 +15,14 @@ import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 import { OptionField } from "../InputFields/OptionField";
 
+type UserOption = {
+  id: number;
+  name: string;
+  loginStatus: string;
+  projectName: string;
+  role: string;
+};
+
 type ProjectT = {
   id: number;
   projectName: string;
@@ -60,10 +68,20 @@ export const AddAssignProject = ({
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer: ${token}`,
         },
       });
-      setAllUsers(res?.data?.users);
+
+      const filteredUsers = res?.data?.users
+        .filter(
+          (user: UserOption) => user.role === "user" && user.loginStatus === "Y"
+        )
+        .map((user: UserOption) => ({
+          value: user.id,
+          label: user.name,
+        }));
+
+      setAllUsers(filteredUsers);
     } catch (error) {
       console.log(error);
     }
@@ -84,31 +102,31 @@ export const AddAssignProject = ({
   }, [token]);
 
   const handlerSubmitted = async (e: FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  try {
-    const payload = {
-      employee_id: addProject.userId, 
-      projectId: addProject.projectId,
-      date: new Date().toISOString(),
-    };
+    e.preventDefault();
+    try {
+      const payload = {
+        employee_id: addProject.userId,
+        projectId: addProject.projectId,
+        date: new Date().toISOString(),
+      };
 
-    const res = await axios.post(
-      `${BASE_URL}/api/admin/assignProject`,
-      payload,
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
+      const res = await axios.post(
+        `${BASE_URL}/api/admin/assignProject`,
+        payload,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
 
-    console.log(res.data);
-    handleGetAllAssignProjects();
-    setModal(); 
-  } catch (error) {
-    console.log(error);
-  }
-};
+      console.log(res.data);
+      handleGetAllAssignProjects();
+      setModal();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getAllUsers();

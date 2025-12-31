@@ -20,6 +20,7 @@ type UserT = {
   employeeName?: string;
   name?: string;
   loginStatus?: string;
+  role: string;
 };
 
 type ProjectT = {
@@ -154,7 +155,9 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
 
   const userOptions = isAdmin
     ? allUsers
-        .filter((u) => u.loginStatus === "Y" && u.id != null)
+        .filter(
+          (u) => u.role === "user" && u.loginStatus === "Y" && u.id != null
+        )
         .map((u) => ({
           id: Number(u.id),
           name: u.employeeName || u.name || "User",
@@ -162,6 +165,7 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
           label: u.employeeName || u.name || "User",
           loginStatus: u.loginStatus || "Y",
           projectName: "",
+          role: u.role,
         }))
     : [];
 

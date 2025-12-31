@@ -19,15 +19,17 @@ type UserT = {
   name?: string;
   employeeName?: string;
   loginStatus?: string;
+  role: string; 
 };
 
 type UserOption = {
   id: number;
   value: string;
   label: string;
-  name: string; // required
-  loginStatus: string; // required
-  projectName: string; // required
+  name: string; 
+  loginStatus: string; 
+  projectName: string;
+  role: string; 
 };
 
 const currentDate = new Date().toISOString().slice(0, 10);
@@ -109,15 +111,17 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
     }
   };
 
-  // Admin user options, fully typed with defaults
-  const userOptions: UserOption[] = allUsers.map((u) => ({
-    id: u.id,
-    value: String(u.id),
-    label: u.employeeName || u.name || "User",
-    name: u.employeeName || u.name || "User", // required string
-    loginStatus: u.loginStatus ?? "Y", // required string
-    projectName: "", // required string
-  }));
+  const userOptions: UserOption[] = allUsers
+    .filter((u) => u.role === "user" && u.loginStatus === "Y")
+    .map((u) => ({
+      id: u.id,
+      value: String(u.id),
+      label: u.employeeName || u.name || "User",
+      name: u.employeeName || u.name || "User",
+      loginStatus: u.loginStatus ?? "Y",
+      projectName: "", 
+      role: u.role, 
+    }));
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
