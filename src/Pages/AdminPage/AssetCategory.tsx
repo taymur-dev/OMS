@@ -40,25 +40,35 @@ export const AssetCategory = () => {
   const [selectedValue, setSelectedValue] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [categories, setCategories] = useState<AssetCategoryItem[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+    null
+  );
 
   const token = currentUser?.token;
 
-  const handleChangeShowData = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChangeShowData = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setSelectedValue(Number(event.target.value));
     setPageNo(1);
   };
 
-  const handleToggleViewModal = (modal: AssetCategoryT, categoryId: number | null = null) => {
+  const handleToggleViewModal = (
+    modal: AssetCategoryT,
+    categoryId: number | null = null
+  ) => {
     setSelectedCategoryId(categoryId);
     setIsOpenModal(modal);
   };
 
   const fetchCategories = useCallback(async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/api/admin/assetCategories`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        `${BASE_URL}/api/admin/assetCategories`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       const data: AssetCategoryItem[] = Array.isArray(response.data)
         ? response.data
@@ -76,9 +86,12 @@ export const AssetCategory = () => {
     if (!selectedCategoryId) return;
 
     try {
-      await axios.delete(`${BASE_URL}/api/admin/deleteAssetCategory/${selectedCategoryId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `${BASE_URL}/api/admin/deleteAssetCategory/${selectedCategoryId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       await fetchCategories();
       handleToggleViewModal("");
@@ -117,10 +130,15 @@ export const AssetCategory = () => {
 
   return (
     <div className="w-full mx-2">
-      <TableTitle tileName="Assets Category" activeFile="Assets Category list" />
+      <TableTitle
+        tileName="Assets Category"
+        activeFile="Assets Category list"
+      />
 
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white|
-       overflow-hidden flex flex-col">
+      <div
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white|
+       overflow-hidden flex flex-col"
+      >
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Assets Category:{" "}
@@ -149,12 +167,17 @@ export const AssetCategory = () => {
             <span>entries</span>
           </div>
 
-          <TableInputField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
 
         <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
-          <div className="grid grid-cols-3 bg-gray-200 font-semibold border border-gray-600
-           text-sm sticky top-0 z-10 p-[10px]">
+          <div
+            className="grid grid-cols-3 bg-gray-200 font-semibold border border-gray-600
+           text-sm sticky top-0 z-10 p-[10px]"
+          >
             <span>Sr#</span>
             <span>Category Name</span>
             <span className="text-center">Actions</span>
@@ -168,8 +191,12 @@ export const AssetCategory = () => {
               <span>{startIndex + index + 1}</span>
               <span>{cat.category_name}</span>
               <span className="flex gap-1 justify-center">
-                <EditButton handleUpdate={() => handleToggleViewModal("EDIT", cat.id)} />
-                <DeleteButton handleDelete={() => handleToggleViewModal("DELETE", cat.id)} />
+                <EditButton
+                  handleUpdate={() => handleToggleViewModal("EDIT", cat.id)}
+                />
+                <DeleteButton
+                  handleDelete={() => handleToggleViewModal("DELETE", cat.id)}
+                />
               </span>
             </div>
           ))}
@@ -184,7 +211,9 @@ export const AssetCategory = () => {
         />
         <Pagination
           pageNo={pageNo}
-          handleIncrementPageButton={() => setPageNo((p) => Math.min(p + 1, totalPages))}
+          handleIncrementPageButton={() =>
+            setPageNo((p) => Math.min(p + 1, totalPages))
+          }
           handleDecrementPageButton={() => setPageNo((p) => Math.max(1, p - 1))}
         />
       </div>
