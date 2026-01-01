@@ -29,7 +29,7 @@ type UserOption = {
   name: string; 
   loginStatus: string; 
   projectName: string;
-  role: string; 
+  role: string;
 };
 
 const today = new Date();

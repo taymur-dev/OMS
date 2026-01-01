@@ -8,6 +8,7 @@ import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { AddTodo } from "../../Components/TodoModals/AddTodo";
 import { UpdateTodo, TodoType } from "../../Components/TodoModals/UpdateTodo";
+import { ViewTodo } from "../../Components/TodoModals/ViewTodo";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
@@ -39,6 +40,7 @@ export const Todo = () => {
   const [pageNo, setPageNo] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [viewTodo, setViewTodo] = useState<ALLTODOT | null>(null);
 
   const handleIncrementPageButton = () => setPageNo((prev) => prev + 1);
   const handleDecrementPageButton = () =>
@@ -192,7 +194,6 @@ export const Todo = () => {
             </div>
           ) : (
             paginatedTodos.map((todo, index) => {
-              // Convert each date string to local YYYY-MM-DD
               const startDate = todo.startDate
                 ? new Date(todo.startDate).toLocaleDateString("en-CA")
                 : "-";
@@ -223,6 +224,12 @@ export const Todo = () => {
                     <EditButton
                       handleUpdate={() => handleClickEditButton(todo)}
                     />
+                    <button
+                      onClick={() => setViewTodo(todo)}
+                      className="text-blue-500 hover:underline"
+                    >
+                      View
+                    </button>
                     <DeleteButton
                       handleDelete={() => handleClickDeleteButton(todo.id)}
                     />
@@ -257,6 +264,14 @@ export const Todo = () => {
           onUpdate={handleUpdateTodo}
         />
       )}
+
+      {viewTodo && (
+        <ViewTodo
+          setIsOpenModal={() => setViewTodo(null)}
+          viewTodo={viewTodo}
+        />
+      )}
+
       {modalType === "Delete" && (
         <ConfirmationModal
           isOpen={() => toggleModal("Delete")}
