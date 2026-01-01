@@ -146,7 +146,7 @@ export const ConfigEmpSalary = () => {
             <span className="px-2 ">Sr#</span>
             <span>Employee Name</span>
             <span>Salary of Month</span>
-            <span>Empployee of the Month Allowance</span>
+            <span>House Rent</span>
             <span>Transport Allowance</span>
             <span>Medical Allowance</span>
             <span>Total Salary</span>
