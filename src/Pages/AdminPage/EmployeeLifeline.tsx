@@ -184,6 +184,7 @@ export const EmployeeLifeline = () => {
             <span className="text-left">Employee Name</span>
             <span className="text-left">Contact</span>
             <span className="text-left">Position</span>
+            <span className="text-left">Date</span>
             <span className="text-left">Actions</span>
           </div>
 
@@ -198,6 +199,7 @@ export const EmployeeLifeline = () => {
                 <span>{item.employeeName}</span>
                 <span>{item.contact}</span>
                 <span>{item.position}</span>
+                <span>{new Date(item.date).toLocaleDateString("en-CA")}</span>
 
                 <span className="flex items-center gap-1">
                   <ViewButton
