@@ -5,6 +5,7 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { AddTodo } from "../../Components/TodoModals/AddTodo";
 import { UpdateTodo, TodoType } from "../../Components/TodoModals/UpdateTodo";
@@ -224,12 +225,9 @@ export const Todo = () => {
                     <EditButton
                       handleUpdate={() => handleClickEditButton(todo)}
                     />
-                    <button
-                      onClick={() => setViewTodo(todo)}
-                      className="text-blue-500 hover:underline"
-                    >
-                      View
-                    </button>
+                    <ViewButton
+                      handleView={() => setViewTodo(todo)}
+                    ></ViewButton>
                     <DeleteButton
                       handleDelete={() => handleClickDeleteButton(todo.id)}
                     />
