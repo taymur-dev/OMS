@@ -24,7 +24,7 @@ type Salary = {
 
 type EditSalaryProps = {
   setModal: () => void;
-  onSuccess: () => void;
+  onSuccessEdit: () => void;
   editData: Salary;
 };
 
@@ -57,7 +57,7 @@ const initialState: SalaryState = {
 
 export const EditConfigEmpSalary = ({
   setModal,
-  onSuccess,
+  onSuccessEdit,
   editData,
 }: EditSalaryProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
@@ -158,7 +158,7 @@ export const EditConfigEmpSalary = ({
         }
       );
 
-      onSuccess();
+      onSuccessEdit();
       setModal();
     } catch (error) {
       console.error("Salary update failed:", error);

@@ -213,7 +213,7 @@ export const ConfigEmpSalary = () => {
       {isOpenModal === "EDIT" && selectedSalary && (
         <EditConfigEmpSalary
           setModal={() => handleToggleViewModal("")}
-          onSuccess={fetchSalaries}
+          onSuccessEdit={fetchSalaries}
           editData={selectedSalary}
         />
       )}
