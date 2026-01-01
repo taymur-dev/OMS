@@ -12,7 +12,9 @@ type AddAttendanceProps = {
   setModal: () => void;
   handleGetAllHodidays: () => void;
 };
-const currentDate = new Date().toISOString().split("T")[0];
+
+const currentDate = new Date().toLocaleDateString("en-CA");
+
 
 const initialState = {
   date: currentDate,

@@ -184,7 +184,7 @@ export const Holidays = () => {
             >
               <span>{(pageNo - 1) * selectedValue + index + 1}</span>
 
-              <span>{holi.date.split("T")[0]}</span>
+              <span>{new Date(holi.date).toLocaleDateString("en-CA")}</span>
 
               <span>{holi.holiday}</span>
               <span className="flex items-center gap-1">
