@@ -198,8 +198,7 @@ export const Progress = () => {
                 <span>{item.employeeName}</span>
               )}
               <span>{item.projectName}</span>
-              <span>{item.date.slice(0, 10)}</span>
-
+              <span>{new Date(item.date).toLocaleDateString("en-CA")}</span>
               <span className="flex justify-center gap-1">
                 <EditButton handleUpdate={() => handleEdit(item)} />
 

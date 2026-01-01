@@ -30,6 +30,9 @@ type ProjectT = {
   projectCategory?: string;
 };
 
+const today = new Date();
+const currentDate = today.toLocaleDateString("en-CA");
+
 type AddProgressType = {
   employee_id: string;
   projectId: string;
@@ -40,7 +43,7 @@ type AddProgressType = {
 const initialState: AddProgressType = {
   employee_id: "",
   projectId: "",
-  date: "",
+  date: currentDate,
   note: "",
 };
 
