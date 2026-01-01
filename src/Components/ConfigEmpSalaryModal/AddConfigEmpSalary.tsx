@@ -132,75 +132,77 @@ export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[39rem] bg-white mx-auto rounded-xl border border-indigo-500 overflow-auto">
-        <form onSubmit={handlerSubmitted}>
-          <Title setModal={setModal}>Add Salary</Title>
+    <div>
+      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
+        <div className="w-[42rem] max-h-[39rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
+          <form onSubmit={handlerSubmitted}>
+            <Title setModal={() => setModal()}>Update Salary</Title>
 
-          <div className="mx-2 flex flex-wrap gap-3">
-            <UserSelect
-              labelName="Employee Name*"
-              name="employee_name"
-              value={addConfigEmployee.employee_name}
-              handlerChange={handlerChange}
-              optionData={allUsers}
-            />
+            <div className="mx-2 flex flex-col gap-3">
+              <UserSelect
+                labelName="Employee Name*"
+                name="employee_name"
+                value={addConfigEmployee.employee_name}
+                handlerChange={handlerChange}
+                optionData={allUsers}
+              />
 
-            <InputField
-              labelName="Salary Amount*"
-              name="salary_amount"
-              type="number"
-              handlerChange={handlerChange}
-              value={addConfigEmployee.salary_amount}
-            />
+              <InputField
+                labelName="Salary Amount*"
+                name="salary_amount"
+                type="number"
+                handlerChange={handlerChange}
+                value={addConfigEmployee.salary_amount}
+              />
 
-            <InputField
-              labelName="Employee Month Allowance*"
-              name="emp_of_mon_allowance"
-              type="number"
-              handlerChange={handlerChange}
-              value={addConfigEmployee.emp_of_mon_allowance}
-            />
+              <InputField
+                labelName="Employee Month Allowance*"
+                name="emp_of_mon_allowance"
+                type="number"
+                handlerChange={handlerChange}
+                value={addConfigEmployee.emp_of_mon_allowance}
+              />
 
-            <InputField
-              labelName="Transport Allowance*"
-              name="transport_allowance"
-              type="number"
-              handlerChange={handlerChange}
-              value={addConfigEmployee.transport_allowance}
-            />
+              <InputField
+                labelName="Transport Allowance*"
+                name="transport_allowance"
+                type="number"
+                handlerChange={handlerChange}
+                value={addConfigEmployee.transport_allowance}
+              />
 
-            <InputField
-              labelName="Medical Allowance*"
-              name="medical_allowance"
-              type="number"
-              handlerChange={handlerChange}
-              value={addConfigEmployee.medical_allowance}
-            />
+              <InputField
+                labelName="Medical Allowance*"
+                name="medical_allowance"
+                type="number"
+                handlerChange={handlerChange}
+                value={addConfigEmployee.medical_allowance}
+              />
 
-            <InputField
-              labelName="Total Salary"
-              name="total_salary"
-              type="number"
-              value={addConfigEmployee.total_salary}
-              handlerChange={() => {}}
-              disabled
-            />
+              <InputField
+                labelName="Total Salary"
+                name="total_salary"
+                type="number"
+                value={addConfigEmployee.total_salary}
+                handlerChange={() => {}}
+                disabled
+              />
 
-            <InputField
-              labelName="Date*"
-              name="config_date"
-              type="date"
-              handlerChange={handlerChange}
-              value={addConfigEmployee.config_date}
-            />
-          </div>
+              <InputField
+                labelName="Date*"
+                name="config_date"
+                type="date"
+                handlerChange={handlerChange}
+                value={addConfigEmployee.config_date}
+              />
+            </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
-            <CancelBtn setModal={setModal} />
-            <AddButton label={"Save Salary"} />
-          </div>
-        </form>
+            <div className="flex items-center justify-center m-2 gap-2 text-xs">
+              <CancelBtn setModal={setModal} />
+              <AddButton label={"Save Salary"} />
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -22,12 +22,11 @@ type AddAttendanceProps = {
 const initialState = {
   employee_name: "",
   employeeSalary: "",
-  overtimeAllowance: "",
-  projectAllowance: "",
   empMonthAllowance: "",
   medicalAllowance: "",
+  transportAllowance: "",
+  total_salary: "",
   date: "",
-  withEffectDate: "",
 };
 export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
@@ -68,12 +67,11 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
       const payload = {
         employeeName: addConfigEmployee.employee_name,
         employeeSalary: addConfigEmployee.employeeSalary,
-        overtimeAllowance: addConfigEmployee.overtimeAllowance,
-        projectAllowance: addConfigEmployee.projectAllowance,
         empMonthAllowance: addConfigEmployee.empMonthAllowance,
         medicalAllowance: addConfigEmployee.medicalAllowance,
+        transportAllowance: addConfigEmployee.medicalAllowance,
+        total_salary: Number(addConfigEmployee.total_salary),
         date: addConfigEmployee.date,
-        withEffectDate: addConfigEmployee.withEffectDate,
       };
 
       const res = await axios.put(
@@ -128,27 +126,19 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
               />
 
               <InputField
-                labelName="Over Time Allowance*"
-                name="overtimeAllowance"
-                type="number"
-                handlerChange={handlerChange}
-                value={addConfigEmployee.overtimeAllowance}
-              />
-
-              <InputField
-                labelName="Project Allowance*"
-                name="projectAllowance"
-                type="number"
-                handlerChange={handlerChange}
-                value={addConfigEmployee.projectAllowance}
-              />
-
-              <InputField
                 labelName="Employee Month Allowance*"
                 name="empMonthAllowance"
                 type="number"
                 handlerChange={handlerChange}
                 value={addConfigEmployee.empMonthAllowance}
+              />
+
+              <InputField
+                labelName="Transport Allowance*"
+                name="transportAllowance"
+                type="number"
+                handlerChange={handlerChange}
+                value={addConfigEmployee.medicalAllowance}
               />
 
               <InputField
@@ -160,19 +150,20 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
               />
 
               <InputField
+                labelName="Total Salary"
+                name="total_salary"
+                type="number"
+                value={addConfigEmployee.total_salary}
+                handlerChange={() => {}}
+                disabled
+              />
+
+              <InputField
                 labelName="Date*"
                 name="date"
                 type="date"
                 handlerChange={handlerChange}
                 value={addConfigEmployee.date}
-              />
-
-              <InputField
-                labelName="With Effect From Date*"
-                name="withEffectDate"
-                type="number"
-                handlerChange={handlerChange}
-                value={addConfigEmployee.withEffectDate}
               />
             </div>
 
