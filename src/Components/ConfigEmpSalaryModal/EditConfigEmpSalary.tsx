@@ -36,7 +36,7 @@ type ApiUser = {
 };
 
 type SalaryState = {
-  employee_name: string;
+  employee_id: string; // store ID as string
   salary_amount: string;
   emp_of_mon_allowance: string;
   transport_allowance: string;
@@ -46,12 +46,12 @@ type SalaryState = {
 };
 
 const initialState: SalaryState = {
-  employee_name: "",
-  salary_amount: "",
-  emp_of_mon_allowance: "",
-  transport_allowance: "",
-  medical_allowance: "",
-  total_salary: "",
+  employee_id: "",
+  salary_amount: "0",
+  emp_of_mon_allowance: "0",
+  transport_allowance: "0",
+  medical_allowance: "0",
+  total_salary: "0",
   config_date: "",
 };
 
@@ -71,33 +71,13 @@ export const EditConfigEmpSalary = ({
   useEffect(() => {
     if (editData) {
       setEditConfigEmployee({
-        employee_name: editData.employee_id?.toString() || "",
-        salary_amount:
-          editData.salary_amount !== undefined && editData.salary_amount !== null
-            ? editData.salary_amount.toString()
-            : "",
-        emp_of_mon_allowance:
-          editData.emp_of_mon_allowance !== undefined &&
-          editData.emp_of_mon_allowance !== null
-            ? editData.emp_of_mon_allowance.toString()
-            : "",
-        transport_allowance:
-          editData.transport_allowance !== undefined &&
-          editData.transport_allowance !== null
-            ? editData.transport_allowance.toString()
-            : "",
-        medical_allowance:
-          editData.medical_allowance !== undefined &&
-          editData.medical_allowance !== null
-            ? editData.medical_allowance.toString()
-            : "",
-        total_salary:
-          editData.total_salary !== undefined && editData.total_salary !== null
-            ? editData.total_salary.toString()
-            : "",
-        config_date: editData.config_date
-          ? editData.config_date.split("T")[0]
-          : "",
+        employee_id: editData.employee_id.toString(),
+        salary_amount: editData.salary_amount?.toString() || "0",
+        emp_of_mon_allowance: editData.emp_of_mon_allowance?.toString() || "0",
+        transport_allowance: editData.transport_allowance?.toString() || "0",
+        medical_allowance: editData.medical_allowance?.toString() || "0",
+        total_salary: editData.total_salary?.toString() || "0",
+        config_date: editData.config_date?.split("T")[0] || "",
       });
     }
   }, [editData]);
@@ -112,17 +92,13 @@ export const EditConfigEmpSalary = ({
 
   // Automatically recalculate total salary
   useEffect(() => {
-    const baseSalary = Number(editConfigEmployee.salary_amount) || 0;
-    const monthAllowance = Number(editConfigEmployee.emp_of_mon_allowance) || 0;
-    const transportAllowance = Number(editConfigEmployee.transport_allowance) || 0;
-    const medicalAllowance = Number(editConfigEmployee.medical_allowance) || 0;
+    const total =
+      Number(editConfigEmployee.salary_amount || 0) +
+      Number(editConfigEmployee.emp_of_mon_allowance || 0) +
+      Number(editConfigEmployee.transport_allowance || 0) +
+      Number(editConfigEmployee.medical_allowance || 0);
 
-    const total = baseSalary + monthAllowance + transportAllowance + medicalAllowance;
-
-    setEditConfigEmployee((prev) => ({
-      ...prev,
-      total_salary: total.toString(),
-    }));
+    setEditConfigEmployee((prev) => ({ ...prev, total_salary: total.toString() }));
   }, [
     editConfigEmployee.salary_amount,
     editConfigEmployee.emp_of_mon_allowance,
@@ -163,7 +139,7 @@ export const EditConfigEmpSalary = ({
 
     try {
       const payload = {
-        employee_id: Number(editConfigEmployee.employee_name),
+        employee_id: Number(editConfigEmployee.employee_id),
         salary_amount: Number(editConfigEmployee.salary_amount),
         emp_of_mon_allowance: Number(editConfigEmployee.emp_of_mon_allowance),
         transport_allowance: Number(editConfigEmployee.transport_allowance),
@@ -188,78 +164,76 @@ export const EditConfigEmpSalary = ({
   };
 
   return (
-    <div>
-      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[39rem] bg-white mx-auto rounded-xl border border-indigo-500">
-          <form onSubmit={handlerSubmitted}>
-            <Title setModal={setModal}>Update Salary</Title>
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+      <div className="w-[42rem] max-h-[39rem] bg-white mx-auto rounded-xl border border-indigo-500 overflow-y-auto">
+        <form onSubmit={handlerSubmitted}>
+          <Title setModal={setModal}>Update Salary</Title>
 
-            <div className="mx-2 flex flex-col gap-3">
-              <UserSelect
-                labelName="Employee Name*"
-                name="employee_name"
-                value={editConfigEmployee.employee_name}
-                handlerChange={handlerChange}
-                optionData={allUsers}
-                disabled
-              />
+          <div className="mx-2 flex flex-col gap-3">
+            <UserSelect
+              labelName="Employee Name*"
+              name="employee_id"
+              value={editConfigEmployee.employee_id}
+              handlerChange={handlerChange}
+              optionData={allUsers}
+              disabled
+            />
 
-              <InputField
-                labelName="Salary Amount*"
-                name="salary_amount"
-                type="number"
-                handlerChange={handlerChange}
-                value={editConfigEmployee.salary_amount}
-              />
+            <InputField
+              labelName="Salary Amount*"
+              name="salary_amount"
+              type="number"
+              handlerChange={handlerChange}
+              value={editConfigEmployee.salary_amount}
+            />
 
-              <InputField
-                labelName="Employee Month Allowance*"
-                name="emp_of_mon_allowance"
-                type="number"
-                handlerChange={handlerChange}
-                value={editConfigEmployee.emp_of_mon_allowance}
-              />
+            <InputField
+              labelName="Employee Month Allowance*"
+              name="emp_of_mon_allowance"
+              type="number"
+              handlerChange={handlerChange}
+              value={editConfigEmployee.emp_of_mon_allowance}
+            />
 
-              <InputField
-                labelName="Transport Allowance*"
-                name="transport_allowance"
-                type="number"
-                handlerChange={handlerChange}
-                value={editConfigEmployee.transport_allowance}
-              />
+            <InputField
+              labelName="Transport Allowance*"
+              name="transport_allowance"
+              type="number"
+              handlerChange={handlerChange}
+              value={editConfigEmployee.transport_allowance}
+            />
 
-              <InputField
-                labelName="Medical Allowance*"
-                name="medical_allowance"
-                type="number"
-                handlerChange={handlerChange}
-                value={editConfigEmployee.medical_allowance}
-              />
+            <InputField
+              labelName="Medical Allowance*"
+              name="medical_allowance"
+              type="number"
+              handlerChange={handlerChange}
+              value={editConfigEmployee.medical_allowance}
+            />
 
-              <InputField
-                labelName="Total Salary"
-                name="total_salary"
-                type="number"
-                value={editConfigEmployee.total_salary}
-                handlerChange={() => {}}
-                disabled
-              />
+            <InputField
+              labelName="Total Salary"
+              name="total_salary"
+              type="number"
+              value={editConfigEmployee.total_salary}
+              handlerChange={() => {}}
+              disabled
+            />
 
-              <InputField
-                labelName="Date*"
-                name="config_date"
-                type="date"
-                handlerChange={handlerChange}
-                value={editConfigEmployee.config_date}
-              />
-            </div>
+            <InputField
+              labelName="Date*"
+              name="config_date"
+              type="date"
+              handlerChange={handlerChange}
+              value={editConfigEmployee.config_date}
+            />
+          </div>
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs">
-              <CancelBtn setModal={setModal} />
-              <AddButton label="Update Salary" />
-            </div>
-          </form>
-        </div>
+          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Update Salary" />
+          </div>
+        </form>
       </div>
     </div>
   );
