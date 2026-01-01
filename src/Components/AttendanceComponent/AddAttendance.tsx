@@ -14,8 +14,18 @@ type AddAttendanceProps = {
   setModal: () => void;
   handleGetALLattendance: () => void;
 };
-const currentDate = new Date().toLocaleDateString("sv-SE");
 
+type User = {
+  id: number;
+  name: string;
+  email: string;
+  value: string;
+  label:string;
+  loginStatus: "Y" | "N";
+};
+
+
+const currentDate = new Date().toLocaleDateString("sv-SE");
 
 const reasonLeaveOption = [
   {
@@ -49,7 +59,7 @@ export const AddAttendance = ({
 
   const [addUserAttendance, setAddUserAttendance] = useState(initialState);
 
-  const [allUsers, setAllUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -73,7 +83,12 @@ export const AddAttendance = ({
           Authorization: `Bearer ${token}`,
         },
       });
-      setAllUsers(res?.data?.users);
+
+      const activeUsers = res?.data?.users?.filter(
+        (user: User) => user.loginStatus === "Y"
+      );
+
+      setAllUsers(activeUsers);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(axiosError?.response?.data?.message);
