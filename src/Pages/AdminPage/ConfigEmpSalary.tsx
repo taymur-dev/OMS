@@ -162,9 +162,10 @@ export const ConfigEmpSalary = () => {
               <span>{idx + 1}</span>
               <span>{salary.employee_name}</span>
               <span>{salary.salary_amount}</span>
-              <span>{Number(salary.emp_of_mon_allowance)}</span>
-              <span>{Number(salary.transport_allowance)}</span>
-              <span>{Number(salary.medical_allowance)}</span>
+              <span>{Number(salary.emp_of_mon_allowance) || 0}</span>
+              <span>{Number(salary.transport_allowance) || 0}</span>
+              <span>{Number(salary.medical_allowance) || 0}</span>
+
               <span>{salary.total_salary}</span>
               <span>
                 {new Date(salary.config_date).toLocaleDateString("en-CA")}
