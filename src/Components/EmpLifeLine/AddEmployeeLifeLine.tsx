@@ -9,7 +9,7 @@ import { useAppSelector } from "../../redux/Hooks";
 import { toast } from "react-toastify";
 import { UserSelect } from "../InputFields/UserSelect";
 
-const currentDate = new Date().toISOString().split("T")[0];
+const currentDate = new Date().toLocaleDateString("en-CA");
 
 type Employee = {
   employee_id: string;
