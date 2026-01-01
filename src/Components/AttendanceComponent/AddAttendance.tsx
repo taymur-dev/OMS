@@ -20,10 +20,9 @@ type User = {
   name: string;
   email: string;
   value: string;
-  label:string;
+  label: string;
   loginStatus: "Y" | "N";
 };
-
 
 const currentDate = new Date().toLocaleDateString("sv-SE");
 
@@ -84,9 +83,13 @@ export const AddAttendance = ({
         },
       });
 
-      const activeUsers = res?.data?.users?.filter(
-        (user: User) => user.loginStatus === "Y"
-      );
+      const activeUsers = res.data.users
+        .filter((user: User) => user.loginStatus === "Y")
+        .map((user: User) => ({
+          ...user,
+          value: user.id,
+          label: user.name,
+        }));
 
       setAllUsers(activeUsers);
     } catch (error) {
