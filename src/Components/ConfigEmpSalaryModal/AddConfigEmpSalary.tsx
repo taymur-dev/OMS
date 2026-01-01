@@ -38,9 +38,9 @@ const initialState: SalaryState = {
   employee_id: "",
   employee_name: "",
   salary_amount: "",
-  emp_of_mon_allowance: "0",
-  transport_allowance: "0",
-  medical_allowance: "0",
+  emp_of_mon_allowance: "",
+  transport_allowance: "",
+  medical_allowance: "",
   total_salary: "0",
   config_date: "",
 };
@@ -57,7 +57,6 @@ export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
     setAddConfigEmployee((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Calculate total salary dynamically
   useEffect(() => {
     const total =
       Number(addConfigEmployee.salary_amount || 0) +
@@ -99,11 +98,11 @@ export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
     try {
       const payload = {
         employee_id: Number(addConfigEmployee.employee_id),
-        salary_amount: Number(addConfigEmployee.salary_amount || 0),
-        emp_of_mon_allowance: Number(addConfigEmployee.emp_of_mon_allowance || 0),
-        transport_allowance: Number(addConfigEmployee.transport_allowance || 0),
-        medical_allowance: Number(addConfigEmployee.medical_allowance || 0),
-        total_salary: Number(addConfigEmployee.total_salary || 0),
+        salary_amount: Number(addConfigEmployee.salary_amount ),
+        emp_of_mon_allowance: Number(addConfigEmployee.emp_of_mon_allowance ),
+        transport_allowance: Number(addConfigEmployee.transport_allowance ),
+        medical_allowance: Number(addConfigEmployee.medical_allowance ),
+        total_salary: Number(addConfigEmployee.total_salary),
         config_date: addConfigEmployee.config_date,
       };
 
