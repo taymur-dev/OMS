@@ -28,8 +28,12 @@ type CONFIGT = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
 interface Salary {
   id: number;
+  employee_id: number;
   employee_name: string;
   salary_amount: number;
+  emp_of_mon_allowance: number;
+  transport_allowance: number;
+  medical_allowance: number;
   total_salary: number;
   config_date: string;
 }
@@ -43,16 +47,16 @@ export const ConfigEmpSalary = () => {
   const [isOpenModal, setIsOpenModal] = useState<CONFIGT>("");
   const [pageNo, setPageNo] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedSalaryId, setSelectedSalaryId] = useState<number | null>(null);
 
   const [salaries, setSalaries] = useState<Salary[]>([]);
   const [totalRecords, setTotalRecords] = useState(0);
 
-  
+  const [selectedSalary, setSelectedSalary] = useState<Salary | null>(null);
 
   const handleIncrementPageButton = () => setPageNo((prev) => prev + 1);
   const handleDecrementPageButton = () =>
     setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+
   const handleToggleViewModal = (active: CONFIGT) =>
     setIsOpenModal((prev) => (prev === active ? "" : active));
 
@@ -70,13 +74,15 @@ export const ConfigEmpSalary = () => {
   }, [pageNo, searchTerm]);
 
   const handleDeleteSalary = async () => {
-    if (!selectedSalaryId) return;
+    if (!selectedSalary) return;
 
     try {
       await axios.patch(
-        `${BASE_URL}/api/admin/deletesalaries/${selectedSalaryId}`
+        `${BASE_URL}/api/admin/deletesalaries/${selectedSalary.id}`
       );
-      setSalaries((prev) => prev.filter((s) => s.id !== selectedSalaryId));
+      setSalaries((prev) =>
+        prev.filter((s) => s.id !== selectedSalary.id)
+      );
       setTotalRecords((prev) => prev - 1);
       handleToggleViewModal("");
     } catch (error) {
@@ -156,22 +162,26 @@ export const ConfigEmpSalary = () => {
               <span>{salary.employee_name}</span>
               <span>{salary.salary_amount}</span>
               <span>{salary.total_salary}</span>
-              <span>{new Date(salary.config_date).toLocaleDateString("en-CA")}</span>
-
+              <span>
+                {new Date(salary.config_date).toLocaleDateString("en-CA")}
+              </span>
 
               <span className="flex items-center gap-1">
                 <EditButton
-                  handleUpdate={() => handleToggleViewModal("EDIT")}
+                  handleUpdate={() => {
+                    setSelectedSalary(salary);
+                    handleToggleViewModal("EDIT");
+                  }}
                 />
                 <ViewButton
                   handleView={() => {
-                    setSelectedSalaryId(salary.id);
+                    setSelectedSalary(salary);
                     handleToggleViewModal("VIEW");
                   }}
                 />
                 <DeleteButton
                   handleDelete={() => {
-                    setSelectedSalaryId(salary.id);
+                    setSelectedSalary(salary);
                     handleToggleViewModal("DELETE");
                   }}
                 />
@@ -200,17 +210,21 @@ export const ConfigEmpSalary = () => {
           onSuccess={fetchSalaries}
         />
       )}
-      {isOpenModal === "EDIT" && (
-        <EditConfigEmpSalary setModal={() => handleToggleViewModal("")} />
+      {isOpenModal === "EDIT" && selectedSalary && (
+        <EditConfigEmpSalary
+          setModal={() => handleToggleViewModal("")}
+          onSuccess={fetchSalaries}
+          editData={selectedSalary}
+        />
       )}
-      {isOpenModal === "VIEW" && selectedSalaryId && (
+      {isOpenModal === "VIEW" && selectedSalary && (
         <ViewConfigEmpSalary
           setModal={() => handleToggleViewModal("")}
-          salaryId={selectedSalaryId}
+          salaryId={selectedSalary.id}
         />
       )}
 
-      {isOpenModal === "DELETE" && (
+      {isOpenModal === "DELETE" && selectedSalary && (
         <ConfirmationModal
           isOpen={() => handleToggleViewModal("DELETE")}
           onClose={() => handleToggleViewModal("")}
