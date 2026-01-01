@@ -20,7 +20,7 @@ type AddAttendanceProps = {
 };
 
 const initialState = {
-  employeeName: "",
+  employee_name: "",
   employeeSalary: "",
   overtimeAllowance: "",
   projectAllowance: "",
@@ -66,7 +66,7 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
 
     try {
       const payload = {
-        employeeName: addConfigEmployee.employeeName,
+        employeeName: addConfigEmployee.employee_name,
         employeeSalary: addConfigEmployee.employeeSalary,
         overtimeAllowance: addConfigEmployee.overtimeAllowance,
         projectAllowance: addConfigEmployee.projectAllowance,
@@ -114,7 +114,7 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
               <UserSelect
                 labelName="Employee Name*"
                 name="employeeName"
-                value={addConfigEmployee.employeeName}
+                value={addConfigEmployee.employee_name}
                 handlerChange={handlerChange}
                 optionData={allUsers}
               />

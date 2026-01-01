@@ -24,7 +24,7 @@ type ApiUser = {
 };
 
 type SalaryState = {
-  employee_id: string;
+  employee_name: string;
   salary_amount: string;
   emp_of_mon_allowance: string;
   transport_allowance: string;
@@ -34,7 +34,7 @@ type SalaryState = {
 };
 
 const initialState: SalaryState = {
-  employee_id: "",
+  employee_name: "",
   salary_amount: "",
   emp_of_mon_allowance: "",
   transport_allowance: "",
@@ -111,7 +111,7 @@ export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
 
     try {
       const payload = {
-        employee_id: addConfigEmployee.employee_id,
+        employee_id: addConfigEmployee.employee_name,
         salary_amount: Number(addConfigEmployee.salary_amount),
         emp_of_mon_allowance: Number(addConfigEmployee.emp_of_mon_allowance),
         transport_allowance: Number(addConfigEmployee.transport_allowance),
@@ -140,8 +140,8 @@ export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
           <div className="mx-2 flex flex-wrap gap-3">
             <UserSelect
               labelName="Employee Name*"
-              name="employee_id"
-              value={addConfigEmployee.employee_id}
+              name="employee_name"
+              value={addConfigEmployee.employee_name}
               handlerChange={handlerChange}
               optionData={allUsers}
             />

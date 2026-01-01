@@ -28,7 +28,7 @@ type CONFIGT = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
 interface Salary {
   id: number;
-  employee_id: string;
+  employee_name: string;
   salary_amount: number;
   total_salary: number;
   config_date: string;
@@ -151,7 +151,7 @@ export const ConfigEmpSalary = () => {
                duration-200 text-sm items-center justify-center p-[7px]"
             >
               <span>{idx + 1}</span>
-              <span>{salary.employee_id}</span>
+              <span>{salary.employee_name}</span>
               <span>{salary.salary_amount}</span>
               <span>{salary.total_salary}</span>
               <span>{salary.config_date}</span>
