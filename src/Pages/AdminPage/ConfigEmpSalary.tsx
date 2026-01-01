@@ -12,8 +12,8 @@ import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 
 import { AddConfigEmpSalary } from "../../Components/ConfigEmpSalaryModal/AddConfigEmpSalary";
-import { EditConfigEmpSalary } from "../../Components/ConfigEmpSalaryModal/EditConfigEmpSalary";
-import { ViewConfigEmpSalary } from "../../Components/ConfigEmpSalaryModal/ViewConfigEmpSalary";
+// import { EditConfigEmpSalary } from "../../Components/ConfigEmpSalaryModal/EditConfigEmpSalary";
+// import { ViewConfigEmpSalary } from "../../Components/ConfigEmpSalaryModal/ViewConfigEmpSalary";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
@@ -215,7 +215,7 @@ export const ConfigEmpSalary = () => {
           onSuccess={fetchSalaries}
         />
       )}
-      {isOpenModal === "EDIT" && selectedSalary && (
+      {/* {isOpenModal === "EDIT" && selectedSalary && (
         <EditConfigEmpSalary
           setModal={() => handleToggleViewModal("")}
           onSuccessEdit={fetchSalaries}
@@ -227,7 +227,7 @@ export const ConfigEmpSalary = () => {
           setModal={() => handleToggleViewModal("")}
           salaryId={selectedSalary.id}
         />
-      )}
+      )} */}
 
       {isOpenModal === "DELETE" && selectedSalary && (
         <ConfirmationModal
