@@ -24,7 +24,7 @@ type ApiUser = {
 };
 
 type SalaryState = {
-  employeeId: string;
+  employee_id: string;
   salary_amount: string;
   emp_of_mon_allowance: string;
   transport_allowance: string;
@@ -34,7 +34,7 @@ type SalaryState = {
 };
 
 const initialState: SalaryState = {
-  employeeId: "",
+  employee_id: "",
   salary_amount: "",
   emp_of_mon_allowance: "",
   transport_allowance: "",
@@ -111,7 +111,7 @@ export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
 
     try {
       const payload = {
-        employee_id: addConfigEmployee.employeeId,
+        employee_id: addConfigEmployee.employee_id,
         salary_amount: Number(addConfigEmployee.salary_amount),
         emp_of_mon_allowance: Number(addConfigEmployee.emp_of_mon_allowance),
         transport_allowance: Number(addConfigEmployee.transport_allowance),
@@ -123,7 +123,6 @@ export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
       await axios.post(`${BASE_URL}/api/admin/addsalaries`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
 
       onSuccess();
       setModal();
@@ -141,8 +140,8 @@ export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
           <div className="mx-2 flex flex-wrap gap-3">
             <UserSelect
               labelName="Employee Name*"
-              name="employeeId"
-              value={addConfigEmployee.employeeId}
+              name="employee_id"
+              value={addConfigEmployee.employee_id}
               handlerChange={handlerChange}
               optionData={allUsers}
             />
