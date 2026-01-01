@@ -89,7 +89,6 @@ export const EditConfigEmpSalary = ({
     setEditConfigEmployee((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 🔹 Auto calculate total salary
   useEffect(() => {
     const baseSalary = Number(editConfigEmployee.salary_amount) || 0;
     const monthAllowance = Number(editConfigEmployee.emp_of_mon_allowance) || 0;
@@ -152,7 +151,7 @@ export const EditConfigEmpSalary = ({
       };
 
       await axios.put(
-        `${BASE_URL}/api/admin/updatesalary/${editData.id}`,
+        `${BASE_URL}/api/admin/updatesalaries/${editData.id}`,
         payload,
         {
           headers: { Authorization: `Bearer ${token}` },
