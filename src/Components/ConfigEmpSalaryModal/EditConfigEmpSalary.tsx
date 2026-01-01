@@ -65,23 +65,44 @@ export const EditConfigEmpSalary = ({
 
   const [editConfigEmployee, setEditConfigEmployee] =
     useState<SalaryState>(initialState);
-
   const [allUsers, setAllUsers] = useState<SelectOption[]>([]);
 
+  // Prefill modal with existing data
   useEffect(() => {
     if (editData) {
       setEditConfigEmployee({
         employee_name: editData.employee_id?.toString() || "",
-        salary_amount: editData.salary_amount?.toString() || "",
-        emp_of_mon_allowance: editData.emp_of_mon_allowance?.toString() ?? "0",
-        transport_allowance: editData.transport_allowance?.toString() ?? "0",
-        medical_allowance: editData.medical_allowance?.toString() ?? "0",
-        total_salary: editData.total_salary?.toString() || "",
-        config_date: editData.config_date?.split("T")[0] || "",
+        salary_amount:
+          editData.salary_amount !== undefined && editData.salary_amount !== null
+            ? editData.salary_amount.toString()
+            : "",
+        emp_of_mon_allowance:
+          editData.emp_of_mon_allowance !== undefined &&
+          editData.emp_of_mon_allowance !== null
+            ? editData.emp_of_mon_allowance.toString()
+            : "",
+        transport_allowance:
+          editData.transport_allowance !== undefined &&
+          editData.transport_allowance !== null
+            ? editData.transport_allowance.toString()
+            : "",
+        medical_allowance:
+          editData.medical_allowance !== undefined &&
+          editData.medical_allowance !== null
+            ? editData.medical_allowance.toString()
+            : "",
+        total_salary:
+          editData.total_salary !== undefined && editData.total_salary !== null
+            ? editData.total_salary.toString()
+            : "",
+        config_date: editData.config_date
+          ? editData.config_date.split("T")[0]
+          : "",
       });
     }
   }, [editData]);
 
+  // Handle input changes
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -89,15 +110,14 @@ export const EditConfigEmpSalary = ({
     setEditConfigEmployee((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Automatically recalculate total salary
   useEffect(() => {
     const baseSalary = Number(editConfigEmployee.salary_amount) || 0;
     const monthAllowance = Number(editConfigEmployee.emp_of_mon_allowance) || 0;
-    const transportAllowance =
-      Number(editConfigEmployee.transport_allowance) || 0;
+    const transportAllowance = Number(editConfigEmployee.transport_allowance) || 0;
     const medicalAllowance = Number(editConfigEmployee.medical_allowance) || 0;
 
-    const total =
-      baseSalary + monthAllowance + transportAllowance + medicalAllowance;
+    const total = baseSalary + monthAllowance + transportAllowance + medicalAllowance;
 
     setEditConfigEmployee((prev) => ({
       ...prev,
@@ -110,6 +130,7 @@ export const EditConfigEmpSalary = ({
     editConfigEmployee.medical_allowance,
   ]);
 
+  // Fetch all users for dropdown
   const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get<{ users: ApiUser[] }>(
@@ -136,6 +157,7 @@ export const EditConfigEmpSalary = ({
     getAllUsers();
   }, [getAllUsers]);
 
+  // Submit updated salary
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
 
