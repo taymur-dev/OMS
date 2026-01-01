@@ -73,9 +73,9 @@ export const EditConfigEmpSalary = ({
       setEditConfigEmployee({
         employee_name: editData.employee_id?.toString() || "",
         salary_amount: editData.salary_amount?.toString() || "",
-        emp_of_mon_allowance: editData.emp_of_mon_allowance?.toString() || "",
-        transport_allowance: editData.transport_allowance?.toString() || "",
-        medical_allowance: editData.medical_allowance?.toString() || "",
+        emp_of_mon_allowance: editData.emp_of_mon_allowance?.toString() ?? "0",
+        transport_allowance: editData.transport_allowance?.toString() ?? "0",
+        medical_allowance: editData.medical_allowance?.toString() ?? "0",
         total_salary: editData.total_salary?.toString() || "",
         config_date: editData.config_date?.split("T")[0] || "",
       });
