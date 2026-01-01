@@ -111,7 +111,7 @@ export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
 
     try {
       const payload = {
-        employee_id: addConfigEmployee.employee_name,
+        employee_id: Number(addConfigEmployee.employee_name),
         salary_amount: Number(addConfigEmployee.salary_amount),
         emp_of_mon_allowance: Number(addConfigEmployee.emp_of_mon_allowance),
         transport_allowance: Number(addConfigEmployee.transport_allowance),
