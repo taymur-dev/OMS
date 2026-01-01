@@ -191,32 +191,45 @@ export const Todo = () => {
               No records available at the moment!
             </div>
           ) : (
-            paginatedTodos.map((todo, index) => (
-              <div
-                className="grid grid-cols-[0.5fr_1fr_2fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800
-                 hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
-                key={todo.id}
-              >
-                <span className="px-2">
-                  {(pageNo - 1) * rowsPerPage + index + 1}
-                </span>
-                {currentUser?.role === "admin" && (
-                  <span>{todo.employeeName ?? "-"}</span>
-                )}
-                <span>{todo.task}</span>
-                <span>{todo.startDate.slice(0, 10)}</span>
-                <span>{todo.endDate.slice(0, 10)}</span>
-                <span>{todo.deadline?.slice(0, 10)}</span>
-                <span className="flex items-center gap-2">
-                  <EditButton
-                    handleUpdate={() => handleClickEditButton(todo)}
-                  />
-                  <DeleteButton
-                    handleDelete={() => handleClickDeleteButton(todo.id)}
-                  />
-                </span>
-              </div>
-            ))
+            paginatedTodos.map((todo, index) => {
+              // Convert each date string to local YYYY-MM-DD
+              const startDate = todo.startDate
+                ? new Date(todo.startDate).toLocaleDateString("en-CA")
+                : "-";
+              const endDate = todo.endDate
+                ? new Date(todo.endDate).toLocaleDateString("en-CA")
+                : "-";
+              const deadline = todo.deadline
+                ? new Date(todo.deadline).toLocaleDateString("en-CA")
+                : "-";
+
+              return (
+                <div
+                  className="grid grid-cols-[0.5fr_1fr_2fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800
+          hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
+                  key={todo.id}
+                >
+                  <span className="px-2">
+                    {(pageNo - 1) * rowsPerPage + index + 1}
+                  </span>
+                  {currentUser?.role === "admin" && (
+                    <span>{todo.employeeName ?? "-"}</span>
+                  )}
+                  <span>{todo.task}</span>
+                  <span>{startDate}</span>
+                  <span>{endDate}</span>
+                  <span>{deadline}</span>
+                  <span className="flex items-center gap-2">
+                    <EditButton
+                      handleUpdate={() => handleClickEditButton(todo)}
+                    />
+                    <DeleteButton
+                      handleDelete={() => handleClickDeleteButton(todo.id)}
+                    />
+                  </span>
+                </div>
+              );
+            })
           )}
         </div>
       </div>

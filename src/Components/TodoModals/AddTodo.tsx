@@ -32,7 +32,9 @@ type UserOption = {
   role: string; 
 };
 
-const currentDate = new Date().toISOString().slice(0, 10);
+const today = new Date();
+const currentDate = today.toLocaleDateString("en-CA");
+
 
 const initialState = {
   employee_id: "",
