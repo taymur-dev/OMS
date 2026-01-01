@@ -80,9 +80,7 @@ export const ConfigEmpSalary = () => {
       await axios.patch(
         `${BASE_URL}/api/admin/deletesalaries/${selectedSalary.id}`
       );
-      setSalaries((prev) =>
-        prev.filter((s) => s.id !== selectedSalary.id)
-      );
+      setSalaries((prev) => prev.filter((s) => s.id !== selectedSalary.id));
       setTotalRecords((prev) => prev - 1);
       handleToggleViewModal("");
     } catch (error) {
@@ -142,12 +140,15 @@ export const ConfigEmpSalary = () => {
         </div>
         <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
           <div
-            className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold border border-gray-600
+            className="grid grid-cols-9 bg-gray-200 text-gray-900 font-semibold border border-gray-600
            text-sm sticky top-0 z-10 p-[10px]"
           >
             <span className="px-2 ">Sr#</span>
             <span>Employee Name</span>
             <span>Salary of Month</span>
+            <span>Empployee of the Month Allowance</span>
+            <span>Transport Allowance</span>
+            <span>Medical Allowance</span>
             <span>Total Salary</span>
             <span>Date</span>
             <span>Action</span>
@@ -155,12 +156,15 @@ export const ConfigEmpSalary = () => {
           {salaries.map((salary, idx) => (
             <div
               key={salary.id}
-              className="grid grid-cols-6 border border-gray-600 text-gray-800 hover:bg-gray-100 transition
+              className="grid grid-cols-9 border border-gray-600 text-gray-800 hover:bg-gray-100 transition
                duration-200 text-sm items-center justify-center p-[7px]"
             >
               <span>{idx + 1}</span>
               <span>{salary.employee_name}</span>
               <span>{salary.salary_amount}</span>
+              <span>{Number(salary.emp_of_mon_allowance)}</span>
+              <span>{Number(salary.transport_allowance)}</span>
+              <span>{Number(salary.medical_allowance)}</span>
               <span>{salary.total_salary}</span>
               <span>
                 {new Date(salary.config_date).toLocaleDateString("en-CA")}
