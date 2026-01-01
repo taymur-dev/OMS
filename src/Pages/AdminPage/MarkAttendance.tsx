@@ -193,7 +193,9 @@ export const MarkAttendance = () => {
                 {attendanceTime?.workingHours}
               </span>
               <span className="text-gray-800">
-                {attendanceTime?.date.slice(0, 10)}
+                {new Date(attendanceTime.date).toLocaleDateString("en-CA", {
+                  timeZone: "Asia/Karachi",
+                })}
               </span>
               <span className="text-purple-600">
                 {getAttendanceStatus(
