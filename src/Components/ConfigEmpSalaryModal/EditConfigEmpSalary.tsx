@@ -50,7 +50,7 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
 
   const getAllUsers = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
         headers: {
           Authorization: token,
         },
@@ -59,9 +59,47 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
     } catch (error) {
       console.log(error);
     }
-  } , [token]);
+  }, [token]);
 
-  const handlerSubmitted = async () => {};
+  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const payload = {
+        employeeName: addConfigEmployee.employeeName,
+        employeeSalary: addConfigEmployee.employeeSalary,
+        overtimeAllowance: addConfigEmployee.overtimeAllowance,
+        projectAllowance: addConfigEmployee.projectAllowance,
+        empMonthAllowance: addConfigEmployee.empMonthAllowance,
+        medicalAllowance: addConfigEmployee.medicalAllowance,
+        date: addConfigEmployee.date,
+        withEffectDate: addConfigEmployee.withEffectDate,
+      };
+
+      const res = await axios.put(
+        `${BASE_URL}/api/admin/updatesalaries`,
+        payload,
+        {
+          headers: { Authorization: token },
+        }
+      );
+
+      if (res.status === 200) {
+        alert("Salary updated successfully!");
+        setModal();
+      }
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        alert(
+          error.response?.data?.message ||
+            "Something went wrong while updating salary"
+        );
+      } else {
+        console.error(error);
+        alert("An unexpected error occurred");
+      }
+    }
+  };
 
   useEffect(() => {
     getAllUsers();
@@ -86,7 +124,7 @@ export const EditConfigEmpSalary = ({ setModal }: AddAttendanceProps) => {
                 name="employeeSalary"
                 type="number"
                 handlerChange={handlerChange}
-              value={addConfigEmployee.employeeSalary}
+                value={addConfigEmployee.employeeSalary}
               />
 
               <InputField

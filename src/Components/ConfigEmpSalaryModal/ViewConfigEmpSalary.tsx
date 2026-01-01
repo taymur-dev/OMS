@@ -1,87 +1,100 @@
+import { useEffect, useState, useCallback } from "react";
+import axios from "axios";
 import { Title } from "../Title";
+import { useAppSelector } from "../../redux/Hooks";
+import { BASE_URL } from "../../Content/URL";
 
-export type ViewUserT = {
-  id: number;
-  name: string;
-  email: string;
-  contact: string;
-  cnic: string;
-  address: string;
-  date: string;
-  password: string;
-  confirmPassword: string;
-  role: string;
-  image: string;
-};
 type ModalTProps = {
   setModal: () => void;
+  salaryId?: number;
 };
-export const ViewConfigEmpSalary = ({ setModal }: ModalTProps) => {
+
+const initialState = {
+  employeeName: "",
+  employeeSalary: "",
+  empMonthAllowance: "",
+  transportAllowance: "",
+  medicalAllowance: "",
+  totalSalary: "",
+  date: "",
+};
+
+export const ViewConfigEmpSalary = ({ setModal, salaryId }: ModalTProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+  const token = currentUser?.token;
+
+  const [salaryData, setSalaryData] = useState(initialState);
+
+  const getSalaryData = useCallback(async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getSalary/${salaryId}`, {
+        headers: { Authorization: `Bearer: ${token}` },
+      });
+      const data = res.data;
+      setSalaryData({
+        employeeName: data.employeeName || "",
+        employeeSalary: data.employeeSalary?.toString() || "",
+        empMonthAllowance: data.empMonthAllowance?.toString() || "",
+        transportAllowance: data.transportAllowance?.toString() || "",
+        medicalAllowance: data.medicalAllowance?.toString() || "",
+        totalSalary: data.totalSalary?.toString() || "",
+        date: data.date || "",
+      });
+    } catch (error) {
+      console.error("Failed to fetch salary data:", error);
+    }
+  }, [salaryId, token]);
+
+  useEffect(() => {
+    getSalaryData();
+  }, [getSalaryData]);
+
   return (
-    <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
         <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg">
-          {/* Title */}
           <Title setModal={setModal}>Employee Salary Details</Title>
 
-          {/* User Details List */}
           <div className="mt-6 space-y-4">
             <div className="flex justify-between border-b pb-2">
               <span className="text-lg font-semibold text-gray-800">
                 Employee Name:
               </span>
-              <p className="text-gray-600">{"Hamza Amin"}</p>
+              <p className="text-gray-600">{salaryData.employeeName}</p>
             </div>
             <div className="flex justify-between border-b pb-2">
               <span className="text-lg font-semibold text-gray-800">
-                Salary:
+                Employee Salary:
               </span>
-              <p className="text-gray-600">{"500000"}</p>
+              <p className="text-gray-600">{salaryData.employeeSalary}</p>
             </div>
             <div className="flex justify-between border-b pb-2">
               <span className="text-lg font-semibold text-gray-800">
-                Overtime Allowance:
+                Employee Month Allowance:
               </span>
-              <p className="text-gray-600">{"10000"}</p>
+              <p className="text-gray-600">{salaryData.empMonthAllowance}</p>
             </div>
             <div className="flex justify-between border-b pb-2">
               <span className="text-lg font-semibold text-gray-800">
-                Project Allowance:
+                Transport Allowance:
               </span>
-              <p className="text-gray-600">{"50000"}</p>
+              <p className="text-gray-600">{salaryData.transportAllowance}</p>
             </div>
-
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">
-                Employee Of Month Allowance:
-              </span>
-              <p className="text-gray-600">{"50000"}</p>
-            </div>
-
             <div className="flex justify-between border-b pb-2">
               <span className="text-lg font-semibold text-gray-800">
                 Medical Allowance:
               </span>
-              <p className="text-gray-600">{"50000"}</p>
+              <p className="text-gray-600">{salaryData.medicalAllowance}</p>
             </div>
-
+            <div className="flex justify-between border-b pb-2">
+              <span className="text-lg font-semibold text-gray-800">
+                Total Salary:
+              </span>
+              <p className="text-gray-600">{salaryData.totalSalary}</p>
+            </div>
             <div className="flex justify-between border-b pb-2">
               <span className="text-lg font-semibold text-gray-800">Date:</span>
-              <p className="text-gray-600">{"12-5-2025"}</p>
-            </div>
-
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">
-                With Effect Date:
-              </span>
-              <p className="text-gray-600">{"12-5-2025"}</p>
-            </div>
-
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">
-                Status:
-              </span>
-              <p className="text-gray-600">{"Paid"}</p>
+              <p className="text-gray-600">{salaryData.date}</p>
             </div>
           </div>
         </div>
