@@ -218,7 +218,12 @@ export const UsersDetails = () => {
                 <span>{user.email.slice(0, 15)}</span>
                 <span>{user.contact}</span>
                 <span>{user.role}</span>
-                <span>{user.date.slice(0, 10)}</span>
+                <span>
+                  {new Date(user.date).toLocaleDateString("sv-SE", {
+                    timeZone: "Asia/Karachi",
+                  })}
+                </span>
+
                 <span className="flex items-center justify-center gap-1">
                   <EditButton
                     handleUpdate={() => handleUpdateSingleUser(user)}
