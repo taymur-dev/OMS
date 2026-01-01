@@ -48,6 +48,8 @@ export const ConfigEmpSalary = () => {
   const [salaries, setSalaries] = useState<Salary[]>([]);
   const [totalRecords, setTotalRecords] = useState(0);
 
+  
+
   const handleIncrementPageButton = () => setPageNo((prev) => prev + 1);
   const handleDecrementPageButton = () =>
     setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
@@ -154,7 +156,9 @@ export const ConfigEmpSalary = () => {
               <span>{salary.employee_name}</span>
               <span>{salary.salary_amount}</span>
               <span>{salary.total_salary}</span>
-              <span>{salary.config_date}</span>
+              <span>{new Date(salary.config_date).toLocaleDateString("en-CA")}</span>
+
+
               <span className="flex items-center gap-1">
                 <EditButton
                   handleUpdate={() => handleToggleViewModal("EDIT")}
