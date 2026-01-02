@@ -219,7 +219,7 @@ export const UsersDetails = () => {
                 <span>{user.contact}</span>
                 <span>{user.role}</span>
                 <span>
-                  {new Date(user.date).toLocaleDateString("sv-SE", {
+                  {new Date(user.date).toLocaleDateString("en-GB", {
                     timeZone: "Asia/Karachi",
                   })}
                 </span>

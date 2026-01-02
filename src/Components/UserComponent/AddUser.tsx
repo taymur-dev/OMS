@@ -31,7 +31,7 @@ export interface IAddUserProps extends React.ComponentPropsWithoutRef<"div"> {
   onSuccesAction: () => void;
 }
 
-const currentDate = new Date().toLocaleDateString("sv-SE", {
+const currentDate = new Date().toLocaleDateString("en-GB", {
   timeZone: "Asia/Karachi",
 });
 
