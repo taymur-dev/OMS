@@ -31,10 +31,9 @@ export interface IAddUserProps extends React.ComponentPropsWithoutRef<"div"> {
   onSuccesAction: () => void;
 }
 
-const currentDate = new Date().toLocaleDateString("en-GB", {
+const currentDate = new Date().toLocaleDateString("sv-SE", {
   timeZone: "Asia/Karachi",
 });
-
 
 const initialState: IAddUserValues = {
   name: "",
@@ -88,6 +87,12 @@ export const AddUser = ({
 
     if (name === "email") {
       value = value.toLowerCase();
+    }
+
+    if (name === "contact") {
+      const digits = value.replace(/\D/g, "");
+
+      value = digits.slice(0, 11);
     }
 
     if (name === "cnic") {
