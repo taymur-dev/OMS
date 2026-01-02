@@ -160,7 +160,7 @@ export const ConfigEmpSalary = () => {
                duration-200 text-sm items-center justify-center p-[7px]"
             >
               <span>{idx + 1}</span>
-              <span>{salary.employee_name}</span>
+              <span>{salary.employee_id}</span>
               <span>{salary.salary_amount}</span>
               <span>{Number(salary.emp_of_mon_allowance) || 0}</span>
               <span>{Number(salary.transport_allowance) || 0}</span>
