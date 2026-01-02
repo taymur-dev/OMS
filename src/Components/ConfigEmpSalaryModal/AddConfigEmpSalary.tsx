@@ -12,7 +12,7 @@ import { useAppSelector } from "../../redux/Hooks";
 
 type AddSalaryProps = {
   setModal: () => void;
-  onSuccess: () => void;
+  refreshSalaries: () => void;
 };
 
 type ApiUser = {
@@ -24,8 +24,8 @@ type ApiUser = {
 };
 
 type SalaryState = {
-  employee_id: string; // store ID as string for select
-  employee_name: string; // just for display if needed
+  employee_id: string; 
+  employee_name: string; 
   salary_amount: string;
   emp_of_mon_allowance: string;
   transport_allowance: string;
@@ -45,7 +45,7 @@ const initialState: SalaryState = {
   config_date: "",
 };
 
-export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
+export const AddConfigEmpSalary = ({ setModal, refreshSalaries }: AddSalaryProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
@@ -119,7 +119,7 @@ export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      onSuccess();
+      refreshSalaries();
       setModal();
     } catch (error) {
       console.error("Salary submit failed:", error);
@@ -150,7 +150,7 @@ export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
             />
 
             <InputField
-              labelName="Employee Month Allowance*"
+              labelName="House Rent*"
               name="emp_of_mon_allowance"
               type="number"
               handlerChange={handlerChange}

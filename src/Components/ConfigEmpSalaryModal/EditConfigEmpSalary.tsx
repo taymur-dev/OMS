@@ -23,7 +23,7 @@ type Salary = {
 
 type EditSalaryProps = {
   setModal: () => void;
-  onSuccessEdit: () => void;
+  refreshSalaries: () => void;
   editData: Salary;
 };
 
@@ -35,7 +35,7 @@ type ApiUser = {
 };
 
 type SalaryState = {
-  employee_id: string; // store ID as string
+  employee_id: string; 
   salary_amount: string;
   emp_of_mon_allowance: string;
   transport_allowance: string;
@@ -56,7 +56,7 @@ const initialState: SalaryState = {
 
 export const EditConfigEmpSalary = ({
   setModal,
-  onSuccessEdit,
+  refreshSalaries,
   editData,
 }: EditSalaryProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
@@ -66,7 +66,6 @@ export const EditConfigEmpSalary = ({
     useState<SalaryState>(initialState);
   const [allUsers, setAllUsers] = useState<SelectOption[]>([]);
 
-  // Prefill modal with existing data
   useEffect(() => {
     if (editData) {
       setEditConfigEmployee({
@@ -81,7 +80,6 @@ export const EditConfigEmpSalary = ({
     }
   }, [editData]);
 
-  // Handle input changes
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -89,7 +87,6 @@ export const EditConfigEmpSalary = ({
     setEditConfigEmployee((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Automatically recalculate total salary
   useEffect(() => {
     const total =
       Number(editConfigEmployee.salary_amount || 0) +
@@ -97,7 +94,10 @@ export const EditConfigEmpSalary = ({
       Number(editConfigEmployee.transport_allowance || 0) +
       Number(editConfigEmployee.medical_allowance || 0);
 
-    setEditConfigEmployee((prev) => ({ ...prev, total_salary: total.toString() }));
+    setEditConfigEmployee((prev) => ({
+      ...prev,
+      total_salary: total.toString(),
+    }));
   }, [
     editConfigEmployee.salary_amount,
     editConfigEmployee.emp_of_mon_allowance,
@@ -105,7 +105,6 @@ export const EditConfigEmpSalary = ({
     editConfigEmployee.medical_allowance,
   ]);
 
-  // Fetch all users for dropdown
   const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get<{ users: ApiUser[] }>(
@@ -132,7 +131,6 @@ export const EditConfigEmpSalary = ({
     getAllUsers();
   }, [getAllUsers]);
 
-  // Submit updated salary
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -155,7 +153,7 @@ export const EditConfigEmpSalary = ({
         }
       );
 
-      onSuccessEdit();
+      refreshSalaries();
       setModal();
     } catch (error) {
       console.error("Salary update failed:", error);
@@ -187,7 +185,7 @@ export const EditConfigEmpSalary = ({
             />
 
             <InputField
-              labelName="Employee Month Allowance*"
+              labelName="House Rent*"
               name="emp_of_mon_allowance"
               type="number"
               handlerChange={handlerChange}

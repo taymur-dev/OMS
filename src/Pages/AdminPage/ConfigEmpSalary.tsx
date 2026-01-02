@@ -140,15 +140,16 @@ export const ConfigEmpSalary = () => {
         </div>
         <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
           <div
-            className="grid grid-cols-9 bg-gray-200 text-gray-900 font-semibold border border-gray-600
-           text-sm sticky top-0 z-10 p-[10px]"
+            className="grid grid-cols-[0.5fr_2fr_1fr_1fr_1fr_1fr_1.2fr_1.2fr_1fr] bg-gray-200 text-gray-900
+             font-semibold border border-gray-600
+           text-sm sticky top-0 z-10 py-2 px-1"
           >
             <span className="px-2 ">Sr#</span>
             <span>Employee Name</span>
-            <span>Salary of Month</span>
+            <span>Monthly Pay</span>
             <span>House Rent</span>
-            <span>Transport Allowance</span>
-            <span>Medical Allowance</span>
+            <span>Transport</span>
+            <span>Medical</span>
             <span>Total Salary</span>
             <span>Date</span>
             <span>Action</span>
@@ -156,8 +157,9 @@ export const ConfigEmpSalary = () => {
           {salaries.map((salary, idx) => (
             <div
               key={salary.id}
-              className="grid grid-cols-9 border border-gray-600 text-gray-800 hover:bg-gray-100 transition
-               duration-200 text-sm items-center justify-center p-[7px]"
+              className="grid grid-cols-[0.5fr_2fr_1fr_1fr_1fr_1fr_1.2fr_1.2fr_1fr] border border-gray-600
+               text-gray-800 hover:bg-gray-100 transition
+               duration-200 text-sm items-center py-1 px-1"
             >
               <span>{idx + 1}</span>
               <span>{salary.employee_name}</span>
@@ -171,7 +173,7 @@ export const ConfigEmpSalary = () => {
                 {new Date(salary.config_date).toLocaleDateString("en-CA")}
               </span>
 
-              <span className="flex items-center gap-1">
+              <span className="flex items-center justify-center gap-1">
                 <EditButton
                   handleUpdate={() => {
                     setSelectedSalary(salary);
@@ -212,13 +214,13 @@ export const ConfigEmpSalary = () => {
       {isOpenModal === "ADD" && (
         <AddConfigEmpSalary
           setModal={() => handleToggleViewModal("")}
-          onSuccess={fetchSalaries}
+          refreshSalaries={fetchSalaries}
         />
       )}
       {isOpenModal === "EDIT" && selectedSalary && (
         <EditConfigEmpSalary
           setModal={() => handleToggleViewModal("")}
-          onSuccessEdit={fetchSalaries}
+          refreshSalaries={fetchSalaries}
           editData={selectedSalary}
         />
       )}
