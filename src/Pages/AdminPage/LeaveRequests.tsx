@@ -3,13 +3,18 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
-import { navigationStart, navigationSuccess } from "../../redux/NavigationSlice";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import { AddLeave } from "../../Components/LeaveModals/AddLeave";
 import { UpdateLeave } from "../../Components/LeaveModals/UpdateLeave";
 import { ViewLeave } from "../../Components/LeaveModals/ViewLeave";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
+import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import axios from "axios";
@@ -27,7 +32,8 @@ type ADDLEAVET = {
   name: string;
 };
 
-type ISOPENMODALT = "ADDLEAVE" | "VIEW" | "UPDATE";
+type ISOPENMODALT = "ADDLEAVE" | "VIEW" | "UPDATE" | "DELETE" | "";
+
 
 export const LeaveRequests = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
@@ -42,6 +48,7 @@ export const LeaveRequests = () => {
   const [pageNo, setPageNo] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewLeave, setViewLeave] = useState<ADDLEAVET | null>(null);
+  const [selectedLeave, setSelectedLeave] = useState<ADDLEAVET | null>(null);
 
   const handleGetAllLeaves = useCallback(async () => {
     if (!currentUser) return;
@@ -62,6 +69,28 @@ export const LeaveRequests = () => {
       setAllLeaves([]);
     }
   }, [currentUser, token]);
+
+  const handleDeleteLeave = async () => {
+    if (!selectedLeave || !currentUser) return;
+
+    try {
+      const url =
+        currentUser.role === "admin"
+          ? `${BASE_URL}/api/admin/deleteLeave/${selectedLeave.id}`
+          : `${BASE_URL}/api/user/deleteLeave/${selectedLeave.id}`;
+
+      await axios.delete(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setAllLeaves((prev) => prev.filter((l) => l.id !== selectedLeave.id));
+
+      setIsOpenModal("");
+      setSelectedLeave(null);
+    } catch (error) {
+      console.error("Error deleting leave:", error);
+    }
+  };
 
   const handleRefresh = useCallback(
     async (updatedLeave?: ADDLEAVET) => {
@@ -186,7 +215,9 @@ export const LeaveRequests = () => {
               <span className="text-left flex items-center gap-1">
                 {(currentUser?.role === "admin" ||
                   leave.name === currentUser?.name) && (
-                  <EditButton handleUpdate={() => handleClickEditButton(leave)} />
+                  <EditButton
+                    handleUpdate={() => handleClickEditButton(leave)}
+                  />
                 )}
                 <ViewButton
                   handleView={() => {
@@ -194,6 +225,16 @@ export const LeaveRequests = () => {
                     handleToggleViewModal("VIEW");
                   }}
                 />
+
+                {(currentUser?.role === "admin" ||
+                  leave.name === currentUser?.name) && (
+                  <DeleteButton
+                    handleDelete={() => {
+                      setSelectedLeave(leave);
+                      setIsOpenModal("DELETE");
+                    }}
+                  />
+                )}
               </span>
             </div>
           ))}
@@ -240,6 +281,15 @@ export const LeaveRequests = () => {
 
       {isOpenModal === "VIEW" && viewLeave && (
         <ViewLeave setIsOpenModal={() => setIsOpenModal("")} data={viewLeave} />
+      )}
+
+      {isOpenModal === "DELETE" && selectedLeave && (
+        <ConfirmationModal
+          isOpen={() => setIsOpenModal("")}
+          onClose={() => setIsOpenModal("")}
+          onConfirm={handleDeleteLeave}
+          message="Are you sure you want to delete this leave?"
+        />
       )}
     </div>
   );

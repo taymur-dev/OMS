@@ -35,7 +35,9 @@ export const ViewAttendance = ({
 
           <div className="mt-6 space-y-4">
             <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">User Name:</span>
+              <span className="text-lg font-semibold text-gray-800">
+                User Name:
+              </span>
               <p className="text-gray-600">{viewAttendance.name}</p>
             </div>
 
@@ -46,7 +48,9 @@ export const ViewAttendance = ({
 
             <div className="flex justify-between border-b pb-2">
               <span className="text-lg font-semibold text-gray-800">Date:</span>
-              <p className="text-gray-600">{viewAttendance.date.slice(0, 10)}</p>
+              <p className="text-gray-600">
+                {viewAttendance.date.slice(0, 10)}
+              </p>
             </div>
 
             <div className="flex justify-between border-b pb-2">
@@ -55,42 +59,26 @@ export const ViewAttendance = ({
             </div>
 
             <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">Clock In:</span>
+              <span className="text-lg font-semibold text-gray-800">
+                Clock In:
+              </span>
               <p className="text-gray-600">{viewAttendance.clockIn ?? "--"}</p>
             </div>
 
             <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">Clock Out:</span>
+              <span className="text-lg font-semibold text-gray-800">
+                Clock Out:
+              </span>
               <p className="text-gray-600">{viewAttendance.clockOut ?? "--"}</p>
             </div>
 
             <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">Working Hours:</span>
-              <p className="text-gray-600">{viewAttendance.workingHours ?? "--"}</p>
-            </div>
-
-            {viewAttendance.leaveReason && (
-              <div className="flex justify-between border-b pb-2">
-                <span className="text-lg font-semibold text-gray-800">Leave Reason:</span>
-                <p className="text-gray-600">{viewAttendance.leaveReason}</p>
-              </div>
-            )}
-
-            {viewAttendance.leaveApprovalStatus && (
-              <div className="flex justify-between border-b pb-2">
-                <span className="text-lg font-semibold text-gray-800">Leave Status:</span>
-                <p className="text-gray-600">{viewAttendance.leaveApprovalStatus}</p>
-              </div>
-            )}
-
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">Attendance Status:</span>
-              <p className="text-gray-600">{viewAttendance.attendanceStatus}</p>
-            </div>
-
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">Record Status:</span>
-              <p className="text-gray-600">{viewAttendance.status}</p>
+              <span className="text-lg font-semibold text-gray-800">
+                Working Hours:
+              </span>
+              <p className="text-gray-600">
+                {viewAttendance.workingHours ?? "--"}
+              </p>
             </div>
           </div>
         </div>
