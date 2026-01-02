@@ -34,7 +34,6 @@ type ADDLEAVET = {
 
 type ISOPENMODALT = "ADDLEAVE" | "VIEW" | "UPDATE" | "DELETE" | "";
 
-
 export const LeaveRequests = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
@@ -196,6 +195,7 @@ export const LeaveRequests = () => {
             <span>Sr#</span>
             {currentUser?.role === "admin" && <span>Employee Name</span>}
             <span>Subject Leave</span>
+            <span>Date</span>
             <span>Status</span>
             <span className="text-center w-28">Actions</span>
           </div>
@@ -210,7 +210,9 @@ export const LeaveRequests = () => {
               {currentUser?.role === "admin" && (
                 <span className="text-left">{leave.name}</span>
               )}
+
               <span className="text-left">{leave.leaveSubject}</span>
+              <span className="text-left">{leave.date}</span>
               <span className="text-left">{leave.leaveStatus}</span>
               <span className="text-left flex items-center gap-1">
                 {(currentUser?.role === "admin" ||
