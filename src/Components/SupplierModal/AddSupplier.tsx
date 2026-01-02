@@ -43,17 +43,20 @@ AddCustomerProps) => {
     let value = e.target.value;
 
     if (name === "supplierName" || name === "supplierAddress") {
+      // Remove digits from name
+      if (name === "supplierName") {
+        value = value.replace(/\d/g, "");
+      }
       // Capitalize first letter of each word
       value = value.replace(/\b\w/g, (char) => char.toUpperCase());
     }
 
     if (name === "supplierEmail") {
-      // Convert email to lowercase
       value = value.toLowerCase();
     }
 
     if (name === "supplierContact") {
-      // Limit contact to 11 digits
+      // Remove non-digit characters and limit to 11
       value = value.replace(/\D/g, "").slice(0, 11);
     }
 
@@ -132,7 +135,7 @@ AddCustomerProps) => {
             <InputField
               labelName="Supplier Contact*"
               placeHolder="Enter the Supplier Contact Number"
-              type="number"
+              type="text"
               name="supplierContact"
               handlerChange={handlerChange}
               value={supplierData.supplierContact}
