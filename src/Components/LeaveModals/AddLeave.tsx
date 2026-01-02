@@ -28,10 +28,14 @@ type UserT = {
   loginStatus?: string;
 };
 
+const currentDate = new Date().toLocaleDateString("sv-SE", {
+  timeZone: "Asia/Karachi",
+});
+
 const initialState: AddLeaveType = {
   employee_id: "",
   leaveSubject: "",
-  date: new Date().toISOString().split("T")[0],
+  date: currentDate,
   leaveReason: "",
 };
 

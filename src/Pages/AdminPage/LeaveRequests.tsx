@@ -212,7 +212,9 @@ export const LeaveRequests = () => {
               )}
 
               <span className="text-left">{leave.leaveSubject}</span>
-              <span className="text-left">{leave.date}</span>
+              <span className="text-left">
+                {new Date(leave.date).toLocaleDateString("sv-SE")}
+              </span>
               <span className="text-left">{leave.leaveStatus}</span>
               <span className="text-left flex items-center gap-1">
                 {(currentUser?.role === "admin" ||

@@ -30,7 +30,9 @@ const optionData = [
   { id: 3, label: "Pending", value: "pending" },
 ];
 
-const currentDate = new Date().toLocaleDateString();
+const currentDate = new Date().toLocaleDateString("sv-SE", {
+  timeZone: "Asia/Karachi",
+});
 
 export const UpdateLeave = ({
   setModal,
@@ -58,7 +60,9 @@ export const UpdateLeave = ({
   }, [EditLeave]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setUpdateLeave((prev) => ({ ...prev, [name]: value }));
@@ -72,13 +76,16 @@ export const UpdateLeave = ({
 
     try {
       const payload = {
-        date: updateLeave.date, 
+        date: updateLeave.date,
         leaveStatus: updateLeave.status,
         leaveSubject: updateLeave.leaveSubject,
         leaveReason: updateLeave.leaveReason,
       };
 
-      await axios.put(`${BASE_URL}/api/admin/updateLeave/${EditLeave.id}`, payload);
+      await axios.put(
+        `${BASE_URL}/api/admin/updateLeave/${EditLeave.id}`,
+        payload
+      );
       toast.success("Leave updated successfully!");
       await refreshLeaves();
       setModal();
