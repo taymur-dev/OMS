@@ -30,8 +30,7 @@ const optionData = [
   { id: 3, label: "Pending", value: "pending" },
 ];
 
-const currentDate =
-  new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
+const currentDate = new Date().toLocaleDateString("sv-SE") ?? "";
 
 const initialState = {
   leaveSubject: "",
