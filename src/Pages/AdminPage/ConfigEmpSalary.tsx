@@ -58,24 +58,21 @@ export const ConfigEmpSalary = () => {
   const handleToggleViewModal = (active: CONFIGT) =>
     setIsOpenModal((prev) => (prev === active ? "" : active));
 
-  // Fetch salaries from API
-  const fetchSalaries = useCallback(async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`, {
-        params: { page: pageNo, limit, search: searchTerm },
-      });
-      setSalaries(res.data.salaries);
-      setTotalRecords(res.data.total);
-      console.log("API salaries:", res.data.salaries);
-    } catch (error) {
-      console.error("Error fetching salaries:", error);
-    }
-  }, [pageNo, limit, searchTerm]);
+const fetchSalaries = useCallback(async () => {
+  try {
+    const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`);
+    setSalaries(res.data.salaries);
+    setTotalRecords(res.data.total);
+    console.log("API salaries:", res.data.salaries);
+  } catch (error) {
+    console.error("Error fetching salaries:", error);
+  }
+}, []);
 
-  // Reset page number to 1 when search term changes
+
   useEffect(() => {
     setPageNo(1);
-  }, [searchTerm, limit]);
+  }, [setPageNo]);
 
   // Initial page setup
   useEffect(() => {
