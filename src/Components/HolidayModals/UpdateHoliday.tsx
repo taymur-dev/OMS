@@ -28,29 +28,31 @@ export const UpdateHoliday = ({
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token ?? "";
 
-  const initialState: HolidayType = {
-    id: editHoliday?.id ?? 0,
-    date: editHoliday?.date ?? "",
-    holiday: editHoliday?.holiday ?? "",
+  const formatDateForInput = (date: string) => {  
+    if (!date) return "";
+    return new Date(date).toLocaleDateString('sv-SE');
   };
 
-  const [holidayData, setHolidayData] = useState<HolidayType>(initialState);
+  const [holidayData, setHolidayData] = useState<HolidayType>({
+    id: 0,
+    date: "",
+    holiday: "",
+  });
 
   useEffect(() => {
     if (editHoliday) {
       setHolidayData({
         id: editHoliday.id,
-        date: editHoliday.date,
         holiday: editHoliday.holiday,
+        date: formatDateForInput(editHoliday.date),
       });
     }
   }, [editHoliday]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { name, value } = e.target;
-
     setHolidayData((prev) => ({
       ...prev,
       [name]: value,
@@ -72,7 +74,9 @@ export const UpdateHoliday = ({
           holiday: holidayData.holiday,
           date: holidayData.date,
         },
-        { headers: { Authorization: token } }
+        {
+          headers: { Authorization: token },
+        }
       );
 
       toast.success(res.data.message);
