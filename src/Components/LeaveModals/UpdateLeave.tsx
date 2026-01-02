@@ -117,7 +117,7 @@ export const UpdateLeave = ({
               labelName="Date*"
               type="date"
               name="date"
-              value={updateLeave?.date?.slice(0, 10) ?? ""}
+              value={updateLeave.date}
               handlerChange={handleChange}
             />
 
