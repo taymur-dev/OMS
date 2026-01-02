@@ -8,7 +8,6 @@ import { AxiosError } from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 import { toast } from "react-toastify";
-// const currentDate = new Date().toISOString().split("T")[0];
 type CustomerT = {
   id: number;
   customerStatus: string;

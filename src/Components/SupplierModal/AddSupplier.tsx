@@ -23,7 +23,7 @@ const initialState = {
 export const AddSupplier = ({
   setModal,
   handleGetAllSupplier,
-}: // handleGetAllCustomers,
+}: 
 AddCustomerProps) => {
   const [supplierData, setSupplierData] = useState(initialState);
 
@@ -42,18 +42,15 @@ AddCustomerProps) => {
   const { name } = e.target;
   let value = e.target.value;
 
-  // Remove leading spaces
   value = value.replace(/^\s+/, "");
 
   if (name === "supplierName") {
-    // Remove numbers, allow spaces in between, capitalize words
     value = value
       .replace(/[0-9]/g, "")
       .replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
   if (name === "supplierAddress") {
-    // Capitalize first letter of each word
     value = value.replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
@@ -62,7 +59,6 @@ AddCustomerProps) => {
   }
 
   if (name === "supplierContact") {
-    // Only digits, max 11 digits, remove leading zeros or spaces
     value = value.replace(/\D/g, "").slice(0, 11);
   }
 
@@ -77,7 +73,6 @@ AddCustomerProps) => {
     const { supplierName, supplierEmail, supplierContact, supplierAddress } =
       supplierData;
 
-    // Frontend validation
     if (
       !supplierName ||
       !supplierEmail ||

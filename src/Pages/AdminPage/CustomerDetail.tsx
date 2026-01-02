@@ -141,7 +141,6 @@ export const CustomerDetail = () => {
 
   if (loader) return <Loader />;
 
-  // 🔥 APPLY SEARCH FILTER
   const filteredCustomers = allCustomers.filter((customer) => {
     const combined = `
       ${customer.customerName}
@@ -154,7 +153,6 @@ export const CustomerDetail = () => {
     return combined.includes(searchTerm.toLowerCase());
   });
 
-  // 🔥 PAGINATION LOGIC
   const totalNum = filteredCustomers.length;
   const startIndex = (pageNo - 1) * selectedValue;
   const endIndex = startIndex + selectedValue;
@@ -202,7 +200,6 @@ export const CustomerDetail = () => {
         </div>
 
         <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
-          {/* Header */}
           <div
             className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1fr] bg-gray-200 
             text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-2"
@@ -224,7 +221,8 @@ export const CustomerDetail = () => {
 
           {paginatedCustomers.map((customer, index) => (
             <div
-              className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm p-[7px]"
+              className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1fr] border border-gray-600
+               text-gray-800 hover:bg-gray-100 transition duration-200 text-sm p-[7px]"
               key={customer.id}
             >
               <span>{startIndex + index + 1}</span>
@@ -248,7 +246,6 @@ export const CustomerDetail = () => {
         </div>
       </div>
 
-      {/* Modals */}
       {isOpenModal === "ADD" && (
         <AddCustomer
           setIsOpenModal={() => setIsOpenModal("")}
@@ -280,7 +277,6 @@ export const CustomerDetail = () => {
         />
       )}
 
-      {/* Footer Pagination */}
       <div className="flex items-center justify-between">
         <ShowDataNumber
           start={totalNum === 0 ? 0 : startIndex + 1}

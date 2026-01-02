@@ -18,7 +18,7 @@ type UpdateSupplierProps = {
     supplierContact: string;
     supplierAddress: string;
   };
-  refreshSuppliers: () => void; // callback to refresh supplier list
+  refreshSuppliers: () => void; 
 };
 
 export const UpdateSupplier = ({
@@ -31,39 +31,11 @@ export const UpdateSupplier = ({
   const token = currentUser?.token;
   const [loading, setLoading] = useState(false);
 
-  // Update state if supplierData changes (when selecting another supplier)
   useEffect(() => {
     setUpdateSupplier(supplierData);
   }, [supplierData]);
 
-  // const handlerChange = (
-  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  // ) => {
-  //   const { name, value } = e.target;
-  //   setUpdateSupplier({ ...updateSupplier, [name]: value });
-  // };
-
-  // const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   try {
-  //     const res = await axios.post(
-  //       `${BASE_URL}/api/admin/updateSupplier`,
-  //       updateSupplier,
-  //       {
-  //         headers: { Authorization: token || "" },
-  //       }
-  //     );
-  //     toast.success(res.data.message);
-  //     refreshSuppliers();
-  //     setModal();
-  //   } catch (error) {
-  //     const axiosError = error as AxiosError<{ message: string }>;
-  //     toast.error(axiosError.response?.data.message || "Something went wrong");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -72,17 +44,14 @@ export const UpdateSupplier = ({
     let value = e.target.value;
 
     if (name === "supplierName" || name === "supplierAddress") {
-      // Capitalize first letter of each word
       value = value.replace(/\b\w/g, (char) => char.toUpperCase());
     }
 
     if (name === "supplierEmail") {
-      // Convert email to lowercase
       value = value.toLowerCase();
     }
 
     if (name === "supplierContact") {
-      // Keep only digits and limit to 11
       value = value.replace(/\D/g, "").slice(0, 11);
     }
 
@@ -95,7 +64,6 @@ export const UpdateSupplier = ({
     const { supplierName, supplierEmail, supplierContact, supplierAddress } =
       updateSupplier;
 
-    // Frontend validation
     if (
       !supplierName ||
       !supplierEmail ||

@@ -31,42 +31,34 @@ export const AddCustomer = ({
 
   const token = currentUser?.token;
 
- 
+  const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    let newValue = value;
 
-const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const { name, value } = e.target;
-  let newValue = value;
+    if (newValue.startsWith(" ")) {
+      newValue = newValue.trimStart();
+    }
 
-  // Prevent leading spaces in all fields
-  if (newValue.startsWith(" ")) {
-    newValue = newValue.trimStart();
-  }
+    if (
+      name === "customerName" ||
+      name === "customerAddress" ||
+      name === "companyName" ||
+      name === "companyAddress"
+    ) {
+      newValue = newValue.replace(/\d/g, "");
+      newValue = newValue.replace(/\b\w/g, (char) => char.toUpperCase());
+    }
 
-  // Prevent numbers in name/address fields
-  if (
-    name === "customerName" ||
-    name === "customerAddress" ||
-    name === "companyName" ||
-    name === "companyAddress"
-  ) {
-    // Remove numbers
-    newValue = newValue.replace(/\d/g, "");
-    // Capitalize first letter of each word
-    newValue = newValue.replace(/\b\w/g, (char) => char.toUpperCase());
-  }
+    if (name === "customerContact") {
+      newValue = newValue.replace(/\D/g, "");
+      if (newValue.length > 11) newValue = newValue.slice(0, 11);
+    }
 
-  // Customer contact: only digits, max 11
-  if (name === "customerContact") {
-    newValue = newValue.replace(/\D/g, ""); // remove non-digit characters
-    if (newValue.length > 11) newValue = newValue.slice(0, 11);
-  }
-
-  setCustomerData((prev) => ({
-    ...prev,
-    [name]: newValue,
-  }));
-};
-
+    setCustomerData((prev) => ({
+      ...prev,
+      [name]: newValue,
+    }));
+  };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -139,7 +131,7 @@ const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             <InputField
               labelName="Customer Contact*"
               placeHolder="Enter the Contact Number"
-              type="text" 
+              type="text"
               name="customerContact"
               handlerChange={handlerChange}
               value={customerData.customerContact}

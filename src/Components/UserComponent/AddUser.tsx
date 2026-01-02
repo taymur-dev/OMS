@@ -75,57 +75,51 @@ export const AddUser = ({
     }
   }, [initialValues]);
 
- 
   const handlerChange = (
-  e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-) => {
-  const { name } = e.target;
-  let value = e.target.value;
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name } = e.target;
+    let value = e.target.value;
 
-  if (name === "name") {
-    // Remove any non-letters except spaces
-    value = value.replace(/[^a-zA-Z\s]/g, "");
+    if (name === "name") {
+      value = value.replace(/[^a-zA-Z\s]/g, "");
 
-    // Remove leading spaces
-    value = value.replace(/^\s+/, "");
+      value = value.replace(/^\s+/, "");
 
-    // Capitalize first letter of each word
-    value = value
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  }
-
-  if (name === "email") {
-    value = value.toLowerCase();
-  }
-
-  if (name === "contact") {
-    // Keep only digits and limit to 11
-    value = value.replace(/\D/g, "").slice(0, 11);
-  }
-
-  if (name === "cnic") {
-    const digits = value.replace(/\D/g, "");
-    if (digits.length <= 5) {
-      value = digits;
-    } else if (digits.length <= 12) {
-      value = `${digits.slice(0, 5)}-${digits.slice(5)}`;
-    } else if (digits.length <= 13) {
-      value = `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(
-        12
-      )}`;
-    } else {
-      value = `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(
-        12,
-        13
-      )}`;
+      value = value
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
     }
-  }
 
-  setUserData({ ...userData, [name]: value });
-};
+    if (name === "email") {
+      value = value.toLowerCase();
+    }
 
+    if (name === "contact") {
+      value = value.replace(/\D/g, "").slice(0, 11);
+    }
+
+    if (name === "cnic") {
+      const digits = value.replace(/\D/g, "");
+      if (digits.length <= 5) {
+        value = digits;
+      } else if (digits.length <= 12) {
+        value = `${digits.slice(0, 5)}-${digits.slice(5)}`;
+      } else if (digits.length <= 13) {
+        value = `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(
+          12
+        )}`;
+      } else {
+        value = `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(
+          12,
+          13
+        )}`;
+      }
+    }
+
+    setUserData({ ...userData, [name]: value });
+  };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
