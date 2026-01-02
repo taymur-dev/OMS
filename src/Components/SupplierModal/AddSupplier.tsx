@@ -34,7 +34,6 @@ AddCustomerProps) => {
   const [loading, setLoading] = useState(false);
 
   const token = currentUser?.token;
-
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -42,11 +41,14 @@ AddCustomerProps) => {
     const { name } = e.target;
     let value = e.target.value;
 
-    if (name === "supplierName" || name === "supplierAddress") {
-      // Remove digits from name
-      if (name === "supplierName") {
-        value = value.replace(/\d/g, "");
-      }
+    if (name === "supplierName") {
+      // Capitalize first letter of each word & remove numbers
+      value = value
+        .replace(/[0-9]/g, "")
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+    }
+
+    if (name === "supplierAddress") {
       // Capitalize first letter of each word
       value = value.replace(/\b\w/g, (char) => char.toUpperCase());
     }
@@ -56,7 +58,7 @@ AddCustomerProps) => {
     }
 
     if (name === "supplierContact") {
-      // Remove non-digit characters and limit to 11
+      // Only digits, max 11 digits, no spaces
       value = value.replace(/\D/g, "").slice(0, 11);
     }
 
