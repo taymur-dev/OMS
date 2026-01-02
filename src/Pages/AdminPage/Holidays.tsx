@@ -13,6 +13,11 @@ import { UpdateHoliday } from "../../Components/HolidayModals/UpdateHoliday";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+import { ViewButton } from "../../Components/CustomButtons/ViewButton";
+import {
+  ViewHoliday,
+  HolidayDetailT,
+} from "../../Components/HolidayModals/ViewHoliday"; // import the modal
 
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
@@ -23,7 +28,7 @@ import { BASE_URL } from "../../Content/URL";
 
 const numbers = [10, 25, 50, 100];
 
-type THOLIDAYMODAL = "EDIT" | "DELETE" | "ADDHOLIDAY" | "";
+type THOLIDAYMODAL = "EDIT" | "DELETE" | "ADDHOLIDAY" | "VIEW" | "";
 
 interface HOLIDAYSTATET {
   id: number;
@@ -46,6 +51,7 @@ export const Holidays = () => {
   const [selectedValue, setSelectedValue] = useState(10);
   const [pageNo, setPageNo] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [viewHoliday, setViewHoliday] = useState<HolidayDetailT | null>(null);
 
   const handleGetAllHolidays = useCallback(async () => {
     try {
@@ -85,6 +91,14 @@ export const Holidays = () => {
   const handleDeleteCall = (id: number) => {
     setCatchId(id);
     handleToggleViewModal("DELETE");
+  };
+
+  const handleViewHoliday = (holiday: HOLIDAYSTATET) => {
+    setViewHoliday({
+      holiday: holiday.holiday,
+      date: holiday.date,
+    });
+    handleToggleViewModal("VIEW");
   };
 
   const handleIncrementPageButton = () => setPageNo((prev) => prev + 1);
@@ -171,8 +185,8 @@ export const Holidays = () => {
            border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
           >
             <span>Sr#</span>
-            <span>Date</span>
             <span>Holiday</span>
+            <span>Date</span>
             <span className="text-center w-28">Actions</span>
           </div>
 
@@ -183,12 +197,11 @@ export const Holidays = () => {
               hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
             >
               <span>{(pageNo - 1) * selectedValue + index + 1}</span>
-
-              <span>{new Date(holi.date).toLocaleDateString("en-CA")}</span>
-
               <span>{holi.holiday}</span>
+              <span>{new Date(holi.date).toLocaleDateString("sv-SE")}</span>
               <span className="flex items-center gap-1">
                 <EditButton handleUpdate={() => handleUpdateHoliday(holi)} />
+                <ViewButton handleView={() => handleViewHoliday(holi)} />
                 <DeleteButton handleDelete={() => handleDeleteCall(holi.id)} />
               </span>
             </div>
@@ -217,6 +230,13 @@ export const Holidays = () => {
           setModal={() => setIsOpenModal("")}
           handleGetAllHodidays={handleGetAllHolidays}
           editHoliday={editHoliday}
+        />
+      )}
+
+      {isOpenModal === "VIEW" && viewHoliday && (
+        <ViewHoliday
+          setIsOpenModal={() => setIsOpenModal("")}
+          viewHoliday={viewHoliday}
         />
       )}
 

@@ -13,7 +13,7 @@ type AddAttendanceProps = {
   handleGetAllHodidays: () => void;
 };
 
-const currentDate = new Date().toLocaleDateString("en-CA");
+const currentDate = new Date().toLocaleDateString("sv-SE");
 
 
 const initialState = {
