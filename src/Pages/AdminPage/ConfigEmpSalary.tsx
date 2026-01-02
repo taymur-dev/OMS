@@ -156,23 +156,19 @@ export const ConfigEmpSalary = () => {
           </div>
           {salaries.map((salary, idx) => (
             <div
-              key={salary.id}
-              className="grid grid-cols-[0.5fr_2fr_1fr_1fr_1fr_1fr_1.2fr_1.2fr_1fr] border border-gray-600
-               text-gray-800 hover:bg-gray-100 transition
-               duration-200 text-sm items-center py-1 px-1"
+              key={salary.id} // use id as key
+              className="grid grid-cols-[0.5fr_2fr_1fr_1fr_1fr_1fr_1.2fr_1.2fr_1fr] border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center py-1 px-1"
             >
               <span>{idx + 1}</span>
-              <span>{salary.employee_name}</span>
+              <span>{salary.employee_name}</span> {/* now safe */}
               <span>{salary.salary_amount}</span>
               <span>{Number(salary.emp_of_mon_allowance) || 0}</span>
               <span>{Number(salary.transport_allowance) || 0}</span>
               <span>{Number(salary.medical_allowance) || 0}</span>
-
               <span>{salary.total_salary}</span>
               <span>
                 {new Date(salary.config_date).toLocaleDateString("en-CA")}
               </span>
-
               <span className="flex items-center justify-center gap-1">
                 <EditButton
                   handleUpdate={() => {
