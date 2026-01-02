@@ -6,6 +6,7 @@ import { TextareaField } from "../InputFields/TextareaField";
 import { OptionField } from "../InputFields/OptionField";
 import { Title } from "../Title";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { BASE_URL } from "../../Content/URL";
 
 type UpdateLEAVET = {
@@ -13,7 +14,6 @@ type UpdateLEAVET = {
   name: string;
   leaveSubject: string;
   leaveStatus: string;
-  status: string;
   leaveReason: string;
   date: string;
 };
@@ -30,28 +30,27 @@ const optionData = [
   { id: 3, label: "Pending", value: "pending" },
 ];
 
-const currentDate = new Date().toLocaleDateString("sv-SE") ?? "";
-
-const initialState = {
-  leaveSubject: "",
-  date: currentDate,
-  leaveReason: "",
-  status: "pending",
-};
+const currentDate = new Date().toISOString().slice(0, 10);
 
 export const UpdateLeave = ({
   setModal,
   EditLeave,
   refreshLeaves,
 }: UpdateLeaveProps) => {
-  const [updateLeave, setUpdateLeave] = useState(initialState);
+  const [updateLeave, setUpdateLeave] = useState({
+    leaveSubject: "",
+    date: currentDate,
+    leaveReason: "",
+    status: "pending",
+  });
+
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (EditLeave) {
       setUpdateLeave({
         leaveSubject: EditLeave.leaveSubject || "",
-        date: EditLeave.date || currentDate,
+        date: EditLeave.date ? EditLeave.date.slice(0, 10) : currentDate,
         leaveReason: EditLeave.leaveReason || "",
         status: EditLeave.leaveStatus?.toLowerCase() || "pending",
       });
@@ -59,9 +58,7 @@ export const UpdateLeave = ({
   }, [EditLeave]);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setUpdateLeave((prev) => ({ ...prev, [name]: value }));
@@ -75,22 +72,19 @@ export const UpdateLeave = ({
 
     try {
       const payload = {
-        date: new Date(updateLeave.date).toISOString().split("T")[0],
+        date: updateLeave.date, 
         leaveStatus: updateLeave.status,
         leaveSubject: updateLeave.leaveSubject,
         leaveReason: updateLeave.leaveReason,
       };
 
-      await axios.put(
-        `${BASE_URL}/api/admin/updateLeave/${EditLeave.id}`,
-        payload
-      );
-
+      await axios.put(`${BASE_URL}/api/admin/updateLeave/${EditLeave.id}`, payload);
+      toast.success("Leave updated successfully!");
       await refreshLeaves();
-
       setModal();
     } catch (error) {
       console.error("Update error:", error);
+      toast.error("Failed to update leave.");
     } finally {
       setSubmitting(false);
     }
