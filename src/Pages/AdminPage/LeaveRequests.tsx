@@ -189,7 +189,7 @@ export const LeaveRequests = () => {
 
         <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
           <div
-            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold
+            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold
            border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
           >
             <span>Sr#</span>
@@ -203,7 +203,7 @@ export const LeaveRequests = () => {
           {paginatedLeaves.map((leave, index) => (
             <div
               key={leave.id}
-              className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800
+              className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800
                 hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
             >
               <span className="text-left">{startIndex + index + 1}</span>
