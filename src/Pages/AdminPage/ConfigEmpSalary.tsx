@@ -3,8 +3,11 @@ import axios from "axios";
 
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
+import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
+import { Pagination } from "../../Components/Pagination/Pagination";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 
@@ -32,27 +35,44 @@ interface Salary {
   config_date: string;
 }
 
+const numbers = [10, 25, 50, 100];
+
 export const ConfigEmpSalary = () => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
 
   const [isOpenModal, setIsOpenModal] = useState<CONFIGT>("");
+  const [pageNo, setPageNo] = useState(1);
+  const [limit, setLimit] = useState(10); // Added limit for entries per page
+  const [searchTerm, setSearchTerm] = useState("");
+
   const [salaries, setSalaries] = useState<Salary[]>([]);
+  const [totalRecords, setTotalRecords] = useState(0);
   const [selectedSalary, setSelectedSalary] = useState<Salary | null>(null);
+
+  // Pagination handlers
+  const handleIncrementPageButton = () => setPageNo((prev) => prev + 1);
+  const handleDecrementPageButton = () =>
+    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
 
   const handleToggleViewModal = (active: CONFIGT) =>
     setIsOpenModal((prev) => (prev === active ? "" : active));
 
-  // Fetch all salaries from API
-  const fetchSalaries = useCallback(async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`);
-      setSalaries(res.data.salaries);
-      console.log("API salaries:", res.data.salaries);
-    } catch (error) {
-      console.error("Error fetching salaries:", error);
-    }
-  }, []);
+const fetchSalaries = useCallback(async () => {
+  try {
+    const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`);
+    setSalaries(res.data.salaries);
+    setTotalRecords(res.data.total);
+    console.log("API salaries:", res.data.salaries);
+  } catch (error) {
+    console.error("Error fetching salaries:", error);
+  }
+}, []);
+
+
+  useEffect(() => {
+    setPageNo(1);
+  }, [setPageNo]);
 
   useEffect(() => {
     document.title = "(OMS) CONFIG SALARY";
@@ -74,6 +94,7 @@ export const ConfigEmpSalary = () => {
         `${BASE_URL}/api/admin/deletesalaries/${selectedSalary.id}`
       );
       setSalaries((prev) => prev.filter((s) => s.id !== selectedSalary.id));
+      setTotalRecords((prev) => prev - 1);
       handleToggleViewModal("");
     } catch (error) {
       console.error("Error deleting salary:", error);
@@ -92,7 +113,7 @@ export const ConfigEmpSalary = () => {
           <span>
             Total number of Salaries:{" "}
             <span className="text-2xl text-blue-500 font-semibold font-sans">
-              [{salaries.length}]
+              [{totalRecords}]
             </span>
           </span>
           <CustomButton
@@ -101,10 +122,27 @@ export const ConfigEmpSalary = () => {
           />
         </div>
 
+        {/* Search & entries */}
+        <div className="flex items-center justify-between text-gray-800 mx-2 my-2">
+          <div>
+            <span>Show</span>
+            <span className="bg-gray-200 rounded mx-1 p-1">
+              <select value={limit} onChange={(e) => setLimit(Number(e.target.value))}>
+                {numbers.map((num) => (
+                  <option key={num} value={num}>{num}</option>
+                ))}
+              </select>
+            </span>
+            <span>entries</span>
+          </div>
+          <TableInputField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        </div>
+
         {/* Table */}
         <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
           {/* Table Header */}
-          <div className="grid grid-cols-[0.5fr_2fr_1fr_1fr_1fr_1fr_1.2fr_1.2fr_1fr] bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 py-2 px-1">
+          <div className="grid grid-cols-[0.5fr_2fr_1fr_1fr_1fr_1fr_1.2fr_1.2fr_1fr] bg-gray-200 text-gray-900
+           font-semibold border border-gray-600 text-sm sticky top-0 z-10 py-2 px-1">
             <span className="px-2 ">Sr#</span>
             <span>Employee Name</span>
             <span>Monthly Pay</span>
@@ -120,9 +158,10 @@ export const ConfigEmpSalary = () => {
           {salaries.map((salary, idx) => (
             <div
               key={salary.id}
-              className="grid grid-cols-[0.5fr_2fr_1fr_1fr_1fr_1fr_1.2fr_1.2fr_1fr] border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center py-1 px-1"
+              className="grid grid-cols-[0.5fr_2fr_1fr_1fr_1fr_1fr_1.2fr_1.2fr_1fr] border
+               border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center py-1 px-1"
             >
-              <span>{idx + 1}</span>
+              <span>{(pageNo - 1) * limit + idx + 1}</span>
               <span>{salary.employee_name}</span>
               <span>{salary.salary_amount}</span>
               <span>{Number(salary.emp_of_mon_allowance) || 0}</span>
@@ -153,6 +192,20 @@ export const ConfigEmpSalary = () => {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Pagination */}
+      <div className="flex items-center justify-between my-2">
+        <ShowDataNumber
+          start={(pageNo - 1) * limit + 1}
+          total={totalRecords}
+          end={Math.min(pageNo * limit, totalRecords)}
+        />
+        <Pagination
+          handleIncrementPageButton={handleIncrementPageButton}
+          handleDecrementPageButton={handleDecrementPageButton}
+          pageNo={pageNo}
+        />
       </div>
 
       {/* Modals */}
