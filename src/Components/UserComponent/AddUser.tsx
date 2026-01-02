@@ -75,6 +75,7 @@ export const AddUser = ({
     }
   }, [initialValues]);
 
+ 
   const handlerChange = (
   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
 ) => {
@@ -82,12 +83,17 @@ export const AddUser = ({
   let value = e.target.value;
 
   if (name === "name") {
-    // Remove numbers and extra spaces
-    value = value.replace(/[^a-zA-Z]/g, "");
-    // Capitalize first letter
-    if (value.length > 0) {
-      value = value.charAt(0).toUpperCase() + value.slice(1);
-    }
+    // Remove any non-letters except spaces
+    value = value.replace(/[^a-zA-Z\s]/g, "");
+
+    // Remove leading spaces
+    value = value.replace(/^\s+/, "");
+
+    // Capitalize first letter of each word
+    value = value
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   }
 
   if (name === "email") {
@@ -95,10 +101,8 @@ export const AddUser = ({
   }
 
   if (name === "contact") {
-    // Remove all non-digit characters
-    value = value.replace(/\D/g, "");
-    // Limit to 11 digits
-    if (value.length > 11) value = value.slice(0, 11);
+    // Keep only digits and limit to 11
+    value = value.replace(/\D/g, "").slice(0, 11);
   }
 
   if (name === "cnic") {

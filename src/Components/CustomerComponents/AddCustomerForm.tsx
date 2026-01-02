@@ -31,31 +31,33 @@ export const AddCustomer = ({
 
   const token = currentUser?.token;
 
-  const capitalizeFirstLetter = (str: string) =>
-    str.charAt(0).toUpperCase() + str.slice(1);
+ 
 
-  const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const { name, value } = e.target;
   let newValue = value;
 
-  // Name and Address fields: no numbers, capitalize first letter, trim spaces at start
+  // Prevent leading spaces in all fields
+  if (newValue.startsWith(" ")) {
+    newValue = newValue.trimStart();
+  }
+
+  // Prevent numbers in name/address fields
   if (
     name === "customerName" ||
     name === "customerAddress" ||
     name === "companyName" ||
     name === "companyAddress"
   ) {
-    // Remove digits
+    // Remove numbers
     newValue = newValue.replace(/\d/g, "");
-    // Remove leading spaces
-    newValue = newValue.replace(/^\s+/, "");
-    // Capitalize first letter
-    newValue = capitalizeFirstLetter(newValue);
+    // Capitalize first letter of each word
+    newValue = newValue.replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
-  // Customer Contact: only digits, max 11, no spaces
+  // Customer contact: only digits, max 11
   if (name === "customerContact") {
-    newValue = newValue.replace(/\D/g, ""); // remove anything that's not a digit
+    newValue = newValue.replace(/\D/g, ""); // remove non-digit characters
     if (newValue.length > 11) newValue = newValue.slice(0, 11);
   }
 
@@ -64,6 +66,7 @@ export const AddCustomer = ({
     [name]: newValue,
   }));
 };
+
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

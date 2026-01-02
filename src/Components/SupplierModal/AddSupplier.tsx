@@ -35,18 +35,21 @@ AddCustomerProps) => {
 
   const token = currentUser?.token;
   
-  const handlerChange = (
+ const handlerChange = (
   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 ) => {
   e.preventDefault();
-  const { name, value: rawValue } = e.target;
-  let value = rawValue;
+  const { name } = e.target;
+  let value = e.target.value;
+
+  // Remove leading spaces
+  value = value.replace(/^\s+/, "");
 
   if (name === "supplierName") {
-    // Remove numbers and special characters, allow only letters and spaces
-    value = value.replace(/[^a-zA-Z\s]/g, "");
-    // Capitalize first letter of each word
-    value = value.replace(/\b\w/g, (char) => char.toUpperCase());
+    // Remove numbers, allow spaces in between, capitalize words
+    value = value
+      .replace(/[0-9]/g, "")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
   if (name === "supplierAddress") {
@@ -59,12 +62,13 @@ AddCustomerProps) => {
   }
 
   if (name === "supplierContact") {
-    // Remove all non-digits, remove spaces, limit to 11 digits
+    // Only digits, max 11 digits, remove leading zeros or spaces
     value = value.replace(/\D/g, "").slice(0, 11);
   }
 
   setSupplierData({ ...supplierData, [name]: value });
 };
+
 
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
