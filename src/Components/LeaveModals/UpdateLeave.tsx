@@ -50,9 +50,15 @@ export const UpdateLeave = ({
 
   useEffect(() => {
     if (EditLeave) {
+      const dateOnly = EditLeave.date
+        ? new Date(EditLeave.date).toLocaleDateString("sv-SE", {
+            timeZone: "Asia/Karachi",
+          })
+        : currentDate;
+
       setUpdateLeave({
         leaveSubject: EditLeave.leaveSubject || "",
-        date: EditLeave.date ? EditLeave.date.slice(0, 10) : currentDate,
+        date: dateOnly,
         leaveReason: EditLeave.leaveReason || "",
         status: EditLeave.leaveStatus?.toLowerCase() || "pending",
       });
