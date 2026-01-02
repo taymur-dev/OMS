@@ -34,36 +34,38 @@ AddCustomerProps) => {
   const [loading, setLoading] = useState(false);
 
   const token = currentUser?.token;
+  
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    e.preventDefault();
-    const { name } = e.target;
-    let value = e.target.value;
+  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+) => {
+  e.preventDefault();
+  const { name, value: rawValue } = e.target;
+  let value = rawValue;
 
-    if (name === "supplierName") {
-      // Capitalize first letter of each word & remove numbers
-      value = value
-        .replace(/[0-9]/g, "")
-        .replace(/\b\w/g, (char) => char.toUpperCase());
-    }
+  if (name === "supplierName") {
+    // Remove numbers and special characters, allow only letters and spaces
+    value = value.replace(/[^a-zA-Z\s]/g, "");
+    // Capitalize first letter of each word
+    value = value.replace(/\b\w/g, (char) => char.toUpperCase());
+  }
 
-    if (name === "supplierAddress") {
-      // Capitalize first letter of each word
-      value = value.replace(/\b\w/g, (char) => char.toUpperCase());
-    }
+  if (name === "supplierAddress") {
+    // Capitalize first letter of each word
+    value = value.replace(/\b\w/g, (char) => char.toUpperCase());
+  }
 
-    if (name === "supplierEmail") {
-      value = value.toLowerCase();
-    }
+  if (name === "supplierEmail") {
+    value = value.toLowerCase();
+  }
 
-    if (name === "supplierContact") {
-      // Only digits, max 11 digits, no spaces
-      value = value.replace(/\D/g, "").slice(0, 11);
-    }
+  if (name === "supplierContact") {
+    // Remove all non-digits, remove spaces, limit to 11 digits
+    value = value.replace(/\D/g, "").slice(0, 11);
+  }
 
-    setSupplierData({ ...supplierData, [name]: value });
-  };
+  setSupplierData({ ...supplierData, [name]: value });
+};
+
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
