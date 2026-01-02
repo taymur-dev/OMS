@@ -13,9 +13,11 @@ import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
+import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { AddAttendance } from "../../Components/AttendanceComponent/AddAttendance";
 import { UpdateAttendance } from "../../Components/AttendanceComponent/UpdateAttendance";
+import { ViewAttendance } from "../../Components/AttendanceComponent/ViewAttendance";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
@@ -26,7 +28,7 @@ const numbers = [10, 25, 50, 100];
 
 type ISOPENMODALT = "ADDATTENDANCE" | "EDITATTENDANCE" | "DELETE";
 
-type AttendanceT = {
+export type AttendanceT = {
   id: number;
   attendanceStatus: string;
   clockIn: string;
@@ -55,12 +57,15 @@ export const UserAttendance = () => {
   const [pageNo, setPageNo] = useState(1);
   const [selectedValue, setSelectedValue] = useState(10);
 
+  const [viewAttendance, setViewAttendance] = useState<AttendanceT | null>(
+    null
+  );
+
   const [isOpenModal, setIsOpenModal] = useState<ISOPENMODALT | "">("");
   const [updatedAttendance, setUpdatedAttendance] =
     useState<AttendanceT | null>(null);
   const [recordToDelete, setRecordToDelete] = useState<number | null>(null);
 
-  // 🔑 ROLE BASED FETCH
   const handleGetAttendance = useCallback(async () => {
     if (!token || !currentUser) return;
 
@@ -185,11 +190,11 @@ export const UserAttendance = () => {
             } bg-gray-200 font-semibold p-2 sticky top-0`}
           >
             <span>Sr#</span>
-            <span>Date</span>
             {isAdmin && <span>User</span>}
             <span>Clock In</span>
             <span>Clock Out</span>
             <span>Working Hours</span>
+            <span>Date</span>
             <span>Day</span>
             {isAdmin && <span className="text-center">Actions</span>}
           </div>
@@ -204,11 +209,11 @@ export const UserAttendance = () => {
               } border p-2 hover:bg-gray-100`}
             >
               <span>{startIndex + index + 1}</span>
-              <span>{att.date.slice(0, 10)}</span>
               {isAdmin && <span>{att.name}</span>}
               <span>{att.clockIn ?? "--"}</span>
               <span>{att.clockOut ?? "--"}</span>
               <span>{att.workingHours ?? "--"}</span>
+              <span>{att.date.slice(0, 10)}</span>
               <span>{att.day ?? "--"}</span>
 
               {isAdmin && (
@@ -219,6 +224,9 @@ export const UserAttendance = () => {
                       setIsOpenModal("EDITATTENDANCE");
                     }}
                   />
+
+                  <ViewButton handleView={() => setViewAttendance(att)} />
+
                   <DeleteButton
                     handleDelete={() => {
                       setRecordToDelete(att.id);
@@ -258,6 +266,13 @@ export const UserAttendance = () => {
         <UpdateAttendance
           setModal={() => setIsOpenModal("")}
           updatedAttendance={updatedAttendance}
+        />
+      )}
+
+      {viewAttendance && (
+        <ViewAttendance
+          setIsOpenModal={() => setViewAttendance(null)}
+          viewAttendance={viewAttendance}
         />
       )}
 
