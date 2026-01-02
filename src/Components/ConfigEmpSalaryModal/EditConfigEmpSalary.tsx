@@ -13,7 +13,6 @@ import { useAppSelector } from "../../redux/Hooks";
 type Salary = {
   id: number;
   employee_id: number;
-  employee_name: string;
   salary_amount: number;
   emp_of_mon_allowance: number;
   transport_allowance: number;
@@ -47,10 +46,10 @@ type SalaryState = {
 
 const initialState: SalaryState = {
   employee_id: "",
-  salary_amount: "0",
-  emp_of_mon_allowance: "0",
-  transport_allowance: "0",
-  medical_allowance: "0",
+  salary_amount: "",
+  emp_of_mon_allowance: "",
+  transport_allowance: "",
+  medical_allowance: "",
   total_salary: "0",
   config_date: "",
 };

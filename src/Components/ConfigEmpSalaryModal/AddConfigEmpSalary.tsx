@@ -49,10 +49,13 @@ export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
-  const [addConfigEmployee, setAddConfigEmployee] = useState<SalaryState>(initialState);
+  const [addConfigEmployee, setAddConfigEmployee] =
+    useState<SalaryState>(initialState);
   const [allUsers, setAllUsers] = useState<SelectOption[]>([]);
 
-  const handlerChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handlerChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setAddConfigEmployee((prev) => ({ ...prev, [name]: value }));
   };
@@ -64,7 +67,10 @@ export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
       Number(addConfigEmployee.transport_allowance || 0) +
       Number(addConfigEmployee.medical_allowance || 0);
 
-    setAddConfigEmployee((prev) => ({ ...prev, total_salary: total.toString() }));
+    setAddConfigEmployee((prev) => ({
+      ...prev,
+      total_salary: total.toString(),
+    }));
   }, [
     addConfigEmployee.salary_amount,
     addConfigEmployee.emp_of_mon_allowance,
@@ -74,9 +80,12 @@ export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
 
   const getAllUsers = useCallback(async () => {
     try {
-      const res = await axios.get<{ users: ApiUser[] }>(`${BASE_URL}/api/admin/getUsers`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get<{ users: ApiUser[] }>(
+        `${BASE_URL}/api/admin/getUsers`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       const formattedUsers: SelectOption[] = res.data.users
         .filter((user) => user.role === "user" && user.loginStatus === "Y")
@@ -97,11 +106,11 @@ export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
 
     try {
       const payload = {
-        employee_id: addConfigEmployee.employee_name,
-        salary_amount: Number(addConfigEmployee.salary_amount ),
-        emp_of_mon_allowance: Number(addConfigEmployee.emp_of_mon_allowance ),
-        transport_allowance: Number(addConfigEmployee.transport_allowance ),
-        medical_allowance: Number(addConfigEmployee.medical_allowance ),
+        employee_id: Number(addConfigEmployee.employee_id),
+        salary_amount: Number(addConfigEmployee.salary_amount),
+        emp_of_mon_allowance: Number(addConfigEmployee.emp_of_mon_allowance),
+        transport_allowance: Number(addConfigEmployee.transport_allowance),
+        medical_allowance: Number(addConfigEmployee.medical_allowance),
         total_salary: Number(addConfigEmployee.total_salary),
         config_date: addConfigEmployee.config_date,
       };
@@ -126,8 +135,8 @@ export const AddConfigEmpSalary = ({ setModal, onSuccess }: AddSalaryProps) => {
           <div className="mx-2 flex flex-col gap-3">
             <UserSelect
               labelName="Employee Name*"
-              name="employee_name"
-              value={addConfigEmployee.employee_name}
+              name="employee_id"
+              value={addConfigEmployee.employee_id}
               handlerChange={handlerChange}
               optionData={allUsers}
             />
