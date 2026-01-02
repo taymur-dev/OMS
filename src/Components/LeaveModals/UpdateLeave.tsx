@@ -30,7 +30,7 @@ const optionData = [
   { id: 3, label: "Pending", value: "pending" },
 ];
 
-const currentDate = new Date().toISOString().slice(0, 10);
+const currentDate = new Date().toLocaleDateString();
 
 export const UpdateLeave = ({
   setModal,
