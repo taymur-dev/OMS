@@ -17,10 +17,7 @@ import { ViewConfigEmpSalary } from "../../Components/ConfigEmpSalaryModal/ViewC
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
-import {
-  navigationStart,
-  navigationSuccess,
-} from "../../redux/NavigationSlice";
+import { navigationStart, navigationSuccess } from "../../redux/NavigationSlice";
 
 import { BASE_URL } from "../../Content/URL";
 
@@ -46,13 +43,14 @@ export const ConfigEmpSalary = () => {
 
   const [isOpenModal, setIsOpenModal] = useState<CONFIGT>("");
   const [pageNo, setPageNo] = useState(1);
+  const [limit, setLimit] = useState(10); // Added limit for entries per page
   const [searchTerm, setSearchTerm] = useState("");
 
   const [salaries, setSalaries] = useState<Salary[]>([]);
   const [totalRecords, setTotalRecords] = useState(0);
-
   const [selectedSalary, setSelectedSalary] = useState<Salary | null>(null);
 
+  // Pagination handlers
   const handleIncrementPageButton = () => setPageNo((prev) => prev + 1);
   const handleDecrementPageButton = () =>
     setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
@@ -60,10 +58,11 @@ export const ConfigEmpSalary = () => {
   const handleToggleViewModal = (active: CONFIGT) =>
     setIsOpenModal((prev) => (prev === active ? "" : active));
 
+  // Fetch salaries from API
   const fetchSalaries = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`, {
-        params: { page: pageNo, search: searchTerm },
+        params: { page: pageNo, limit, search: searchTerm },
       });
       setSalaries(res.data.salaries);
       setTotalRecords(res.data.total);
@@ -71,8 +70,28 @@ export const ConfigEmpSalary = () => {
     } catch (error) {
       console.error("Error fetching salaries:", error);
     }
-  }, [pageNo, searchTerm]);
+  }, [pageNo, limit, searchTerm]);
 
+  // Reset page number to 1 when search term changes
+  useEffect(() => {
+    setPageNo(1);
+  }, [searchTerm, limit]);
+
+  // Initial page setup
+  useEffect(() => {
+    document.title = "(OMS) CONFIG SALARY";
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("CONFIG SALARY"));
+    }, 1000);
+  }, [dispatch]);
+
+  // Fetch salaries when page, limit, or search changes
+  useEffect(() => {
+    fetchSalaries();
+  }, [fetchSalaries]);
+
+  // Delete salary
   const handleDeleteSalary = async () => {
     if (!selectedSalary) return;
 
@@ -88,27 +107,14 @@ export const ConfigEmpSalary = () => {
     }
   };
 
-  useEffect(() => {
-    document.title = "(OMS) CONFIG SALARY";
-    dispatch(navigationStart());
-    setTimeout(() => {
-      dispatch(navigationSuccess("CONFIG SALARY"));
-    }, 1000);
-  }, [dispatch]);
-
-  useEffect(() => {
-    fetchSalaries();
-  }, [fetchSalaries]);
-
   if (loader) return <Loader />;
 
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Salaries" activeFile="Salaries list" />
-      <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white
-       overflow-hidden flex flex-col"
-      >
+
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
+        {/* Top controls */}
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Salaries:{" "}
@@ -121,29 +127,27 @@ export const ConfigEmpSalary = () => {
             handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
-        <div className="flex items-center justify-between text-gray-800 mx-2">
+
+        {/* Search & entries */}
+        <div className="flex items-center justify-between text-gray-800 mx-2 my-2">
           <div>
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
-              <select>
+              <select value={limit} onChange={(e) => setLimit(Number(e.target.value))}>
                 {numbers.map((num) => (
-                  <option key={num}>{num}</option>
+                  <option key={num} value={num}>{num}</option>
                 ))}
               </select>
             </span>
             <span>entries</span>
           </div>
-          <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-          />
+          <TableInputField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </div>
+
+        {/* Table */}
         <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
-          <div
-            className="grid grid-cols-[0.5fr_2fr_1fr_1fr_1fr_1fr_1.2fr_1.2fr_1fr] bg-gray-200 text-gray-900
-             font-semibold border border-gray-600
-           text-sm sticky top-0 z-10 py-2 px-1"
-          >
+          {/* Table Header */}
+          <div className="grid grid-cols-[0.5fr_2fr_1fr_1fr_1fr_1fr_1.2fr_1.2fr_1fr] bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 py-2 px-1">
             <span className="px-2 ">Sr#</span>
             <span>Employee Name</span>
             <span>Monthly Pay</span>
@@ -154,21 +158,21 @@ export const ConfigEmpSalary = () => {
             <span>Date</span>
             <span>Action</span>
           </div>
+
+          {/* Table Rows */}
           {salaries.map((salary, idx) => (
             <div
-              key={salary.id} // use id as key
+              key={salary.id}
               className="grid grid-cols-[0.5fr_2fr_1fr_1fr_1fr_1fr_1.2fr_1.2fr_1fr] border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center py-1 px-1"
             >
-              <span>{idx + 1}</span>
-              <span>{salary.employee_name}</span> {/* now safe */}
+              <span>{(pageNo - 1) * limit + idx + 1}</span>
+              <span>{salary.employee_name}</span>
               <span>{salary.salary_amount}</span>
               <span>{Number(salary.emp_of_mon_allowance) || 0}</span>
               <span>{Number(salary.transport_allowance) || 0}</span>
               <span>{Number(salary.medical_allowance) || 0}</span>
               <span>{salary.total_salary}</span>
-              <span>
-                {new Date(salary.config_date).toLocaleDateString("en-CA")}
-              </span>
+              <span>{new Date(salary.config_date).toLocaleDateString("en-CA")}</span>
               <span className="flex items-center justify-center gap-1">
                 <EditButton
                   handleUpdate={() => {
@@ -194,11 +198,12 @@ export const ConfigEmpSalary = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
+      {/* Pagination */}
+      <div className="flex items-center justify-between my-2">
         <ShowDataNumber
-          start={(pageNo - 1) * 10 + 1}
+          start={(pageNo - 1) * limit + 1}
           total={totalRecords}
-          end={pageNo * 10}
+          end={Math.min(pageNo * limit, totalRecords)}
         />
         <Pagination
           handleIncrementPageButton={handleIncrementPageButton}
@@ -207,11 +212,9 @@ export const ConfigEmpSalary = () => {
         />
       </div>
 
+      {/* Modals */}
       {isOpenModal === "ADD" && (
-        <AddConfigEmpSalary
-          setModal={() => handleToggleViewModal("")}
-          refreshSalaries={fetchSalaries}
-        />
+        <AddConfigEmpSalary setModal={() => handleToggleViewModal("")} refreshSalaries={fetchSalaries} />
       )}
       {isOpenModal === "EDIT" && selectedSalary && (
         <EditConfigEmpSalary
@@ -221,12 +224,8 @@ export const ConfigEmpSalary = () => {
         />
       )}
       {isOpenModal === "VIEW" && selectedSalary && (
-        <ViewConfigEmpSalary
-          setModal={() => handleToggleViewModal("")}
-          salaryId={selectedSalary.id}
-        />
+        <ViewConfigEmpSalary setModal={() => handleToggleViewModal("")} salaryId={selectedSalary.id} />
       )}
-
       {isOpenModal === "DELETE" && selectedSalary && (
         <ConfirmationModal
           isOpen={() => handleToggleViewModal("DELETE")}
