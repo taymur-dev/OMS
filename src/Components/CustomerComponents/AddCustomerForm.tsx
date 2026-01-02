@@ -36,16 +36,22 @@ export const AddCustomer = ({
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
     let newValue = value;
 
+    // Prevent numbers in name/address fields
     if (
       name === "customerName" ||
       name === "customerAddress" ||
       name === "companyName" ||
       name === "companyAddress"
     ) {
-      newValue = capitalizeFirstLetter(value);
+      newValue = value.replace(/\d/g, "");
+      newValue = capitalizeFirstLetter(newValue);
+    }
+
+    if (name === "customerContact") {
+      newValue = newValue.replace(/\D/g, "");
+      if (newValue.length > 11) newValue = newValue.slice(0, 11);
     }
 
     setCustomerData((prev) => ({
@@ -125,7 +131,7 @@ export const AddCustomer = ({
             <InputField
               labelName="Customer Contact*"
               placeHolder="Enter the Contact Number"
-              type="number"
+              type="text" 
               name="customerContact"
               handlerChange={handlerChange}
               value={customerData.customerContact}

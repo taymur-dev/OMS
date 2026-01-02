@@ -81,9 +81,12 @@ export const AddUser = ({
     const { name } = e.target;
     let value = e.target.value;
 
-    if (name === "name") {
-      value = value.charAt(0).toUpperCase() + value.slice(1);
-    }
+   if (name === "name") {
+  value = value.replace(/[^a-zA-Z\s]/g, "");
+
+  value = value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 
     if (name === "email") {
       value = value.toLowerCase();
