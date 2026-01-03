@@ -49,9 +49,11 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
 
   const [form, setForm] = useState(initialState);
   const [allUsers, setAllUsers] = useState<User[]>([]);
-  const [salaries, setSalaries] = useState<{ employee_id: number; total_salary: number }[]>([]);
+  // const [salaries, setSalaries] = useState<{ employee_id: number; total_salary: number }[]>([]);
 
-  const handlerChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handlerChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
 
     setForm((prev) => {
@@ -59,7 +61,7 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
 
       if (name === "selectEmployee") {
         const selectedUser = allUsers.find((u) => u.id === Number(value));
-        const salaryConfig = salaries.find((s) => s.employee_id === Number(value));
+        // const salaryConfig = salaries.find((s) => s.employee_id === Number(value));
 
         if (selectedUser) {
           updated.employeeName = selectedUser.name;
@@ -67,7 +69,7 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
           updated.employeeEmail = selectedUser.email;
         }
 
-        updated.payableSalary = salaryConfig?.total_salary.toString() || "0";
+        // updated.payableSalary = salaryConfig?.total_salary.toString() || "0";
       }
 
       const salary = parseFloat(updated.payableSalary) || 0;
@@ -89,19 +91,19 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
     }
   }, [token]);
 
-  const getSalaries = useCallback(async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`);
-      setSalaries(res.data.salaries || []);
-    } catch {
-      toast.error("Failed to fetch salaries");
-    }
-  }, []);
+  // const getSalaries = useCallback(async () => {
+  //   try {
+  //     const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`);
+  //     setSalaries(res.data.salaries || []);
+  //   } catch {
+  //     toast.error("Failed to fetch salaries");
+  //   }
+  // }, []);
 
   useEffect(() => {
     getAllUsers();
-    getSalaries();
-  }, [getAllUsers, getSalaries]);
+    // getSalaries();
+  }, [getAllUsers]);
 
   const userOptions = allUsers
     .filter((u) => u.loginStatus === "Y" && u.role === "user")
@@ -149,10 +151,25 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
               optionData={userOptions}
             />
 
-            <InputField labelName="Employee Name*" value={form.employeeName} readOnly />
-            <InputField labelName="Employee Contact*" value={form.employeeContact} readOnly />
-            <InputField labelName="Employee Email*" value={form.employeeEmail} readOnly />
-            <InputField labelName="Payable Salary*" value={form.payableSalary} readOnly />
+            <InputField
+              labelName="Employee Name*"
+              value={form.employeeName}
+              readOnly
+            />
+            <InputField
+              labelName="Employee Contact*"
+              value={form.employeeContact}
+              readOnly
+            />
+            <InputField
+              labelName="Employee Email*"
+              value={form.employeeEmail}
+              readOnly
+            />
+            <InputField
+              labelName="Payable Salary*"
+              value={form.payableSalary}
+            />
 
             <InputField
               labelName="Withdraw Amount*"

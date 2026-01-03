@@ -25,10 +25,10 @@ type User = {
   loginStatus: string;
 };
 
-type SalaryConfig = {
-  employee_id: number;
-  total_salary: number;
-};
+// type SalaryConfig = {
+//   employee_id: number;
+//   total_salary: number;
+// };
 
 const paymentMethods = [
   { id: 1, label: "EasyPaisy", value: "easyPaisy" },
@@ -54,7 +54,7 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
 
   const [form, setForm] = useState(initialState);
   const [allUsers, setAllUsers] = useState<User[]>([]);
-  const [salaries, setSalaries] = useState<SalaryConfig[]>([]);
+  // const [salaries, setSalaries] = useState<SalaryConfig[]>([]);
 
   const getAllUsers = useCallback(async () => {
     try {
@@ -68,19 +68,19 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
     }
   }, [token]);
 
-  const getSalaries = useCallback(async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`);
-      setSalaries(res.data.salaries || []);
-    } catch {
-      toast.error("Failed to fetch salaries");
-    }
-  }, []);
+  // const getSalaries = useCallback(async () => {
+  //   try {
+  //     const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`);
+  //     setSalaries(res.data.salaries || []);
+  //   } catch {
+  //     toast.error("Failed to fetch salaries");
+  //   }
+  // }, []);
 
   useEffect(() => {
     getAllUsers();
-    getSalaries();
-  }, [getAllUsers, getSalaries]);
+    // getSalaries();
+  }, [getAllUsers]);
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -90,7 +90,7 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
 
       if (name === "selectEmployee") {
         const selectedUser = allUsers.find((u) => u.id === Number(value));
-        const salaryConfig = salaries.find((s) => s.employee_id === Number(value));
+        // const salaryConfig = salaries.find((s) => s.employee_id === Number(value));
 
         if (selectedUser) {
           updated.employeeName = selectedUser.name;
@@ -98,7 +98,7 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
           updated.employeeEmail = selectedUser.email;
         }
 
-        updated.paymentAmount = salaryConfig?.total_salary.toString() || "0";
+        // updated.paymentAmount = salaryConfig?.total_salary.toString() || "0";
       }
 
       if (name === "paymentAmount" || name === "refundAmount") {
@@ -192,7 +192,6 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
               type="number"
               handlerChange={handlerChange}
               value={form.paymentAmount}
-              readOnly
             />
 
             <InputField
