@@ -6,6 +6,7 @@ type InputFieldProps = {
   name?: string;
   value?: string;
   disabled?: boolean;
+  readOnly?: boolean;
 };
 export const InputField = ({
   type,
