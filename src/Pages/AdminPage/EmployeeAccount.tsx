@@ -14,8 +14,7 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
-import { EditButton } from "../../Components/CustomButtons/EditButton";
-import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+
 const numbers = [10, 25, 50, 10];
 
 type EMPLOYEEACOUNTT = "ADDPAYMENT" | "ADDREFUND" | "VIEW" | "";
@@ -108,10 +107,8 @@ export const EmployeeAccount = () => {
             <span className="">Hamza</span>
             <span className="">hamzaamin10@gmail.com</span>
             <span className="">+923215965061</span>
-            <span className="flex items-center  gap-1">
-              <EditButton handleUpdate={() => handleToggleViewModal("")} />
+            <span className="flex items-center">
               <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
-              <DeleteButton handleDelete={() => handleToggleViewModal("")} />
             </span>
           </div>
         </div>

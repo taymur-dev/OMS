@@ -38,13 +38,11 @@ const initialState = {
   employeeName: "",
   employeeContact: "",
   employeeEmail: "",
-  withdrawAccount: "",
   paymentMethod: "",
-  paymentAccount: "",
-  refundAccount: "",
+  paymentAmount: "",
+  refundAmount: "",
   balance: "",
   date: "",
-  depositeBy: "",
 };
 export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
@@ -76,7 +74,7 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
     } catch (error) {
       console.log(error);
     }
-  } , [token]);
+  }, [token]);
 
   const handlerSubmitted = async () => {};
 
@@ -122,22 +120,6 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
                 value={addConfigEmployee.employeeEmail}
               />
 
-              <InputField
-                labelName="Withdraw Account*"
-                name="withdrawAccount"
-                type="number"
-                handlerChange={handlerChange}
-                value={addConfigEmployee.withdrawAccount}
-              />
-
-              <InputField
-                labelName=" Withdraw Account*"
-                name=" withdrawAccount"
-                type="number"
-                handlerChange={handlerChange}
-                value={addConfigEmployee.withdrawAccount}
-              />
-
               <OptionField
                 labelName="Payment Method*"
                 name="paymentMethod"
@@ -152,19 +134,19 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
               />
 
               <InputField
-                labelName="Payment Account*"
+                labelName="Payment Amount*"
                 name="paymentDate"
                 type="text"
                 handlerChange={handlerChange}
-                value={addConfigEmployee.paymentAccount}
+                value={addConfigEmployee.paymentAmount}
               />
 
               <InputField
-                labelName="Refund Account*"
-                name="refundAccount"
+                labelName="Refund Amount*"
+                name="refundAmount"
                 type="text"
                 handlerChange={handlerChange}
-                value={addConfigEmployee.refundAccount}
+                value={addConfigEmployee.refundAmount}
               />
 
               <InputField
@@ -181,14 +163,6 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
                 type="date"
                 handlerChange={handlerChange}
                 value={addConfigEmployee.date}
-              />
-
-              <InputField
-                labelName="Deposite by*"
-                name="depositeBy"
-                type="number"
-                handlerChange={handlerChange}
-                value={addConfigEmployee.depositeBy}
               />
             </div>
 

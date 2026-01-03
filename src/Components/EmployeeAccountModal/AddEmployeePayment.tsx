@@ -36,11 +36,10 @@ const initialState = {
   employeeContact: "",
   employeeEmail: "",
   payableSalary: "",
-  withdrawAccount: "",
+  withdrawAmount: "",
   paymentMethod: "",
   paymentDate: "",
   balance: "",
-  paidBy: "",
 };
 
 export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
@@ -68,9 +67,9 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
       const updated = { ...prev, [name]: value };
 
       const salary = parseFloat(updated.payableSalary) || 0;
-      const withdraw = parseFloat(updated.withdrawAccount) || 0;
+      const withdraw = parseFloat(updated.withdrawAmount) || 0;
 
-      if (name === "withdrawAccount" || name === "payableSalary") {
+      if (name === "withdrawAmount" || name === "payableSalary") {
         updated.balance = (salary - withdraw).toString();
       }
 
@@ -83,7 +82,7 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
 
     if (selectedUser) {
       const salary = selectedUser.salary || "0";
-      const withdraw = addConfigEmployee.withdrawAccount || "0";
+      const withdraw = addConfigEmployee.withdrawAmount || "0";
 
       setAddConfigEmployee((prev) => ({
         ...prev,
@@ -146,11 +145,10 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
       "employeeContact",
       "employeeEmail",
       "payableSalary",
-      "withdrawAccount",
+      "withdrawAmount",
       "paymentMethod",
       "paymentDate",
       "balance",
-      "paidBy",
     ];
 
     for (const field of requiredFields) {
@@ -167,11 +165,10 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
         employeeContact: addConfigEmployee.employeeContact,
         employeeEmail: addConfigEmployee.employeeEmail,
         payableSalary: parseFloat(addConfigEmployee.payableSalary),
-        withdrawAccount: parseFloat(addConfigEmployee.withdrawAccount),
+        withdrawAmount: parseFloat(addConfigEmployee.withdrawAmount),
         paymentMethod: addConfigEmployee.paymentMethod,
         paymentDate: addConfigEmployee.paymentDate,
         balance: parseFloat(addConfigEmployee.balance),
-        paidBy: addConfigEmployee.paidBy,
       };
 
       await axios.post(`${BASE_URL}/api/admin/addEmployeePayment`, payload, {
@@ -241,10 +238,10 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
 
               <InputField
                 labelName="Withdraw Account*"
-                name="withdrawAccount"
+                name="withdrawAmount"
                 type="number"
                 handlerChange={handlerChange}
-                value={addConfigEmployee.withdrawAccount}
+                value={addConfigEmployee.withdrawAmount}
               />
 
               <InputField
@@ -277,13 +274,7 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
                 value={addConfigEmployee.paymentDate}
               />
 
-              <InputField
-                labelName="Paid By*"
-                name="paidBy"
-                type="number"
-                handlerChange={handlerChange}
-                value={addConfigEmployee.paidBy}
-              />
+            
             </div>
 
             <div className="flex items-center justify-center m-2 gap-2 text-xs">
