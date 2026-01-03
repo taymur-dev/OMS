@@ -153,12 +153,12 @@ export const SalaryCycle = () => {
                 className="grid grid-cols-4 border border-gray-600 text-gray-800 hover:bg-gray-100
                  transition duration-200 text-sm items-center p-[7px]"
               >
-                <span className="px-2">{startIndex + index + 1}</span>
+                <span>{startIndex + index + 1}</span>
                 <span>{item.year}</span>
                 <span>{item.month}</span>
                 <span className="flex items-center justify-center">
                   <button
-                    className={`w-24 h-7 text-xs font-semibold rounded text-white
+                    className={`w-20 h-6 text-xs font-semibold rounded text-white
                     ${
                       item.calendarStatus?.toLowerCase() === "active"
                         ? "bg-green-500"
@@ -193,7 +193,10 @@ export const SalaryCycle = () => {
       </div>
 
       {isOpenModal === "ADD" && (
-        <AddSalaryCycle setModal={() => handleToggleViewModal("")} />
+        <AddSalaryCycle
+          setModal={() => handleToggleViewModal("")}
+          calendarList={calendarList}
+        />
       )}
     </div>
   );
