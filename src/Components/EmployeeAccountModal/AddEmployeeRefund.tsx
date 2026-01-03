@@ -67,9 +67,9 @@ export const AddEmployeeRefund = ({ setModal }: AddAttendanceProps) => {
 
   const getAllUsers = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer: ${token}`,
         },
       });
       setAllUsers(res?.data?.users);
