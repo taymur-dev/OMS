@@ -3,6 +3,7 @@ import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+import { IoIosClose } from "react-icons/io";
 import { useCallback, useEffect, useState } from "react";
 import { AddSalaryCycle } from "../../Components/SalaryCycleModal/AddSalaryCycle";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
@@ -53,11 +54,14 @@ export const SalaryCycle = () => {
 
   const handleGetCalendarSession = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/api/admin/getCalendarSession`, {
-        headers: {
-          Authorization: `Bearer: ${token}`,
-        },
-      });
+      const res = await axios.get(
+        `${BASE_URL}/api/admin/getCalendarSession`,
+        {
+          headers: {
+            Authorization: `Bearer: ${token}`,
+          },
+        }
+      );
       setCalendarList(res.data.data || res.data);
     } catch (error) {
       console.log(error);
@@ -74,6 +78,7 @@ export const SalaryCycle = () => {
     }, 1000);
   }, [dispatch, handleGetCalendarSession]);
 
+  
   const filteredList = calendarList.filter((item) =>
     `${item.year} ${item.month}`
       .toLowerCase()
@@ -90,10 +95,8 @@ export const SalaryCycle = () => {
     <div className="w-full mx-2">
       <TableTitle tileName="Salary Cycle List" activeFile="Salary Cycle" />
 
-      <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white 
-      overflow-hidden flex flex-col"
-      >
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white 
+      overflow-hidden flex flex-col">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total Salary Cycles :{" "}
@@ -136,10 +139,8 @@ export const SalaryCycle = () => {
         </div>
 
         <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
-          <div
-            className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold border border-gray-600
-           text-sm sticky top-0 z-10 p-[10px]"
-          >
+          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold border border-gray-600
+           text-sm sticky top-0 z-10 p-[10px]">
             <span>Sr#</span>
             <span>Year</span>
             <span>Month</span>
@@ -156,14 +157,8 @@ export const SalaryCycle = () => {
                 <span className="px-2">{startIndex + index + 1}</span>
                 <span>{item.year}</span>
                 <span>{item.month}</span>
-                <span
-                  className={`flex items-center gap-1 justify-center
-                  ${
-                    item.calendarStatus === "Active"
-                      ? "bg-green-500"
-                      : "bg-red-500"
-                  }`}
-                >
+                <span className="flex items-center gap-1">
+                  <IoIosClose size={18} />
                   {item.calendarStatus || "Not Active"}
                 </span>
               </div>
