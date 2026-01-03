@@ -25,7 +25,7 @@ import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 100];
 
-type LoanT = "ADD" | "VIEW" | "EDIT" | "";
+type LoanT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
 
 type LifeLine = {
   id: number;
@@ -199,7 +199,7 @@ export const EmployeeLifeline = () => {
                 <span>{item.employeeName}</span>
                 <span>{item.contact}</span>
                 <span>{item.position}</span>
-                <span>{new Date(item.date).toLocaleDateString("en-CA")}</span>
+                <span>{new Date(item.date).toLocaleDateString("sv-SA")}</span>
 
                 <span className="flex items-center gap-1">
                   <ViewButton
@@ -252,11 +252,11 @@ export const EmployeeLifeline = () => {
                 item.id === updatedEmployee.id ? updatedEmployee : item
               )
             );
-            handleToggleViewModal(""); // close modal after edit if needed
+            handleToggleViewModal(""); 
           }}
           handleDelete={(id: number) => {
             setLifeLines((prev) => prev.filter((item) => item.id !== id));
-            handleToggleViewModal(""); // close modal after delete
+            handleToggleViewModal(""); 
           }}
         />
       )}

@@ -51,7 +51,7 @@ export const ViewEmployeeLifeLine = ({
       await axios.put(
         `${BASE_URL}/api/admin/updateEmpll/${editData.id}`,
         editData,
-        { headers: { Authorization: token } }
+        { headers: { Authorization: `Bearer: ${token}` } }
       );
 
       handleEdit(editData);
@@ -77,7 +77,7 @@ export const ViewEmployeeLifeLine = ({
     try {
       await axios.delete(
         `${BASE_URL}/api/admin/deleteEmpll/${employeeData.id}`,
-        { headers: { Authorization: token } }
+        { headers: { Authorization: `Bearer: ${token}` } }
       );
       handleDelete(employeeData.id);
       setIsOpenModal();
@@ -131,7 +131,8 @@ export const ViewEmployeeLifeLine = ({
         </div>
 
         {/* Employee Details Table */}
-        <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr] bg-gray-100 text-gray-800 font-semibold text-sm border border-gray-300 rounded-t-md">
+        <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr] bg-gray-100 text-gray-800 font-semibold
+         text-sm border border-gray-300 rounded-t-md">
           <span className="p-2 text-left">Sr#</span>
           <span className="p-2 text-left">Date</span>
           <span className="p-2 text-left">Position</span>
@@ -140,7 +141,8 @@ export const ViewEmployeeLifeLine = ({
         </div>
 
         <div className="max-h-[20rem] overflow-y-auto border-x border-b border-gray-300">
-          <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr] text-sm text-gray-700 hover:bg-gray-50 transition duration-200 p-2 items-center">
+          <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr] text-sm text-gray-700 hover:bg-gray-50
+           transition duration-200 p-2 items-center">
             <span>1</span>
             <span>{new Date(employeeData.date).toLocaleDateString()}</span>
             <span>
