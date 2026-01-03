@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -12,30 +12,17 @@ import { OptionField } from "../InputFields/OptionField";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 
-type AddAttendanceProps = {
+type AddEmployeePaymentProps = {
   setModal: () => void;
 };
 
-type UserOption = {
-  id: string;
-  label: string;
-  value: string;
+type User = {
+  id: number;
+  name: string;
   contact: string;
   email: string;
-};
-
-type ApiUser = {
-  id: string;
-  name: string;
-  contact?: string;
-  email?: string;
-  loginStatus: "Y" | "N";
-  role: "user" | "admin";
-};
-
-type SalaryConfig = {
-  employee_id: number;
-  total_salary: number;
+  role: string;
+  loginStatus: string;
 };
 
 const paymentMethods = [
@@ -51,53 +38,44 @@ const initialState = {
   employeeEmail: "",
   payableSalary: "",
   withdrawAmount: "",
+  balance: "",
   paymentMethod: "",
   paymentDate: "",
-  balance: "",
 };
 
-export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
+export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
   const [form, setForm] = useState(initialState);
-  const [users, setUsers] = useState<UserOption[]>([]);
-  const [salaries, setSalaries] = useState<SalaryConfig[]>([]);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [salaries, setSalaries] = useState<{ employee_id: number; total_salary: number }[]>([]);
 
-  const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handlerChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     setForm((prev) => {
       const updated = { ...prev, [name]: value };
 
-      const salary = Number(updated.payableSalary) || 0;
-      const withdraw = Number(updated.withdrawAmount) || 0;
+      if (name === "selectEmployee") {
+        const selectedUser = allUsers.find((u) => u.id === Number(value));
+        const salaryConfig = salaries.find((s) => s.employee_id === Number(value));
 
+        if (selectedUser) {
+          updated.employeeName = selectedUser.name;
+          updated.employeeContact = selectedUser.contact;
+          updated.employeeEmail = selectedUser.email;
+        }
+
+        updated.payableSalary = salaryConfig?.total_salary.toString() || "0";
+      }
+
+      const salary = parseFloat(updated.payableSalary) || 0;
+      const withdraw = parseFloat(updated.withdrawAmount) || 0;
       updated.balance = (salary - withdraw).toString();
+
       return updated;
     });
-  };
-
-  const handleUserSelect = (userId: string) => {
-    const user = users.find((u) => u.value === userId);
-    const salaryConfig = salaries.find((s) => s.employee_id === Number(userId));
-
-    const salary = salaryConfig?.total_salary || 0;
-    const withdraw = Number(form.withdrawAmount) || 0;
-
-    if (!user) return;
-
-    setForm((prev) => ({
-      ...prev,
-      selectEmployee: userId,
-      employeeName: user.label,
-      employeeContact: user.contact,
-      employeeEmail: user.email,
-      payableSalary: salary.toString(),
-      balance: (salary - withdraw).toString(),
-    }));
   };
 
   const getAllUsers = useCallback(async () => {
@@ -105,18 +83,7 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      const mappedUsers = res.data.users
-        .filter((u: ApiUser) => u.loginStatus === "Y" && u.role === "user")
-        .map((u: ApiUser) => ({
-          id: u.id,
-          label: u.name,
-          value: u.id,
-          contact: u.contact || "",
-          email: u.email || "",
-        }));
-
-      setUsers(mappedUsers);
+      setAllUsers(res.data.users || []);
     } catch {
       toast.error("Failed to fetch users");
     }
@@ -125,7 +92,7 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
   const getSalaries = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`);
-      setSalaries(res.data.salaries);
+      setSalaries(res.data.salaries || []);
     } catch {
       toast.error("Failed to fetch salaries");
     }
@@ -136,9 +103,12 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
     getSalaries();
   }, [getAllUsers, getSalaries]);
 
+  const userOptions = allUsers
+    .filter((u) => u.loginStatus === "Y" && u.role === "user")
+    .map((u) => ({ value: u.id.toString(), label: u.name }));
+
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       await axios.post(
         `${BASE_URL}/api/admin/addEmployeePayment`,
@@ -149,16 +119,14 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
           employeeEmail: form.employeeEmail,
           payableSalary: Number(form.payableSalary),
           withdrawAmount: Number(form.withdrawAmount),
+          balance: Number(form.balance),
           paymentMethod: form.paymentMethod,
           paymentDate: form.paymentDate,
-          balance: Number(form.balance),
         },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      toast.success("Payment Withdraw added successfully");
+      toast.success("Payment Withdraw added successfully!");
       setForm(initialState);
       setModal();
     } catch {
@@ -177,30 +145,14 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
               labelName="Select Employee*"
               name="selectEmployee"
               value={form.selectEmployee}
-              handlerChange={(e) => handleUserSelect(e.target.value)}
-              optionData={users}
+              handlerChange={handlerChange}
+              optionData={userOptions}
             />
 
-            <InputField
-              labelName="Employee Name*"
-              value={form.employeeName}
-              readOnly
-            />
-            <InputField
-              labelName="Employee Contact*"
-              value={form.employeeContact}
-              readOnly
-            />
-            <InputField
-              labelName="Employee Email*"
-              value={form.employeeEmail}
-              readOnly
-            />
-            <InputField
-              labelName="Payable Salary*"
-              value={form.payableSalary}
-              readOnly
-            />
+            <InputField labelName="Employee Name*" value={form.employeeName} readOnly />
+            <InputField labelName="Employee Contact*" value={form.employeeContact} readOnly />
+            <InputField labelName="Employee Email*" value={form.employeeEmail} readOnly />
+            <InputField labelName="Payable Salary*" value={form.payableSalary} readOnly />
 
             <InputField
               labelName="Withdraw Amount*"
