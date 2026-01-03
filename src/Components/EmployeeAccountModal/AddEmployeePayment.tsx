@@ -1,27 +1,41 @@
 import React, { useEffect, useState, useCallback } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 import { UserSelect } from "../InputFields/UserSelect";
 import { InputField } from "../InputFields/InputField";
 import { OptionField } from "../InputFields/OptionField";
-import axios from "axios";
+
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
-import { toast } from "react-toastify";
 
 type AddAttendanceProps = {
   setModal: () => void;
 };
 
-type User = {
+type UserOption = {
+  id: string;
+  label: string;
+  value: string;
+  contact: string;
+  email: string;
+};
+
+type ApiUser = {
   id: string;
   name: string;
   contact?: string;
   email?: string;
-  salary?: number;
-  loginStatus: string;
-  role: string;
+  loginStatus: "Y" | "N";
+  role: "user" | "admin";
+};
+
+type SalaryConfig = {
+  employee_id: number;
+  total_salary: number;
 };
 
 const paymentMethods = [
@@ -46,243 +60,181 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
-  const [addConfigEmployee, setAddConfigEmployee] = useState(initialState);
-  const [allUsers, setAllUsers] = useState<
-    {
-      id: string;
-      label: string;
-      value: string;
-      contact: string;
-      email: string;
-      salary: string;
-    }[]
-  >([]);
+  const [form, setForm] = useState(initialState);
+  const [users, setUsers] = useState<UserOption[]>([]);
+  const [salaries, setSalaries] = useState<SalaryConfig[]>([]);
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
 
-    setAddConfigEmployee((prev) => {
+    setForm((prev) => {
       const updated = { ...prev, [name]: value };
 
-      const salary = parseFloat(updated.payableSalary) || 0;
-      const withdraw = parseFloat(updated.withdrawAmount) || 0;
+      const salary = Number(updated.payableSalary) || 0;
+      const withdraw = Number(updated.withdrawAmount) || 0;
 
-      if (name === "withdrawAmount" || name === "payableSalary") {
-        updated.balance = (salary - withdraw).toString();
-      }
-
+      updated.balance = (salary - withdraw).toString();
       return updated;
     });
   };
 
-  const handleUserSelect = (selectedUserId: string) => {
-    const selectedUser = allUsers.find((user) => user.value === selectedUserId);
+  const handleUserSelect = (userId: string) => {
+    const user = users.find((u) => u.value === userId);
+    const salaryConfig = salaries.find((s) => s.employee_id === Number(userId));
 
-    if (selectedUser) {
-      const salary = selectedUser.salary || "0";
-      const withdraw = addConfigEmployee.withdrawAmount || "0";
+    const salary = salaryConfig?.total_salary || 0;
+    const withdraw = Number(form.withdrawAmount) || 0;
 
-      setAddConfigEmployee((prev) => ({
-        ...prev,
-        selectEmployee: selectedUserId,
-        employeeName: selectedUser.label,
-        employeeContact: selectedUser.contact,
-        employeeEmail: selectedUser.email,
-        payableSalary: salary,
-        balance: (parseFloat(salary) - parseFloat(withdraw)).toString(),
-      }));
-    } else {
-      setAddConfigEmployee((prev) => ({
-        ...prev,
-        selectEmployee: "",
-        employeeName: "",
-        employeeContact: "",
-        employeeEmail: "",
-        payableSalary: "",
-        balance: "",
-      }));
-    }
+    if (!user) return;
+
+    setForm((prev) => ({
+      ...prev,
+      selectEmployee: userId,
+      employeeName: user.label,
+      employeeContact: user.contact,
+      employeeEmail: user.email,
+      payableSalary: salary.toString(),
+      balance: (salary - withdraw).toString(),
+    }));
   };
 
   const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
-        headers: { Authorization: `Bearer: ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      const filteredUsers = res?.data?.users
-        ?.filter(
-          (user: User) => user.loginStatus === "Y" && user.role === "user"
-        )
-        .map((user: User) => ({
-          id: user.id,
-          label: user.name,
-          value: user.id,
-          contact: user.contact || "",
-          email: user.email || "",
-          salary: user.salary?.toString() || "0",
+      const mappedUsers = res.data.users
+        .filter((u: ApiUser) => u.loginStatus === "Y" && u.role === "user")
+        .map((u: ApiUser) => ({
+          id: u.id,
+          label: u.name,
+          value: u.id,
+          contact: u.contact || "",
+          email: u.email || "",
         }));
 
-      setAllUsers(filteredUsers);
-    } catch (error) {
-      console.error("Error fetching users:", error);
+      setUsers(mappedUsers);
+    } catch {
       toast.error("Failed to fetch users");
     }
   }, [token]);
 
+  const getSalaries = useCallback(async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`);
+      setSalaries(res.data.salaries);
+    } catch {
+      toast.error("Failed to fetch salaries");
+    }
+  }, []);
+
   useEffect(() => {
     getAllUsers();
-  }, [getAllUsers]);
+    getSalaries();
+  }, [getAllUsers, getSalaries]);
 
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const requiredFields = [
-      "selectEmployee",
-      "employeeName",
-      "employeeContact",
-      "employeeEmail",
-      "payableSalary",
-      "withdrawAmount",
-      "paymentMethod",
-      "paymentDate",
-      "balance",
-    ];
-
-    for (const field of requiredFields) {
-      if (!addConfigEmployee[field as keyof typeof addConfigEmployee]) {
-        toast.error(`Please fill the ${field}`);
-        return;
-      }
-    }
-
     try {
-      const payload = {
-        employeeId: addConfigEmployee.selectEmployee,
-        employeeName: addConfigEmployee.employeeName,
-        employeeContact: addConfigEmployee.employeeContact,
-        employeeEmail: addConfigEmployee.employeeEmail,
-        payableSalary: parseFloat(addConfigEmployee.payableSalary),
-        withdrawAmount: parseFloat(addConfigEmployee.withdrawAmount),
-        paymentMethod: addConfigEmployee.paymentMethod,
-        paymentDate: addConfigEmployee.paymentDate,
-        balance: parseFloat(addConfigEmployee.balance),
-      };
+      await axios.post(
+        `${BASE_URL}/api/admin/addEmployeePayment`,
+        {
+          employeeId: form.selectEmployee,
+          employeeName: form.employeeName,
+          employeeContact: form.employeeContact,
+          employeeEmail: form.employeeEmail,
+          payableSalary: Number(form.payableSalary),
+          withdrawAmount: Number(form.withdrawAmount),
+          paymentMethod: form.paymentMethod,
+          paymentDate: form.paymentDate,
+          balance: Number(form.balance),
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-      await axios.post(`${BASE_URL}/api/admin/addEmployeePayment`, payload, {
-        headers: { Authorization: `Bearer: ${token}` },
-      });
-
-      toast.success("Payment Withdraw added successfully!");
+      toast.success("Payment Withdraw added successfully");
+      setForm(initialState);
       setModal();
-      setAddConfigEmployee(initialState);
-    } catch (error) {
-      console.error("Error saving payment:", error);
-      toast.error("Failed to save Payment Withdraw");
+    } catch {
+      toast.error("Failed to save payment");
     }
   };
 
   return (
-    <div>
-      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[39rem] overflow-y-auto mt-6 bg-white mx-auto rounded-xl border border-indigo-500">
-          <form onSubmit={handlerSubmitted}>
-            <Title setModal={setModal}>Add Payment Withdraw</Title>
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+      <div className="w-[42rem] bg-white rounded-xl border border-indigo-500">
+        <form onSubmit={handlerSubmitted}>
+          <Title setModal={setModal}>Add Payment Withdraw</Title>
 
-            <div className="mx-2 flex-wrap gap-3">
-              <UserSelect
-                labelName="Select Employee*"
-                name="selectEmployee"
-                value={addConfigEmployee.selectEmployee}
-                handlerChange={(e) => handleUserSelect(e.target.value)} 
-                optionData={allUsers}
-              />
+          <div className="mx-2 flex-wrap gap-3">
+            <UserSelect
+              labelName="Select Employee*"
+              name="selectEmployee"
+              value={form.selectEmployee}
+              handlerChange={(e) => handleUserSelect(e.target.value)}
+              optionData={users}
+            />
 
-              <InputField
-                labelName="Employee Name*"
-                name="employeeName"
-                type="text"
-                handlerChange={handlerChange}
-                value={addConfigEmployee.employeeName}
-                readOnly
-              />
+            <InputField
+              labelName="Employee Name*"
+              value={form.employeeName}
+              readOnly
+            />
+            <InputField
+              labelName="Employee Contact*"
+              value={form.employeeContact}
+              readOnly
+            />
+            <InputField
+              labelName="Employee Email*"
+              value={form.employeeEmail}
+              readOnly
+            />
+            <InputField
+              labelName="Payable Salary*"
+              value={form.payableSalary}
+              readOnly
+            />
 
-              <InputField
-                labelName="Employee Contact*"
-                name="employeeContact"
-                type="number"
-                handlerChange={handlerChange}
-                value={addConfigEmployee.employeeContact}
-                readOnly
-              />
+            <InputField
+              labelName="Withdraw Amount*"
+              name="withdrawAmount"
+              type="number"
+              value={form.withdrawAmount}
+              handlerChange={handlerChange}
+            />
 
-              <InputField
-                labelName="Employee Email*"
-                name="employeeEmail"
-                type="email"
-                handlerChange={handlerChange}
-                value={addConfigEmployee.employeeEmail}
-                readOnly
-              />
+            <InputField labelName="Balance*" value={form.balance} readOnly />
 
-              <InputField
-                labelName="Payable Salary*"
-                name="payableSalary"
-                type="number"
-                handlerChange={handlerChange}
-                value={addConfigEmployee.payableSalary}
-                readOnly
-              />
+            <OptionField
+              labelName="Payment Method*"
+              name="paymentMethod"
+              value={form.paymentMethod}
+              handlerChange={handlerChange}
+              optionData={paymentMethods}
+              inital="Please Select"
+            />
 
-              <InputField
-                labelName="Withdraw Account*"
-                name="withdrawAmount"
-                type="number"
-                handlerChange={handlerChange}
-                value={addConfigEmployee.withdrawAmount}
-              />
+            <InputField
+              labelName="Payment Date*"
+              name="paymentDate"
+              type="date"
+              value={form.paymentDate}
+              handlerChange={handlerChange}
+            />
+          </div>
 
-              <InputField
-                labelName="Balance*"
-                name="balance"
-                type="number"
-                handlerChange={handlerChange}
-                value={addConfigEmployee.balance}
-                readOnly
-              />
-
-              <OptionField
-                labelName="Payment Method*"
-                name="paymentMethod"
-                value={addConfigEmployee.paymentMethod}
-                handlerChange={handlerChange}
-                optionData={paymentMethods.map((d) => ({
-                  id: d.id,
-                  label: d.label,
-                  value: d.value,
-                }))}
-                inital="Please Select"
-              />
-
-              <InputField
-                labelName="Payment Date*"
-                name="paymentDate"
-                type="text"
-                handlerChange={handlerChange}
-                value={addConfigEmployee.paymentDate}
-              />
-
-            
-            </div>
-
-            <div className="flex items-center justify-center m-2 gap-2 text-xs">
-              <CancelBtn setModal={setModal} />
-              <AddButton label="Save Payment Withdraw" />
-            </div>
-          </form>
-        </div>
+          <div className="flex justify-center gap-2 m-2">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Save Payment Withdraw" />
+          </div>
+        </form>
       </div>
     </div>
   );
