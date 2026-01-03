@@ -23,8 +23,6 @@ type User = {
   email: string;
   role: string;
   loginStatus: string;
-  value: string;
-  label: string;
 };
 
 const paymentMethods = [
@@ -78,9 +76,10 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log("API response users:", res.data); 
       setAllUsers(res?.data?.users || []);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }, [token]);
 
@@ -88,25 +87,19 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
     getAllUsers();
   }, [getAllUsers]);
 
-  const activeUsers = allUsers.filter(
-    (user) => user.loginStatus === "Y" && user.role === "user"
-  );
+  const userOptions = allUsers
+    .filter(
+      (user) =>
+        user.loginStatus?.toUpperCase() === "Y" &&
+        user.role?.toLowerCase() === "user"
+    )
+    .map((user) => ({ value: user.id.toString(), label: user.name }));
 
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const payload: {
-        employeeId: number | string;
-        employeeName: string;
-        employeeContact: string;
-        employeeEmail: string;
-        paymentMethod: string;
-        paymentAmount: string;
-        refundAmount: string;
-        balance: string | number;
-        date: string;
-      } = {
+      const payload = {
         employeeId: addConfigEmployee.selectEmployee,
         employeeName: addConfigEmployee.employeeName,
         employeeContact: addConfigEmployee.employeeContact,
@@ -118,18 +111,11 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
         date: addConfigEmployee.date,
       };
 
-      const res = await axios.post(
-        `${BASE_URL}/api/admin/addEmployeeRefund`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.post(`${BASE_URL}/api/admin/addEmployeeRefund`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       toast.success("Refund added successfully!");
-      console.log(res);
       setModal();
       setAddConfigEmployee(initialState);
     } catch (error: unknown) {
@@ -152,7 +138,7 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
               name="selectEmployee"
               value={addConfigEmployee.selectEmployee}
               handlerChange={handlerChange}
-              optionData={activeUsers}
+              optionData={userOptions}
             />
 
             <InputField
