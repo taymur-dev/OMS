@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
-import { toast } from "react-toastify"; 
+import { toast } from "react-toastify";
 
 type CalendarSession = {
   year: string | number;
@@ -48,8 +48,7 @@ export const AddSalaryCycle = ({
 
   useEffect(() => {
     const match = calendarList.find(
-      (item) =>
-        Number(item.year) === salaryYear && item.month === salaryMonth
+      (item) => Number(item.year) === salaryYear && item.month === salaryMonth
     );
     setStatus(match?.calendarStatus ?? "Inactive");
   }, [calendarList, salaryYear, salaryMonth]);
@@ -58,7 +57,7 @@ export const AddSalaryCycle = ({
     e.preventDefault();
 
     if (salaryYear !== currentYear || salaryMonth !== currentMonth) {
-      setModal(); 
+      setModal();
       toast.error("Only current month salary cycle can run");
       return;
     }
@@ -71,7 +70,7 @@ export const AddSalaryCycle = ({
 
     console.log("Submitted:", { salaryYear, salaryMonth });
     setStatus("Active");
-    setModal(); 
+    setModal();
     toast.success("Salary cycle is now Active");
   };
 
@@ -83,7 +82,8 @@ export const AddSalaryCycle = ({
         <form onSubmit={handleSubmit}>
           <Title setModal={() => setModal()}>Add Salary Cycle</Title>
 
-          <div className="mx-2 flex flex-col items-center gap-3 justify-center mt-4">
+          <div className="mx-2 flex items-center gap-4 justify-center mt-4">
+            {/* Year */}
             <div className="flex flex-col text-sm">
               <label className="font-medium">Year</label>
               <select
@@ -99,6 +99,7 @@ export const AddSalaryCycle = ({
               </select>
             </div>
 
+            {/* Month */}
             <div className="flex flex-col text-sm">
               <label className="font-medium">Month</label>
               <select
