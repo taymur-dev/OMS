@@ -14,14 +14,7 @@ type AddSalaryCycleProps = {
   calendarList: CalendarSession[];
 };
 
-export const AddSalaryCycle = ({
-  setModal,
-  calendarList,
-}: AddSalaryCycleProps) => {
-  const [salaryYear, setSalaryYear] = useState("");
-  const [salaryMonth, setSalaryMonth] = useState("");
-  const [status, setStatus] = useState<string | null>(null);
-
+export const AddSalaryCycle = ({ setModal, calendarList }: AddSalaryCycleProps) => {
   const monthOrder = [
     "January",
     "February",
@@ -38,39 +31,32 @@ export const AddSalaryCycle = ({
   ];
 
   const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
   const currentMonth = monthOrder[currentDate.getMonth()];
 
-  // Years from calendar list
-  const years = Array.from(new Set(calendarList.map((item) => String(item.year))));
+  const [salaryYear] = useState(currentYear);
+  const [salaryMonth, setSalaryMonth] = useState(currentMonth);
+  const [status, setStatus] = useState<string | null>(null);
 
-  // Only allow current month
-  const months = [currentMonth];
-
+  // Check if selected month/year is already active
   useEffect(() => {
-    if (salaryYear && salaryMonth) {
-      const match = calendarList.find(
-        (item) =>
-          String(item.year) === String(salaryYear) && item.month === salaryMonth
-      );
-      setStatus(match?.calendarStatus ?? "Inactive");
-    } else {
-      setStatus(null);
-    }
-  }, [salaryYear, salaryMonth, calendarList]);
+    const match = calendarList.find(
+      (item) =>
+        String(item.year) === String(salaryYear) && item.month === salaryMonth
+    );
+    setStatus(match?.calendarStatus ?? "Inactive");
+  }, [calendarList, salaryYear, salaryMonth]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (status?.toLowerCase() === "active") return;
 
-    // Here you would call your API to save & run the cycle
-    console.log("Submitted:", { salaryYear, salaryMonth, status });
+    console.log("Submitted:", { salaryYear, salaryMonth });
 
-    // Simulate setting status after running cycle
     setStatus("Active");
   };
 
-  const isSaveDisabled =
-    !salaryYear || !salaryMonth || status?.toLowerCase() === "active";
+  const isSaveDisabled = status?.toLowerCase() === "active";
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
@@ -78,36 +64,25 @@ export const AddSalaryCycle = ({
         <form onSubmit={handleSubmit}>
           <Title setModal={() => setModal()}>Add Salary Cycle</Title>
 
-          <div className="mx-2 flex flex-wrap gap-3 justify-center mt-4">
+          <div className="mx-2 flex flex-col items-center gap-3 justify-center mt-4">
             <div className="flex flex-col text-sm">
-              <label className="font-medium">Year*</label>
-              <select
-                className="border rounded px-2 py-1"
+              <label className="font-medium">Year</label>
+              <input
+                type="text"
+                className="border rounded px-2 py-1 bg-gray-100"
                 value={salaryYear}
-                onChange={(e) => {
-                  setSalaryYear(e.target.value);
-                  setSalaryMonth("");
-                }}
-              >
-                <option value="">Select Year</option>
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
+                disabled
+              />
             </div>
 
             <div className="flex flex-col text-sm">
-              <label className="font-medium">Month*</label>
+              <label className="font-medium">Month</label>
               <select
                 className="border rounded px-2 py-1"
                 value={salaryMonth}
                 onChange={(e) => setSalaryMonth(e.target.value)}
-                disabled={!salaryYear}
               >
-                <option value="">Select Month</option>
-                {months.map((month) => (
+                {monthOrder.map((month) => (
                   <option key={month} value={month}>
                     {month}
                   </option>
@@ -130,7 +105,6 @@ export const AddSalaryCycle = ({
             </div>
           )}
 
-          {/* Buttons */}
           <div className="flex justify-center gap-2 mt-4">
             <CancelBtn setModal={() => setModal()} />
             <AddButton label="Save Run Cycle" disabled={isSaveDisabled} />
