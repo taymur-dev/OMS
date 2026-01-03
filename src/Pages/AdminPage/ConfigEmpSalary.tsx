@@ -219,9 +219,23 @@ const fetchSalaries = useCallback(async () => {
           editData={selectedSalary}
         />
       )}
+
       {isOpenModal === "VIEW" && selectedSalary && (
-        <ViewConfigEmpSalary setModal={() => handleToggleViewModal("")} salaryId={selectedSalary.id} />
-      )}
+  <ViewConfigEmpSalary
+    setModal={() => handleToggleViewModal("")}
+    viewSalary={{
+      employeeName: selectedSalary.employee_name,
+      employeeSalary: selectedSalary.salary_amount.toString(),
+      empMonthAllowance: selectedSalary.emp_of_mon_allowance?.toString(),
+      transportAllowance: selectedSalary.transport_allowance?.toString(),
+      medicalAllowance: selectedSalary.medical_allowance?.toString(),
+      totalSalary: selectedSalary.total_salary?.toString(),
+      date: selectedSalary.config_date,
+    }}
+  />
+)}
+
+     
       {isOpenModal === "DELETE" && selectedSalary && (
         <ConfirmationModal
           isOpen={() => handleToggleViewModal("DELETE")}
