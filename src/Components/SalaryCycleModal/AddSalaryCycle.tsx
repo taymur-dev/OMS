@@ -14,7 +14,10 @@ type AddSalaryCycleProps = {
   calendarList: CalendarSession[];
 };
 
-export const AddSalaryCycle = ({ setModal, calendarList }: AddSalaryCycleProps) => {
+export const AddSalaryCycle = ({
+  setModal,
+  calendarList,
+}: AddSalaryCycleProps) => {
   const monthOrder = [
     "January",
     "February",
@@ -34,26 +37,43 @@ export const AddSalaryCycle = ({ setModal, calendarList }: AddSalaryCycleProps) 
   const currentYear = currentDate.getFullYear();
   const currentMonth = monthOrder[currentDate.getMonth()];
 
-  const [salaryYear] = useState(currentYear);
-  const [salaryMonth, setSalaryMonth] = useState(currentMonth);
+  // Extract unique years from calendarList, sorted
+  const years = Array.from(
+    new Set(calendarList.map((item) => Number(item.year)))
+  ).sort((a, b) => a - b);
+
+  const [salaryYear, setSalaryYear] = useState<number>(currentYear);
+  const [salaryMonth, setSalaryMonth] = useState<string>(currentMonth);
   const [status, setStatus] = useState<string | null>(null);
+  const [message, setMessage] = useState<string>("");
 
   // Check if selected month/year is already active
   useEffect(() => {
     const match = calendarList.find(
       (item) =>
-        String(item.year) === String(salaryYear) && item.month === salaryMonth
+        Number(item.year) === salaryYear && item.month === salaryMonth
     );
     setStatus(match?.calendarStatus ?? "Inactive");
+    setMessage(match?.calendarStatus ? `This cycle is ${match.calendarStatus}` : "");
   }, [calendarList, salaryYear, salaryMonth]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (status?.toLowerCase() === "active") return;
+
+    // Only allow current month to run
+    if (salaryYear !== currentYear || salaryMonth !== currentMonth) {
+      setMessage("Only current month salary cycle can run");
+      return;
+    }
+
+    if (status?.toLowerCase() === "active") {
+      setMessage("Salary cycle already active for this month");
+      return;
+    }
 
     console.log("Submitted:", { salaryYear, salaryMonth });
-
     setStatus("Active");
+    setMessage("Salary cycle is now Active");
   };
 
   const isSaveDisabled = status?.toLowerCase() === "active";
@@ -67,12 +87,17 @@ export const AddSalaryCycle = ({ setModal, calendarList }: AddSalaryCycleProps) 
           <div className="mx-2 flex flex-col items-center gap-3 justify-center mt-4">
             <div className="flex flex-col text-sm">
               <label className="font-medium">Year</label>
-              <input
-                type="text"
-                className="border rounded px-2 py-1 bg-gray-100"
+              <select
+                className="border rounded px-2 py-1"
                 value={salaryYear}
-                disabled
-              />
+                onChange={(e) => setSalaryYear(Number(e.target.value))}
+              >
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="flex flex-col text-sm">
@@ -89,21 +114,17 @@ export const AddSalaryCycle = ({ setModal, calendarList }: AddSalaryCycleProps) 
                 ))}
               </select>
             </div>
-          </div>
 
-          {status && (
-            <div className="text-center mt-4">
-              <span
-                className={`px-4 py-1 rounded text-white text-sm font-semibold ${
-                  status.toLowerCase() === "active"
-                    ? "bg-green-500"
-                    : "bg-red-500"
+            {message && (
+              <p
+                className={`mt-2 text-sm ${
+                  status?.toLowerCase() === "active" ? "text-green-600" : "text-red-600"
                 }`}
               >
-                {status}
-              </span>
-            </div>
-          )}
+                {message}
+              </p>
+            )}
+          </div>
 
           <div className="flex justify-center gap-2 mt-4">
             <CancelBtn setModal={() => setModal()} />
