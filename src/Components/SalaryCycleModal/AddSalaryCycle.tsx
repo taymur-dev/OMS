@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
+import { toast } from "react-toastify"; 
 
 type CalendarSession = {
   year: string | number;
@@ -37,7 +38,6 @@ export const AddSalaryCycle = ({
   const currentYear = currentDate.getFullYear();
   const currentMonth = monthOrder[currentDate.getMonth()];
 
-  // Extract unique years from calendarList, sorted
   const years = Array.from(
     new Set(calendarList.map((item) => Number(item.year)))
   ).sort((a, b) => a - b);
@@ -45,35 +45,34 @@ export const AddSalaryCycle = ({
   const [salaryYear, setSalaryYear] = useState<number>(currentYear);
   const [salaryMonth, setSalaryMonth] = useState<string>(currentMonth);
   const [status, setStatus] = useState<string | null>(null);
-  const [message, setMessage] = useState<string>("");
 
-  // Check if selected month/year is already active
   useEffect(() => {
     const match = calendarList.find(
       (item) =>
         Number(item.year) === salaryYear && item.month === salaryMonth
     );
     setStatus(match?.calendarStatus ?? "Inactive");
-    setMessage(match?.calendarStatus ? `This cycle is ${match.calendarStatus}` : "");
   }, [calendarList, salaryYear, salaryMonth]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Only allow current month to run
     if (salaryYear !== currentYear || salaryMonth !== currentMonth) {
-      setMessage("Only current month salary cycle can run");
+      setModal(); 
+      toast.error("Only current month salary cycle can run");
       return;
     }
 
     if (status?.toLowerCase() === "active") {
-      setMessage("Salary cycle already active for this month");
+      setModal();
+      toast.info("Salary cycle already active for this month");
       return;
     }
 
     console.log("Submitted:", { salaryYear, salaryMonth });
     setStatus("Active");
-    setMessage("Salary cycle is now Active");
+    setModal(); 
+    toast.success("Salary cycle is now Active");
   };
 
   const isSaveDisabled = status?.toLowerCase() === "active";
@@ -114,16 +113,6 @@ export const AddSalaryCycle = ({
                 ))}
               </select>
             </div>
-
-            {message && (
-              <p
-                className={`mt-2 text-sm ${
-                  status?.toLowerCase() === "active" ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                {message}
-              </p>
-            )}
           </div>
 
           <div className="flex justify-center gap-2 mt-4">
