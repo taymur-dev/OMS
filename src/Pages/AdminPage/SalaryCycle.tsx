@@ -156,15 +156,17 @@ export const SalaryCycle = () => {
                 <span className="px-2">{startIndex + index + 1}</span>
                 <span>{item.year}</span>
                 <span>{item.month}</span>
-                <span
-                  className={`flex items-center gap-1
-                  ${
-                    item.calendarStatus === "Active"
-                      ? "bg-green-500"
-                      : "bg-red-500"
-                  }`}
-                >
-                  {item.calendarStatus || "Not Active"}
+                <span className="flex items-center justify-center">
+                  <button
+                    className={`w-24 h-7 text-xs font-semibold rounded text-white
+                    ${
+                      item.calendarStatus?.toLowerCase() === "active"
+                        ? "bg-green-500"
+                        : "bg-red-500"
+                    }`}
+                  >
+                    {item.calendarStatus || "Inactive"}
+                  </button>
                 </span>
               </div>
             ))
