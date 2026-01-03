@@ -3,11 +3,11 @@ import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 import { UserSelect } from "../InputFields/UserSelect";
+import { InputField } from "../InputFields/InputField";
+import { OptionField } from "../InputFields/OptionField";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
-import { InputField } from "../InputFields/InputField";
-import { OptionField } from "../InputFields/OptionField";
 import { toast } from "react-toastify";
 
 type AddAttendanceProps = {
@@ -49,48 +49,61 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
 
   const [addConfigEmployee, setAddConfigEmployee] = useState(initialState);
   const [allUsers, setAllUsers] = useState<
-    { id: string; label: string; value: string; contact: string; email: string; salary: string }[]
+    {
+      id: string;
+      label: string;
+      value: string;
+      contact: string;
+      email: string;
+      salary: string;
+    }[]
   >([]);
 
-  const handlerChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    e.preventDefault();
+  const handlerChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
 
-    const updatedState = { ...addConfigEmployee, [name]: value };
+    setAddConfigEmployee((prev) => {
+      const updated = { ...prev, [name]: value };
 
-    if (name === "payableSalary" || name === "withdrawAccount") {
-      const salary = parseFloat(updatedState.payableSalary) || 0;
-      const withdraw = parseFloat(updatedState.withdrawAccount) || 0;
-      updatedState.balance = (salary - withdraw).toString();
-    }
+      const salary = parseFloat(updated.payableSalary) || 0;
+      const withdraw = parseFloat(updated.withdrawAccount) || 0;
 
-    setAddConfigEmployee(updatedState);
+      if (name === "withdrawAccount" || name === "payableSalary") {
+        updated.balance = (salary - withdraw).toString();
+      }
+
+      return updated;
+    });
   };
 
   const handleUserSelect = (selectedUserId: string) => {
     const selectedUser = allUsers.find((user) => user.value === selectedUserId);
+
     if (selectedUser) {
       const salary = selectedUser.salary || "0";
       const withdraw = addConfigEmployee.withdrawAccount || "0";
-      setAddConfigEmployee({
-        ...addConfigEmployee,
+
+      setAddConfigEmployee((prev) => ({
+        ...prev,
         selectEmployee: selectedUserId,
         employeeName: selectedUser.label,
         employeeContact: selectedUser.contact,
         employeeEmail: selectedUser.email,
         payableSalary: salary,
         balance: (parseFloat(salary) - parseFloat(withdraw)).toString(),
-      });
+      }));
     } else {
-      setAddConfigEmployee({
-        ...addConfigEmployee,
+      setAddConfigEmployee((prev) => ({
+        ...prev,
         selectEmployee: "",
         employeeName: "",
         employeeContact: "",
         employeeEmail: "",
         payableSalary: "",
         balance: "",
-      });
+      }));
     }
   };
 
@@ -101,7 +114,9 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
       });
 
       const filteredUsers = res?.data?.users
-        ?.filter((user: User) => user.loginStatus === "Y" && user.role === "user")
+        ?.filter(
+          (user: User) => user.loginStatus === "Y" && user.role === "user"
+        )
         .map((user: User) => ({
           id: user.id,
           label: user.name,
@@ -114,6 +129,7 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
       setAllUsers(filteredUsers);
     } catch (error) {
       console.error("Error fetching users:", error);
+      toast.error("Failed to fetch users");
     }
   }, [token]);
 
@@ -136,6 +152,7 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
       "balance",
       "paidBy",
     ];
+
     for (const field of requiredFields) {
       if (!addConfigEmployee[field as keyof typeof addConfigEmployee]) {
         toast.error(`Please fill the ${field}`);
@@ -162,8 +179,8 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
       });
 
       toast.success("Payment Withdraw added successfully!");
-      setModal(); 
-      setAddConfigEmployee(initialState); 
+      setModal();
+      setAddConfigEmployee(initialState);
     } catch (error) {
       console.error("Error saving payment:", error);
       toast.error("Failed to save Payment Withdraw");
@@ -175,15 +192,14 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
       <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
         <div className="w-[42rem] max-h-[39rem] overflow-y-auto mt-6 bg-white mx-auto rounded-xl border border-indigo-500">
           <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Add Payment Withdraw</Title>
+            <Title setModal={setModal}>Add Payment Withdraw</Title>
 
             <div className="mx-2 flex-wrap gap-3">
-
               <UserSelect
                 labelName="Select Employee*"
                 name="selectEmployee"
                 value={addConfigEmployee.selectEmployee}
-                handlerChange={(e) => handleUserSelect(e.target.value)}
+                handlerChange={(e) => handleUserSelect(e.target.value)} 
                 optionData={allUsers}
               />
 
@@ -193,6 +209,7 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
                 type="text"
                 handlerChange={handlerChange}
                 value={addConfigEmployee.employeeName}
+                readOnly
               />
 
               <InputField
@@ -201,6 +218,7 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
                 type="number"
                 handlerChange={handlerChange}
                 value={addConfigEmployee.employeeContact}
+                readOnly
               />
 
               <InputField
@@ -209,6 +227,7 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
                 type="email"
                 handlerChange={handlerChange}
                 value={addConfigEmployee.employeeEmail}
+                readOnly
               />
 
               <InputField
@@ -268,7 +287,7 @@ export const AddEmployeePayment = ({ setModal }: AddAttendanceProps) => {
             </div>
 
             <div className="flex items-center justify-center m-2 gap-2 text-xs">
-              <CancelBtn setModal={() => setModal()} />
+              <CancelBtn setModal={setModal} />
               <AddButton label="Save Payment Withdraw" />
             </div>
           </form>
