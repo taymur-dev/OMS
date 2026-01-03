@@ -25,6 +25,11 @@ type User = {
   loginStatus: string;
 };
 
+type SalaryConfig = {
+  employee_id: number;
+  total_salary: number;
+};
+
 const paymentMethods = [
   { id: 1, label: "EasyPaisy", value: "easyPaisy" },
   { id: 2, label: "Bank Transfer", value: "bankTransfer" },
@@ -49,33 +54,7 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
 
   const [form, setForm] = useState(initialState);
   const [allUsers, setAllUsers] = useState<User[]>([]);
-
-  const handlerChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-
-    setForm((prev) => {
-      const updated = { ...prev, [name]: value };
-
-      // Autofill user info when selecting employee
-      if (name === "selectEmployee") {
-        const selectedUser = allUsers.find((u) => u.id === Number(value));
-        if (selectedUser) {
-          updated.employeeName = selectedUser.name;
-          updated.employeeContact = selectedUser.contact;
-          updated.employeeEmail = selectedUser.email;
-        }
-      }
-
-      // Live balance update whenever payment or refund amount changes
-      if (name === "paymentAmount" || name === "refundAmount") {
-        const payment = parseFloat(updated.paymentAmount) || 0;
-        const refund = parseFloat(updated.refundAmount) || 0;
-        updated.balance = (payment - refund).toFixed(2); // two decimal places
-      }
-
-      return updated;
-    });
-  };
+  const [salaries, setSalaries] = useState<SalaryConfig[]>([]);
 
   const getAllUsers = useCallback(async () => {
     try {
@@ -89,9 +68,48 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
     }
   }, [token]);
 
+  const getSalaries = useCallback(async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`);
+      setSalaries(res.data.salaries || []);
+    } catch {
+      toast.error("Failed to fetch salaries");
+    }
+  }, []);
+
   useEffect(() => {
     getAllUsers();
-  }, [getAllUsers]);
+    getSalaries();
+  }, [getAllUsers, getSalaries]);
+
+  const handlerChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+
+    setForm((prev) => {
+      const updated = { ...prev, [name]: value };
+
+      if (name === "selectEmployee") {
+        const selectedUser = allUsers.find((u) => u.id === Number(value));
+        const salaryConfig = salaries.find((s) => s.employee_id === Number(value));
+
+        if (selectedUser) {
+          updated.employeeName = selectedUser.name;
+          updated.employeeContact = selectedUser.contact;
+          updated.employeeEmail = selectedUser.email;
+        }
+
+        updated.paymentAmount = salaryConfig?.total_salary.toString() || "0";
+      }
+
+      if (name === "paymentAmount" || name === "refundAmount") {
+        const payment = parseFloat(updated.paymentAmount) || 0;
+        const refund = parseFloat(updated.refundAmount) || 0;
+        updated.balance = (payment - refund).toFixed(2);
+      }
+
+      return updated;
+    });
+  };
 
   const userOptions = allUsers
     .filter((user) => user.loginStatus?.toUpperCase() === "Y" && user.role?.toLowerCase() === "user")
@@ -147,6 +165,7 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
               type="text"
               handlerChange={handlerChange}
               value={form.employeeName}
+              readOnly
             />
 
             <InputField
@@ -155,6 +174,7 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
               type="number"
               handlerChange={handlerChange}
               value={form.employeeContact}
+              readOnly
             />
 
             <InputField
@@ -163,6 +183,7 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
               type="email"
               handlerChange={handlerChange}
               value={form.employeeEmail}
+              readOnly
             />
 
             <InputField
@@ -171,6 +192,7 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
               type="number"
               handlerChange={handlerChange}
               value={form.paymentAmount}
+              readOnly
             />
 
             <InputField
