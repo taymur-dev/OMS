@@ -4,7 +4,7 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 
 type CalendarSession = {
-  year: string;
+  year: string | number;
   month: string;
   calendarStatus?: string;
 };
@@ -22,16 +22,38 @@ export const AddSalaryCycle = ({
   const [salaryMonth, setSalaryMonth] = useState("");
   const [status, setStatus] = useState<string | null>(null);
 
-  const years = Array.from(new Set(calendarList.map((item) => item.year)));
+  const monthOrder = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
-  const months = calendarList
-    .filter((item) => item.year === salaryYear)
-    .map((item) => item.month);
+  const years = Array.from(
+    new Set(calendarList.map((item) => String(item.year)))
+  );
+
+  const months = Array.from(
+    new Set(
+      calendarList
+        .filter((item) => String(item.year) === String(salaryYear))
+        .map((item) => item.month)
+    )
+  ).sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b));
 
   useEffect(() => {
     if (salaryYear && salaryMonth) {
       const match = calendarList.find(
-        (item) => item.year === salaryYear && item.month === salaryMonth
+        (item) =>
+          String(item.year) === String(salaryYear) && item.month === salaryMonth
       );
       setStatus(match?.calendarStatus ?? "Inactive");
     } else {
@@ -80,7 +102,7 @@ export const AddSalaryCycle = ({
                 className="border rounded px-2 py-1"
                 value={salaryMonth}
                 onChange={(e) => setSalaryMonth(e.target.value)}
-                disabled={!salaryYear}
+                disabled={!salaryYear || months.length === 0}
               >
                 <option value="">Select Month</option>
                 {months.map((month) => (
@@ -106,6 +128,7 @@ export const AddSalaryCycle = ({
             </div>
           )}
 
+          {/* Buttons */}
           <div className="flex justify-center gap-2 mt-4">
             <CancelBtn setModal={() => setModal()} />
             <AddButton label="Save Run Cycle" disabled={isSaveDisabled} />
