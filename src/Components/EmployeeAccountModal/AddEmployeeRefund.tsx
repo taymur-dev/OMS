@@ -51,23 +51,32 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
   const [allUsers, setAllUsers] = useState<User[]>([]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
-  ) => {
-    const { name, value } = e.target;
-    setAddConfigEmployee((prev) => ({ ...prev, [name]: value }));
+  e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+) => {
+  const { name, value } = e.target;
+
+  setAddConfigEmployee((prev) => {
+    const updated = { ...prev, [name]: value };
 
     if (name === "selectEmployee") {
       const selectedUser = allUsers.find((u) => u.id === Number(value));
       if (selectedUser) {
-        setAddConfigEmployee((prev) => ({
-          ...prev,
-          employeeName: selectedUser.name,
-          employeeContact: selectedUser.contact,
-          employeeEmail: selectedUser.email,
-        }));
+        updated.employeeName = selectedUser.name;
+        updated.employeeContact = selectedUser.contact;
+        updated.employeeEmail = selectedUser.email;
       }
     }
-  };
+
+    if (name === "paymentAmount" || name === "refundAmount") {
+      const payment = parseFloat(updated.paymentAmount) || 0;
+      const refund = parseFloat(updated.refundAmount) || 0;
+      updated.balance = (payment - refund).toString();
+    }
+
+    return updated;
+  });
+};
+
 
   const getAllUsers = useCallback(async () => {
     try {
