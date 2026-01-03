@@ -54,7 +54,7 @@ export const Calendar = () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getCalendarSession`, {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer: ${token}`,
         },
       });
       setCalendarList(res.data.data || res.data);

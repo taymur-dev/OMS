@@ -143,7 +143,7 @@ const fetchSalaries = useCallback(async () => {
           {/* Table Header */}
           <div className="grid grid-cols-[0.5fr_2fr_1fr_1fr_1fr_1fr_1.2fr_1.2fr_1fr] bg-gray-200 text-gray-900
            font-semibold border border-gray-600 text-sm sticky top-0 z-10 py-2 px-1">
-            <span className="px-2 ">Sr#</span>
+            <span>Sr#</span>
             <span>Employee Name</span>
             <span>Monthly Pay</span>
             <span>House Rent</span>
