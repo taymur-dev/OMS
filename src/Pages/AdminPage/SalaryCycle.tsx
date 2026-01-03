@@ -157,7 +157,7 @@ export const SalaryCycle = () => {
                 <span>{item.year}</span>
                 <span>{item.month}</span>
                 <span
-                  className={`p-1 rounded-full text-xs font-semibold text-white inline-flex items-center gap-1
+                  className={`flex items-center gap-1 justify-center
                   ${
                     item.calendarStatus === "Active"
                       ? "bg-green-500"
