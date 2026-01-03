@@ -52,33 +52,33 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
   // const [salaries, setSalaries] = useState<{ employee_id: number; total_salary: number }[]>([]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
+  e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+) => {
+  const { name, value } = e.target;
 
-    setForm((prev) => {
-      const updated = { ...prev, [name]: value };
+  setForm((prev) => {
+    const updated = { ...prev, [name]: value };
 
-      if (name === "selectEmployee") {
-        const selectedUser = allUsers.find((u) => u.id === Number(value));
-        // const salaryConfig = salaries.find((s) => s.employee_id === Number(value));
+    if (name === "selectEmployee") {
+      const selectedUser = allUsers.find((u) => u.id === Number(value));
 
-        if (selectedUser) {
-          updated.employeeName = selectedUser.name;
-          updated.employeeContact = selectedUser.contact;
-          updated.employeeEmail = selectedUser.email;
-        }
-
-        // updated.payableSalary = salaryConfig?.total_salary.toString() || "0";
+      if (selectedUser) {
+        updated.employeeName = selectedUser.name;
+        updated.employeeContact = selectedUser.contact;
+        updated.employeeEmail = selectedUser.email;
       }
 
-      const salary = parseFloat(updated.payableSalary) || 0;
-      const withdraw = parseFloat(updated.withdrawAmount) || 0;
-      updated.balance = (salary - withdraw).toString();
+      // Do NOT update payableSalary automatically
+      // updated.payableSalary = salaryConfig?.total_salary.toString() || "0";
+    }
 
-      return updated;
-    });
-  };
+    const salary = parseFloat(updated.payableSalary) || 0;
+    const withdraw = parseFloat(updated.withdrawAmount) || 0;
+    updated.balance = (salary - withdraw).toString();
+
+    return updated;
+  });
+};
 
   const getAllUsers = useCallback(async () => {
     try {
