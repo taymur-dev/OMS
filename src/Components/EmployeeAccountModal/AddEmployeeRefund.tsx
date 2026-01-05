@@ -37,6 +37,7 @@ const initialState = {
   employeeContact: "",
   employeeEmail: "",
   paymentMethod: "",
+  // paymentAmount: "",
   refundAmount: "",
   balance: "",
   date: "",
@@ -83,7 +84,13 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
         }
       }
 
-      if (name === "refundAmount") {
+      // if (name === "paymentAmount" || name === "refundAmount") {
+      //   const payment = parseFloat(updated.paymentAmount) || 0;
+      //   const refund = parseFloat(updated.refundAmount) || 0;
+      //   updated.balance = (payment - refund).toFixed(2);
+      // }
+
+       if (name === "refundAmount") {
         updated.balance = value;
       }
 
@@ -110,6 +117,7 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
           employeeContact: form.employeeContact,
           employeeEmail: form.employeeEmail,
           paymentMethod: form.paymentMethod,
+          // paymentAmount: parseFloat(form.paymentAmount) || 0,
           refundAmount: parseFloat(form.refundAmount) || 0,
           balance: parseFloat(form.balance) || 0,
           date: form.date,
@@ -169,6 +177,15 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
               value={form.employeeEmail}
               readOnly
             />
+
+            {/* <InputField
+              labelName="Payment Amount*"
+              name="paymentAmount"
+              type="number"
+              handlerChange={handlerChange}
+              value={form.paymentAmount}
+              readOnly
+            /> */}
 
             <InputField
               labelName="Refund Amount*"
