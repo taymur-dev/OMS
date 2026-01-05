@@ -43,14 +43,13 @@ export const ConfigEmpSalary = () => {
 
   const [isOpenModal, setIsOpenModal] = useState<CONFIGT>("");
   const [pageNo, setPageNo] = useState(1);
-  const [limit, setLimit] = useState(10); // Added limit for entries per page
+  const [limit, setLimit] = useState(10); 
   const [searchTerm, setSearchTerm] = useState("");
 
   const [salaries, setSalaries] = useState<Salary[]>([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [selectedSalary, setSelectedSalary] = useState<Salary | null>(null);
 
-  // Pagination handlers
   const handleIncrementPageButton = () => setPageNo((prev) => prev + 1);
   const handleDecrementPageButton = () =>
     setPageNo((prev) => (prev > 1 ? prev - 1 : 1));

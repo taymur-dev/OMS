@@ -36,7 +36,7 @@ const initialState = {
   employeeName: "",
   employeeContact: "",
   employeeEmail: "",
-  payableSalary: "",
+  // payableSalary: "",
   withdrawAmount: "",
   balance: "",
   paymentMethod: "",
@@ -49,7 +49,6 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
 
   const [form, setForm] = useState(initialState);
   const [allUsers, setAllUsers] = useState<User[]>([]);
-  // const [salaries, setSalaries] = useState<{ employee_id: number; total_salary: number }[]>([]);
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -67,14 +66,15 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
           updated.employeeContact = selectedUser.contact;
           updated.employeeEmail = selectedUser.email;
         }
-
-        // Do NOT update payableSalary automatically
-        // updated.payableSalary = salaryConfig?.total_salary.toString() || "0";
       }
 
-      const salary = parseFloat(updated.payableSalary) || 0;
-      const withdraw = parseFloat(updated.withdrawAmount) || 0;
-      updated.balance = (salary - withdraw).toString();
+      // const salary = parseFloat(updated.payableSalary) || 0;
+      // const withdraw = parseFloat(updated.withdrawAmount) || 0;
+      // updated.balance = (salary - withdraw).toString();
+
+      if (name === "withdrawAmount") {
+        updated.balance = value;
+      }
 
       return updated;
     });
@@ -91,18 +91,8 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
     }
   }, [token]);
 
-  // const getSalaries = useCallback(async () => {
-  //   try {
-  //     const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`);
-  //     setSalaries(res.data.salaries || []);
-  //   } catch {
-  //     toast.error("Failed to fetch salaries");
-  //   }
-  // }, []);
-
   useEffect(() => {
     getAllUsers();
-    // getSalaries();
   }, [getAllUsers]);
 
   const userOptions = allUsers
@@ -119,7 +109,7 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
           employeeName: form.employeeName,
           employeeContact: form.employeeContact,
           employeeEmail: form.employeeEmail,
-          payableSalary: Number(form.payableSalary),
+          // payableSalary: Number(form.payableSalary),
           withdrawAmount: Number(form.withdrawAmount),
           balance: Number(form.balance),
           paymentMethod: form.paymentMethod,
@@ -166,13 +156,13 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
               value={form.employeeEmail}
               readOnly
             />
-            <InputField
+            {/* <InputField
               labelName="Payable Salary*"
               name="payableSalary"
-              type="number"
               value={form.payableSalary}
+              type="number"
               handlerChange={handlerChange}
-            />
+            /> */}
 
             <InputField
               labelName="Withdraw Amount*"

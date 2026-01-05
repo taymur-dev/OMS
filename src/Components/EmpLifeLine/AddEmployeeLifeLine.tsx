@@ -23,9 +23,11 @@ type Employee = {
 type UserOption = {
   id: number;
   name: string;
-  loginStatus: string;
-  projectName: string;
+  email: string;
+  contact: string;
+  position?: string;
   role: string;
+  loginStatus: string;
 };
 
 type LifeLine = {
@@ -40,7 +42,6 @@ type LifeLine = {
 type AddEmployeeLifeLineProps = {
   setModal: () => void;
   onAdd: (newLifeLine: LifeLine) => void;
-  editData?: LifeLine;
 };
 
 const initialState: Employee = {
@@ -58,52 +59,53 @@ export const AddEmployeeLifeLine = ({
 }: AddEmployeeLifeLineProps) => {
   const [allUsers, setAllUsers] = useState<UserOption[]>([]);
   const [addEmployee, setAddEmployee] = useState<Employee>(initialState);
-  const { currentUser } = useAppSelector((state) => state?.officeState);
 
+  const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setAddEmployee({ ...addEmployee, [name]: value });
+    setAddEmployee((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleEmployeeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedId = e.target.value;
-    const selectedUser = allUsers.find(
-      (user) => user.id.toString() === selectedId
-    );
+    const selectedId = Number(e.target.value);
 
-    if (selectedUser) {
-      setAddEmployee({
-        ...addEmployee,
-        employee_id: selectedUser.id.toString(),
-        employeeName: selectedUser.name,
-        email: "",
-        contact: "",
-        position: "",
-      });
-    }
+    const selectedUser = allUsers.find((u) => u.id === selectedId);
+    if (!selectedUser) return;
+
+    setAddEmployee((prev) => ({
+      ...prev,
+      employee_id: selectedUser.id.toString(),
+      employeeName: selectedUser.name,
+      email: selectedUser.email || "",
+      contact: selectedUser.contact || "",
+      position: selectedUser.position || "",
+    }));
   };
 
   const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const filteredUsers = res.data.users.filter(
-        (user: { role: string; loginStatus: string }) =>
-          user.role === "user" && user.loginStatus === "Y"
+        (u: UserOption) => u.role === "user" && u.loginStatus === "Y"
       );
 
       setAllUsers(filteredUsers);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message);
+      toast.error(axiosError.response?.data.message || "Failed to fetch users");
     }
   }, [token]);
+
+  useEffect(() => {
+    getAllUsers();
+  }, [getAllUsers]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -111,7 +113,7 @@ export const AddEmployeeLifeLine = ({
       const res = await axios.post(
         `${BASE_URL}/api/admin/addEmpll`,
         addEmployee,
-        { headers: { Authorization: `Bearer: ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (res.data?.newLifeLine) {
@@ -119,66 +121,59 @@ export const AddEmployeeLifeLine = ({
         toast.success(res.data.message);
       }
 
-      setModal();
       setAddEmployee(initialState);
+      setModal();
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message);
+      toast.error(axiosError.response?.data.message || "Failed to add lifeline");
     }
   };
-
-  useEffect(() => {
-    getAllUsers();
-  }, [getAllUsers]);
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-500">
         <form onSubmit={handlerSubmitted}>
           <Title setModal={setModal}>Add Employee LifeLine</Title>
+
           <div className="mx-2 flex-wrap gap-3">
             <UserSelect
               labelName="Select Employee*"
               name="employee_id"
               handlerChange={handleEmployeeSelect}
-              optionData={allUsers.map((user) => ({
-                value: user.id.toString(),
-                label: user.name,
+              optionData={allUsers.map((u) => ({
+                value: u.id.toString(),
+                label: u.name,
               }))}
               value={addEmployee.employee_id}
             />
 
             <InputField
               labelName="Employee Email*"
-              placeHolder="Enter the Employee Email"
-              type="text"
               name="email"
-              handlerChange={handlerChange}
               value={addEmployee.email}
+              readOnly
             />
+
             <InputField
               labelName="Employee Contact*"
-              placeHolder="Enter the Employee Contact"
-              type="number"
               name="contact"
-              handlerChange={handlerChange}
               value={addEmployee.contact}
+              readOnly
             />
+
             <InputField
               labelName="Employee Position*"
-              placeHolder="Enter the Employee Position"
-              type="text"
               name="position"
-              handlerChange={handlerChange}
               value={addEmployee.position}
+              handlerChange={handlerChange}
             />
+
             <InputField
               labelName="Date*"
-              placeHolder="Enter the Date"
-              type="date"
               name="date"
-              handlerChange={handlerChange}
+              type="date"
               value={addEmployee.date}
+              handlerChange={handlerChange}
             />
           </div>
 

@@ -18,14 +18,14 @@ type Employee = {
 type Payment = {
   id: number;
   invoiceNumber: string;
-  withdrawAmount: number;
+  withdrawAmount: number | null;
   date: string;
 };
 
 type Refund = {
   id: number;
   invoiceNumber: string;
-  refundAmount: number;
+  refundAmount: number | null;
   date: string;
 };
 
@@ -73,34 +73,31 @@ export const ViewEmployeeAccount = ({
       const sorted = [
         ...payments.map((p) => ({
           invoiceNumber: p.invoiceNumber,
-          debit: p.withdrawAmount,
+          debit: Number(p.withdrawAmount) || 0,
           credit: 0,
           date: p.date,
         })),
         ...refunds.map((r) => ({
           invoiceNumber: r.invoiceNumber,
           debit: 0,
-          credit: r.refundAmount,
+          credit: Number(r.refundAmount) || 0,
           date: r.date,
         })),
       ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
       let previousBalance = 0;
       const combined: Transaction[] = sorted.map((tx) => {
-        const balance = tx.debit - tx.credit;
-        const netBalance = previousBalance - balance;
-
+        const balance = previousBalance + tx.debit - tx.credit;
         const transaction: Transaction = {
           invoiceNumber: tx.invoiceNumber,
           debit: tx.debit,
           credit: tx.credit,
           balance,
           previousBalance,
-          netBalance,
+          netBalance: balance,
           date: tx.date,
         };
-
-        previousBalance = netBalance;
+        previousBalance = balance;
         return transaction;
       });
 
@@ -170,19 +167,19 @@ export const ViewEmployeeAccount = ({
                       <td className="border px-2 py-1">{idx + 1}</td>
                       <td className="border px-2 py-1">{tx.invoiceNumber}</td>
                       <td className="border px-2 py-1 text-right">
-                        {tx.debit.toFixed(2)}
+                        {(tx.debit ?? 0).toFixed(2)}
                       </td>
                       <td className="border px-2 py-1 text-right">
-                        {tx.credit.toFixed(2)}
+                        {(tx.credit ?? 0).toFixed(2)}
                       </td>
                       <td className="border px-2 py-1 text-right">
-                        {tx.balance.toFixed(2)}
+                        {(tx.balance ?? 0).toFixed(2)}
                       </td>
                       <td className="border px-2 py-1 text-right">
-                        {tx.previousBalance.toFixed(2)}
+                        {(tx.previousBalance ?? 0).toFixed(2)}
                       </td>
                       <td className="border px-2 py-1 text-right">
-                        {tx.netBalance.toFixed(2)}
+                        {(tx.netBalance ?? 0).toFixed(2)}
                       </td>
                     </tr>
                   ))

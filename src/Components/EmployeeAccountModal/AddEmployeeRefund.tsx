@@ -25,11 +25,6 @@ type User = {
   loginStatus: string;
 };
 
-// type SalaryConfig = {
-//   employee_id: number;
-//   total_salary: number;
-// };
-
 const paymentMethods = [
   { id: 1, label: "EasyPaisy", value: "easyPaisy" },
   { id: 2, label: "Bank Transfer", value: "bankTransfer" },
@@ -42,7 +37,7 @@ const initialState = {
   employeeContact: "",
   employeeEmail: "",
   paymentMethod: "",
-  paymentAmount: "",
+  // paymentAmount: "",
   refundAmount: "",
   balance: "",
   date: "",
@@ -54,7 +49,6 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
 
   const [form, setForm] = useState(initialState);
   const [allUsers, setAllUsers] = useState<User[]>([]);
-  // const [salaries, setSalaries] = useState<SalaryConfig[]>([]);
 
   const getAllUsers = useCallback(async () => {
     try {
@@ -68,21 +62,13 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
     }
   }, [token]);
 
-  // const getSalaries = useCallback(async () => {
-  //   try {
-  //     const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`);
-  //     setSalaries(res.data.salaries || []);
-  //   } catch {
-  //     toast.error("Failed to fetch salaries");
-  //   }
-  // }, []);
-
   useEffect(() => {
     getAllUsers();
-    // getSalaries();
   }, [getAllUsers]);
 
-  const handlerChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handlerChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
 
     setForm((prev) => {
@@ -90,21 +76,22 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
 
       if (name === "selectEmployee") {
         const selectedUser = allUsers.find((u) => u.id === Number(value));
-        // const salaryConfig = salaries.find((s) => s.employee_id === Number(value));
 
         if (selectedUser) {
           updated.employeeName = selectedUser.name;
           updated.employeeContact = selectedUser.contact;
           updated.employeeEmail = selectedUser.email;
         }
-
-        // updated.paymentAmount = salaryConfig?.total_salary.toString() || "0";
       }
 
-      if (name === "paymentAmount" || name === "refundAmount") {
-        const payment = parseFloat(updated.paymentAmount) || 0;
-        const refund = parseFloat(updated.refundAmount) || 0;
-        updated.balance = (payment - refund).toFixed(2);
+      // if (name === "paymentAmount" || name === "refundAmount") {
+      //   const payment = parseFloat(updated.paymentAmount) || 0;
+      //   const refund = parseFloat(updated.refundAmount) || 0;
+      //   updated.balance = (payment - refund).toFixed(2);
+      // }
+
+       if (name === "refundAmount") {
+        updated.balance = value;
       }
 
       return updated;
@@ -112,7 +99,11 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
   };
 
   const userOptions = allUsers
-    .filter((user) => user.loginStatus?.toUpperCase() === "Y" && user.role?.toLowerCase() === "user")
+    .filter(
+      (user) =>
+        user.loginStatus?.toUpperCase() === "Y" &&
+        user.role?.toLowerCase() === "user"
+    )
     .map((user) => ({ value: user.id.toString(), label: user.name }));
 
   const handlerSubmitted = async (e: React.FormEvent) => {
@@ -126,7 +117,7 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
           employeeContact: form.employeeContact,
           employeeEmail: form.employeeEmail,
           paymentMethod: form.paymentMethod,
-          paymentAmount: parseFloat(form.paymentAmount) || 0,
+          // paymentAmount: parseFloat(form.paymentAmount) || 0,
           refundAmount: parseFloat(form.refundAmount) || 0,
           balance: parseFloat(form.balance) || 0,
           date: form.date,
@@ -139,7 +130,8 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
       setModal();
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : "Failed to add refund.";
+      const message =
+        error instanceof Error ? error.message : "Failed to add refund.";
       toast.error(message);
     }
   };
@@ -186,13 +178,14 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
               readOnly
             />
 
-            <InputField
+            {/* <InputField
               labelName="Payment Amount*"
               name="paymentAmount"
               type="number"
               handlerChange={handlerChange}
               value={form.paymentAmount}
-            />
+              readOnly
+            /> */}
 
             <InputField
               labelName="Refund Amount*"
