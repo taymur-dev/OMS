@@ -36,7 +36,6 @@ const initialState = {
   employeeName: "",
   employeeContact: "",
   employeeEmail: "",
-  // payableSalary: "",
   withdrawAmount: "",
   balance: "",
   paymentMethod: "",
@@ -68,9 +67,7 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
         }
       }
 
-      // const salary = parseFloat(updated.payableSalary) || 0;
-      // const withdraw = parseFloat(updated.withdrawAmount) || 0;
-      // updated.balance = (salary - withdraw).toString();
+    
 
       if (name === "withdrawAmount") {
         updated.balance = value;
@@ -109,7 +106,6 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
           employeeName: form.employeeName,
           employeeContact: form.employeeContact,
           employeeEmail: form.employeeEmail,
-          // payableSalary: Number(form.payableSalary),
           withdrawAmount: Number(form.withdrawAmount),
           balance: Number(form.balance),
           paymentMethod: form.paymentMethod,
@@ -156,13 +152,7 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
               value={form.employeeEmail}
               readOnly
             />
-            {/* <InputField
-              labelName="Payable Salary*"
-              name="payableSalary"
-              value={form.payableSalary}
-              type="number"
-              handlerChange={handlerChange}
-            /> */}
+           
 
             <InputField
               labelName="Withdraw Amount*"
