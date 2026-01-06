@@ -36,9 +36,7 @@ const initialState = {
   employeeName: "",
   employeeContact: "",
   employeeEmail: "",
-  // payableSalary: "",
   withdrawAmount: "",
-  balance: "",
   paymentMethod: "",
   paymentDate: "",
 };
@@ -66,14 +64,6 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
           updated.employeeContact = selectedUser.contact;
           updated.employeeEmail = selectedUser.email;
         }
-      }
-
-      // const salary = parseFloat(updated.payableSalary) || 0;
-      // const withdraw = parseFloat(updated.withdrawAmount) || 0;
-      // updated.balance = (salary - withdraw).toString();
-
-      if (name === "withdrawAmount") {
-        updated.balance = value;
       }
 
       return updated;
@@ -109,9 +99,7 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
           employeeName: form.employeeName,
           employeeContact: form.employeeContact,
           employeeEmail: form.employeeEmail,
-          // payableSalary: Number(form.payableSalary),
           withdrawAmount: Number(form.withdrawAmount),
-          balance: Number(form.balance),
           paymentMethod: form.paymentMethod,
           paymentDate: form.paymentDate,
         },
@@ -156,13 +144,6 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
               value={form.employeeEmail}
               readOnly
             />
-            {/* <InputField
-              labelName="Payable Salary*"
-              name="payableSalary"
-              value={form.payableSalary}
-              type="number"
-              handlerChange={handlerChange}
-            /> */}
 
             <InputField
               labelName="Withdraw Amount*"
@@ -171,8 +152,6 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
               value={form.withdrawAmount}
               handlerChange={handlerChange}
             />
-
-            <InputField labelName="Balance*" value={form.balance} readOnly />
 
             <OptionField
               labelName="Payment Method*"
