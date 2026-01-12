@@ -224,7 +224,7 @@ export const ConfigEmpSalary = () => {
             <span className="truncate">Total Salary</span>
             <span className="truncate">Loan Deduction</span>
             <span className="truncate">Net Salary</span>
-            {/* <span className="truncate">Date</span> */}
+            <span className="truncate">Date</span>
             <span className="truncate">Action</span>
           </div>
 
@@ -256,7 +256,7 @@ export const ConfigEmpSalary = () => {
                 {salary.net_salary || 0}
               </span>
               <span className="truncate">
-                {/* {new Date(salary.config_date).toLocaleDateString("en-CA")} */}
+                {new Date(salary.config_date).toLocaleDateString("en-CA")}
               </span>
               <span className="flex items-center justify-center gap-1">
                 <EditButton
