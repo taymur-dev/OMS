@@ -212,7 +212,7 @@ export const ConfigEmpSalary = () => {
 
         <div className="w-full max-h-[28.4rem] overflow-y-auto overflow-x-hidden mx-auto">
           <div
-            className="grid grid-cols-10 bg-gray-200 text-gray-900 font-semibold 
+            className="grid grid-cols-11 bg-gray-200 text-gray-900 font-semibold 
                border border-gray-600 text-sm sticky top-0 z-10 py-2 px-1"
           >
             <span className="truncate">Sr#</span>
@@ -231,7 +231,7 @@ export const ConfigEmpSalary = () => {
           {salaries.map((salary, idx) => (
             <div
               key={salary.id}
-              className="grid grid-cols-10 border border-gray-600 text-gray-800 
+              className="grid grid-cols-11 border border-gray-600 text-gray-800 
                  hover:bg-gray-100 transition duration-200 text-sm items-center py-1 px-1"
             >
               <span className="truncate">{(pageNo - 1) * limit + idx + 1}</span>
