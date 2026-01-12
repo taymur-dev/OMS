@@ -33,12 +33,12 @@ const paymentMethods = [
 
 const initialState = {
   selectEmployee: "",
-  employeeName: "",
+  employee_name: "",
   employeeContact: "",
   employeeEmail: "",
   withdrawAmount: "",
   paymentMethod: "",
-  date: "",
+  paymentDate: "",
 };
 
 export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
@@ -60,7 +60,7 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
         const selectedUser = allUsers.find((u) => u.id === Number(value));
 
         if (selectedUser) {
-          updated.employeeName = selectedUser.name;
+          updated.employee_name = selectedUser.name;
           updated.employeeContact = selectedUser.contact;
           updated.employeeEmail = selectedUser.email;
         }
@@ -95,14 +95,14 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
       await axios.post(
         `${BASE_URL}/api/admin/addEmployeePayment`,
         {
-          employeeId: form.selectEmployee,
-          employeeName: form.employeeName,
+          employee_id: form.selectEmployee,
+          employee_name: form.employee_name,
           employeeContact: form.employeeContact,
           employeeEmail: form.employeeEmail,
           debit: Number(form.withdrawAmount),
           credit: 0,
           paymentMethod: form.paymentMethod,
-          date: form.date,
+          paymentDate: form.paymentDate,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -132,7 +132,7 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
 
             <InputField
               labelName="Employee Name*"
-              value={form.employeeName}
+              value={form.employee_name}
               readOnly
             />
             <InputField
@@ -165,9 +165,9 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
 
             <InputField
               labelName="Payment Date*"
-              name="date"
+              name="paymentDate"
               type="date"
-              value={form.date}
+              value={form.paymentDate}
               handlerChange={handlerChange}
             />
           </div>
