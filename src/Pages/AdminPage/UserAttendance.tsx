@@ -143,7 +143,10 @@ export const UserAttendance = () => {
     <div className="w-full mx-2">
       <TableTitle tileName="Attendance" activeFile="Attendance list" />
 
-      <div className="max-h-[74.5vh] shadow-lg border-t-2 rounded border-indigo-500 bg-white flex flex-col">
+      <div
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white
+       overflow-hidden flex flex-col"
+      >
         <div className="flex items-center justify-between mx-2">
           <span>
             Total Attendance:
@@ -181,7 +184,7 @@ export const UserAttendance = () => {
           />
         </div>
 
-        <div className="overflow-y-auto">
+        <div className="flex-1 overflow-y-auto">
           <div
             className={`grid ${
               isAdmin
