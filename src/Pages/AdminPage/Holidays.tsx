@@ -17,7 +17,7 @@ import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import {
   ViewHoliday,
   HolidayDetailT,
-} from "../../Components/HolidayModals/ViewHoliday"; // import the modal
+} from "../../Components/HolidayModals/ViewHoliday";
 
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {

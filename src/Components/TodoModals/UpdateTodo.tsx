@@ -53,7 +53,6 @@ export const UpdateTodo = ({
   const [todo, setTodo] = useState<TodoType | null>(seleteTodo);
   const [allUsers, setAllUsers] = useState<UserT[]>([]);
 
-  // Handle input/select changes
   const handlerChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
@@ -65,7 +64,6 @@ export const UpdateTodo = ({
     );
   };
 
-  // Fetch all users
   const getAllUsers = useCallback(async () => {
     if (!token) return;
     try {
@@ -77,6 +75,21 @@ export const UpdateTodo = ({
       console.error("Failed to fetch users:", error);
     }
   }, [token]);
+
+  useEffect(() => {
+  if (!seleteTodo) return;
+
+  const formatDate = (date?: string) =>
+    date ? date.split("T")[0] : "";
+
+  setTodo({
+    ...seleteTodo,
+    startDate: formatDate(seleteTodo.startDate),
+    endDate: formatDate(seleteTodo.endDate),
+    deadline: formatDate(seleteTodo.deadline),
+  });
+}, [seleteTodo]);
+
 
   useEffect(() => {
     getAllUsers();

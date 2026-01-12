@@ -9,18 +9,24 @@ import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+import { ViewButton } from "../../Components/CustomButtons/ViewButton";
+
 import { AddConfigTime } from "../../Components/ConfigTimeModal/AddConfigTime";
 import { EditConfigTime } from "../../Components/ConfigTimeModal/EditConfigTime";
+import { ViewConfigTime } from "../../Components/ConfigTimeModal/ViewConfigTime";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
-import { navigationStart, navigationSuccess } from "../../redux/NavigationSlice";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
 
 const numbers = [10, 25, 50, 100];
 
-type CONFIGTIMET = "ADD" | "EDIT" | "DELETE" | "";
+type CONFIGTIMET = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 type ALLCONFIGT = {
   id: number;
   configureType: string;
@@ -37,6 +43,7 @@ export const ConfigTime = () => {
   const [selectData, setSelectData] = useState<ALLCONFIGT | null>(null);
   const [catchId, setCatchId] = useState<number>();
   const [allConfig, setAllConfig] = useState<ALLCONFIGT[]>([]);
+  const [viewData, setViewData] = useState<ALLCONFIGT | null>(null);
   const [pageNo, setPageNo] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(numbers[0]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,7 +54,9 @@ export const ConfigTime = () => {
       const res = await axios.get(`${BASE_URL}/api/admin/getTimeConfigured`, {
         headers: { Authorization: token },
       });
-      setAllConfig(res.data.sort((a: ALLCONFIGT, b: ALLCONFIGT) => a.id - b.id));
+      setAllConfig(
+        res.data.sort((a: ALLCONFIGT, b: ALLCONFIGT) => a.id - b.id)
+      );
     } catch (error) {
       console.error(error);
       toast.error("Failed to fetch configuration data");
@@ -79,6 +88,11 @@ export const ConfigTime = () => {
     handleToggleViewModal("EDIT");
   };
 
+  const handleClickViewButton = (data: ALLCONFIGT) => {
+    setViewData(data);
+    handleToggleViewModal("VIEW");
+  };
+
   const handleClickDeleteButton = (id: number) => {
     setCatchId(id);
     handleToggleViewModal("DELETE");
@@ -96,8 +110,10 @@ export const ConfigTime = () => {
   const endIndex = startIndex + entriesPerPage;
   const paginatedConfig = filteredConfig.slice(startIndex, endIndex);
 
-  const handleIncrementPageButton = () => setPageNo((prev) => (prev < totalPages ? prev + 1 : prev));
-  const handleDecrementPageButton = () => setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+  const handleIncrementPageButton = () =>
+    setPageNo((prev) => (prev < totalPages ? prev + 1 : prev));
+  const handleDecrementPageButton = () =>
+    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
 
   useEffect(() => setPageNo(1), [searchTerm, entriesPerPage]);
 
@@ -119,9 +135,14 @@ export const ConfigTime = () => {
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total Configurations:{" "}
-            <span className="text-2xl text-blue-500 font-semibold font-sans">{filteredConfig.length}</span>
+            <span className="text-2xl text-blue-500 font-semibold font-sans">
+              {filteredConfig.length}
+            </span>
           </span>
-          <CustomButton label="Add Config Time" handleToggle={() => handleToggleViewModal("ADD")} />
+          <CustomButton
+            label="Add Config Time"
+            handleToggle={() => handleToggleViewModal("ADD")}
+          />
         </div>
 
         {/* Controls */}
@@ -129,7 +150,10 @@ export const ConfigTime = () => {
           <div>
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
-              <select value={entriesPerPage} onChange={(e) => setEntriesPerPage(Number(e.target.value))}>
+              <select
+                value={entriesPerPage}
+                onChange={(e) => setEntriesPerPage(Number(e.target.value))}
+              >
                 {numbers.map((num) => (
                   <option key={num} value={num}>
                     {num}
@@ -139,7 +163,10 @@ export const ConfigTime = () => {
             </span>
             <span>entries</span>
           </div>
-          <TableInputField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
 
         {/* Table */}
@@ -152,7 +179,9 @@ export const ConfigTime = () => {
           </div>
 
           {paginatedConfig.length === 0 ? (
-            <div className="text-gray-800 text-lg text-center py-2">No records available at the moment!</div>
+            <div className="text-gray-800 text-lg text-center py-2">
+              No records available at the moment!
+            </div>
           ) : (
             paginatedConfig.map((config, index) => (
               <div
@@ -163,8 +192,17 @@ export const ConfigTime = () => {
                 <span>{config.configureTime ?? "N/A"}</span>
                 <span>{config.configureType}</span>
                 <span className="flex items-center gap-1">
-                  <EditButton handleUpdate={() => handleClickEditButton(config)} />
-                  <DeleteButton handleDelete={() => handleClickDeleteButton(config.id)} />
+                  <EditButton
+                    handleUpdate={() => handleClickEditButton(config)}
+                  />
+
+                  <ViewButton
+                    handleView={() => handleClickViewButton(config)}
+                  />
+
+                  <DeleteButton
+                    handleDelete={() => handleClickDeleteButton(config.id)}
+                  />
                 </span>
               </div>
             ))
@@ -174,14 +212,47 @@ export const ConfigTime = () => {
 
       {/* Pagination */}
       <div className="flex items-center justify-between mt-2">
-        <ShowDataNumber start={startIndex + 1} end={Math.min(endIndex, filteredConfig.length)} total={filteredConfig.length} />
-        <Pagination pageNo={pageNo} handleIncrementPageButton={handleIncrementPageButton} handleDecrementPageButton={handleDecrementPageButton} />
+        <ShowDataNumber
+          start={startIndex + 1}
+          end={Math.min(endIndex, filteredConfig.length)}
+          total={filteredConfig.length}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleIncrementPageButton={handleIncrementPageButton}
+          handleDecrementPageButton={handleDecrementPageButton}
+        />
       </div>
 
       {/* Modals */}
-      {isOpenModal === "ADD" && <AddConfigTime setModal={() => handleToggleViewModal("")} handleGetAllTimeConfig={handleGetAllTimeConfig} />}
-      {isOpenModal === "EDIT" && <EditConfigTime setModal={() => handleToggleViewModal("")} handleGetAllTimeConfig={handleGetAllTimeConfig} selectData={selectData} />}
-      {isOpenModal === "DELETE" && <ConfirmationModal isOpen={() => handleToggleViewModal("DELETE")} onClose={() => handleToggleViewModal("")} onConfirm={handleDeleteConfigTime} />}
+      {isOpenModal === "ADD" && (
+        <AddConfigTime
+          setModal={() => handleToggleViewModal("")}
+          handleGetAllTimeConfig={handleGetAllTimeConfig}
+        />
+      )}
+      {isOpenModal === "EDIT" && (
+        <EditConfigTime
+          setModal={() => handleToggleViewModal("")}
+          handleGetAllTimeConfig={handleGetAllTimeConfig}
+          selectData={selectData}
+        />
+      )}
+
+      {isOpenModal === "VIEW" && viewData && (
+        <ViewConfigTime
+          setIsOpenModal={() => handleToggleViewModal("")}
+          viewConfig={viewData}
+        />
+      )}
+
+      {isOpenModal === "DELETE" && (
+        <ConfirmationModal
+          isOpen={() => handleToggleViewModal("DELETE")}
+          onClose={() => handleToggleViewModal("")}
+          onConfirm={handleDeleteConfigTime}
+        />
+      )}
     </div>
   );
 };

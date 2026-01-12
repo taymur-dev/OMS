@@ -32,11 +32,7 @@ type Sale = {
 };
 
 const formatDate = (date: string) =>
-  new Date(date).toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
+  new Date(date).toLocaleDateString("sv-SE");
 
 const pageSizes = [10, 25, 50, 100];
 

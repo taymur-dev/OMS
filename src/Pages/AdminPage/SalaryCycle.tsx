@@ -135,7 +135,7 @@ export const SalaryCycle = () => {
           />
         </div>
 
-        <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
+        {/* <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
           <div
             className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold border border-gray-600
            text-sm sticky top-0 z-10 p-[10px]"
@@ -175,7 +175,55 @@ export const SalaryCycle = () => {
               No salary cycles found
             </div>
           )}
+        </div> */}
+
+        {/* Table Header */}
+        <div
+          className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold border border-gray-600
+ text-sm sticky top-0 z-10 p-[10px] text-center"
+        >
+          <span>Sr#</span>
+          <span>Year</span>
+          <span>Month</span>
+          <span>Status</span>
         </div>
+
+        {/* Table Rows */}
+        {paginatedList.length > 0 ? (
+          paginatedList.map((item, index) => (
+            <div
+              key={item._id || index}
+              className="grid grid-cols-4 border border-gray-600 text-gray-800 hover:bg-gray-100
+       transition duration-200 text-sm items-start p-[7px] text-center"
+            >
+              <span className="flex items-center justify-center">
+                {startIndex + index + 1}
+              </span>
+              <span className="flex items-center justify-center">
+                {item.year}
+              </span>
+              <span className="flex items-center justify-center">
+                {item.month}
+              </span>
+              <span className="flex flex-col items-center justify-center">
+                <button
+                  className={`w-20 h-6 mt-1 text-xs font-semibold rounded text-white
+          ${
+            item.calendarStatus?.toLowerCase() === "active"
+              ? "bg-green-500"
+              : "bg-red-500"
+          }`}
+                >
+                  {item.calendarStatus || "Inactive"}
+                </button>
+              </span>
+            </div>
+          ))
+        ) : (
+          <div className="text-center text-gray-500 text-sm py-4">
+            No salary cycles found
+          </div>
+        )}
       </div>
 
       <div className="flex items-center justify-between">

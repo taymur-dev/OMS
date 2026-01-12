@@ -1,157 +1,181 @@
 import React, { useCallback, useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 import { AddButton } from "../CustomButtons/AddButton";
-
 import { CancelBtn } from "../CustomButtons/CancelBtn";
-
 import { Title } from "../Title";
-
 import { UserSelect } from "../InputFields/UserSelect";
-
-import axios from "axios";
-
-import { BASE_URL } from "../../Content/URL";
-
-import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../InputFields/InputField";
-import { toast } from "react-toastify";
 import { TextareaField } from "../InputFields/TextareaField";
 
-type AddAttendanceProps = {
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+
+type AddOvertimeProps = {
   setModal: () => void;
+  refreshOvertime?: () => void;
 };
 
-const currentDate =
-  new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
+type AddOvertimeType = {
+  employee_id: string;
+  date: string;
+  time: string;
+  description: string;
+};
 
-const initialState = {
-  employeeId: "",
-  time: "00:00:00",
+type UserT = {
+  id: number;
+  employeeName?: string;
+  name?: string;
+  loginStatus?: string;
+  role?: string;
+};
+
+const currentDate = new Date().toLocaleDateString("sv-SE", {
+  timeZone: "Asia/Karachi",
+});
+
+const initialState: AddOvertimeType = {
+  employee_id: "",
   date: currentDate,
+  time: "00:00:00",
   description: "",
 };
-export const AddOverTime = ({ setModal }: AddAttendanceProps) => {
+
+export const AddOverTime = ({
+  setModal,
+  refreshOvertime,
+}: AddOvertimeProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
-  const [addOverTime, setAddOverTime] = useState(initialState);
-
-  const [allUsers, setAllUsers] = useState([]);
-
   const token = currentUser?.token;
+  const isAdmin = currentUser?.role === "admin";
 
-  const isAdmin = currentUser?.role;
+  const [addOvertime, setAddOvertime] = useState<AddOvertimeType>(initialState);
 
-  console.log("res", isAdmin);
+  const [allUsers, setAllUsers] = useState<UserT[]>([]);
+
+  const getAllUsers = useCallback(async () => {
+    if (!token) return;
+
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setAllUsers(res.data?.users ?? []);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (!currentUser || !token) return;
+
+    if (!isAdmin) {
+      setAddOvertime((prev) => ({
+        ...prev,
+        employee_id: String(currentUser.id),
+      }));
+    } else {
+      getAllUsers();
+    }
+  }, [currentUser, token, isAdmin, getAllUsers]);
 
   const handlerChange = (
     e: React.ChangeEvent<
-      HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
-    e.preventDefault();
-
     const { name, value } = e.target;
-
-    setAddOverTime({ ...addOverTime, [name]: value });
+    setAddOvertime((prev) => ({ ...prev, [name]: value }));
   };
-
-  const getAllUsers = useCallback(async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      setAllUsers(res?.data?.users);
-    } catch (error) {
-      console.log(error);
-    }
-  } , [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
-      const res = await axios.post(
-        `${BASE_URL}/admin/createTodo`,
-        addOverTime,
+      await axios.post(
+        `${BASE_URL}/api/createOvertime`,
         {
-          headers: {
-            Authorization: token,
-          },
+          date: addOvertime.date,
+          time: addOvertime.time,
+          description: addOvertime.description,
+          ...(isAdmin && { employee_id: addOvertime.employee_id }),
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      console.log(res.data);
+      toast.success("Overtime added successfully");
+      refreshOvertime?.();
       setModal();
-
-      toast.success("Todo submitted successfully");
-    } catch (error) {
-      console.log(error);
+      setAddOvertime(initialState);
+    } catch (err) {
+      console.error("Add overtime failed:", err);
+      toast.error("Failed to add overtime");
     }
   };
 
-  useEffect(() => {
-    getAllUsers();
-  }, [getAllUsers]);
+  const userOptions = allUsers
+    .filter((u) => u.loginStatus === "Y" && u.role === "user")
+    .map((u) => ({
+      id: u.id,
+      value: String(u.id),
+      label: u.employeeName || u.name || "User",
+      name: u.employeeName || u.name || "User",
+      loginStatus: u.loginStatus || "Y",
+      projectName: "",
+    }));
+
   return (
-    <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
-          <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Add OverTime</Title>
-            <div className="mx-2 flex-wrap gap-3  ">
-              {currentUser?.role === "admin" && (
-                <UserSelect
-                  labelName="Employees*"
-                  name="employeeId"
-                  value={addOverTime.employeeId}
-                  handlerChange={handlerChange}
-                  optionData={allUsers}
-                />
-              )}
-              {currentUser?.role === "user" && (
-                <InputField
-                  labelName="Employee*"
-                  name="employeeId"
-                  handlerChange={handlerChange}
-                  value={
-                    currentUser?.role === "user"
-                      ? currentUser.name
-                      : addOverTime.employeeId
-                  }
-                />
-              )}
+    <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
+      <div className="w-[42rem] bg-white rounded-xl border border-indigo-500">
+        <form onSubmit={handlerSubmitted}>
+          <Title setModal={setModal}>Add Overtime</Title>
 
-              <InputField
-                labelName="Date*"
-                type="date"
-                name="date"
+          <div className="mx-2 space-y-2">
+            {isAdmin && (
+              <UserSelect
+                labelName="Employee*"
+                name="employee_id"
+                value={addOvertime.employee_id}
                 handlerChange={handlerChange}
-                value={addOverTime.date}
+                optionData={userOptions}
               />
+            )}
 
-              <InputField
-                labelName="Over time*"
-                name="time"
-                handlerChange={handlerChange}
-                value={addOverTime.time}
-              />
+            <InputField
+              labelName="Date*"
+              type="date"
+              name="date"
+              value={addOvertime.date}
+              handlerChange={handlerChange}
+            />
 
-              <TextareaField
-                labelName="Description*"
-                name="description"
-                handlerChange={handlerChange}
-                placeHolder="write here detail..."
-                inputVal={addOverTime.description}
-              />
-            </div>
+            <InputField
+              labelName="Overtime (HH:MM:SS)*"
+              name="time"
+              value={addOvertime.time}
+              handlerChange={handlerChange}
+            />
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Save"} />
-            </div>
-          </form>
-        </div>
+            <TextareaField
+              labelName="Description*"
+              name="description"
+              inputVal={addOvertime.description}
+              handlerChange={handlerChange}
+              placeHolder="Write overtime details..."
+            />
+          </div>
+
+          <div className="flex justify-center gap-2 m-2">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Save Overtime" />
+          </div>
+        </form>
       </div>
     </div>
   );

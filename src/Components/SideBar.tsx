@@ -35,9 +35,9 @@ type TActivButton =
   | "Assets Management"
   | "Recuritment"
   | "Dynamic"
-  | "configureTime"
   | "Accounts"
-  | "Reports";
+  | "Reports"
+  | "configureTime";
 export const SideBar = ({ isOpen }: SideBarProps) => {
   const [activeBtns, setActiveBtns] = useState<TActivButton | "">("");
 
@@ -61,7 +61,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getTodos`, {
         headers: {
-          Authorization: token,
+          Authorization: `Bearre: ${token}`,
         },
       });
       setAllTodos(res.data);
@@ -85,8 +85,8 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
     <div
       className={`${
         isOpen ? "w-16" : "w-52"
-      } bg-white overflow-y-auto transition-all duration-300 ease-in-out flex flex-col items-center py-4 shadow-lg 
-     `}
+      } bg-white overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out
+  flex flex-col items-center py-4 shadow-lg`}
     >
       {!isOpen ? (
         <Link
@@ -530,7 +530,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         )}
       </div>
 
-      <SideBarButton
+      {/* <SideBarButton
         isOpen={isOpen}
         icon={<AiOutlineFieldTime size={20} />}
         title={"Configure Time"}
@@ -554,7 +554,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
             </ul>
           </AccordionItem>
         )}
-      </div>
+      </div> */}
       <SideBarButton
         isOpen={isOpen}
         icon={<RiUserCommunityLine size={20} />}
@@ -633,29 +633,11 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
 
               <Link
                 className={`my-button ${
-                  pathname === "/customerPayment" && "bg-indigo-200"
-                } `}
-                to={"/customerPayment"}
-              >
-                Customer Payment
-              </Link>
-
-              <Link
-                className={`my-button ${
                   pathname === "/supplierAccount" && "bg-indigo-200"
                 } `}
                 to={"/supplierAccount"}
               >
                 Supplier Account
-              </Link>
-
-              <Link
-                className={`my-button ${
-                  pathname === "/supplierPayment" && "bg-indigo-200"
-                } `}
-                to={"/supplierPayment"}
-              >
-                Supplier Payment
               </Link>
             </ul>
           </AccordionItem>
@@ -729,6 +711,32 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
                 to={"/expenseReports"}
               >
                 Expense Report
+              </Link>
+            </ul>
+          </AccordionItem>
+        )}
+      </div>
+
+      <SideBarButton
+        isOpen={isOpen}
+        icon={<AiOutlineFieldTime size={20} />}
+        title={"Configure Time"}
+        arrowIcon={<BiArrowBack />}
+        handlerClick={() => toggleButtonActive("configureTime")}
+        activeBtns={activeBtns}
+        activeBtn="configure"
+      />
+      <div>
+        {activeBtns === "configureTime" && (
+          <AccordionItem isOpen={isOpen}>
+            <ul className="flex flex-col ">
+              <Link
+                className={`my-button ${
+                  pathname === "/configTime" && "bg-indigo-200"
+                } `}
+                to={"/configTime"}
+              >
+                Config Time
               </Link>
             </ul>
           </AccordionItem>

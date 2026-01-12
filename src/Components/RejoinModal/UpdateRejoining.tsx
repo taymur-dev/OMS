@@ -1,187 +1,227 @@
 import { useCallback, useEffect, useState } from "react";
-
 import { InputField } from "../InputFields/InputField";
-
 import { Title } from "../Title";
-
 import { AddButton } from "../CustomButtons/AddButton";
-
 import { CancelBtn } from "../CustomButtons/CancelBtn";
-
-import axios, { AxiosError } from "axios";
-
-import { BASE_URL } from "../../Content/URL";
-
-import { useAppSelector } from "../../redux/Hooks";
-
-import { toast } from "react-toastify";
-
-import { UserSelect } from "../InputFields/UserSelect";
-
 import { TextareaField } from "../InputFields/TextareaField";
-
+import { UserSelect } from "../InputFields/UserSelect";
 import { OptionField } from "../InputFields/OptionField";
+import axios, { AxiosError } from "axios";
+import { toast } from "react-toastify";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+import { REJOIN_T } from "../../Pages/AdminPage/Rejoin";
 
-const currentDate = new Date().toISOString().split("T")[0];
-
-type AddPromotionProps = {
+type UpdateRejoiningProps = {
   setModal: () => void;
+  rejoinData: REJOIN_T;
+  handleRefresh?: () => void;
 };
 
-const ApprovalOptions = [
-  {
-    id: 1,
-    label: "Accepted",
-    value: "accepted",
-  },
-  {
-    id: 2,
-    label: "Rejected",
-    value: "rejected",
-  },
+type UserT = {
+  id: number;
+  name: string;
+  designation: string;
+  resignation_date: string;
+  loginStatus: string;
+  role: string;
+};
+
+type SelectOption = {
+  value: string;
+  label: string;
+};
+
+type UpdateRejoinState = {
+  id: string;
+  designation: string;
+  resignation_date: string;
+  rejoin_date: string;
+  note: string;
+  approval_status: string;
+};
+
+const ApprovalOptions: { id: number; value: string; label: string }[] = [
+  { id: 1, value: "Accepted", label: "Accepted" },
+  { id: 2, value: "Rejected", label: "Rejected" },
 ];
 
-const initialState = {
-  id: "",
-  designation: "",
-  resignationDate: "",
-  rejoinDate: "",
-  approval: "",
-  note: "",
-  rejoiningStatus: "",
-  date: currentDate,
+const formatDate = (dateStr: string) => {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 };
 
-export const UpdateRejoining = ({ setModal }: AddPromotionProps) => {
-  const [allUsers, setAllUsers] = useState([]);
-
-  const [addRejoining, setAddRejoining] = useState(initialState);
-
-  console.log("=>", addRejoining);
-
-  const { currentUser } = useAppSelector((state) => state?.officeState);
-
+export const UpdateRejoining = ({
+  setModal,
+  rejoinData,
+  handleRefresh,
+}: UpdateRejoiningProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
-  // const [showTime, setShowTime] = useState("");
-  // setInterval(() => {
-  //   const getTime = new Date().toLocaleTimeString("en-US", {
-  //     hour: "2-digit",
-  //     minute: "2-digit",
-  //     second: "2-digit",
-  //     hour12: true,
-  //   });
-  //   setShowTime(getTime);
-  // }, 1000);
+  const [allUsers, setAllUsers] = useState<SelectOption[]>([]);
+  const [allUsersRaw, setAllUsersRaw] = useState<UserT[]>([]);
+
+  const [updateData, setUpdateData] = useState<UpdateRejoinState>({
+    id: rejoinData.employee_id.toString(),
+    designation: rejoinData.designation,
+    resignation_date: formatDate(rejoinData.resignation_date),
+    rejoin_date: formatDate(rejoinData.rejoinRequest_date),
+    note: "",
+    approval_status: rejoinData.approval_status || "Pending",
+  });
+
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
-    e.preventDefault();
     const { name, value } = e.target;
-    setAddRejoining({ ...addRejoining, [name]: value });
+    setUpdateData({ ...updateData, [name]: value });
   };
 
   const getAllUsers = useCallback(async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      setAllUsers(res?.data?.users);
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message);
-    }
-  } , [token]);
+    if (!token || currentUser?.role !== "admin") return;
 
-  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
     try {
-      const res = await axios.post(
-        `${BASE_URL}/admin/addCustomer`,
-        addRejoining,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
+      const res = await axios.get<{ users: UserT[] }>(
+        `${BASE_URL}/api/admin/getUsers`,
+        { headers: { Authorization: token } }
       );
-      console.log(res.data.message);
-      setModal();
-      toast.success(res.data.message);
+
+      const filteredUsers = res.data.users.filter(
+        (u) => u.loginStatus === "N" && u.role === "user"
+      );
+
+      setAllUsersRaw(filteredUsers);
+
+      const formattedUsers: SelectOption[] = filteredUsers.map((u) => ({
+        value: u.id.toString(),
+        label: u.name,
+      }));
+      setAllUsers(formattedUsers);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message);
+      toast.error(axiosError.response?.data.message || "Failed to fetch users");
+    }
+  }, [token, currentUser]);
+
+  const handleUserSelect = (userId: string) => {
+    const selectedUser = allUsersRaw.find((u) => u.id.toString() === userId);
+    if (selectedUser) {
+      setUpdateData({
+        ...updateData,
+        id: userId,
+        designation: selectedUser.designation,
+        resignation_date: formatDate(selectedUser.resignation_date),
+      });
     }
   };
+
+  const handlerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!token) return;
+
+    try {
+      const url =
+        currentUser?.role === "admin"
+          ? `${BASE_URL}/api/admin/updateRejoin/${rejoinData.id}`
+          : `${BASE_URL}/api/user/updateMyRejoin/${rejoinData.id}`;
+
+      const res = await axios.put(url, updateData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      toast.success(res.data.message);
+      handleRefresh?.();
+      setModal();
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(
+        axiosError.response?.data.message || "Failed to update rejoin request"
+      );
+    }
+  };
+
   useEffect(() => {
     getAllUsers();
   }, [getAllUsers]);
+
   return (
-    <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-      <div className="w-[42rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
-        <form onSubmit={handlerSubmitted}>
-          <Title setModal={() => setModal()}>Update Rejoining Employee</Title>
-          <div className="mx-2  flex-wrap gap-3  ">
-            <UserSelect
-              labelName="Select Employee*"
-              name="id"
-              handlerChange={handlerChange}
-              optionData={allUsers}
-              value={addRejoining.id}
-            />
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+      <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-500">
+        <form onSubmit={handlerSubmit}>
+          <Title setModal={setModal}>Update Rejoining Employee</Title>
+
+          <div className="mx-2 flex-wrap gap-3">
+            {currentUser?.role === "admin" && (
+              <UserSelect
+                labelName="Select Employee*"
+                name="id"
+                handlerChange={(e) => {
+                  handlerChange(e);
+                  handleUserSelect(e.target.value);
+                }}
+                optionData={allUsers}
+                value={updateData.id}
+                disabled
+              />
+            )}
+
             <InputField
               labelName="Current Designation*"
               placeHolder="Enter the Current Designation"
               type="text"
               name="designation"
               handlerChange={handlerChange}
-              value={addRejoining?.designation}
+              value={updateData.designation}
+              disabled
             />
+
             <InputField
               labelName="Resignation Date*"
               placeHolder="Enter the Resignation Date"
-              type="text"
-              name="resignationDate"
+              type="date"
+              name="resignation_date"
               handlerChange={handlerChange}
-              value={addRejoining.resignationDate}
+              value={updateData.resignation_date}
+              disabled
             />
+
             <TextareaField
               labelName="Note*"
-              placeHolder="Write here your rejoining description"
+              placeHolder="Write your rejoining description"
               handlerChange={handlerChange}
               name="note"
-              inputVal={addRejoining.note}
+              inputVal={updateData.note}
             />
 
             <InputField
               labelName="Rejoin Date*"
               placeHolder="Enter the Rejoin Date"
               type="date"
-              name="rejoinDate"
+              name="rejoin_date"
               handlerChange={handlerChange}
-              value={addRejoining.rejoinDate}
+              value={updateData.rejoin_date}
             />
-          </div>
 
-          <div className="px-2">
             <OptionField
               labelName="Approval Status*"
-              name="approvalStatus"
-              value={addRejoining.rejoiningStatus}
+              name="approval_status"
               handlerChange={handlerChange}
+              value={updateData.approval_status}
               optionData={ApprovalOptions}
               inital="Pending"
             />
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-            <CancelBtn setModal={() => setModal()} />
-
-            <AddButton label={"update Rejoining"} />
+          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Update Rejoining" />
           </div>
         </form>
       </div>

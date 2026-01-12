@@ -112,30 +112,42 @@ export const ProgressReports = () => {
   const printDiv = () => {
     const printStyles = `
       @page { size: A4 portrait; }
-      body { font-family: Arial; font-size: 11pt; }
-      table { width: 100%; border-collapse: collapse; }
-      th, td { border: 2px solid #000; padding: 5px; }
-      thead { background: #ccc; }
+      body { font-family: Arial, sans-serif; font-size: 11pt; color: #000; }
+      .print-container { width: 100%; padding: 0; }
+      .print-header { text-align: center; }
+      .print-header h1 { font-size: 25pt; font-weight: bold; }
+      .print-header h2 { font-size: 20pt; font-weight: normal; }
+      .date-range { text-align: left; font-size: 14pt; display: flex; justify-content: space-between; }
+      table { width: 100%; border-collapse: collapse; border: 2px solid #000; }
+      thead { background-color: #ccc; color: #000; }
+      thead th, tbody td { border: 2px solid #000; font-size: 10pt; text-align: left; }
+      tbody tr:nth-child(even) { background-color: #f9f9f9; }
+      .footer { position: fixed; bottom: 0; width: 100%; text-align: center; font-size: 10pt; padding: 10px 0;
+       border-top: 1px solid #ccc; }
       @media print { .no-print { display: none; } }
     `;
-
     const content = document.getElementById("myDiv")?.outerHTML || "";
-
     document.body.innerHTML = `
-      <h1 style="text-align:center;">Office Management System</h1>
-      <h2 style="text-align:center;">Progress Report</h2>
-      <p><b>From:</b> ${reportData.startDate} &nbsp; <b>To:</b> ${reportData.endDate}</p>
-      ${content}
+      <div class="print-container">
+        <div class="print-header">
+          <h1>Office Management System</h1>
+          <h2>Progress Report</h2>
+        </div>
+        <div class="date-range">
+          <strong>From: ${reportData.startDate}</strong>
+          <strong>To: ${reportData.endDate}</strong>
+        </div>
+        ${content}
+        <div class="footer"></div>
+      </div>
     `;
-
     const style = document.createElement("style");
-    style.innerHTML = printStyles;
+    style.type = "text/css";
+    style.appendChild(document.createTextNode(printStyles));
     document.head.appendChild(style);
-
     window.print();
     location.reload();
   };
-
   useEffect(() => {
     document.title = "(OMS) PROGRESS REPORTS";
     dispatch(navigationStart());

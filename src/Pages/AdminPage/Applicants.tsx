@@ -127,7 +127,10 @@ export const Applicants = () => {
     <div className="w-full mx-2">
       <TableTitle tileName="Applicants" activeFile="Applicants list" />
 
-      <div className="shadow-lg border-t-2 rounded border-indigo-500 bg-white flex flex-col">
+      <div
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 
+  bg-white overflow-hidden flex flex-col"
+      >
         <div className="flex items-center justify-between mx-2 py-2">
           <span>
             Total Applicants:{" "}
@@ -167,7 +170,7 @@ export const Applicants = () => {
           />
         </div>
 
-        <div className="overflow-y-auto max-h-[28rem]">
+        <div className="w-full flex-1 overflow-y-auto">
           <div className="grid grid-cols-7 bg-gray-200 font-semibold p-2 sticky top-0">
             <span>Sr#</span>
             <span>Name</span>

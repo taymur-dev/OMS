@@ -34,7 +34,7 @@ import { ExpenseReports } from "./Pages/AdminPage/ExpenseReports";
 import { Profile } from "./Pages/AdminPage/Profile";
 import { PrivateRoute } from "./Components/PrivateRouteHOC/PrivateRoute";
 import { EmployeePrivateLayout } from "./Components/HOC/PrivateLayout/EmployeePrivateLayout";
-import { EmployeeDashborad } from "./Components/Employee/EmployeeDashborad";
+import { EmployeeDashboard } from "./Components/Employee/EmployeeDashboard";
 import { Loan } from "./Pages/AdminPage/Loan";
 import { AdvanceSalary } from "./Pages/AdminPage/AdvanceSalary";
 import { OverTime } from "./Pages/AdminPage/OverTime";
@@ -45,12 +45,10 @@ import { Promotion } from "./Pages/AdminPage/Promotion";
 import { Resignation } from "./Pages/AdminPage/Resignation";
 import { Rejoin } from "./Pages/AdminPage/Rejoin";
 import { EmployeeProfile } from "./Pages/AdminPage/EmployeeProfile";
-import { EmployeeSalaryDetail } from "./Pages/AdminPage/EmployeeSalaryDetail";
 import { AssetCategory } from "./Pages/AdminPage/AssetCategory";
 import { Assets } from "./Pages/AdminPage/Assets";
 import { Suppliers } from "./Pages/AdminPage/Suppliers";
-import { SupplierPayment } from "./Pages/AdminPage/SupplierPayment";
-import { CustomerPayment } from "./Pages/AdminPage/CustomerPayment";
+
 import { CustomerAccount } from "./Pages/AdminPage/CustomerAccount";
 import { SupplierAccount } from "./Pages/AdminPage/SupplierAccount";
 
@@ -75,7 +73,7 @@ function App() {
             path="/User/dashboard"
             element={
               <EmployeePrivateLayout>
-                <EmployeeDashborad />
+                <EmployeeDashboard />
               </EmployeePrivateLayout>
             }
           />
@@ -210,33 +208,6 @@ function App() {
             element={
               <PrivateLayout>
                 <Suppliers />
-              </PrivateLayout>
-            }
-          />
-
-          <Route
-            path="/supplierPayment"
-            element={
-              <PrivateLayout>
-                <SupplierPayment />
-              </PrivateLayout>
-            }
-          />
-
-          <Route
-            path="/customerPayment"
-            element={
-              <PrivateLayout>
-                <CustomerPayment />
-              </PrivateLayout>
-            }
-          />
-
-          <Route
-            path="/customerPayment"
-            element={
-              <PrivateLayout>
-                <CustomerPayment />
               </PrivateLayout>
             }
           />
@@ -476,7 +447,7 @@ function App() {
             path="/user/salarydetail"
             element={
               <EmployeePrivateLayout>
-                <EmployeeSalaryDetail />
+                <EmployeeAccount />
               </EmployeePrivateLayout>
             }
           />

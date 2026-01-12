@@ -1,89 +1,167 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { InputField } from "../../Components/InputFields/InputField";
-import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
-import { navigationStart, navigationSuccess } from "../../redux/NavigationSlice";
+import { OptionField } from "../../Components/InputFields/OptionField";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import { navigationStart, navigationSuccess } from "../../redux/NavigationSlice";
 
-const itemsPerPageOptions = [10, 25, 50];
-
-type PAYMENTMETHODT = {
+type CustomerT = {
   id: number;
   customerName: string;
+};
+
+type PaymentT = {
+  id: number;
   customerId: string;
+  customerName?: string;
   amount: string;
   date: string;
 };
 
+const itemsPerPageOptions = [10, 25, 50, 100];
+
 export const PaymentsReports = () => {
-  const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
+  const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
-
   const token = currentUser?.token;
-  const currentDate = new Date().toISOString().split("T")[0];
 
-  const initialState = { startDate: currentDate, endDate: currentDate, selectCustomer: "" };
-  const [reportData, setReportData] = useState(initialState);
-
-  const [allPayment, setAllPayment] = useState<PAYMENTMETHODT[]>([]);
+  const [selectedValue, setSelectedValue] = useState(10);
+  const [getCustomers, setGetCustomers] = useState<CustomerT[]>([]);
+  const [reportData, setReportData] = useState({
+    startDate: new Date().toLocaleDateString("sv-SE"),
+    endDate: new Date().toLocaleDateString("sv-SE"),
+    customerId: "",
+  });
   const [pageNo, setPageNo] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [payments, setPayments] = useState<PaymentT[]>([]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setReportData(prev => ({ ...prev, [name]: value }));
+    setReportData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleIncrementPageButton = () => setPageNo(prev => prev + 1);
-  const handleDecrementPageButton = () => setPageNo(prev => (prev > 1 ? prev - 1 : 1));
+  const handleChangeShowData = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedValue(Number(e.target.value));
+    setPageNo(1);
+  };
 
-  // Fetch payments dynamically
+  const handleIncrementPageButton = () => setPageNo((p) => p + 1);
+  const handleDecrementPageButton = () => setPageNo((p) => Math.max(p - 1, 1));
+
+  const fetchCustomers = useCallback(async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/getAllCustomers`, {
+        headers: { Authorization: token },
+      });
+      setGetCustomers(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [token]);
+
   const fetchPayments = useCallback(async () => {
     try {
+      dispatch(navigationStart());
       const res = await axios.get(`${BASE_URL}/api/admin/getPayments`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      let filtered = res.data as PAYMENTMETHODT[];
+      // Map customerName from customer list
+      const mappedPayments = res.data.map((p: PaymentT) => ({
+        ...p,
+        customerName:
+          getCustomers.find((c) => c.id.toString() === p.customerId)?.customerName ||
+          p.customerId,
+        date: new Date(p.date).toLocaleDateString("sv-SE"),
+      }));
 
-      // Filter by date
-      filtered = filtered.filter(payment => {
-        const paymentDate = payment.date.slice(0, 10);
-        return paymentDate >= reportData.startDate && paymentDate <= reportData.endDate;
-      });
-
-      // Filter by customer if selected
-      if (reportData.selectCustomer) {
-        filtered = filtered.filter(payment =>
-          payment.customerId.toLowerCase().includes(reportData.selectCustomer.toLowerCase())
-        );
-      }
-
-      // Filter by search term
-      if (searchTerm) {
-        filtered = filtered.filter(payment =>
-          payment.customerId.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
-
-      setAllPayment(filtered);
+      setPayments(mappedPayments);
     } catch (error) {
-      console.log(error);
+      console.error(error);
+    } finally {
+      dispatch(navigationSuccess("PAYMENT REPORTS"));
     }
-  }, [token, reportData, searchTerm]);
+  }, [dispatch, token, getCustomers]);
+
+  // Fetch customers first, then payments
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchCustomers();
+    };
+    fetchData();
+  }, [fetchCustomers]);
 
   useEffect(() => {
-    document.title = "(OMS) PAYMENT REPORTS";
-    dispatch(navigationStart());
-    setTimeout(() => dispatch(navigationSuccess("PAYMENT REPORTS")), 1000);
-    fetchPayments();
-  }, [dispatch, fetchPayments]);
+    if (getCustomers.length > 0) {
+      fetchPayments();
+    }
+  }, [getCustomers, fetchPayments]);
+
+  const filteredPayments = useMemo(() => {
+    return payments
+      .filter((p) =>
+        !reportData.customerId || p.customerId === reportData.customerId
+      )
+      .filter(
+        (p) =>
+          p.date >= reportData.startDate && p.date <= reportData.endDate
+      )
+      .filter(
+        (p) =>
+          searchTerm === "" ||
+          p.customerId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          p.customerName?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+  }, [payments, reportData, searchTerm]);
+
+  const printDiv = () => {
+    const printStyles = `
+      @page { size: A4 portrait; }
+      body { font-family: Arial, sans-serif; font-size: 11pt; color: #000; }
+      .print-container { width: 100%; padding: 0; }
+      .print-header { text-align: center; }
+      .print-header h1 { font-size: 25pt; font-weight: bold; }
+      .print-header h2 { font-size: 20pt; font-weight: normal; }
+      .date-range { text-align: left; font-size: 14pt; display: flex; justify-content: space-between; }
+      table { width: 100%; border-collapse: collapse; border: 2px solid #000; }
+      thead { background-color: #ccc; color: #000; }
+      thead th, tbody td { border: 2px solid #000; font-size: 10pt; text-align: left; }
+      tbody tr:nth-child(even) { background-color: #f9f9f9; }
+      .footer { position: fixed; bottom: 0; width: 100%; text-align: center; font-size: 10pt; padding: 10px 0; border-top: 1px solid #ccc; }
+      @media print { .no-print { display: none; } }
+    `;
+    const content = document.getElementById("myDiv")?.outerHTML || "";
+    document.body.innerHTML = `
+      <div class="print-container">
+        <div class="print-header">
+          <h1>Office Management System</h1>
+          <h2>Payment Report</h2>
+        </div>
+        <div class="date-range">
+          <strong>From: ${reportData.startDate}</strong>
+          <strong>To: ${reportData.endDate}</strong>
+        </div>
+        ${content}
+        <div class="footer"></div>
+      </div>
+    `;
+    const style = document.createElement("style");
+    style.type = "text/css";
+    style.appendChild(document.createTextNode(printStyles));
+    document.head.appendChild(style);
+    window.print();
+    location.reload();
+  };
 
   if (loader) return <Loader />;
 
@@ -91,14 +169,15 @@ export const PaymentsReports = () => {
     <div className="w-full mx-2">
       <TableTitle tileName="Payment Report" activeFile="Payment Report" />
 
-      {/* Top Controls */}
       <div className="flex items-center justify-between text-gray-800 py-2 mx-2">
         <div>
           <span>Show</span>
           <span className="bg-gray-200 rounded mx-1 p-1">
-            <select>
-              {itemsPerPageOptions.map((num, index) => (
-                <option key={index} value={num}>{num}</option>
+            <select value={selectedValue} onChange={handleChangeShowData}>
+              {itemsPerPageOptions.map((num) => (
+                <option key={num} value={num}>
+                  {num}
+                </option>
               ))}
             </select>
           </span>
@@ -107,10 +186,9 @@ export const PaymentsReports = () => {
         <TableInputField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       </div>
 
-      {/* Report Filters */}
       <div className="max-h-[58vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
         <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div className="flex flex-1 px-6 py-2 gap-2 items-center justify-between">
+          <div className="flex flex-1 py-1 gap-1 items-center justify-center">
             <InputField
               labelName="From"
               type="date"
@@ -125,14 +203,20 @@ export const PaymentsReports = () => {
               handlerChange={handleChange}
               name="endDate"
             />
-            <InputField
-              labelName="Customers"
-              value={reportData.selectCustomer}
+            <OptionField
+              labelName="Customer"
+              name="customerId"
+              value={reportData.customerId}
+              optionData={getCustomers.map((customer) => ({
+                id: customer.id,
+                label: customer.customerName,
+                value: customer.id.toString(),
+              }))}
+              inital="Please Select Customer"
               handlerChange={handleChange}
-              name="selectCustomer"
             />
-            <div className="mt-4">
-              <div className="text-gray-800 flex items-center justify-end mx-7 py-2 font-semibold">
+            <div className="w-full flex justify-end mt-4">
+              <div className="text-gray-800 flex items-center py-2 font-semibold">
                 <span className="mr-1">From</span>
                 <span className="text-red-500 mr-1">{reportData.startDate}</span>
                 <span className="mr-1">To</span>
@@ -142,37 +226,50 @@ export const PaymentsReports = () => {
           </div>
         </div>
 
-        {/* Report Table */}
         <div id="myDiv" className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
           <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[7px]">
             <span>Sr#</span>
-            <span>Customer Name</span>
+            <span>Customer</span>
             <span>Payment Amount</span>
             <span>Date</span>
           </div>
 
-          {allPayment.length === 0 ? (
-            <div className="p-2 text-center">No data found</div>
-          ) : (
-            allPayment.map((payment, index) => (
+          {filteredPayments
+            .slice((pageNo - 1) * selectedValue, pageNo * selectedValue)
+            .map((payment, index) => (
               <div
-                className="grid grid-cols-4 border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-xs items-center justify-center p-[5px]"
                 key={payment.id}
+                className="grid grid-cols-4 border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[5px]"
               >
-                <span className="px-2">{index + 1}</span>
-                <span>{payment.customerId}</span>
+                <span>{(pageNo - 1) * selectedValue + index + 1}</span>
+                <span>{payment.customerName}</span>
                 <span>{payment.amount}</span>
-                <span>{payment.date.slice(0, 10)}</span>
+                <span>{payment.date}</span>
               </div>
-            ))
-          )}
+            ))}
         </div>
       </div>
 
-      {/* Pagination and Footer */}
       <div className="flex items-center justify-between">
-        <ShowDataNumber start={1} total={allPayment.length} end={allPayment.length} />
-        <Pagination pageNo={pageNo} handleDecrementPageButton={handleDecrementPageButton} handleIncrementPageButton={handleIncrementPageButton} />
+        <ShowDataNumber
+          start={(pageNo - 1) * selectedValue + 1}
+          end={Math.min(pageNo * selectedValue, filteredPayments.length)}
+          total={filteredPayments.length}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
+      </div>
+
+      <div className="flex items-center justify-center mt-4">
+        <button
+          onClick={printDiv}
+          className="bg-green-500 text-white py-2 px-4 rounded font-semibold hover:cursor-pointer"
+        >
+          Download
+        </button>
       </div>
     </div>
   );

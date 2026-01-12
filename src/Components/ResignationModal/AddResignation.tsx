@@ -1,138 +1,216 @@
 import { useCallback, useEffect, useState } from "react";
+import axios, { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
 import { InputField } from "../InputFields/InputField";
-
+import { TextareaField } from "../InputFields/TextareaField";
+import { UserSelect } from "../InputFields/UserSelect";
 import { Title } from "../Title";
-
 import { AddButton } from "../CustomButtons/AddButton";
-
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 
-import axios, { AxiosError } from "axios";
-
+import { useAppSelector } from "../../redux/Hooks";
 import { BASE_URL } from "../../Content/URL";
 
-import { useAppSelector } from "../../redux/Hooks";
-
-import { toast } from "react-toastify";
-import { UserSelect } from "../InputFields/UserSelect";
-import { TextareaField } from "../InputFields/TextareaField";
-
-const currentDate = new Date().toISOString().split("T")[0];
+const today = new Date().toISOString().split("T")[0];
 
 type AddResignationProps = {
   setModal: () => void;
+  handleRefresh?: () => void;
 };
 
-const initialState = {
+type UserT = {
+  id: string | number;
+  employee_name?: string;
+  name?: string;
+  loginStatus?: string;
+  role: string;
+};
+
+type ResignationT = {
+  id: string;
+  designation: string;
+  note: string;
+  resignation_date: string;
+};
+
+type LifeLine = {
+  id: number;
+  position: string;
+  date: string;
+};
+
+const initialState: ResignationT = {
   id: "",
   designation: "",
   note: "",
-  resignationDate: currentDate,
-  approvalStatus: "",
+  resignation_date: today,
 };
 
-export const AddResignation = ({ setModal }: AddResignationProps) => {
-  const [allUsers, setAllUsers] = useState([]);
-
-  const [addResignation, setAddResignation] = useState(initialState);
-
-  console.log("=>", addResignation);
-
-  const { currentUser } = useAppSelector((state) => state?.officeState);
+export const AddResignation = ({
+  setModal,
+  handleRefresh,
+}: AddResignationProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
 
   const token = currentUser?.token;
+  const isAdmin = currentUser?.role === "admin";
+
+  const [allUsers, setAllUsers] = useState<UserT[]>([]);
+  const [lifeLines, setLifeLines] = useState<LifeLine[]>([]);
+  const [formData, setFormData] = useState<ResignationT>(initialState);
+
+  const getAllUsers = useCallback(async () => {
+    if (!token || !isAdmin) return;
+
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setAllUsers(res.data?.users ?? []);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch users");
+    }
+  }, [token, isAdmin]);
+
+  const fetchUserDesignation = useCallback(async () => {
+    if (!token || !isAdmin) return;
+
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/getEmployeeLifeLine`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setLifeLines(Array.isArray(res.data) ? res.data : []);
+    } catch {
+      toast.error("Failed to fetch employee lifeline");
+    }
+  }, [token, isAdmin]);
 
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
-    e.preventDefault();
     const { name, value } = e.target;
-    setAddResignation({ ...addResignation, [name]: value });
-  };
 
-  const getAllUsers = useCallback(async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      setAllUsers(res?.data?.users);
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message);
-    }
-  } , [token]);
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
 
-  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post(
-        `${BASE_URL}/admin/addCustomer`,
-        addResignation,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-      console.log(res.data.message);
-      setModal();
-      toast.success(res.data.message);
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message);
+    if (name === "id") {
+      const latestLifeLine = lifeLines
+        .filter((l) => String(l.id) === value)
+        .sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        )[0];
+
+      setFormData((prev) => ({
+        ...prev,
+        designation: latestLifeLine?.position || "",
+      }));
     }
   };
+
   useEffect(() => {
-    getAllUsers();
-  }, [getAllUsers]);
+    if (isAdmin) {
+      getAllUsers();
+      fetchUserDesignation();
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        id: String(currentUser?.id),
+      }));
+    }
+  }, [isAdmin, getAllUsers, fetchUserDesignation, currentUser]);
+
+  const handlerSubmitted = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.id || !formData.designation || !formData.note) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
+    try {
+      const url = isAdmin
+        ? `${BASE_URL}/api/admin/addResignation`
+        : `${BASE_URL}/api/user/addResignation`;
+
+      await axios.post(url, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      toast.success("Resignation added successfully");
+      setModal();
+      handleRefresh?.();
+      setFormData(initialState);
+    } catch (err) {
+      const axiosError = err as AxiosError<{ message: string }>;
+      toast.error(
+        axiosError.response?.data?.message || "Failed to add resignation"
+      );
+    }
+  };
+
+  const userOptions = allUsers
+    .filter((u) => u.role === "user" && u.loginStatus === "Y")
+    .map((u) => ({
+      value: String(u.id),
+      label: u.employee_name || u.name || "User",
+    }));
+
   return (
-    <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-      <div className="w-[42rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
+      <div className="w-[42rem] bg-white rounded-xl border border-indigo-500">
         <form onSubmit={handlerSubmitted}>
-          <Title setModal={() => setModal()}>Add Employee Resignation</Title>
-          <div className="mx-2  flex-wrap gap-3  ">
-            <UserSelect
-              labelName="Select Employee*"
-              name="id"
-              handlerChange={handlerChange}
-              optionData={allUsers}
-              value={addResignation.id}
-            />
+          <Title setModal={setModal}>Add Employee Resignation</Title>
+
+          <div className="mx-2 space-y-2">
+            {isAdmin && (
+              <UserSelect
+                labelName="Select Employee*"
+                name="id"
+                value={formData.id}
+                optionData={userOptions}
+                handlerChange={handlerChange}
+              />
+            )}
+
             <InputField
               labelName="Current Designation*"
-              placeHolder="Enter the current designation"
-              type="text"
-              name="currentDesignation"
+              name="designation"
+              value={formData.designation}
               handlerChange={handlerChange}
-              value={addResignation?.designation}
+              readOnly
             />
 
             <TextareaField
               labelName="Note*"
-              placeHolder="Write here your resignation description"
-              handlerChange={handlerChange}
               name="note"
-              inputVal={addResignation.note}
+              inputVal={formData.note}
+              handlerChange={handlerChange}
             />
 
             <InputField
-              labelName="Date*"
-              placeHolder="Enter the Resignation Date "
+              labelName="Resignation Date*"
               type="date"
-              name="resignationDate"
+              name="resignation_date"
+              value={formData.resignation_date}
               handlerChange={handlerChange}
-              value={addResignation.resignationDate}
             />
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-            <CancelBtn setModal={() => setModal()} />
-            <AddButton label={"Add Resignation"} />
+          <div className="flex justify-center gap-2 m-2">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Add Resignation" />
           </div>
         </form>
       </div>

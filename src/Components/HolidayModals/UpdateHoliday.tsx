@@ -28,9 +28,9 @@ export const UpdateHoliday = ({
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token ?? "";
 
-  const formatDateForInput = (date: string) => {  
+  const formatDateForInput = (date: string) => {
     if (!date) return "";
-    return new Date(date).toLocaleDateString('sv-SE');
+    return new Date(date).toLocaleDateString("sv-SE");
   };
 
   const [holidayData, setHolidayData] = useState<HolidayType>({
@@ -49,9 +49,7 @@ export const UpdateHoliday = ({
     }
   }, [editHoliday]);
 
-  const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setHolidayData((prev) => ({
       ...prev,
@@ -75,7 +73,7 @@ export const UpdateHoliday = ({
           date: holidayData.date,
         },
         {
-          headers: { Authorization: token },
+          headers: { Authorization: `Bearer: ${token}` },
         }
       );
 

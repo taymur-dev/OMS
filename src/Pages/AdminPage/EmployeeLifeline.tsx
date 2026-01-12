@@ -105,7 +105,6 @@ export const EmployeeLifeline = () => {
     fetchLifelines();
   }, [fetchLifelines]);
 
-  // 🔍 FILTERED LIST FOR SEARCH
   const filteredLifeLines = lifeLines.filter((item) => {
     const name = item.employeeName?.toLowerCase() || "";
     const contact = item.contact?.toLowerCase() || "";
@@ -119,7 +118,6 @@ export const EmployeeLifeline = () => {
     );
   });
 
-  // 🔹 Pagination calculation
   const totalPages = Math.ceil(filteredLifeLines.length / selectedValue);
   const startIndex = (pageNo - 1) * selectedValue;
   const endIndex = startIndex + selectedValue;

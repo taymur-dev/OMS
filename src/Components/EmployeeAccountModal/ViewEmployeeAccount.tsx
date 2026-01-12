@@ -55,17 +55,32 @@ export const ViewEmployeeAccount = ({
   const [loading, setLoading] = useState(false);
 
   const fetchTransactions = useCallback(async () => {
+    if (!currentUser) return;
+
     try {
       setLoading(true);
 
-      const [paymentsRes, refundsRes] = await Promise.all([
-        axios.get(`${BASE_URL}/api/admin/getEmployeePayments/${employee.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get(`${BASE_URL}/api/admin/getEmployeeRefunds/${employee.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-      ]);
+      let paymentsRes, refundsRes;
+
+      if (currentUser.role === "admin") {
+        [paymentsRes, refundsRes] = await Promise.all([
+          axios.get(`${BASE_URL}/api/admin/getEmployeePayments/${employee.id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get(`${BASE_URL}/api/admin/getEmployeeRefunds/${employee.id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+      } else {
+        [paymentsRes, refundsRes] = await Promise.all([
+          axios.get(`${BASE_URL}/api/user/getMyPayments`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get(`${BASE_URL}/api/user/getMyRefunds`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+      }
 
       const payments: Payment[] = paymentsRes.data || [];
       const refunds: Refund[] = refundsRes.data || [];
@@ -108,7 +123,7 @@ export const ViewEmployeeAccount = ({
     } finally {
       setLoading(false);
     }
-  }, [employee.id, token]);
+  }, [employee.id, token, currentUser]);
 
   useEffect(() => {
     fetchTransactions();

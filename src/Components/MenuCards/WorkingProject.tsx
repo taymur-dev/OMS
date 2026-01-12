@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BiArrowFromTop } from "react-icons/bi";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -25,7 +25,7 @@ export const WorkingProject = () => {
   );
   const [catchId, setCatchId] = useState<number | null>(null);
 
-  const getAllWorkingProjects = async () => {
+  const getAllWorkingProjects = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getWorkingProjects`, {
         headers: {
@@ -36,7 +36,7 @@ export const WorkingProject = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [token]);
 
   const handleMoveToCompletion = async (id: number) => {
     try {
@@ -53,7 +53,7 @@ export const WorkingProject = () => {
 
   useEffect(() => {
     getAllWorkingProjects();
-  }, []);
+  }, [getAllWorkingProjects]);
   return (
     <div className="w-full max-w-2xl h-96 bg-white mt-4 rounded-lg shadow-lg overflow-y-auto p-4 mx-auto relative">
       {/* Title (Fixed) */}

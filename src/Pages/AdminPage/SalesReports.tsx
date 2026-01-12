@@ -23,8 +23,9 @@ type SaleReportT = {
   id: number;
   customerName: string;
   projectName: string;
-  date: string;
+  saleDate: string;
 };
+
 
 const numbers = [10, 25, 50, 100];
 
@@ -38,8 +39,8 @@ export const SalesReports = () => {
   const [selectedValue, setSelectedValue] = useState(10);
   const [getCustomers, setGetCustomers] = useState<CustomerT[] | null>(null);
   const [reportData, setReportData] = useState({
-    startDate: new Date().toISOString().split("T")[0],
-    endDate: new Date().toISOString().split("T")[0],
+    startDate: new Date().toLocaleDateString('sv-SE'),
+    endDate: new Date().toLocaleDateString('sv-SE'),
     customerName: "",
   });
   const [pageNo, setPageNo] = useState(1);
@@ -73,32 +74,35 @@ export const SalesReports = () => {
   }, [token]);
 
   const handleGetSalesReports = useCallback(async () => {
-    try {
-      dispatch(navigationStart());
-      const res = await axios.get(`${BASE_URL}/api/admin/getSales`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setSalesReports(
-        res.data.map(
-          (sale: {
-            id: number;
-            customerName: string;
-            projectName: string;
-            date?: string;
-          }) => ({
-            id: sale.id,
-            customerName: sale.customerName,
-            projectName: sale.projectName,
-            date: sale.date || new Date().toISOString().split("T")[0],
-          })
-        )
-      );
-    } catch (error) {
-      console.error(error);
-    } finally {
-      dispatch(navigationSuccess("SALE REPORTS"));
-    }
-  }, [dispatch, token]);
+  try {
+    dispatch(navigationStart());
+
+    const res = await axios.get(`${BASE_URL}/api/admin/getSales`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setSalesReports(
+      res.data.map(
+        (sale: {
+          id: number;
+          customerName: string;
+          projectName: string;
+          saleDate: string;
+        }) => ({
+          id: sale.id,
+          customerName: sale.customerName,
+          projectName: sale.projectName,
+          saleDate: new Date(sale.saleDate).toLocaleDateString("sv-SE"),
+        })
+      )
+    );
+  } catch (error) {
+    console.error(error);
+  } finally {
+    dispatch(navigationSuccess("SALE REPORTS"));
+  }
+}, [dispatch, token]);
+
 
   const printDiv = () => {
     const printStyles = `
@@ -166,10 +170,11 @@ export const SalesReports = () => {
           : true
       )
       .filter(
-        (report) =>
-          report.date >= reportData.startDate &&
-          report.date <= reportData.endDate
-      );
+  (report) =>
+    report.saleDate >= reportData.startDate &&
+    report.saleDate <= reportData.endDate
+)
+
   }, [salesReports, searchTerm, reportData, getCustomers]);
 
   if (loader) return <Loader />;
@@ -269,7 +274,7 @@ export const SalesReports = () => {
                 <span>{(pageNo - 1) * selectedValue + index + 1}</span>
                 <span>{report.customerName}</span>
                 <span>{report.projectName}</span>
-                <span>{report.date}</span>
+                <span>{report.saleDate}</span>
               </div>
             ))}
         </div>

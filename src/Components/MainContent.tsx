@@ -212,13 +212,13 @@ export const MainContent = () => {
         </DndContext>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 px-14">
         <Card
           titleName="Users"
           totalUser="Total Users"
           totalNumber={activeUsers.length}
           icon={<BiUser className="text-3xl" />}
-          style="bg-gradient-to-r from-purple-500 to-indigo-700 text-white ml-[1.2cm]"
+          style="bg-gradient-to-r from-purple-500 to-indigo-700"
         />
 
         <Card
@@ -226,7 +226,7 @@ export const MainContent = () => {
           totalUser="Total Projects"
           totalNumber={allAssignProjects.length}
           icon={<FaProjectDiagram className="text-3xl" />}
-          style="bg-gradient-to-r from-green-500 to-blue-700 text-white"
+          style="bg-gradient-to-r from-green-500 to-blue-700"
         />
 
         <Card
@@ -234,7 +234,7 @@ export const MainContent = () => {
           totalUser="Active Todo's"
           totalNumber={activeTodos.length}
           icon={<LuListTodo className="text-3xl" />}
-          style="bg-gradient-to-r from-yellow-400 to-orange-600 text-white"
+          style="bg-gradient-to-r from-yellow-400 to-orange-600"
         />
 
         <Card
@@ -242,15 +242,15 @@ export const MainContent = () => {
           totalUser="Total Categories"
           totalNumber={expenseCategory.length}
           icon={<CiViewList className="text-3xl" />}
-          style="bg-gradient-to-r from-fuchsia-500 to-fuchsia-700 text-white"
+          style="bg-gradient-to-r from-fuchsia-500 to-fuchsia-700"
         />
 
         <Card
           titleName="Total Expense"
           totalNumber={totalExpenseAmount}
-          isCurrency={true}
+          isCurrency
           icon={<GiTakeMyMoney className="text-3xl" />}
-          style="bg-gradient-to-r from-cyan-600 to-cyan-800 text-white mr-[1.6cm]"
+          style="bg-gradient-to-r from-cyan-600 to-cyan-800"
         />
       </div>
     </div>

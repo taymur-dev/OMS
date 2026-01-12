@@ -7,6 +7,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 type AddAttendanceProps = {
   setModal: () => void;
@@ -16,6 +18,18 @@ type AddAttendanceProps = {
 const initialState = {
   startingMonth: new Date(),
 };
+
+const currentDate = new Date();
+const startOfCurrentMonth = new Date(
+  currentDate.getFullYear(),
+  currentDate.getMonth(),
+  1
+);
+const endOfCurrentMonth = new Date(
+  currentDate.getFullYear(),
+  currentDate.getMonth() + 1,
+  0
+);
 
 export const AddCalendarSession = ({
   setModal,
@@ -40,7 +54,7 @@ export const AddCalendarSession = ({
 
     try {
       if (!addCalendar.startingMonth) {
-        alert("Please select a month");
+        toast.error("Please select a month");
         return;
       }
 
@@ -55,9 +69,7 @@ export const AddCalendarSession = ({
         calendarStatus: "Active",
       };
 
-      console.log(formattedData, "data to send");
-
-      const res = await axios.post(
+      await axios.post(
         `${BASE_URL}/api/admin/addCalendarSession`,
         formattedData,
         {
@@ -67,26 +79,51 @@ export const AddCalendarSession = ({
         }
       );
 
-      console.log(res.data);
+      toast.success("Calendar session added successfully");
       refreshCalendar();
       setModal();
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 409) {
+          toast.warning("Calendar session already exists for this month");
+        } else {
+          toast.error(
+            error.response?.data?.message ||
+              "Something went wrong. Please try again"
+          );
+        }
+      } else {
+        toast.error("Unexpected error occurred");
+      }
+
+      console.error(error);
     }
   };
 
   return (
-    <div>
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme="colored"
+      />
+
       <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
         <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-500">
           <form onSubmit={handlerSubmitted}>
             <Title setModal={() => setModal()}>Add Calendar</Title>
+
             <div className="mx-2 flex-wrap gap-3 flex flex-col justify-center">
               <label className="block text-gray-900 text-xs font-semibold">
                 Starting Month*
               </label>
+
               <DatePicker
-                selected={addCalendar?.startingMonth}
+                selected={addCalendar.startingMonth}
                 onChange={(date: Date | null) =>
                   handlerChange({
                     target: { name: "startingMonth", value: date },
@@ -94,9 +131,12 @@ export const AddCalendarSession = ({
                 }
                 dateFormat="yyyy-MM"
                 showMonthYearPicker
+                minDate={startOfCurrentMonth}
+                maxDate={endOfCurrentMonth}
                 className="border px-3 py-2 rounded-md w-full text-gray-800"
               />
             </div>
+
             <div className="flex items-center justify-center m-2 gap-2 text-xs">
               <CancelBtn setModal={() => setModal()} />
               <AddButton label={"Save Calendar"} />
@@ -104,6 +144,6 @@ export const AddCalendarSession = ({
           </form>
         </div>
       </div>
-    </div>
+    </>
   );
 };

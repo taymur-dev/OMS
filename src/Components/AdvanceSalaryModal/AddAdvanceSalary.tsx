@@ -1,146 +1,182 @@
 import React, { useCallback, useEffect, useState } from "react";
-
 import { AddButton } from "../CustomButtons/AddButton";
-
 import { CancelBtn } from "../CustomButtons/CancelBtn";
-
 import { Title } from "../Title";
-
 import { UserSelect } from "../InputFields/UserSelect";
-
-import axios from "axios";
-
-import { BASE_URL } from "../../Content/URL";
-
-import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../InputFields/InputField";
-import { toast } from "react-toastify";
 import { TextareaField } from "../InputFields/TextareaField";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+import { toast } from "react-toastify";
 
-type AddAttendanceProps = {
+type AddAdvanceSalaryProps = {
   setModal: () => void;
+  handleRefresh?: () => void;
 };
 
-const currentDate =
-  new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
-
-const initialState = {
-  employeeId: "",
-  task: "",
-  note: "",
-  startDate: currentDate,
-  endDate: currentDate,
-  deadline: currentDate,
+type User = {
+  id: number | string;
+  name?: string;
+  employee_name?: string;
+  role: string;
+  loginStatus: "Y" | "N" | string;
 };
-export const AddAdvanceSalary = ({ setModal }: AddAttendanceProps) => {
+
+type AdvanceSalaryFormType = {
+  employee_id: string; 
+  date: string;
+  description: string;
+  amount: string; 
+};
+
+const today = new Date();
+const currentDate = today.toISOString().split("T")[0];
+
+const initialState: AdvanceSalaryFormType = {
+  employee_id: "",
+  date: currentDate,
+  description: "",
+  amount: "",
+};
+
+export const AddAdvanceSalary = ({ setModal, handleRefresh }: AddAdvanceSalaryProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-
-  const [addTodo, setAddTodo] = useState(initialState);
-
-  const [allUsers, setAllUsers] = useState([]);
-
   const token = currentUser?.token;
+  const isAdmin = currentUser?.role === "admin";
 
-  const isAdmin = currentUser?.role;
-
-  console.log("res", isAdmin);
-
-  const handlerChange = (
-    e: React.ChangeEvent<
-      HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement
-    >
-  ) => {
-    e.preventDefault();
-
-    const { name, value } = e.target;
-
-    setAddTodo({ ...addTodo, [name]: value });
-  };
+  const [formData, setFormData] = useState<AdvanceSalaryFormType>(initialState);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
 
   const getAllUsers = useCallback(async () => {
+    if (!token) return;
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      setAllUsers(res?.data?.users);
-    } catch (error) {
-      console.log(error);
+      const res = await axios.get<{ users: User[] }>(
+        `${BASE_URL}/api/admin/getUsers`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setAllUsers(res.data.users ?? []);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+      toast.error("Failed to fetch users");
     }
-  } , [token]);
+  }, [token]);
 
-  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (isAdmin) {
+      getAllUsers();
+    } else if (currentUser?.role === "user") {
+      setFormData((prev) => ({
+        ...prev,
+        employee_id: String(currentUser.id),
+      }));
+    }
+  }, [isAdmin, currentUser, getAllUsers]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!formData.employee_id || !formData.date || !formData.description || !formData.amount) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+    if (isNaN(Number(formData.amount)) || Number(formData.amount) <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+
     try {
-      const res = await axios.post(`${BASE_URL}/admin/createTodo`, addTodo, {
-        headers: {
-          Authorization: token,
+      await axios.post(
+        `${BASE_URL}/api/createAdvanceSalary`,
+        {
+          ...formData,
+          employee_id: Number(formData.employee_id),
+          amount: Number(formData.amount),
         },
-      });
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-      console.log(res.data);
+      toast.success("Advance Salary added successfully");
       setModal();
-
-      toast.success("Todo submitted successfully");
-    } catch (error) {
-      console.log(error);
+      handleRefresh?.(); 
+      setFormData(initialState);
+    } catch (err) {
+      console.error("Error adding advance salary:", err);
+      toast.error("Failed to add advance salary");
     }
   };
 
-  useEffect(() => {
-    getAllUsers();
-  }, [getAllUsers]);
+  const userOptions = allUsers
+    .filter((u) => u.role === "user" && u.loginStatus === "Y")
+    .map((u) => ({
+      value: String(u.id),
+      label: u.employee_name || u.name || "User",
+    }));
+
   return (
-    <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
-          <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Add Advance Salary</Title>
-            <div className="mx-2 flex-wrap gap-3  ">
-              {currentUser?.role === "admin" && (
-                <UserSelect
-                  labelName="Employees*"
-                  name="employeeId"
-                  value={addTodo.employeeId}
-                  handlerChange={handlerChange}
-                  optionData={allUsers}
-                />
-              )}
-              {currentUser?.role === "user" && (
-                <InputField
-                  labelName="Employee*"
-                  name="employeeId"
-                  handlerChange={handlerChange}
-                  value={
-                    currentUser?.role === "user"
-                      ? currentUser.name
-                      : addTodo.employeeId
-                  }
-                />
-              )}
+    <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
+      <div className="w-[42rem] bg-white rounded-xl border border-indigo-500">
+        <form onSubmit={handleSubmit}>
+          <Title setModal={setModal}>Add Advance Salary</Title>
+          <div className="mx-2 space-y-2">
+            {isAdmin && (
+              <UserSelect
+                labelName="Employees*"
+                name="employee_id"
+                value={formData.employee_id}
+                handlerChange={handleChange}
+                optionData={userOptions}
+              />
+            )}
+
+            {!isAdmin && (
               <InputField
-                labelName="Date*"
-                type="date"
-                name="startDate"
-                handlerChange={handlerChange}
-                value={addTodo.startDate}
+                labelName="Employee*"
+                name="employee_id"
+                value={currentUser?.name || ""}
+                handlerChange={handleChange}
+                disabled
               />
+            )}
 
-              <TextareaField
-                labelName="Note*"
-                name="note"
-                handlerChange={handlerChange}
-                inputVal={addTodo.note}
-              />
-            </div>
+            <InputField
+              labelName="Date*"
+              type="date"
+              name="date"
+              value={formData.date}
+              handlerChange={handleChange}
+            />
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Save Advance Salary"} />
-            </div>
-          </form>
-        </div>
+            <InputField
+              labelName="Amount*"
+              type="number"
+              name="amount"
+              value={formData.amount}
+              handlerChange={handleChange}
+            />
+
+            <TextareaField
+              labelName="Description*"
+              name="description"
+              inputVal={formData.description}
+              handlerChange={handleChange}
+            />
+          </div>
+
+          <div className="flex justify-center gap-2 m-2">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Save Advance Salary" />
+          </div>
+        </form>
       </div>
     </div>
   );

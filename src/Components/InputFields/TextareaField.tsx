@@ -4,6 +4,7 @@ type TextareaFieldProps = {
   handlerChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   name: string;
   inputVal: string;
+  disabled?: boolean;
 };
 
 export const TextareaField = ({

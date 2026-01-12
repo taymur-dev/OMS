@@ -1,174 +1,269 @@
+import { useCallback, useEffect, useState } from "react";
+import axios from "axios";
+
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
-
 import { Pagination } from "../../Components/Pagination/Pagination";
-
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
-
-import { useEffect, useState } from "react";
-
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
-
-import { AddRejoining } from "../../Components/RejoinModal/AddRejoining";
-
 import { EditButton } from "../../Components/CustomButtons/EditButton";
-
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 
+import { AddRejoining } from "../../Components/RejoinModal/AddRejoining";
 import { UpdateRejoining } from "../../Components/RejoinModal/UpdateRejoining";
-
+import { ViewRejoin } from "../../Components/RejoinModal/ViewRejoin";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+import { Loader } from "../../Components/LoaderComponent/Loader";
+
+import { BASE_URL } from "../../Content/URL";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
-import { Loader } from "../../Components/LoaderComponent/Loader";
 
 const numbers = [10, 25, 50, 100];
 
-type LoanT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
+type MODAL_T = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
+
+export type REJOIN_T = {
+  id: number;
+  employee_id: number;
+  employee_name: string;
+  designation: string;
+  resignation_date: string;
+  rejoinRequest_date: string;
+  approval_status: string;
+};
 
 export const Rejoin = () => {
-  const { loader } = useAppSelector((state) => state.NavigateState);
-
   const dispatch = useAppDispatch();
+  const { loader } = useAppSelector((state) => state.NavigateState);
+  const { currentUser } = useAppSelector((state) => state.officeState);
 
-  const [isOpenModal, setIsOpenModal] = useState<LoanT>("");
+  const token = currentUser?.token;
+
+  const [rejoinList, setRejoinList] = useState<REJOIN_T[]>([]);
+  const [isOpenModal, setIsOpenModal] = useState<MODAL_T>("");
+
+  const [selectedRejoin, setSelectedRejoin] = useState<REJOIN_T | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
   const [pageNo, setPageNo] = useState(1);
-
   const [selectedValue, setSelectedValue] = useState(10);
-    const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
-
-  const handleChangeShowData = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setSelectedValue(Number(event.target.value));
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
   };
 
-  const handleIncrementPageButton = () => {
-    setPageNo((prev) => prev + 1);
+  const handleGetRejoinRequests = useCallback(async () => {
+    if (!token || !currentUser) return;
+
+    try {
+      const url =
+        currentUser.role === "admin"
+          ? `${BASE_URL}/api/admin/getAllRejoinRequests`
+          : `${BASE_URL}/api/user/getMyRejoinRequests`;
+
+      const res = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setRejoinList(
+        Array.isArray(res.data) ? res.data.sort((a, b) => a.id - b.id) : []
+      );
+    } catch (error) {
+      console.error("Failed to fetch rejoin requests:", error);
+      setRejoinList([]);
+    }
+  }, [token, currentUser]);
+
+  const handleDeleteRejoin = async () => {
+    if (!selectedId || !token) return;
+
+    try {
+      await axios.patch(
+        `${BASE_URL}/api/admin/deleteRejoin/${selectedId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      handleGetRejoinRequests();
+      setIsOpenModal("");
+      setSelectedId(null);
+    } catch (error) {
+      console.error("Failed to delete rejoin request:", error);
+    }
   };
-  const handleDecrementPageButton = () => {
-    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
-  };
-  const handleToggleViewModal = (active: LoanT) => {
-    setIsOpenModal((prev) => (prev === active ? "" : active));
-  };
+
+  const filteredData = rejoinList.filter(
+    (r) =>
+      r.employee_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.designation.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalItems = filteredData.length;
+  const startIndex = (pageNo - 1) * selectedValue;
+  const endIndex = Math.min(startIndex + selectedValue, totalItems);
+  const paginatedData = filteredData.slice(startIndex, endIndex);
 
   useEffect(() => {
     document.title = "(OMS) REJOIN";
     dispatch(navigationStart());
-    setTimeout(() => {
-      dispatch(navigationSuccess("REJOIN"));
-    }, 1000);
-  }, [dispatch]);
+    handleGetRejoinRequests();
+    setTimeout(() => dispatch(navigationSuccess("REJOIN")), 500);
+  }, [dispatch, handleGetRejoinRequests]);
 
   if (loader) return <Loader />;
+
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Rejoining" activeFile="Rejoining list" />
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col ">
-        <div className="flex text-gray-800 items-center justify-between mx-2">
+
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between mx-2">
           <span>
-            Total number of Rejoining Members :{" "}
-            <span className="text-2xl text-blue-500 font-semibold font-sans">
-              [10]
+            Total Rejoining Requests:{" "}
+            <span className="text-2xl text-blue-500 font-semibold">
+              [{totalItems}]
             </span>
           </span>
+
           <CustomButton
             label="Add Rejoin"
-            handleToggle={() => handleToggleViewModal("ADD")}
+            handleToggle={() => setIsOpenModal("ADD")}
           />
         </div>
-        <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div>
+
+        <div className="flex justify-between mx-2">
+          <div className="flex items-center gap-2">
             <span>Show</span>
-            <span className="bg-gray-200 rounded mx-1 p-1">
-              <select value={selectedValue} onChange={handleChangeShowData}>
-                {numbers.map((num, index) => (
-                  <option key={index} value={num}>
-                    {num}
-                  </option>
-                ))}
-              </select>
-            </span>
+            <select
+              value={selectedValue}
+              onChange={(e) => {
+                setSelectedValue(Number(e.target.value));
+                setPageNo(1);
+              }}
+              className="bg-gray-200 rounded px-2 py-1"
+            >
+              {numbers.map((num) => (
+                <option key={num}>{num}</option>
+              ))}
+            </select>
             <span>entries</span>
           </div>
-     <TableInputField
+
+          <TableInputField
             searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
+            setSearchTerm={(term) => {
+              setSearchTerm(term);
+              setPageNo(1);
+            }}
           />
-
         </div>
-        <div className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto">
-          <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1fr] bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px] ">
-            <span className="">Sr#</span>
 
-            <span className="">Employee Name</span>
-
-            <span className="">Designation</span>
-
-            <span className="">Resignation Date</span>
-
-            <span className="">Rejoin Request Date</span>
-
-            <span className="">Approval</span>
-
-            <span className="text-center w-40">Actions</span>
+        <div className="flex-1 overflow-y-auto">
+          <div className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr_1fr_1fr_1fr] bg-gray-200 font-semibold p-2 sticky top-0">
+            <span>Sr#</span>
+            <span>Employee</span>
+            <span>Designation</span>
+            <span>Resignation Date</span>
+            <span>Rejoin Date</span>
+            <span>Status</span>
+            <span className="text-center">Actions</span>
           </div>
 
-          <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px] ">
-            <span className=" px-2">1</span>
+          {paginatedData.map((item, index) => (
+            <div
+              key={item.id}
+              className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr_1fr_1fr_1fr] p-2 border hover:bg-gray-100"
+            >
+              <span>{startIndex + index + 1}</span>
+              <span>{item.employee_name}</span>
+              <span>{item.designation}</span>
+              <span>{formatDate(item.resignation_date)}</span>
+              <span>{formatDate(item.rejoinRequest_date)}</span>
+              <span>{item.approval_status}</span>
 
-            <span className="">Hamza Amin</span>
+              <span className="flex justify-center gap-1">
+                <EditButton
+                  handleUpdate={() => {
+                    setSelectedRejoin(item);
+                    setIsOpenModal("EDIT");
+                  }}
+                />
+                <ViewButton
+                  handleView={() => {
+                    setSelectedRejoin(item);
+                    setIsOpenModal("VIEW");
+                  }}
+                />
 
-            <span className="">React JS</span>
-
-            <span className="">26,may,2025</span>
-
-            <span className="">28,may,2025</span>
-
-            <span className=" ">Pending</span>
-
-            <span className="flex items-center  gap-1">
-              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
-              <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
-              <DeleteButton
-                handleDelete={() => handleToggleViewModal("DELETE")}
-              />
-            </span>
-          </div>
+                {currentUser?.role === "admin" && (
+                  <DeleteButton
+                    handleDelete={() => {
+                      setSelectedId(item.id);
+                      setIsOpenModal("DELETE");
+                    }}
+                  />
+                )}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
-        <ShowDataNumber start={1} total={10} end={1 + 9} />
+      <div className="flex justify-between mt-2">
+        <ShowDataNumber
+          start={startIndex + 1}
+          end={endIndex}
+          total={totalItems}
+        />
+
         <Pagination
-          handleIncrementPageButton={handleIncrementPageButton}
-          handleDecrementPageButton={handleDecrementPageButton}
           pageNo={pageNo}
+          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+          handleIncrementPageButton={() =>
+            pageNo * selectedValue < totalItems && setPageNo((p) => p + 1)
+          }
         />
       </div>
 
       {isOpenModal === "ADD" && (
-        <AddRejoining setModal={() => handleToggleViewModal("")} />
+        <AddRejoining
+          setModal={() => setIsOpenModal("")}
+          handleRefresh={handleGetRejoinRequests}
+        />
       )}
-      {isOpenModal === "EDIT" && (
-        <UpdateRejoining setModal={() => handleToggleViewModal("")} />
+
+      {isOpenModal === "EDIT" && selectedRejoin && (
+        <UpdateRejoining
+          setModal={() => setIsOpenModal("")}
+          rejoinData={selectedRejoin}
+          handleRefresh={handleGetRejoinRequests}
+        />
       )}
 
       {isOpenModal === "DELETE" && (
         <ConfirmationModal
-          isOpen={() => handleToggleViewModal("DELETE")}
-          onClose={() => handleToggleViewModal("")}
-          onConfirm={() => handleToggleViewModal("")}
-          message="Are you sure you want to delete this Rejoining application?"
+          isOpen={() => {}}
+          onClose={() => setIsOpenModal("")}
+          onConfirm={handleDeleteRejoin}
+          message="Are you sure you want to delete this rejoining request?"
+        />
+      )}
+
+      {isOpenModal === "VIEW" && selectedRejoin && (
+        <ViewRejoin
+          setIsOpenModal={() => setIsOpenModal("")}
+          viewRejoin={selectedRejoin}
         />
       )}
     </div>

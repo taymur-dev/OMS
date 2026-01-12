@@ -1,47 +1,45 @@
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
-
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+import { Loader } from "../../Components/LoaderComponent/Loader";
+import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 
-import { useEffect, useState } from "react";
+import { AddCustomerAccount } from "../../Components/CustomerAccountModal/AddCustomerAcc";
+import { ViewCustomerAcc } from "../../Components/CustomerAccountModal/ViewCustomerAcc";
 
-import { AddResignation } from "../../Components/ResignationModal/AddResignation";
-
-import { UpdateResignation } from "../../Components/ResignationModal/UpdateResignation";
-
-import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
-
+import { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
-
 import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 
-import { Loader } from "../../Components/LoaderComponent/Loader";
-import { EditButton } from "../../Components/CustomButtons/EditButton";
-import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
-import { ViewButton } from "../../Components/CustomButtons/ViewButton";
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
 
 const numbers = [10, 25, 50, 100];
 
-type CustomerAccountT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
+type CustomerAccountT = "ADD" | "VIEW" | "";
+
+type Customer = {
+  id: number;
+  customerName: string;
+  customerContact: string;
+  customerAddress: string;
+};
+
 export const CustomerAccount = () => {
   const { loader } = useAppSelector((state) => state.NavigateState);
-
   const dispatch = useAppDispatch();
 
   const [isOpenModal, setIsOpenModal] = useState<CustomerAccountT>("");
-
+  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(null);
   const [pageNo, setPageNo] = useState(1);
-
   const [selectedValue, setSelectedValue] = useState(10);
-
   const [searchTerm, setSearchTerm] = useState("");
+  const [customers, setCustomers] = useState<Customer[]>([]);
 
   const handleChangeShowData = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -49,18 +47,42 @@ export const CustomerAccount = () => {
     setSelectedValue(Number(event.target.value));
   };
 
-  const handleIncrementPageButton = () => {
-    setPageNo((prev) => prev + 1);
-  };
-  const handleDecrementPageButton = () => {
+  const handleIncrementPageButton = () => setPageNo((prev) => prev + 1);
+  const handleDecrementPageButton = () =>
     setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
-  };
-  const handleToggleViewModal = (active: CustomerAccountT) => {
-    setIsOpenModal((prev) => (prev === active ? "" : active));
+
+  const handleToggleViewModal = (type: CustomerAccountT, customerId?: number) => {
+    setIsOpenModal((prev) => (prev === type ? "" : type));
+    if (customerId !== undefined) setSelectedCustomerId(customerId);
+    else setSelectedCustomerId(null);
   };
 
+  const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const fetchCustomers = useCallback(async () => {
+    try {
+      dispatch(navigationStart());
+
+      const response = await axios.get(`${BASE_URL}/api/admin/getCustomerAcc`, {
+        headers: { Authorization: `Bearer ${currentUser?.token}` },
+      });
+
+      console.log("Customer Data:", response.data);
+      setCustomers(response.data || []);
+
+      dispatch(navigationSuccess("Customer Account"));
+    } catch (error) {
+      console.error("Error fetching customer accounts:", error);
+      dispatch(navigationSuccess("Customer Account"));
+    }
+  }, [dispatch, currentUser]);
+
   useEffect(() => {
-    document.title = "(OMS) Customer Account ";
+    fetchCustomers();
+  }, [fetchCustomers]);
+
+  useEffect(() => {
+    document.title = "(OMS) Customer Account";
     dispatch(navigationStart());
     setTimeout(() => {
       dispatch(navigationSuccess("Customer Account"));
@@ -75,12 +97,15 @@ export const CustomerAccount = () => {
         tileName="Customer Accounts"
         activeFile="Customer Accounts list"
       />
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
+      <div
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white
+       overflow-hidden flex flex-col"
+      >
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
-            Total number of Customer Accounts :{" "}
+            Total number of Customer Accounts:{" "}
             <span className="text-2xl text-blue-500 font-semibold font-sans">
-              [10]
+              {customers.length}
             </span>
           </span>
           <CustomButton
@@ -107,35 +132,52 @@ export const CustomerAccount = () => {
             setSearchTerm={setSearchTerm}
           />
         </div>
-        <div className="w-full max-h-[28.4rem] overflow-y-auto  mx-auto">
-          <div className="grid grid-cols-6  bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px] ">
-            <span className="">Sr#</span>
-            <span className="">Customer Name</span>
-            <span className="">Debit</span>
-            <span className="">Credit</span>
-            <span className="">Net Balance</span>
+        <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
+          <div
+            className="grid grid-cols-5 bg-gray-200 text-gray-900 font-semibold border border-gray-600
+           text-sm sticky top-0 z-10 p-[10px]"
+          >
+            <span>Sr#</span>
+            <span>Customer</span>
+            <span>Contact#</span>
+            <span>Customer Address</span>
             <span className="text-center w-40">Actions</span>
           </div>
-          <div className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px] ">
-            <span className="px-2">1</span>
-            <span className="">Hamza Amin</span>
-            <span className="]">250000</span>
-            <span className="">340000</span>
-            <span className="">400000000</span>
-            <span className=" flex items-center  gap-1">
-              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
+          {customers.length === 0 ? (
+            <div className="text-center text-gray-500 p-4 col-span-5">
+              No customers found
+            </div>
+          ) : (
+            customers.map((customer, index) => (
+              <div
+                key={customer.id}
+                className="grid grid-cols-5 border border-gray-600 text-gray-800 hover:bg-gray-100 transition
+                 duration-200 text-sm items-center justify-center p-[7px]"
+              >
+                <span className="px-2">{index + 1}</span>
+                <span>{customer.customerName}</span>
+                <span>{customer.customerContact}</span>
+                <span>{customer.customerAddress}</span>
 
-              <ViewButton handleView={() => handleToggleViewModal("")} />
-              <DeleteButton
-                handleDelete={() => handleToggleViewModal("DELETE")}
-              />
-            </span>
-          </div>
+                <span className="flex items-center gap-1">
+                  <ViewButton
+                    handleView={() =>
+                      handleToggleViewModal("VIEW", customer.id)
+                    }
+                  />
+                </span>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
       <div className="flex items-center justify-between">
-        <ShowDataNumber start={1} total={10} end={1 + 9} />
+        <ShowDataNumber
+          start={1}
+          total={customers.length}
+          end={customers.length}
+        />
         <Pagination
           handleIncrementPageButton={handleIncrementPageButton}
           handleDecrementPageButton={handleDecrementPageButton}
@@ -144,19 +186,16 @@ export const CustomerAccount = () => {
       </div>
 
       {isOpenModal === "ADD" && (
-        <AddResignation setModal={() => handleToggleViewModal("")} />
+        <AddCustomerAccount
+          setModal={() => handleToggleViewModal("")}
+          refreshData={fetchCustomers}
+        />
       )}
 
-      {isOpenModal === "EDIT" && (
-        <UpdateResignation setModal={() => handleToggleViewModal("")} />
-      )}
-
-      {isOpenModal === "DELETE" && (
-        <ConfirmationModal
-          isOpen={() => handleToggleViewModal("")}
-          onClose={() => handleToggleViewModal("DELETE")}
-          onConfirm={() => handleToggleViewModal("")}
-          message="Are you sure you want to delete this Resignation?"
+      {isOpenModal === "VIEW" && selectedCustomerId && (
+        <ViewCustomerAcc
+          setModal={() => handleToggleViewModal("")}
+          customerId={selectedCustomerId}
         />
       )}
     </div>

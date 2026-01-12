@@ -74,25 +74,41 @@ export const EmployeeAccount = () => {
   };
 
   const fetchEmployees = useCallback(async () => {
+    if (!currentUser) return;
+
     try {
-      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      setEmployees([]);
 
-      const mapped: EmployeeAccountRow[] = (res.data.users as ApiUser[])
-        .filter((u) => u.loginStatus === "Y" && u.role === "user")
-        .map((u) => ({
-          id: u.id,
-          name: u.name,
-          email: u.email,
-          contact: u.contact,
-        }));
+      if (currentUser.role === "admin") {
+        // Admin sees all active users
+        const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-      setEmployees(mapped);
+        const mapped: EmployeeAccountRow[] = (res.data.users as ApiUser[])
+          .filter((u) => u.loginStatus === "Y" && u.role === "user")
+          .map((u) => ({
+            id: Number(u.id),
+            name: u.name,
+            email: u.email,
+            contact: u.contact,
+          }));
+
+        setEmployees(mapped);
+      } else {
+        setEmployees([
+          {
+            id: Number(currentUser.id ?? 0),
+            name: currentUser.name ?? "",
+            email: currentUser.email ?? "",
+            contact: currentUser.contact ?? "",
+          },
+        ]);
+      }
     } catch (error) {
       console.error("Failed to fetch employees", error);
     }
-  }, [token]);
+  }, [token, currentUser]);
 
   useEffect(() => {
     document.title = "(OMS) EMPLOYEE ACCOUNT";
@@ -133,16 +149,18 @@ export const EmployeeAccount = () => {
             </span>
           </span>
 
-          <div className="flex gap-2">
-            <CustomButton
-              label="Payment Withdraw"
-              handleToggle={() => handleToggleViewModal("ADDPAYMENT")}
-            />
-            <CustomButton
-              label="Payment Refund"
-              handleToggle={() => handleToggleViewModal("ADDREFUND")}
-            />
-          </div>
+          {currentUser?.role === "admin" && (
+            <div className="flex gap-2">
+              <CustomButton
+                label="Payment Withdraw"
+                handleToggle={() => handleToggleViewModal("ADDPAYMENT")}
+              />
+              <CustomButton
+                label="Payment Refund"
+                handleToggle={() => handleToggleViewModal("ADDREFUND")}
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex items-center justify-between text-gray-800 mx-2 my-2">

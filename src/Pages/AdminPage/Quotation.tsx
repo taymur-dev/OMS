@@ -160,7 +160,7 @@ export const Quotation = () => {
           />
         </div>
 
-        <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
+        {/* <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
           <div
             className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold border border-gray-600
            text-sm sticky top-0 z-10 p-[10px]"
@@ -182,6 +182,37 @@ export const Quotation = () => {
               <span>{item.customerName}</span>
 
               <span className="flex items-center gap-1 justify-center">
+                <ViewButton handleView={() => handleViewQuotation(item.id)} />
+              </span>
+            </div>
+          ))}
+        </div> */}
+
+        <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
+          {/* Table Header */}
+          <div
+            className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold border border-gray-600
+      text-sm sticky top-0 z-10 p-[10px]"
+          >
+            <span>Sr</span>
+            <span>Ref</span>
+            <span>Customer</span>
+            <span className="text-center">Action</span>
+          </div>
+
+          {/* Table Body */}
+          {quotations.map((item, index) => (
+            <div
+              key={item.id}
+              className="grid grid-cols-4 border border-gray-600 text-gray-800 hover:bg-gray-100 transition
+        duration-200 text-sm items-center p-[7px]"
+            >
+              <span className="px-2">{index + 1}</span>
+              <span>{item.refNo}</span>
+              <span>{item.customerName}</span>
+
+              {/* Action Column with Button Centered */}
+              <span className="flex flex-col items-center justify-center gap-1">
                 <ViewButton handleView={() => handleViewQuotation(item.id)} />
               </span>
             </div>

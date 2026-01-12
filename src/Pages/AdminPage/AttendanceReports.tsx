@@ -41,7 +41,7 @@ export const AttendanceReports = () => {
   const token = currentUser?.token;
   const isAdmin = currentUser?.role === "admin";
 
-  const currentDate = new Date().toISOString().split("T")[0];
+  const currentDate = new Date().toLocaleDateString("sv-SE");
 
   const [reportData, setReportData] = useState({
     startDate: currentDate,
@@ -66,7 +66,16 @@ export const AttendanceReports = () => {
       const res = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setAttendance(Array.isArray(res.data) ? res.data : []);
+
+      // Normalize dates to YYYY-MM-DD
+      const normalizedData = Array.isArray(res.data)
+        ? res.data.map((item: AttendanceT) => ({
+            ...item,
+            date: new Date(item.date).toLocaleDateString("sv-SE"),
+          }))
+        : [];
+
+      setAttendance(normalizedData);
     } catch (error) {
       console.error("Failed to load attendance report", error);
       setAttendance([]);
@@ -74,15 +83,13 @@ export const AttendanceReports = () => {
   }, [token, currentUser, isAdmin]);
 
   /* ================= FETCH USERS ================= */
-  /* ================= FETCH USERS ================= */
   const getUsers = useCallback(async () => {
     if (!token) return;
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      // Filter users with loginStatus "Y"
       const activeUsers = (res.data.users || []).filter(
         (u: UserType) => u.loginStatus === "Y"
       );
@@ -97,10 +104,11 @@ export const AttendanceReports = () => {
   /* ================= FILTER ================= */
   const filteredAttendance = useMemo(() => {
     return attendance.filter((item) => {
-      const itemDate = item.date.slice(0, 10);
+      const itemDate = item.date;
 
       const inDateRange =
-        itemDate >= reportData.startDate && itemDate <= reportData.endDate;
+        (!reportData.startDate || itemDate >= reportData.startDate) &&
+        (!reportData.endDate || itemDate <= reportData.endDate);
 
       const matchesUser = reportData.userId
         ? item.userId === Number(reportData.userId)
@@ -132,35 +140,44 @@ export const AttendanceReports = () => {
     setPageNo(1);
   };
 
-  const printReport = () => {
+  const printDiv = () => {
     const printStyles = `
       @page { size: A4 portrait; }
       body { font-family: Arial, sans-serif; font-size: 11pt; color: #000; }
-      table { width: 100%; border-collapse: collapse; border: 2px solid #000; margin-top: 20px; }
+      .print-container { width: 100%; padding: 0; }
+      .print-header { text-align: center; }
+      .print-header h1 { font-size: 25pt; font-weight: bold; }
+      .print-header h2 { font-size: 20pt; font-weight: normal; }
+      .date-range { text-align: left; font-size: 14pt; display: flex; justify-content: space-between; }
+      table { width: 100%; border-collapse: collapse; border: 2px solid #000; }
       thead { background-color: #ccc; color: #000; }
-      thead th, tbody td { border: 2px solid #000; font-size: 10pt; padding: 5px; text-align: left; }
+      thead th, tbody td { border: 2px solid #000; font-size: 10pt; text-align: left; }
       tbody tr:nth-child(even) { background-color: #f9f9f9; }
+      .footer { position: fixed; bottom: 0; width: 100%; text-align: center; font-size: 10pt; padding: 10px 0;
+       border-top: 1px solid #ccc; }
+      @media print { .no-print { display: none; } }
     `;
     const content = document.getElementById("attendanceDiv")?.outerHTML || "";
-    const printWindow = window.open("", "_blank");
-    if (printWindow) {
-      printWindow.document.write(`
-        <html>
-        <head><title>Attendance Report</title><style>${printStyles}</style></head>
-        <body>
-          <h1 style="text-align:center;">Office Management System</h1>
-          <h2 style="text-align:center;">Attendance Report</h2>
-          <div style="margin-bottom: 10px;">
-            <strong>From:</strong> ${reportData.startDate} 
-            <strong>To:</strong> ${reportData.endDate}
-          </div>
-          ${content}
-        </body>
-        </html>
-      `);
-      printWindow.document.close();
-      printWindow.print();
-    }
+    document.body.innerHTML = `
+      <div class="print-container">
+        <div class="print-header">
+          <h1>Office Management System</h1>
+          <h2>Attendance Report</h2>
+        </div>
+        <div class="date-range">
+          <strong>From: ${reportData.startDate}</strong>
+          <strong>To: ${reportData.endDate}</strong>
+        </div>
+        ${content}
+        <div class="footer"></div>
+      </div>
+    `;
+    const style = document.createElement("style");
+    style.type = "text/css";
+    style.appendChild(document.createTextNode(printStyles));
+    document.head.appendChild(style);
+    window.print();
+    location.reload();
   };
 
   /* ================= EFFECTS ================= */
@@ -224,18 +241,20 @@ export const AttendanceReports = () => {
               name="endDate"
             />
 
-            <OptionField
-              labelName="User"
-              name="userId"
-              value={reportData.userId}
-              optionData={users.map((u) => ({
-                id: u.id,
-                label: u.name,
-                value: u.id,
-              }))}
-              inital="Select User"
-              handlerChange={handleChange}
-            />
+            {isAdmin && (
+              <OptionField
+                labelName="User"
+                name="userId"
+                value={reportData.userId}
+                optionData={users.map((u) => ({
+                  id: u.id,
+                  label: u.name,
+                  value: u.id,
+                }))}
+                inital="Select User"
+                handlerChange={handleChange}
+              />
+            )}
 
             <div className="w-full flex justify-end mt-4">
               <div className="text-gray-800 flex items-center py-2 font-semibold">
@@ -279,7 +298,7 @@ export const AttendanceReports = () => {
                duration-200 text-sm items-center justify-center p-[5px]"
               >
                 <span>{startIndex + index + 1}</span>
-                <span>{item.date.slice(0, 10)}</span>
+                <span>{item.date}</span>
                 <span>{item.name}</span>
                 <span>{item.clockIn ?? "--"}</span>
                 <span>{item.clockOut ?? "--"}</span>
@@ -308,7 +327,7 @@ export const AttendanceReports = () => {
 
       <div className="flex items-center justify-center mt-4">
         <button
-          onClick={printReport}
+          onClick={printDiv}
           className="bg-green-500 text-white py-2 px-4 rounded font-semibold hover:cursor-pointer"
         >
           Download

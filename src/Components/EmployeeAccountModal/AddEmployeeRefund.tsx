@@ -105,7 +105,8 @@ export const AddEmployeeRefund = ({ setModal }: AddEmployeeRefundProps) => {
           employeeContact: form.employeeContact,
           employeeEmail: form.employeeEmail,
           paymentMethod: form.paymentMethod,
-          refundAmount: parseFloat(form.refundAmount) || 0,
+          debit: 0,
+          credit: parseFloat(form.refundAmount) || 0,
           date: form.date,
         },
         { headers: { Authorization: `Bearer ${token}` } }

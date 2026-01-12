@@ -156,7 +156,7 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
               handlerChange={handleChange}
             />
 
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 ml-20">
               <InputField
                 labelName="Start Date*"
                 name="startDate"

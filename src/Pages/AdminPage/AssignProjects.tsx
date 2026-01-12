@@ -72,9 +72,7 @@ export const AssignProjects = () => {
       });
 
       setAllAssignProjects(
-        Array.isArray(res.data)
-          ? res.data.sort((a, b) => a.id - b.id)
-          : []
+        Array.isArray(res.data) ? res.data.sort((a, b) => a.id - b.id) : []
       );
     } catch (error) {
       console.error("Failed to fetch assign projects:", error);
@@ -92,12 +90,9 @@ export const AssignProjects = () => {
     if (!token) return;
 
     try {
-      await axios.delete(
-        `${BASE_URL}/api/admin/deleteAssignProject/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await axios.delete(`${BASE_URL}/api/admin/deleteAssignProject/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       handleGetAllAssignProjects();
       setIsOpenModal("");
     } catch (error) {
@@ -132,7 +127,7 @@ export const AssignProjects = () => {
     <div className="w-full mx-2">
       <TableTitle tileName="Assign Project" activeFile="Assign Project list" />
 
-      <div className="max-h-[74.5vh] shadow-lg border-t-2 rounded border-indigo-500 bg-white flex flex-col">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white flex flex-col overflow-hidden">
         <div className="flex items-center justify-between mx-2">
           <span>
             Total Assign Projects:{" "}
@@ -176,7 +171,7 @@ export const AssignProjects = () => {
           />
         </div>
 
-        <div className="overflow-y-auto">
+        <div className="flex-1 overflow-y-auto">
           <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr] bg-gray-200 font-semibold p-2 sticky top-0">
             <span>Sr#</span>
             <span>User</span>
@@ -233,9 +228,7 @@ export const AssignProjects = () => {
 
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={() =>
-            setPageNo((p) => Math.max(p - 1, 1))
-          }
+          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
           handleIncrementPageButton={() =>
             pageNo * entriesPerPage < filteredProjects.length &&
             setPageNo((p) => p + 1)

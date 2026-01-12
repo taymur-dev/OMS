@@ -140,7 +140,7 @@ export const Progress = () => {
     <div className="w-full mx-2">
       <TableTitle tileName="Progress" activeFile="All Progress list" />
 
-      <div className="max-h-[74.5vh] shadow-lg border-t-2 rounded border-indigo-500 bg-white flex flex-col">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white flex flex-col overflow-hidden">
         <div className="flex items-center justify-between mx-2">
           <span>
             Total number of Progress:{" "}
@@ -179,7 +179,7 @@ export const Progress = () => {
           />
         </div>
 
-        <div className="overflow-y-auto">
+        <div className="flex-1 overflow-y-auto">
           <div className="grid grid-cols-[1fr_1fr_2fr_1fr_1fr] bg-gray-200 font-semibold p-2 sticky top-0">
             <span>Sr#</span>
             {currentUser?.role === "admin" && <span>Employee</span>}
@@ -216,7 +216,7 @@ export const Progress = () => {
         </div>
       </div>
 
-      <div className="flex justify-between mt-2">
+      <div className="flex items-center justify-between mt-2 px-2">
         <ShowDataNumber
           start={startIndex + 1}
           end={endIndex}

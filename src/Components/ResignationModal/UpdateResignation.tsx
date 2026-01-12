@@ -1,174 +1,188 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import axios, { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
 import { InputField } from "../InputFields/InputField";
-
+import { TextareaField } from "../InputFields/TextareaField";
 import { Title } from "../Title";
-
 import { AddButton } from "../CustomButtons/AddButton";
-
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 
-import axios, { AxiosError } from "axios";
-
+import { useAppSelector } from "../../redux/Hooks";
 import { BASE_URL } from "../../Content/URL";
 
-import { useAppSelector } from "../../redux/Hooks";
 
-import { toast } from "react-toastify";
-import { UserSelect } from "../InputFields/UserSelect";
-import { TextareaField } from "../InputFields/TextareaField";
-import { OptionField } from "../InputFields/OptionField";
+type UpdatedResignationT = {
+  id: number;
+  employee_name: string;
+  designation: string;
+  note: string;
+  resignation_date: string;
+  approval_status: string;
+};
 
-const currentDate = new Date().toISOString().split("T")[0];
-
-type updatePromotionProps = {
+type UpdateResignationProps = {
   setModal: () => void;
+  resignationData: {
+    id: string;
+    employee_name: string;
+    designation: string;
+    note: string;
+    date: string;
+    approval_status: string;
+  };
+  handleRefresh?: (updatedItem: UpdatedResignationT) => void;
 };
 
-const ApprovalOptions = [
-  {
-    id: 1,
-    label: "Pending",
-    value: "pending",
-  },
-  {
-    id: 2,
-    label: "Accepted",
-    value: "accepted",
-  },
-  {
-    id: 3,
-    label: "Rejected",
-    value: "rejected",
-  },
-];
 
-const initialState = {
-  id: "",
-  designation: "",
-  resignationDate: "",
-  note: "",
-  date: currentDate,
-  approvalStatus: "",
-};
-
-export const UpdateResignation = ({ setModal }: updatePromotionProps) => {
-  const [allUsers, setAllUsers] = useState([]);
-
-  const [addPromotion, setAddPromotion] = useState(initialState);
-
-  console.log("=>", addPromotion);
-
-  const { currentUser } = useAppSelector((state) => state?.officeState);
-
+export const UpdateResignation = ({
+  setModal,
+  resignationData,
+  handleRefresh,
+}: UpdateResignationProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
-  const handlerChange = (
+  const [updateResignation, setUpdateResignation] = useState({
+    id: "",
+    employee_name: "",
+    designation: "",
+    note: "",
+    resignation_date: "",
+    approval_status: "PENDING",
+  });
+
+
+  useEffect(() => {
+    if (!resignationData) return;
+
+    const formattedDate = resignationData.date
+      ? resignationData.date.includes("T")
+        ? resignationData.date.split("T")[0]
+        : resignationData.date
+      : "";
+
+    setUpdateResignation({
+      id: resignationData.id,
+      employee_name: resignationData.employee_name || "",
+      designation: resignationData.designation || "",
+      note: resignationData.note || "",
+      resignation_date: formattedDate,
+      approval_status:
+        resignationData.approval_status?.toUpperCase() || "PENDING",
+    });
+  }, [resignationData]);
+
+  
+  const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
-    e.preventDefault();
     const { name, value } = e.target;
-    
-    setAddPromotion({ ...addPromotion, [name]: value });
+    setUpdateResignation((prev) => ({ ...prev, [name]: value }));
   };
 
-  const getAllUsers = useCallback(async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      setAllUsers(res?.data?.users);
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message);
-    }
-  } , [token]);
 
-  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const { id, designation, note, resignation_date, approval_status } =
+      updateResignation;
+
+    if (!designation || !note || !resignation_date) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
     try {
-      const res = await axios.post(
-        `${BASE_URL}/admin/addCustomer`,
-        addPromotion,
+      const res = await axios.put(
+        `${BASE_URL}/api/updateResignation/${id}`,
         {
-          headers: {
-            Authorization: token,
-          },
-        }
+          designation,
+          note,
+          resignation_date,
+          approval_status,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log(res.data.message);
+
+      toast.success(res.data.message || "Resignation updated successfully");
+
+      handleRefresh?.({
+        id: Number(id),
+        employee_name: updateResignation.employee_name,
+        designation,
+        note,
+        resignation_date,
+        approval_status,
+      });
+
       setModal();
-      toast.success(res.data.message);
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message);
+    } catch (err) {
+      const axiosError = err as AxiosError<{ message: string }>;
+      toast.error(
+        axiosError.response?.data?.message || "Failed to update resignation"
+      );
     }
   };
-  useEffect(() => {
-    getAllUsers();
-  }, [getAllUsers]);
-  return (
-    <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-      <div className="w-[42rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
-        <form onSubmit={handlerSubmitted}>
-          <Title setModal={() => setModal()}>Update Employee Resignation</Title>
-          <div className="mx-2  flex-wrap gap-3  ">
 
-            {}
-            <UserSelect
-              labelName="Select Employee*"
-              name="id"
-              handlerChange={handlerChange}
-              optionData={allUsers}
-              value={addPromotion.id}
-            />
+  return (
+    <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
+      <div className="w-[42rem] bg-white rounded-xl border border-indigo-500">
+        <form onSubmit={handleSubmit}>
+          <Title setModal={setModal}>Update Employee Resignation</Title>
+
+          <div className="mx-2 space-y-2">
             <InputField
-              labelName="Current Designation*"
-              placeHolder="Enter the Current Designation"
+              labelName="Employee Name"
+              name="employee_name"
               type="text"
-              name="currentDesignation"
-              handlerChange={handlerChange}
-              value={addPromotion?.designation}
+              value={updateResignation.employee_name}
+              handlerChange={handleChange}
+              disabled
+            />
+
+            <InputField
+              labelName="Current Designation"
+              name="designation"
+              type="text"
+              value={updateResignation.designation}
+              handlerChange={handleChange}
+              disabled
             />
 
             <TextareaField
               labelName="Note*"
-              placeHolder="Write here your promotion description"
-              handlerChange={handlerChange}
               name="note"
-              inputVal={addPromotion.note}
+              inputVal={updateResignation.note}
+              handlerChange={handleChange}
+              placeHolder="Write resignation note"
             />
 
             <InputField
-              labelName="Resignation Date*"
-              placeHolder="Enter the  Resignation Date"
+              labelName="Date*"
+              name="resignation_date"
               type="date"
-              name="date"
-              handlerChange={handlerChange}
-              value={addPromotion.date}
+              value={updateResignation.resignation_date}
+              handlerChange={handleChange}
             />
-          </div>
-          {addPromotion.approvalStatus === "" ||
-          addPromotion.approvalStatus === "pending" ? (
-            <div className="px-2">
-              <OptionField
-                labelName="Approval Status*"
-                name="approvalStatus"
-                value={addPromotion.approvalStatus}
-                handlerChange={handlerChange}
-                optionData={ApprovalOptions}
-                inital="Please Select Status"
-              />
-            </div>
-          ) : null}
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-            <CancelBtn setModal={() => setModal()} />
-            <AddButton label={"Update Resignation"} />
+            <select
+              name="approval_status"
+              value={updateResignation.approval_status}
+              onChange={handleChange}
+              className="border border-gray-400 rounded p-1 w-full"
+            >
+              <option value="PENDING">PENDING</option>
+              <option value="ACCEPTED">ACCEPTED</option>
+              <option value="REJECTED">REJECTED</option>
+            </select>
+          </div>
+
+          <div className="flex justify-center gap-2 m-2">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Update Resignation" />
           </div>
         </form>
       </div>

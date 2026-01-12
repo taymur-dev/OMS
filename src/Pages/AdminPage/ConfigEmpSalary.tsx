@@ -17,7 +17,10 @@ import { ViewConfigEmpSalary } from "../../Components/ConfigEmpSalaryModal/ViewC
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
-import { navigationStart, navigationSuccess } from "../../redux/NavigationSlice";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
 
 import { BASE_URL } from "../../Content/URL";
 
@@ -32,6 +35,8 @@ interface Salary {
   transport_allowance: number;
   medical_allowance: number;
   total_salary: number;
+  total_loan_deduction: number;
+  net_salary: number;
   config_date: string;
 }
 
@@ -43,7 +48,7 @@ export const ConfigEmpSalary = () => {
 
   const [isOpenModal, setIsOpenModal] = useState<CONFIGT>("");
   const [pageNo, setPageNo] = useState(1);
-  const [limit, setLimit] = useState(10); 
+  const [limit, setLimit] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
 
   const [salaries, setSalaries] = useState<Salary[]>([]);
@@ -57,17 +62,16 @@ export const ConfigEmpSalary = () => {
   const handleToggleViewModal = (active: CONFIGT) =>
     setIsOpenModal((prev) => (prev === active ? "" : active));
 
-const fetchSalaries = useCallback(async () => {
-  try {
-    const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`);
-    setSalaries(res.data.salaries);
-    setTotalRecords(res.data.total);
-    console.log("API salaries:", res.data.salaries);
-  } catch (error) {
-    console.error("Error fetching salaries:", error);
-  }
-}, []);
-
+  const fetchSalaries = useCallback(async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`);
+      setSalaries(res.data.salaries);
+      setTotalRecords(res.data.total);
+      console.log("API salaries:", res.data.salaries);
+    } catch (error) {
+      console.error("Error fetching salaries:", error);
+    }
+  }, []);
 
   useEffect(() => {
     setPageNo(1);
@@ -107,7 +111,6 @@ const fetchSalaries = useCallback(async () => {
       <TableTitle tileName="Salaries" activeFile="Salaries list" />
 
       <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
-        {/* Top controls */}
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Salaries:{" "}
@@ -121,27 +124,34 @@ const fetchSalaries = useCallback(async () => {
           />
         </div>
 
-        {/* Search & entries */}
         <div className="flex items-center justify-between text-gray-800 mx-2 my-2">
           <div>
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
-              <select value={limit} onChange={(e) => setLimit(Number(e.target.value))}>
+              <select
+                value={limit}
+                onChange={(e) => setLimit(Number(e.target.value))}
+              >
                 {numbers.map((num) => (
-                  <option key={num} value={num}>{num}</option>
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
                 ))}
               </select>
             </span>
             <span>entries</span>
           </div>
-          <TableInputField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
 
-        {/* Table */}
-        <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
-          {/* Table Header */}
-          <div className="grid grid-cols-[0.5fr_2fr_1fr_1fr_1fr_1fr_1.2fr_1.2fr_1fr] bg-gray-200 text-gray-900
-           font-semibold border border-gray-600 text-sm sticky top-0 z-10 py-2 px-1">
+        {/* <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
+          <div
+            className="grid grid-cols-11 bg-gray-200 text-gray-900
+           font-semibold border border-gray-600 text-sm sticky top-0 z-10 py-2 px-1"
+          >
             <span>Sr#</span>
             <span>Employee Name</span>
             <span>Monthly Pay</span>
@@ -149,15 +159,16 @@ const fetchSalaries = useCallback(async () => {
             <span>Transport</span>
             <span>Medical</span>
             <span>Total Salary</span>
+            <span>Loan Deduction</span>
+            <span>Net Salary</span>
             <span>Date</span>
             <span>Action</span>
           </div>
 
-          {/* Table Rows */}
           {salaries.map((salary, idx) => (
             <div
               key={salary.id}
-              className="grid grid-cols-[0.5fr_2fr_1fr_1fr_1fr_1fr_1.2fr_1.2fr_1fr] border
+              className="grid grid-cols-11 border
                border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center py-1 px-1"
             >
               <span>{(pageNo - 1) * limit + idx + 1}</span>
@@ -166,8 +177,87 @@ const fetchSalaries = useCallback(async () => {
               <span>{Number(salary.emp_of_mon_allowance) || 0}</span>
               <span>{Number(salary.transport_allowance) || 0}</span>
               <span>{Number(salary.medical_allowance) || 0}</span>
-              <span>{salary.total_salary}</span>
-              <span>{new Date(salary.config_date).toLocaleDateString("en-CA")}</span>
+              <span>{Number(salary.total_salary) || 0}</span>
+              <span>{salary.total_loan_deduction}</span>
+              <span className="font-semibold text-green-600">
+                {salary.net_salary}
+              </span>
+
+              <span>
+                {new Date(salary.config_date).toLocaleDateString("en-CA")}
+              </span>
+              <span className="flex items-center justify-center gap-1">
+                <EditButton
+                  handleUpdate={() => {
+                    setSelectedSalary(salary);
+                    handleToggleViewModal("EDIT");
+                  }}
+                />
+                <ViewButton
+                  handleView={() => {
+                    setSelectedSalary(salary);
+                    handleToggleViewModal("VIEW");
+                  }}
+                />
+                <DeleteButton
+                  handleDelete={() => {
+                    setSelectedSalary(salary);
+                    handleToggleViewModal("DELETE");
+                  }}
+                />
+              </span>
+            </div>
+          ))}
+        </div> */}
+
+        <div className="w-full max-h-[28.4rem] overflow-y-auto overflow-x-hidden mx-auto">
+          <div
+            className="grid grid-cols-11 bg-gray-200 text-gray-900 font-semibold 
+               border border-gray-600 text-sm sticky top-0 z-10 py-2 px-1"
+          >
+            <span className="truncate">Sr#</span>
+            <span className="truncate">Employee Name</span>
+            <span className="truncate">Monthly Pay</span>
+            <span className="truncate">House Rent</span>
+            <span className="truncate">Transport</span>
+            <span className="truncate">Medical</span>
+            <span className="truncate">Total Salary</span>
+            <span className="truncate">Loan Deduction</span>
+            <span className="truncate">Net Salary</span>
+            <span className="truncate">Date</span>
+            <span className="truncate">Action</span>
+          </div>
+
+          {salaries.map((salary, idx) => (
+            <div
+              key={salary.id}
+              className="grid grid-cols-11 border border-gray-600 text-gray-800 
+                 hover:bg-gray-100 transition duration-200 text-sm items-center py-1 px-1"
+            >
+              <span className="truncate">{(pageNo - 1) * limit + idx + 1}</span>
+              <span className="truncate">{salary.employee_name}</span>
+              <span className="truncate">{salary.salary_amount}</span>
+              <span className="truncate">
+                {Number(salary.emp_of_mon_allowance) || 0}
+              </span>
+              <span className="truncate">
+                {Number(salary.transport_allowance) || 0}
+              </span>
+              <span className="truncate">
+                {Number(salary.medical_allowance) || 0}
+              </span>
+              <span className="truncate">
+                {Number(salary.total_salary) || 0}
+              </span>
+              <span className="truncate">
+                {salary.total_loan_deduction || 0}
+              </span>
+              <span className="truncate font-semibold text-green-600">
+                {salary.net_salary || 0}
+              </span>
+              <span className="truncate">
+                {new Date(salary.config_date).toLocaleDateString("en-CA")}
+              </span>
               <span className="flex items-center justify-center gap-1">
                 <EditButton
                   handleUpdate={() => {
@@ -193,7 +283,6 @@ const fetchSalaries = useCallback(async () => {
         </div>
       </div>
 
-      {/* Pagination */}
       <div className="flex items-center justify-between my-2">
         <ShowDataNumber
           start={(pageNo - 1) * limit + 1}
@@ -207,9 +296,11 @@ const fetchSalaries = useCallback(async () => {
         />
       </div>
 
-      {/* Modals */}
       {isOpenModal === "ADD" && (
-        <AddConfigEmpSalary setModal={() => handleToggleViewModal("")} refreshSalaries={fetchSalaries} />
+        <AddConfigEmpSalary
+          setModal={() => handleToggleViewModal("")}
+          refreshSalaries={fetchSalaries}
+        />
       )}
       {isOpenModal === "EDIT" && selectedSalary && (
         <EditConfigEmpSalary
@@ -220,21 +311,20 @@ const fetchSalaries = useCallback(async () => {
       )}
 
       {isOpenModal === "VIEW" && selectedSalary && (
-  <ViewConfigEmpSalary
-    setModal={() => handleToggleViewModal("")}
-    viewSalary={{
-      employeeName: selectedSalary.employee_name,
-      employeeSalary: selectedSalary.salary_amount.toString(),
-      empMonthAllowance: selectedSalary.emp_of_mon_allowance?.toString(),
-      transportAllowance: selectedSalary.transport_allowance?.toString(),
-      medicalAllowance: selectedSalary.medical_allowance?.toString(),
-      totalSalary: selectedSalary.total_salary?.toString(),
-      date: selectedSalary.config_date,
-    }}
-  />
-)}
+        <ViewConfigEmpSalary
+          setModal={() => handleToggleViewModal("")}
+          viewSalary={{
+            employeeName: selectedSalary.employee_name,
+            employeeSalary: selectedSalary.salary_amount.toString(),
+            empMonthAllowance: selectedSalary.emp_of_mon_allowance?.toString(),
+            transportAllowance: selectedSalary.transport_allowance?.toString(),
+            medicalAllowance: selectedSalary.medical_allowance?.toString(),
+            totalSalary: selectedSalary.total_salary?.toString(),
+            date: selectedSalary.config_date,
+          }}
+        />
+      )}
 
-     
       {isOpenModal === "DELETE" && selectedSalary && (
         <ConfirmationModal
           isOpen={() => handleToggleViewModal("DELETE")}

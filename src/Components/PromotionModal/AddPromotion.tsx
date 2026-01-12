@@ -1,127 +1,211 @@
 import { useCallback, useEffect, useState } from "react";
+import axios, { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
 import { InputField } from "../InputFields/InputField";
-
+import { TextareaField } from "../InputFields/TextareaField";
+import { UserSelect } from "../InputFields/UserSelect";
 import { Title } from "../Title";
-
 import { AddButton } from "../CustomButtons/AddButton";
-
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 
-import axios, { AxiosError } from "axios";
-
 import { BASE_URL } from "../../Content/URL";
-
 import { useAppSelector } from "../../redux/Hooks";
 
-import { toast } from "react-toastify";
-import { UserSelect } from "../InputFields/UserSelect";
-import { TextareaField } from "../InputFields/TextareaField";
-
-const currentDate = new Date().toISOString().split("T")[0];
+const today = new Date();
+const currentDate = today.toLocaleDateString("sv-SE");
 
 type AddPromotionProps = {
   setModal: () => void;
+  handleRefresh: () => void;
 };
 
-const initialState = {
+type AddPromotionType = {
+  id: string;
+  current_designation: string;
+  requested_designation: string;
+  note: string;
+  date: string;
+};
+
+type User = {
+  id: number;
+  name?: string;
+  loginStatus?: string;
+  role?: string;
+};
+
+type LifeLine = {
+  id: number;
+  employee_name: string;
+  email: string;
+  contact: string;
+  position: string;
+  date: string;
+};
+
+const initialState: AddPromotionType = {
   id: "",
-  currentDesignation: "",
-  requestDesignation: "",
+  current_designation: "",
+  requested_designation: "",
   note: "",
   date: currentDate,
 };
 
-export const AddPromotion = ({ setModal }: AddPromotionProps) => {
-  const [allUsers, setAllUsers] = useState([]);
-
-  const [addPromotion, setAddPromotion] = useState(initialState);
-
-  console.log("=>", addPromotion);
-
-  const { currentUser } = useAppSelector((state) => state?.officeState);
-
+export const AddPromotion = ({
+  setModal,
+  handleRefresh,
+}: AddPromotionProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
-  
+  const isAdmin = currentUser?.role === "admin";
+
+  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [lifeLines, setLifeLines] = useState<LifeLine[]>([]);
+  const [addPromotion, setAddPromotion] =
+    useState<AddPromotionType>(initialState);
+
+  const getAllUsers = useCallback(async () => {
+    if (!token) return;
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setAllUsers(Array.isArray(res.data.users) ? res.data.users : []);
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(axiosError.response?.data.message || "Failed to fetch users");
+    }
+  }, [token]);
+
+  const getEmployeeLifeLine = useCallback(async () => {
+    if (!token) return;
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/getEmployeeLifeLine`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setLifeLines(Array.isArray(res.data) ? res.data : []);
+    } catch {
+      toast.error("Failed to fetch employee lifeline");
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      getAllUsers();
+      getEmployeeLifeLine();
+    } else {
+      setAddPromotion((prev) => ({
+        ...prev,
+        id: String(currentUser?.id),
+      }));
+    }
+  }, [isAdmin, getAllUsers, getEmployeeLifeLine, currentUser]);
+
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
-    e.preventDefault();
     const { name, value } = e.target;
-    setAddPromotion({ ...addPromotion, [name]: value });
-  };
 
-  const getAllUsers = useCallback(async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/admin/getUsers`, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      setAllUsers(res?.data?.users);
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message);
+    setAddPromotion((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "id") {
+      const latestLifeLine = lifeLines
+        .filter((l) => String(l.id) === value)
+        .sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        )[0];
+
+      setAddPromotion((prev) => ({
+        ...prev,
+        current_designation: latestLifeLine?.position || "",
+      }));
     }
-  } , [token]);
+  };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const { id, current_designation, requested_designation, note, date } =
+      addPromotion;
+
+    if (!id || !current_designation || !requested_designation || !note || !date) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
     try {
-      const res = await axios.post(
-        `${BASE_URL}/admin/addCustomer`,
-        addPromotion,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-      console.log(res.data.message);
+      const url = isAdmin
+        ? `${BASE_URL}/api/admin/addPromotion`
+        : `${BASE_URL}/api/user/addPromotion`;
+
+      await axios.post(url, addPromotion, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      toast.success("Promotion request added successfully!");
+      handleRefresh();
+      setAddPromotion(initialState);
       setModal();
-      toast.success(res.data.message);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message);
+      toast.error(
+        axiosError.response?.data.message || "Failed to add promotion"
+      );
     }
   };
-  useEffect(() => {
-    getAllUsers();
-  }, [getAllUsers]);
+
+  const userOptions = isAdmin
+    ? allUsers
+        .filter((u) => u.loginStatus === "Y" && u.role === "user")
+        .map((u) => ({
+          id: u.id,
+          value: String(u.id),
+          label: u.name || "",
+        }))
+    : [];
+
   return (
-    <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-      <div className="w-[42rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
+      <div className="w-[42rem] bg-white rounded-xl border border-indigo-500">
         <form onSubmit={handlerSubmitted}>
-          <Title setModal={() => setModal()}>Add Employee Promotion</Title>
-          <div className="mx-2  flex-wrap gap-3  ">
-            <UserSelect
-              labelName="Select Employee*"
-              name="id"
-              handlerChange={handlerChange}
-              optionData={allUsers}
-              value={addPromotion.id}
-            />
+          <Title setModal={setModal}>Add Employee Promotion</Title>
+
+          <div className="mx-2 flex-wrap gap-3">
+            {isAdmin && (
+              <UserSelect
+                labelName="Select Employee*"
+                name="id"
+                handlerChange={handlerChange}
+                optionData={userOptions}
+                value={addPromotion.id}
+              />
+            )}
+
             <InputField
               labelName="Current Designation*"
-              placeHolder="Enter the Current Designation"
+              placeHolder="Current Designation"
               type="text"
-              name="currentDesignation"
+              name="current_designation"
               handlerChange={handlerChange}
-              value={addPromotion?.currentDesignation}
+              value={addPromotion.current_designation}
+              readOnly
             />
+
             <InputField
               labelName="Requested Designation*"
-              placeHolder="Enter the designation request"
+              placeHolder="Enter requested designation"
               type="text"
-              name="requestDesignation"
+              name="requested_designation"
               handlerChange={handlerChange}
-              value={addPromotion.requestDesignation}
+              value={addPromotion.requested_designation}
             />
+
             <TextareaField
               labelName="Note*"
-              placeHolder="Write here your promotion description"
+              placeHolder="Write promotion reason"
               handlerChange={handlerChange}
               name="note"
               inputVal={addPromotion.note}
@@ -129,7 +213,7 @@ export const AddPromotion = ({ setModal }: AddPromotionProps) => {
 
             <InputField
               labelName="Date*"
-              placeHolder="Enter the Employee Position"
+              placeHolder="Select Date"
               type="date"
               name="date"
               handlerChange={handlerChange}
@@ -137,9 +221,9 @@ export const AddPromotion = ({ setModal }: AddPromotionProps) => {
             />
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-            <CancelBtn setModal={() => setModal()} />
-            <AddButton label={"Add Promotion"} />
+          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Add Promotion" />
           </div>
         </form>
       </div>

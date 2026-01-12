@@ -38,7 +38,7 @@ const initialState = {
   employeeEmail: "",
   withdrawAmount: "",
   paymentMethod: "",
-  paymentDate: "",
+  date: "",
 };
 
 export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
@@ -99,9 +99,10 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
           employeeName: form.employeeName,
           employeeContact: form.employeeContact,
           employeeEmail: form.employeeEmail,
-          withdrawAmount: Number(form.withdrawAmount),
+          debit: Number(form.withdrawAmount),
+          credit: 0,
           paymentMethod: form.paymentMethod,
-          paymentDate: form.paymentDate,
+          date: form.date,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -164,9 +165,9 @@ export const AddEmployeePayment = ({ setModal }: AddEmployeePaymentProps) => {
 
             <InputField
               labelName="Payment Date*"
-              name="paymentDate"
+              name="date"
               type="date"
-              value={form.paymentDate}
+              value={form.date}
               handlerChange={handlerChange}
             />
           </div>

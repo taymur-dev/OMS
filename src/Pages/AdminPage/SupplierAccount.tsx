@@ -1,69 +1,103 @@
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
-
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+import { Loader } from "../../Components/LoaderComponent/Loader";
+import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 
-import { useEffect, useState } from "react";
+import { AddSupplierAccount } from "../../Components/SupplierAccountModal/AddSupplierAcc";
+import { ViewSupplierAcc } from "../../Components/SupplierAccountModal/ViewSupplierAcc";
 
-import { AddResignation } from "../../Components/ResignationModal/AddResignation";
-
-import { UpdateResignation } from "../../Components/ResignationModal/UpdateResignation";
-
-import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
-
+import { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
-
 import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
-import { Loader } from "../../Components/LoaderComponent/Loader";
-import { EditButton } from "../../Components/CustomButtons/EditButton";
-import { ViewButton } from "../../Components/CustomButtons/ViewButton";
-import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
 
 const numbers = [10, 25, 50, 100];
 
-type SupplierAccountT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
+type SupplierAccountT = "ADD" | "VIEW" | "";
+
+type Supplier = {
+  supplierId: number;
+  supplierName: string;
+  supplierContact: string;
+  supplierAddress: string;
+};
+
 export const SupplierAccount = () => {
   const { loader } = useAppSelector((state) => state.NavigateState);
+  const { currentUser } = useAppSelector((state) => state.officeState);
 
   const dispatch = useAppDispatch();
 
   const [isOpenModal, setIsOpenModal] = useState<SupplierAccountT>("");
+  const [selectedSupplierId, setSelectedSupplierId] = useState<number | null>(
+    null
+  );
 
   const [pageNo, setPageNo] = useState(1);
-
   const [selectedValue, setSelectedValue] = useState(10);
-
   const [searchTerm, setSearchTerm] = useState("");
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
 
   const handleChangeShowData = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setSelectedValue(Number(event.target.value));
+    setPageNo(1);
   };
 
-  const handleIncrementPageButton = () => {
-    setPageNo((prev) => prev + 1);
-  };
-  const handleDecrementPageButton = () => {
+  const handleIncrementPageButton = () => setPageNo((prev) => prev + 1);
+  const handleDecrementPageButton = () =>
     setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+
+  const handleToggleViewModal = (
+    type: SupplierAccountT,
+    supplierId?: number
+  ) => {
+    setIsOpenModal((prev) => (prev === type ? "" : type));
+    if (supplierId !== undefined) setSelectedSupplierId(supplierId);
+    else setSelectedSupplierId(null);
   };
-  const handleToggleViewModal = (active: SupplierAccountT) => {
-    setIsOpenModal((prev) => (prev === active ? "" : active));
-  };
+
+  const fetchSupplierAccounts = useCallback(async () => {
+    try {
+      dispatch(navigationStart());
+
+      const res = await axios.get(
+        `${BASE_URL}/api/admin/getSupplierAcc`,
+        {
+          headers: {
+            Authorization: `Bearer ${currentUser?.token}`,
+          },
+        }
+      );
+
+      setSuppliers(res.data || []);
+      dispatch(navigationSuccess("Supplier Account"));
+    } catch (error) {
+      console.error("Error fetching supplier accounts:", error);
+      dispatch(navigationSuccess("Supplier Account"));
+    }
+  }, [dispatch, currentUser]);
 
   useEffect(() => {
-    document.title = "(OMS) Supplier";
+    fetchSupplierAccounts();
+  }, [fetchSupplierAccounts]);
+
+  useEffect(() => {
+    document.title = "(OMS) Supplier Account";
     dispatch(navigationStart());
-    setTimeout(() => {
-      dispatch(navigationSuccess("Supplier"));
+    const timer = setTimeout(() => {
+      dispatch(navigationSuccess("Supplier Account"));
     }, 1000);
+    return () => clearTimeout(timer);
   }, [dispatch]);
 
   if (loader) return <Loader />;
@@ -71,29 +105,35 @@ export const SupplierAccount = () => {
   return (
     <div className="w-full mx-2">
       <TableTitle
-        tileName="Supplier Account"
-        activeFile="Supplier Account list"
+        tileName="Supplier Accounts"
+        activeFile="Supplier Accounts list"
       />
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
+
+      <div
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500
+        bg-white overflow-hidden flex flex-col"
+      >
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
-            Total number of Supplier Account :{" "}
+            Total number of Supplier Accounts:{" "}
             <span className="text-2xl text-blue-500 font-semibold font-sans">
-              [10]
+              {suppliers.length}
             </span>
           </span>
+
           <CustomButton
-            label="Add supplier"
+            label="Add Account"
             handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
+
         <div className="flex items-center justify-between text-gray-800 mx-2">
           <div>
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
               <select value={selectedValue} onChange={handleChangeShowData}>
-                {numbers.map((num, index) => (
-                  <option key={index} value={num}>
+                {numbers.map((num) => (
+                  <option key={num} value={num}>
                     {num}
                   </option>
                 ))}
@@ -101,39 +141,61 @@ export const SupplierAccount = () => {
             </span>
             <span>entries</span>
           </div>
+
           <TableInputField
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
           />
         </div>
-        <div className="w-full max-h-[28.6rem] overflow-hidden  mx-auto">
-          <div className="grid grid-cols-6  bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px] ">
-            <span className="">Sr#</span>
-            <span className="">Supplier Name</span>
-            <span className="">Debit</span>
-            <span className="">Credit</span>
-            <span className="">Net Balance</span>
+
+        <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
+          <div
+            className="grid grid-cols-5 bg-gray-200 text-gray-900 font-semibold
+            border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
+          >
+            <span>Sr#</span>
+            <span>Supplier</span>
+            <span>Contact#</span>
+            <span>Address</span>
             <span className="text-center w-40">Actions</span>
           </div>
-          <div className="grid grid-cols-6 border border-gray-600 text-gray-800  hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[5px]">
-            <span className=" px-2 ">1</span>
-            <span className="">Hamza Amin</span>
-            <span className="">340000</span>
-            <span className="">230000</span>
-            <span className="">3400000</span>
-            <span className="flex items-center  gap-1">
-              <EditButton handleUpdate={() => handleToggleViewModal("EDIT")} />
-              <ViewButton handleView={() => handleToggleViewModal("VIEW")} />
-              <DeleteButton
-                handleDelete={() => handleToggleViewModal("DELETE")}
-              />
-            </span>
-          </div>
+
+          {suppliers.length === 0 ? (
+            <div className="text-center text-gray-500 p-4 col-span-5">
+              No supplier accounts found
+            </div>
+          ) : (
+            suppliers.map((supplier, index) => (
+              <div
+                key={supplier.supplierId}
+                className="grid grid-cols-5 border border-gray-600 text-gray-800
+                hover:bg-gray-100 transition duration-200 text-sm items-center p-[7px]"
+              >
+                <span>{index + 1}</span>
+                <span>{supplier.supplierName}</span>
+                <span>{supplier.supplierContact}</span>
+                <span>{supplier.supplierAddress}</span>
+
+                <span className="flex items-center gap-1">
+                  <ViewButton
+                    handleView={() =>
+                      handleToggleViewModal("VIEW", supplier.supplierId)
+                    }
+                  />
+                </span>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
-        <ShowDataNumber start={1} total={10} end={1 + 9} />
+      <div className="flex items-center justify-between mt-2">
+        <ShowDataNumber
+          start={suppliers.length === 0 ? 0 : 1}
+          end={suppliers.length}
+          total={suppliers.length}
+        />
+
         <Pagination
           handleIncrementPageButton={handleIncrementPageButton}
           handleDecrementPageButton={handleDecrementPageButton}
@@ -142,19 +204,16 @@ export const SupplierAccount = () => {
       </div>
 
       {isOpenModal === "ADD" && (
-        <AddResignation setModal={() => handleToggleViewModal("")} />
+        <AddSupplierAccount
+          setModal={() => handleToggleViewModal("")}
+          refreshData={fetchSupplierAccounts}
+        />
       )}
 
-      {isOpenModal === "EDIT" && (
-        <UpdateResignation setModal={() => handleToggleViewModal("")} />
-      )}
-
-      {isOpenModal === "DELETE" && (
-        <ConfirmationModal
-          isOpen={() => handleToggleViewModal("")}
-          onClose={() => handleToggleViewModal("DELETE")}
-          onConfirm={() => handleToggleViewModal("")}
-          message="Are you sure you want to delete this Resignation?"
+      {isOpenModal === "VIEW" && selectedSupplierId && (
+        <ViewSupplierAcc
+          setModal={() => handleToggleViewModal("")}
+          supplierId={selectedSupplierId}
         />
       )}
     </div>
