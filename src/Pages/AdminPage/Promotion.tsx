@@ -183,7 +183,7 @@ export const Promotion = () => {
           />
         </div>
 
-        <div className="w-full flex-1 overflow-y-auto">
+        <div className="mx-2 flex-1 overflow-y-auto">
           <div
             className={`grid grid-cols-6 bg-gray-200 font-semibold p-2 sticky top-0`}
           >

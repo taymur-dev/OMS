@@ -245,7 +245,7 @@ export const ProcessReports = () => {
           </div>
         </div>
 
-        <div id="myDiv" className="w-full flex-1 overflow-y-auto">
+        <div id="myDiv" className="mx-2 flex-1 overflow-y-auto">
           <div className="grid grid-cols-7 bg-gray-200 font-semibold sticky top-0 p-2">
             <span>Sr#</span>
             <span>Employee</span>

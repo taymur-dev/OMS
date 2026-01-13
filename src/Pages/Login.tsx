@@ -1,47 +1,69 @@
 import axios, { AxiosError } from "axios";
 import { InputField } from "../Components/InputFields/InputField";
+import technic from "../assets/technic.png";
 import Logo from "../assets/Logo.png";
-import officeTeam from "../assets/OMS.jpg";
+
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../Content/URL";
 import { useAppDispatch, useAppSelector } from "../redux/Hooks";
 import { authFailure, authSuccess } from "../redux/UserSlice";
 import setAuthToken from "../SetAuthToken";
-import { ClipLoader } from "react-spinners";
 import { Navigate } from "react-router-dom";
 import { navigationStart, navigationSuccess } from "../redux/NavigationSlice";
-import { Loader } from "../Components/LoaderComponent/Loader";
 import { toast } from "react-toastify";
+import Lottie from "lottie-react";
+import SplashAnimation from "../assets/login-splash.json";
+
+import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 
 const initialState = {
   email: "",
   password: "",
 };
+
 export const Login = () => {
   const { currentUser, error } = useAppSelector((state) => state.officeState);
-
-  const { loader } = useAppSelector((state) => state.NavigateState);
-
   const [formData, setFormData] = useState(initialState);
-
   const [loading, setLoading] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useAppDispatch();
 
-  console.log("loading btn", loading);
-
   useEffect(() => {
-    document.title = "(OMS)Login";
+    document.title = "(OMS) Login";
     dispatch(navigationStart());
-    setTimeout(() => {
+
+    const timer = setTimeout(() => {
       dispatch(navigationSuccess("logIn"));
-    }, 1000);
+      setShowSplash(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
   }, [dispatch]);
 
-  if (currentUser?.role === "admin") return <Navigate to={"/"} />;
-  if (currentUser?.role === "user") return <Navigate to={"/User/dashboard"} />;
+  if (currentUser?.role === "admin") return <Navigate to="/" />;
+  if (currentUser?.role === "user") return <Navigate to="/User/dashboard" />;
 
-  if (loader) return <Loader />;
+  if (showSplash) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600
+       to-blue-600 relative"
+      >
+        <div className="w-72 relative">
+          <Lottie animationData={SplashAnimation} loop={false} />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <img
+              src={Logo}
+              alt="Logo"
+              className="w-24 h-24 object-contain animate-[pulse_2s_ease-in-out_infinite]"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
@@ -67,65 +89,115 @@ export const Login = () => {
   };
 
   return (
-    <div>
-      <div className=" bg-indigo-500 flex items-center justify-between  ">
-        <div className="p-8 pl-12">
-          <img src={Logo} alt="Logo" className="w-44" />
-          <h1 className="text-5xl text-white font-serif">Login to</h1>
-          <h2 className="text-2xl text-white font-serif">
-            Technic Mentors (Office Management System)
-          </h2>
-          <p className="text-white font-serif">
-            The Office Management System (OMS) is an integrated software
-            platform designed to streamline and automate daily office
-            operations.
-          </p>
+    <div
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br
+     from-indigo-500 via-blue-500 to-indigo-600"
+    >
+      <div className="absolute top-1/2 -left-24 w-96 h-96 bg-blue-100/40 rounded-full animate-pulse" />
+      <div
+        className="absolute -top-24 -right-24 w-96 h-96 bg-blue-100/40 rounded-full  animate-[float_2s_ease-in-out_infinite] 
+      delay-2000"
+      />
+
+      <div className="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl px-8 py-10 animate-[fadeIn_0.6s_ease-out]">
+        <div className="flex flex-col items-center mb-6">
+          <div className="relative mb-4">
+            <div
+              className="relative w-32 h-32 rounded-full bg-blue-500 flex items-center
+             justify-center shadow-xl animate-[float_3s_ease-in-out_infinite]"
+            >
+              <div className="absolute inset-0 rounded-full bg-blue-500/30 blur-3xl animate-[pulse_2s_ease-in-out_infinite]" />
+              <img
+                src={technic}
+                alt="Logo"
+                className="relative w-20 h-20 object-contain"
+              />
+            </div>
+          </div>
+
+          <h1 className="text-3xl font-semibold text-gray-800">
+            Welcome Back!
+          </h1>
+          <p className="text-sm text-gray-500">Sign in to your account</p>
         </div>
-        <form
-          onSubmit={handleSubmit}
-          className="shadow bg-white p-6 h-96 w-[28rem] absolute right-24 top-52 rounded-lg text-black  "
-        >
-          <h2 className="text-2xl font-serif ">
-            Welcome to <span className="font-semibold ">Technic Mentors</span>
-            (OMS)
-          </h2>
-          <h1 className="text-5xl font-serif">Login now</h1>
-          <InputField
-            type="email"
-            labelName="Enter your Email"
-            placeHolder="Abc@gmail.com..."
-            name={"email"}
-            handlerChange={handlerChange}
-            value={formData.email}
-          />
-          <InputField
-            type="password"
-            labelName="Enter your Password"
-            placeHolder="Password..."
-            name={"password"}
-            handlerChange={handlerChange}
-            value={formData.password}
-          />
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="relative focus-within:text-blue-500">
+            <InputField
+              type="email"
+              labelName="Email"
+              placeHolder="Enter Your Email"
+              name="email"
+              handlerChange={handlerChange}
+              value={formData.email}
+              className="pl-10 pr-10 border border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg w-full h-12"
+            />
+            <div className="absolute inset-y-0 top-3 left-0 flex items-center pl-3 pointer-events-none">
+              <FiMail className="w-5 h-5" />
+            </div>
+          </div>
+
+          <div className="relative focus-within:text-blue-500">
+            <InputField
+              type={showPassword ? "text" : "password"}
+              labelName="Password"
+              placeHolder="Enter Your Password"
+              name="password"
+              handlerChange={handlerChange}
+              value={formData.password}
+              className="pl-10 pr-10 border border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg w-full h-12"
+            />
+            <div className="absolute inset-y-0 top-3 left-0 flex items-center pl-3 pointer-events-none">
+              <FiLock className="w-5 h-5" />
+            </div>
+            <div
+              className="absolute inset-y-0 top-3 right-0 flex items-center pr-3 cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <FiEyeOff className="w-5 h-5" />
+              ) : (
+                <FiEye className="w-5 h-5" />
+              )}
+            </div>
+          </div>
 
           <button
             disabled={loading}
-            className="w-full font-serif border rounded-md p-2 bg-indigo-500 text-white cursor-pointer mt-4 hover:opacity-90 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full h-12 rounded-lg bg-blue-500 text-white font-semibold tracking-wide transition-all
+       duration-300 hover:bg-blue-600 hover:shadow-lg active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {loading ? (
               <div className="flex items-center justify-center gap-2">
                 <span>Logging in...</span>
-                <ClipLoader size={18} color="white" />
               </div>
             ) : (
-              "Log In"
+              "LOGIN"
             )}
           </button>
+
           {error && (
-            <p className="text-xs text-red-500 text-center pt-3">{error}</p>
+            <p className="text-sm text-red-500 text-center pt-1">{error}</p>
           )}
         </form>
+
+        <div className="mt-6 text-center text-xs text-gray-400">
+          © {new Date().getFullYear()} Technic Mentors — OMS
+        </div>
       </div>
-      <img src={officeTeam} alt="office Team" className="h-[24rem] pl-20" />
+
+      <style>
+        {`
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+          }
+          @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+          }
+        `}
+      </style>
     </div>
   );
 };

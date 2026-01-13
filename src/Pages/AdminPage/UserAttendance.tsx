@@ -184,7 +184,7 @@ export const UserAttendance = () => {
           />
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto mx-2">
           <div
             className={`grid ${
               isAdmin

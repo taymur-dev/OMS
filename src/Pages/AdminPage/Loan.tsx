@@ -174,7 +174,7 @@ export const Loan = () => {
           />
         </div>
 
-        <div className="flex-1  overflow-y-auto">
+        <div className="flex-1  overflow-y-auto mx-2">
           <div className="grid grid-cols-4 items-center bg-gray-200 font-semibold p-2 sticky top-0 z-10">
             <span>Sr#</span>
             {currentUser?.role === "admin" && <span>Employee</span>}

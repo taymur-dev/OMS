@@ -271,7 +271,7 @@ export const AttendanceReports = () => {
 
         <div
           id="attendanceDiv"
-          className="w-full max-h-[28.4rem] overflow-y-auto mx-auto"
+          className="max-h-[28.4rem] overflow-y-auto mx-2"
         >
           <div
             className="grid grid-cols-7 bg-gray-200 text-gray-900 font-semibold border border-gray-600 

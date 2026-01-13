@@ -179,7 +179,7 @@ export const Progress = () => {
           />
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 mx-2">
           <div className="grid grid-cols-[1fr_1fr_2fr_1fr_1fr] bg-gray-200 font-semibold p-2 sticky top-0">
             <span>Sr#</span>
             {currentUser?.role === "admin" && <span>Employee</span>}

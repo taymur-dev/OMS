@@ -170,7 +170,7 @@ export const Applicants = () => {
           />
         </div>
 
-        <div className="w-full flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto mx-2">
           <div className="grid grid-cols-7 bg-gray-200 font-semibold p-2 sticky top-0">
             <span>Sr#</span>
             <span>Name</span>

@@ -180,7 +180,7 @@ export const Sales = () => {
           />
         </div>
 
-        <div className="w-full overflow-y-auto">
+        <div className="flex-1 mx-2">
           <div className="grid grid-cols-5 bg-gray-200 font-semibold text-sm p-3 sticky top-0">
             <span>Sr#</span>
             <span>Customer</span>

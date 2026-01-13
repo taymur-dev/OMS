@@ -83,10 +83,8 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
 
   return (
     <div
-      className={`${
-        isOpen ? "w-16" : "w-52"
-      } bg-white overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out
-  flex flex-col items-center py-4 shadow-lg`}
+      className="w-52 bg-white overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out
+  flex flex-col items-center py-4 shadow-lg"
     >
       {!isOpen ? (
         <Link

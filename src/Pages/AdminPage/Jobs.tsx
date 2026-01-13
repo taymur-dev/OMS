@@ -139,7 +139,7 @@ export const Jobs = () => {
           />
         </div>
 
-        <div className="w-full overflow-y-auto">
+        <div className="overflow-y-auto mx-2">
           <div className="grid grid-cols-4 bg-gray-200 font-semibold text-sm p-3 sticky top-0">
             <span>Sr#</span>
             <span>Job Title</span>

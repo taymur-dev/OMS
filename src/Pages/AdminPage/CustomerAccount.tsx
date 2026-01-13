@@ -132,7 +132,7 @@ export const CustomerAccount = () => {
             setSearchTerm={setSearchTerm}
           />
         </div>
-        <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
+        <div className="max-h-[28.4rem] overflow-y-auto mx-2">
           <div
             className="grid grid-cols-5 bg-gray-200 text-gray-900 font-semibold border border-gray-600
            text-sm sticky top-0 z-10 p-[10px]"

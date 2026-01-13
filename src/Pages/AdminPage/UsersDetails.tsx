@@ -188,7 +188,7 @@ export const UsersDetails = () => {
           />
         </div>
 
-        <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
+        <div className="mx-2 max-h-[28.4rem] overflow-y-auto">
           <div
             className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1.5fr] bg-gray-200 text-gray-900
            font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"

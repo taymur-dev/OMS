@@ -23,7 +23,7 @@ type CATEGORYT = {
   categoryName: string;
 };
 
-const ITEMS_PER_PAGE = 10;
+const numbers = [5, 10, 15, 20];
 
 export const ProjectsCatogries = () => {
   const { loader } = useAppSelector((state) => state?.NavigateState);
@@ -38,6 +38,7 @@ export const ProjectsCatogries = () => {
   const [catchId, setCatchId] = useState<number>();
   const [pageNo, setPageNo] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedValue, setSelectedValue] = useState(10);
 
   const getAllCategories = useCallback(async () => {
     try {
@@ -67,18 +68,17 @@ export const ProjectsCatogries = () => {
     cat.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filteredCategories.length / ITEMS_PER_PAGE);
-  const startIndex = (pageNo - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const startIndex = (pageNo - 1) * selectedValue;
+  const endIndex = Math.min(
+    startIndex + selectedValue,
+    filteredCategories.length
+  );
 
   const paginatedCategories = filteredCategories.slice(startIndex, endIndex);
 
-  const handleIncrementPageButton = () => {
-    setPageNo((prev) => (prev < totalPages ? prev + 1 : prev));
-  };
-
-  const handleDecrementPageButton = () => {
-    setPageNo((prev) => (prev > 1 ? prev - 1 : prev));
+  const handleChangeShowData = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedValue(Number(e.target.value));
+    setPageNo(1);
   };
 
   const handleToggleViewModal = (active: TPROJECTCATEGORY) => {
@@ -136,14 +136,30 @@ export const ProjectsCatogries = () => {
         </div>
 
         <div className="flex items-center justify-between mx-2 text-gray-800">
-          <div />
+          <div className="flex items-center gap-2">
+            <span>Show</span>
+            <select
+              value={selectedValue}
+              onChange={handleChangeShowData}
+              className="bg-gray-200 rounded px-2 py-1"
+            >
+              {numbers.map((num) => (
+                <option key={num}>{num}</option>
+              ))}
+            </select>
+            <span>entries</span>
+          </div>
+
           <TableInputField
             searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
+            setSearchTerm={(term) => {
+              setSearchTerm(term);
+              setPageNo(1);
+            }}
           />
         </div>
 
-        <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
+        <div className="max-h-[28.4rem] overflow-y-auto mx-2">
           <div
             className="grid grid-cols-[0.5fr_1fr_1fr] bg-gray-200 font-semibold 
     border border-gray-600 text-sm sticky top-0 z-10 px-3 py-2 items-center"
@@ -182,8 +198,11 @@ export const ProjectsCatogries = () => {
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+          handleIncrementPageButton={() =>
+            pageNo * selectedValue < filteredCategories.length &&
+            setPageNo((p) => p + 1)
+          }
         />
       </div>
 

@@ -8,6 +8,7 @@ type ButtonProps = {
   handlerClick: () => void;
   activeBtn: string;
   activeBtns: string;
+  className?: string;
 };
 
 export const SideBarButton = ({
@@ -18,20 +19,22 @@ export const SideBarButton = ({
   handlerClick,
   activeBtns,
   activeBtn,
+  className, // <-- now we'll use it
 }: ButtonProps) => {
   return (
     <div
       onClick={handlerClick}
       className={`flex items-center ${
-        isOpen && "justify-center "
-      } gap-2 p-2  rounded cursor-pointer text-gray-900 hover:bg-indigo-500 hover:text-white transition border-b m-1 ${
-        activeBtns === activeBtn && "bg-indigo-500 text-white"
-      } `}
+        isOpen ? "justify-center" : ""
+      } gap-2 p-2 rounded cursor-pointer text-gray-900 hover:bg-indigo-500 hover:text-white 
+ transition no-underline border-b m-2 ${
+   activeBtns === activeBtn ? "bg-indigo-500 text-white" : ""
+ } ${className ?? ""}`}
     >
       <span>{icon}</span>
       {isOpen ? "" : <span className="w-24 text-xs">{title}</span>}
       {!isOpen && arrowIcon && (
-        <span className="">
+        <span>
           {activeBtns === activeBtn ? (
             <FaChevronUp size={10} />
           ) : (

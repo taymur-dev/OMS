@@ -1,0 +1,197 @@
+import React, { useCallback, useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+
+import { AddButton } from "../CustomButtons/AddButton";
+import { CancelBtn } from "../CustomButtons/CancelBtn";
+import { Title } from "../Title";
+import { UserSelect } from "../InputFields/UserSelect";
+import { InputField } from "../InputFields/InputField";
+import { OptionField } from "../InputFields/OptionField";
+
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+
+type Props = {
+  setModal: () => void;
+  refreshData?: () => void;
+};
+
+type User = {
+  id: number;
+  name: string;
+  contact: string;
+  email: string;
+  role: string;
+  loginStatus: string;
+};
+
+const paymentMethods = [
+  { id: 1, label: "EasyPaisa", value: "easyPaisa" },
+  { id: 2, label: "Bank Transfer", value: "bankTransfer" },
+  { id: 3, label: "Cash", value: "cash" },
+];
+
+const initialState = {
+  selectEmployee: "",
+  employee_name: "",
+  employeeContact: "",
+  employeeEmail: "",
+  debit: "",
+  credit: "",
+  paymentMethod: "",
+  payment_date: "",
+};
+
+export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+  const token = currentUser?.token;
+
+  const [form, setForm] = useState(initialState);
+  const [users, setUsers] = useState<User[]>([]);
+
+  const handlerChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+
+    setForm((prev) => {
+      const updated = { ...prev, [name]: value };
+
+      if (name === "selectEmployee") {
+        const emp = users.find((u) => u.id === Number(value));
+        if (emp) {
+          updated.employee_name = emp.name;
+          updated.employeeContact = emp.contact;
+          updated.employeeEmail = emp.email;
+        }
+      }
+      return updated;
+    });
+  };
+
+  const fetchUsers = useCallback(async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setUsers(
+        res.data.users.filter(
+          (u: User) => u.loginStatus === "Y" && u.role === "user"
+        )
+      );
+    } catch {
+      toast.error("Failed to fetch employees");
+    }
+  }, [token]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  const employeeOptions = users.map((u) => ({
+    value: u.id.toString(),
+    label: u.name,
+  }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!form.selectEmployee) {
+      toast.error("Please select employee");
+      return;
+    }
+
+    if (!form.debit && !form.credit) {
+      toast.error("Enter debit or credit amount");
+      return;
+    }
+
+    try {
+      await axios.post(
+        `${BASE_URL}/api/admin/addEmployeeAccount`,
+        {
+          employee_id: Number(form.selectEmployee),
+          employee_name: form.employee_name,
+          employeeContact: form.employeeContact,
+          employeeEmail: form.employeeEmail,
+          debit: Number(form.debit || 0),
+          credit: Number(form.credit || 0),
+          paymentMethod: form.paymentMethod,
+          payment_date: form.payment_date,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      toast.success("Employee account entry added!");
+      setForm(initialState);
+      setModal();
+      refreshData?.();
+    } catch {
+      toast.error("Failed to save employee account");
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+      <div className="w-[42rem] bg-white rounded-xl border border-indigo-500">
+        <form onSubmit={handleSubmit}>
+          <Title setModal={setModal}>Add Employee Account</Title>
+
+          <div className="mx-2 flex-wrap gap-3">
+            <UserSelect
+              labelName="Select Employee*"
+              name="selectEmployee"
+              value={form.selectEmployee}
+              handlerChange={handlerChange}
+              optionData={employeeOptions}
+            />
+
+            <InputField labelName="Employee Name*" value={form.employee_name} readOnly />
+            <InputField labelName="Employee Contact*" value={form.employeeContact} readOnly />
+            <InputField labelName="Employee Email*" value={form.employeeEmail} readOnly />
+
+            <InputField
+              labelName="Debit"
+              name="debit"
+              type="number"
+              value={form.debit}
+              handlerChange={handlerChange}
+            />
+
+            <InputField
+              labelName="Credit"
+              name="credit"
+              type="number"
+              value={form.credit}
+              handlerChange={handlerChange}
+            />
+
+            <OptionField
+              labelName="Payment Method*"
+              name="paymentMethod"
+              value={form.paymentMethod}
+              handlerChange={handlerChange}
+              optionData={paymentMethods}
+              inital="Please Select"
+            />
+
+            <InputField
+              labelName="Payment Date*"
+              name="payment_date"
+              type="date"
+              value={form.payment_date}
+              handlerChange={handlerChange}
+            />
+          </div>
+
+          <div className="flex justify-center gap-2 m-2">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Add Account Entry" />
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};

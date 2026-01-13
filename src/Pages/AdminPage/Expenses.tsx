@@ -153,7 +153,7 @@ export const Expenses = () => {
           />
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 mx-2">
           <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] bg-gray-200 font-semibold p-2 sticky top-0">
             <span>Sr#</span>
             <span>Expense Name</span>

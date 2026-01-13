@@ -9,8 +9,7 @@ import { Pagination } from "../../Components/Pagination/Pagination";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 
-import { AddEmployeePayment } from "../../Components/EmployeeAccountModal/AddEmployeePayment";
-import { AddEmployeeRefund } from "../../Components/EmployeeAccountModal/AddEmployeeRefund";
+import { AddEmployeeAccount } from "../../Components/EmployeeAccountModal/AddEmployeeAccount";
 import { ViewEmployeeAccount } from "../../Components/EmployeeAccountModal/ViewEmployeeAccount";
 
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
@@ -23,7 +22,7 @@ import { BASE_URL } from "../../Content/URL";
 
 const numbers = [10, 25, 50, 100];
 
-type EMPLOYEEACCOUNTT = "ADDPAYMENT" | "ADDREFUND" | "VIEW" | "";
+type EMPLOYEEACCOUNTT = "ADDACCOUNT" | "VIEW" | "";
 
 type ApiUser = {
   id: number;
@@ -49,9 +48,7 @@ export const EmployeeAccount = () => {
   const dispatch = useAppDispatch();
 
   const [isOpenModal, setIsOpenModal] = useState<EMPLOYEEACCOUNTT>("");
-
   const [employees, setEmployees] = useState<EmployeeAccountRow[]>([]);
-
   const [selectedEmployee, setSelectedEmployee] =
     useState<EmployeeAccountRow | null>(null);
 
@@ -59,17 +56,7 @@ export const EmployeeAccount = () => {
   const [limit, setLimit] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleIncrementPageButton = () => {
-    if (pageNo * limit < employees.length) {
-      setPageNo((prev) => prev + 1);
-    }
-  };
-
-  const handleDecrementPageButton = () => {
-    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
-  };
-
-  const handleToggleViewModal = (active: EMPLOYEEACCOUNTT) => {
+  const handleToggleModal = (active: EMPLOYEEACCOUNTT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
 
@@ -80,7 +67,6 @@ export const EmployeeAccount = () => {
       setEmployees([]);
 
       if (currentUser.role === "admin") {
-        // Admin sees all active users
         const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -105,8 +91,8 @@ export const EmployeeAccount = () => {
           },
         ]);
       }
-    } catch (error) {
-      console.error("Failed to fetch employees", error);
+    } catch (err) {
+      console.error("Failed to fetch employees", err);
     }
   }, [token, currentUser]);
 
@@ -115,7 +101,7 @@ export const EmployeeAccount = () => {
     dispatch(navigationStart());
     setTimeout(() => {
       dispatch(navigationSuccess("EMPLOYEE ACCOUNT"));
-    }, 1000);
+    }, 500);
   }, [dispatch]);
 
   useEffect(() => {
@@ -143,23 +129,17 @@ export const EmployeeAccount = () => {
       <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
-            Total Number of Employee Account :{" "}
+            Total Employees :{" "}
             <span className="text-2xl text-blue-500 font-semibold">
               [{filteredEmployees.length}]
             </span>
           </span>
 
           {currentUser?.role === "admin" && (
-            <div className="flex gap-2">
-              <CustomButton
-                label="Payment Withdraw"
-                handleToggle={() => handleToggleViewModal("ADDPAYMENT")}
-              />
-              <CustomButton
-                label="Payment Refund"
-                handleToggle={() => handleToggleViewModal("ADDREFUND")}
-              />
-            </div>
+            <CustomButton
+              label="Add Employee Account"
+              handleToggle={() => handleToggleModal("ADDACCOUNT")}
+            />
           )}
         </div>
 
@@ -190,11 +170,8 @@ export const EmployeeAccount = () => {
           />
         </div>
 
-        <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
-          <div
-            className="grid grid-cols-5 bg-gray-200 text-gray-900 font-semibold border border-gray-600
-           text-sm sticky top-0 z-10 p-[10px]"
-          >
+        <div className=" max-h-[28.4rem] overflow-y-auto mx-2">
+          <div className="grid grid-cols-5 bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]">
             <span>Sr#</span>
             <span>Name</span>
             <span>Email</span>
@@ -205,18 +182,19 @@ export const EmployeeAccount = () => {
           {paginatedEmployees.map((emp, idx) => (
             <div
               key={emp.id}
-              className="grid grid-cols-5 border border-gray-600 text-gray-800 hover:bg-gray-100 transition
-               duration-200 text-sm items-center p-[7px]"
+              className="grid grid-cols-5 border border-gray-600 text-gray-800 hover:bg-gray-100 transition text-sm items-center p-[7px]"
             >
-              <span className="px-2">{(pageNo - 1) * limit + idx + 1}</span>
+              <span className="px-2">
+                {(pageNo - 1) * limit + idx + 1}
+              </span>
               <span>{emp.name}</span>
               <span>{emp.email}</span>
               <span>{emp.contact}</span>
-              <span className="flex items-center justify-center">
+              <span className="flex justify-center">
                 <ViewButton
                   handleView={() => {
                     setSelectedEmployee(emp);
-                    handleToggleViewModal("VIEW");
+                    handleToggleModal("VIEW");
                   }}
                 />
               </span>
@@ -232,23 +210,27 @@ export const EmployeeAccount = () => {
           total={filteredEmployees.length}
         />
         <Pagination
-          handleIncrementPageButton={handleIncrementPageButton}
-          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={() =>
+            pageNo * limit < filteredEmployees.length &&
+            setPageNo((p) => p + 1)
+          }
+          handleDecrementPageButton={() =>
+            setPageNo((p) => (p > 1 ? p - 1 : 1))
+          }
           pageNo={pageNo}
         />
       </div>
 
-      {isOpenModal === "ADDPAYMENT" && (
-        <AddEmployeePayment setModal={() => handleToggleViewModal("")} />
-      )}
-
-      {isOpenModal === "ADDREFUND" && (
-        <AddEmployeeRefund setModal={() => handleToggleViewModal("")} />
+      {isOpenModal === "ADDACCOUNT" && (
+        <AddEmployeeAccount
+          setModal={() => handleToggleModal("")}
+          refreshData={fetchEmployees}
+        />
       )}
 
       {isOpenModal === "VIEW" && selectedEmployee && (
         <ViewEmployeeAccount
-          setModal={() => handleToggleViewModal("")}
+          setModal={() => handleToggleModal("")}
           employee={selectedEmployee}
         />
       )}
