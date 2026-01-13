@@ -20,9 +20,10 @@ type Props = {
 
 type AccountEntry = {
   id: number;
+  refNo: string;
   debit: number;
   credit: number;
-  paymentMethod: string;
+  payment_method: string;
   payment_date: string;
 };
 
@@ -32,6 +33,11 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
 
   const [accounts, setAccounts] = useState<AccountEntry[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "-";
+    return new Date(dateString).toLocaleDateString("sv-SE");
+  };
 
   const fetchEmployeeAccounts = useCallback(async () => {
     if (!employee?.id) return;
@@ -61,23 +67,33 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white rounded-xl border border-indigo-500">
+      <div className="w-[56rem] bg-white rounded-xl border border-indigo-500">
         <Title setModal={setModal}>Employee Account Details</Title>
 
         {/* Employee Info */}
         <div className="mx-4 text-sm text-gray-800 space-y-1">
-          <p><strong>Name:</strong> {employee.name}</p>
-          <p><strong>Email:</strong> {employee.email}</p>
-          <p><strong>Contact:</strong> {employee.contact}</p>
+          <p>
+            <strong>Name:</strong> {employee.name}
+          </p>
+          <p>
+            <strong>Email:</strong> {employee.email}
+          </p>
+          <p>
+            <strong>Contact:</strong> {employee.contact}
+          </p>
         </div>
 
         {/* Account Entries */}
-        <div className="mx-2 my-3 max-h-[22rem] overflow-y-auto border">
-          <div className="grid grid-cols-5 bg-gray-200 font-semibold text-sm p-2">
+        <div className="mx-2 my-3 max-h-[22rem] overflow-y-auto overflow-x-hidden border">
+          <div className="grid grid-cols-9 bg-gray-200 font-semibold text-sm p-2 sticky top-0 z-10">
             <span>Sr#</span>
+            <span>Ref No</span>
             <span>Debit</span>
             <span>Credit</span>
-            <span>Method</span>
+            <span>Prev Balance</span>
+            <span>Balance</span>
+            <span>Net Balance</span>
+            <span>Payment</span>
             <span>Date</span>
           </div>
 
@@ -87,18 +103,40 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
             </p>
           )}
 
-          {accounts.map((acc, idx) => (
-            <div
-              key={acc.id}
-              className="grid grid-cols-5 text-sm border-t p-2"
-            >
-              <span>{idx + 1}</span>
-              <span>{acc.debit || "-"}</span>
-              <span>{acc.credit || "-"}</span>
-              <span>{acc.paymentMethod}</span>
-              <span>{acc.payment_date}</span>
-            </div>
-          ))}
+          {accounts.map((acc, idx) => {
+            const previousBalance =
+              idx === 0
+                ? 0
+                : accounts[idx - 1].debit - accounts[idx - 1].credit;
+
+            const balance = acc.debit - acc.credit;
+            const netBalance = previousBalance - balance;
+
+            return (
+              <div
+                key={acc.id}
+                className="grid grid-cols-9 text-sm border-t p-2"
+              >
+                <span>{idx + 1}</span>
+                <span>{acc.refNo || "-"}</span>
+                <span>{acc.debit || "-"}</span>
+                <span>{acc.credit || "-"}</span>
+                <span>{previousBalance}</span>
+                <span className="font-medium">{balance}</span>
+                <span
+                  className={
+                    netBalance < 0
+                      ? "text-red-600 font-medium"
+                      : "text-green-600 font-medium"
+                  }
+                >
+                  {netBalance}
+                </span>
+                <span>{acc.payment_method}</span>
+                <span>{formatDate(acc.payment_date)}</span>
+              </div>
+            );
+          })}
         </div>
 
         <div className="flex justify-center m-2">
@@ -108,6 +146,3 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
     </div>
   );
 };
-
-
-

@@ -190,8 +190,8 @@ export const UsersDetails = () => {
 
         <div className="mx-2 max-h-[28.4rem] overflow-y-auto">
           <div
-            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1.5fr] bg-gray-200 text-gray-900
-           font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
+            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1.5fr] bg-indigo-500 text-gray-900
+           font-semibold border border-gray-600 text-white text-sm sticky top-0 z-10 p-[10px]"
           >
             <span>Sr#</span>
             <span className="text-left">Users</span>
@@ -238,7 +238,7 @@ export const UsersDetails = () => {
                     className="flex items-center gap-0.5 bg-gray-500 rounded-2xl py-0.5 px-2 
                     text-white cursor-pointer"
                   >
-                    <span className="text-[10px]">Password</span>
+                    <span className="text-[10px]"></span>
                     <RiLockPasswordFill size={20} className="rounded p-0.5" />
                   </div>
                 </span>

@@ -126,7 +126,8 @@ export const EmployeeAccount = () => {
         activeFile="Employee Accounts List"
       />
 
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white 
+      overflow-hidden flex flex-col">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total Employees :{" "}
@@ -171,7 +172,8 @@ export const EmployeeAccount = () => {
         </div>
 
         <div className=" max-h-[28.4rem] overflow-y-auto mx-2">
-          <div className="grid grid-cols-5 bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]">
+          <div className="grid grid-cols-5 bg-gray-200 text-gray-900 font-semibold border border-gray-600
+           text-sm sticky top-0 z-10 p-[10px]">
             <span>Sr#</span>
             <span>Name</span>
             <span>Email</span>
@@ -182,7 +184,8 @@ export const EmployeeAccount = () => {
           {paginatedEmployees.map((emp, idx) => (
             <div
               key={emp.id}
-              className="grid grid-cols-5 border border-gray-600 text-gray-800 hover:bg-gray-100 transition text-sm items-center p-[7px]"
+              className="grid grid-cols-5 border border-gray-600 text-gray-800 hover:bg-gray-100 transition
+               text-sm items-center p-[7px]"
             >
               <span className="px-2">
                 {(pageNo - 1) * limit + idx + 1}

@@ -26,7 +26,7 @@ type User = {
   loginStatus: string;
 };
 
-const paymentMethods = [
+const payment_method = [
   { id: 1, label: "EasyPaisa", value: "easyPaisa" },
   { id: 2, label: "Bank Transfer", value: "bankTransfer" },
   { id: 3, label: "Cash", value: "cash" },
@@ -39,7 +39,7 @@ const initialState = {
   employeeEmail: "",
   debit: "",
   credit: "",
-  paymentMethod: "",
+  payment_method: "",
   payment_date: "",
 };
 
@@ -118,7 +118,7 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
           employeeEmail: form.employeeEmail,
           debit: Number(form.debit || 0),
           credit: Number(form.credit || 0),
-          paymentMethod: form.paymentMethod,
+          payment_method: form.payment_method,
           payment_date: form.payment_date,
         },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -170,10 +170,10 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
 
             <OptionField
               labelName="Payment Method*"
-              name="paymentMethod"
-              value={form.paymentMethod}
+              name="payment_method"
+              value={form.payment_method}
               handlerChange={handlerChange}
-              optionData={paymentMethods}
+              optionData={payment_method}
               inital="Please Select"
             />
 
