@@ -71,7 +71,7 @@ export const Holidays = () => {
         `${BASE_URL}/api/admin/deleteHoliday/${catchId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      toast.info(res.data.message);
+      toast.error(res.data.message);
       handleGetAllHolidays();
       setIsOpenModal("");
     } catch (error) {

@@ -172,7 +172,7 @@ export const AssignProjects = () => {
         </div>
 
         <div className="flex-1 mx-2">
-          <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr] bg-gray-200 font-semibold p-2 sticky top-0">
+          <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr] bg-indigo-500 text-white font-semibold p-2 sticky top-0">
             <span>Sr#</span>
             <span>User</span>
             <span>Project</span>

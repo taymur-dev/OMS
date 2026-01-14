@@ -57,7 +57,7 @@ export const WorkingProject = () => {
   return (
     <div className="w-full max-w-2xl h-96 bg-white mt-4 rounded-lg shadow-lg overflow-y-auto p-4 mx-auto relative">
       {/* Title (Fixed) */}
-      <h1 className="text-center text-lg font-semibold bg-orange-400 text-white p-3 rounded-md  sticky top-0 z-10">
+      <h1 className="text-center text-lg font-semibold border-blue-500 bg-white text-black p-3 rounded-md  sticky top-0 z-10">
         Working Project
       </h1>
 

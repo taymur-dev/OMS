@@ -110,11 +110,24 @@ export const UpdateCustomer = ({
   };
 
   return (
-    <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border  border-indigo-500 ">
-        <form onSubmit={(e) => handlerSubmitted(e, customerData?.id ?? null)}>
-          <Title setModal={() => setIsOpenModal()}>Update Customer</Title>
-          <div className="mx-2  flex-wrap gap-3  ">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="w-[42rem] max-h-[29rem] bg-white rounded-xl border border-indigo-500 shadow-lg overflow-hidden">
+        <form
+          onSubmit={(e) => handlerSubmitted(e, customerData?.id ?? null)}
+          className="flex flex-col h-full"
+        >
+          {/* Header */}
+          <div className="bg-blue-600 rounded-t-xl px-6">
+            <Title
+              setModal={setIsOpenModal}
+              className="text-white text-lg font-semibold"
+            >
+              Update Customer
+            </Title>
+          </div>
+
+          {/* Body */}
+          <div className="flex-1 overflow-y-auto p-4 grid grid-cols-2 gap-4">
             <InputField
               labelName="Customer Name*"
               placeHolder="Enter the Customer Name"
@@ -129,16 +142,15 @@ export const UpdateCustomer = ({
               type="text"
               name="customerAddress"
               handlerChange={handlerChange}
-              value={customerData?.customerAddress}
+              value={customerData?.customerAddress || ""}
             />
-
             <InputField
               labelName="Customer Contact*"
               placeHolder="Enter the Contact Number"
               type="number"
               name="customerContact"
               handlerChange={handlerChange}
-              value={customerData?.customerContact}
+              value={customerData?.customerContact || ""}
             />
             <InputField
               labelName="Company Name*"
@@ -146,22 +158,24 @@ export const UpdateCustomer = ({
               type="text"
               name="companyName"
               handlerChange={handlerChange}
-              value={customerData?.companyName}
+              value={customerData?.companyName || ""}
             />
+            <div className="col-span-2">
+              <InputField
+                labelName="Company Address*"
+                placeHolder="Enter the Company Address"
+                type="text"
+                name="companyAddress"
+                handlerChange={handlerChange}
+                value={customerData?.companyAddress || ""}
+              />
+            </div>
           </div>
-          <div className="px-2">
-            <InputField
-              labelName="Company Address*"
-              placeHolder="Enter the Company Address"
-              type="text"
-              name="companyAddress"
-              value={customerData?.companyAddress}
-              handlerChange={handlerChange}
-            />
-          </div>
-          <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-            <CancelBtn setModal={() => setIsOpenModal()} />
-            <AddButton label={"Update Customer"} />
+
+          {/* Footer */}
+          <div className="flex justify-end gap-3 px-4 py-3 bg-blue-600 border-t border-indigo-500">
+            <CancelBtn setModal={setIsOpenModal} />
+            <AddButton label="Update Customer" />
           </div>
         </form>
       </div>

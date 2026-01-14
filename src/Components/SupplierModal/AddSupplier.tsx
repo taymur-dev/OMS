@@ -23,8 +23,7 @@ const initialState = {
 export const AddSupplier = ({
   setModal,
   handleGetAllSupplier,
-}: 
-AddCustomerProps) => {
+}: AddCustomerProps) => {
   const [supplierData, setSupplierData] = useState(initialState);
 
   console.log(supplierData);
@@ -34,38 +33,36 @@ AddCustomerProps) => {
   const [loading, setLoading] = useState(false);
 
   const token = currentUser?.token;
-  
- const handlerChange = (
-  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-) => {
-  e.preventDefault();
-  const { name } = e.target;
-  let value = e.target.value;
 
-  value = value.replace(/^\s+/, "");
+  const handlerChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    e.preventDefault();
+    const { name } = e.target;
+    let value = e.target.value;
 
-  if (name === "supplierName") {
-    value = value
-      .replace(/[0-9]/g, "")
-      .replace(/\b\w/g, (char) => char.toUpperCase());
-  }
+    value = value.replace(/^\s+/, "");
 
-  if (name === "supplierAddress") {
-    value = value.replace(/\b\w/g, (char) => char.toUpperCase());
-  }
+    if (name === "supplierName") {
+      value = value
+        .replace(/[0-9]/g, "")
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+    }
 
-  if (name === "supplierEmail") {
-    value = value.toLowerCase();
-  }
+    if (name === "supplierAddress") {
+      value = value.replace(/\b\w/g, (char) => char.toUpperCase());
+    }
 
-  if (name === "supplierContact") {
-    value = value.replace(/\D/g, "").slice(0, 11);
-  }
+    if (name === "supplierEmail") {
+      value = value.toLowerCase();
+    }
 
-  setSupplierData({ ...supplierData, [name]: value });
-};
+    if (name === "supplierContact") {
+      value = value.replace(/\D/g, "").slice(0, 11);
+    }
 
-
+    setSupplierData({ ...supplierData, [name]: value });
+  };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -116,8 +113,15 @@ AddCustomerProps) => {
     <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
       <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border  border-indigo-500 ">
         <form onSubmit={handlerSubmitted}>
-          <Title setModal={() => setModal()}>Add Supplier</Title>
-          <div className="mx-2  flex-wrap gap-3  ">
+          <div className="bg-blue-600 rounded-t-xl px-6 ">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Add Customer
+            </Title>
+          </div>
+          <div className="mx-2 grid grid-cols-2 gap-3 py-2 ">
             <InputField
               labelName="Supplier Name*"
               placeHolder="Enter the Supplier Name"
@@ -152,9 +156,12 @@ AddCustomerProps) => {
             />
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-            <CancelBtn setModal={() => setModal()} />
-            <AddButton label={"Add Supplier"} loading={loading} />
+          <div className="flex justify-end items-center gap-3 px-2 py-2 bg-blue-600 rounded-b-xl">
+            <CancelBtn setModal={setModal} />
+            <AddButton
+              label={loading ? "Adding..." : "Add Customer"}
+              loading={loading}
+            />
           </div>
         </form>
       </div>

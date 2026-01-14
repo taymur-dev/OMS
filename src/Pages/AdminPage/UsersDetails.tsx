@@ -235,11 +235,24 @@ export const UsersDetails = () => {
 
                   <div
                     onClick={() => handleCatchId(user.id)}
-                    className="flex items-center gap-0.5 bg-gray-500 rounded-2xl py-0.5 px-2 
-                    text-white cursor-pointer"
+                    className="
+                    flex items-center gap-0.5
+                    bg-grey
+                    p-1 py-0.5 px-2
+                    rounded-xl
+                    border border-grey-500
+                    hover:bg-grey-50
+                    hover:cursor-pointer
+                    active:scale-95
+                    transition-all duration-300
+                    "
                   >
                     <span className="text-[10px]"></span>
-                    <RiLockPasswordFill size={20} className="rounded p-0.5" />
+                    <RiLockPasswordFill
+                      size={20}
+                      className="text-gainsboro-500"
+                      title="Password"
+                    />
                   </div>
                 </span>
               </div>

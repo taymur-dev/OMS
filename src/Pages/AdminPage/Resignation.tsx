@@ -199,7 +199,7 @@ export const Resignation = () => {
 
         <div className="mx-2 max-h-[28.4rem] overflow-y-auto">
           <div
-            className="grid grid-cols-6 bg-gray-200 text-gray-900 font-semibold border border-gray-600
+            className="grid grid-cols-6 bg-indigo-500 text-white font-semibold border border-gray-600
            text-sm sticky top-0 z-10 p-[10px]"
           >
             <span>Sr#</span>

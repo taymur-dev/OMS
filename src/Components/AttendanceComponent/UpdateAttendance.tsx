@@ -128,17 +128,23 @@ export const UpdateAttendance = ({
   };
 
   const userOptions = allUsers.map((user) => ({
-  value: user.id,     
-  label: user.name,  
-}));
-
+    value: user.id,
+    label: user.name,
+  }));
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-500">
         <form onSubmit={handlerSubmitted}>
-          <Title setModal={() => setModal()}>Update Attendance</Title>
-          <div className="mx-2 flex-wrap gap-3">
+          <div className="bg-blue-600 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Update Attendance
+            </Title>
+          </div>
+          <div className="mx-2 grid grid-cols-2 gap-3">
             <UserSelect
               labelName="Select User*"
               name="userId"
@@ -147,14 +153,6 @@ export const UpdateAttendance = ({
               optionData={userOptions}
             />
 
-            <OptionField
-              labelName="Attendance Status*"
-              name="attendanceStatus"
-              value={addUserAttendance?.attendanceStatus ?? ""}
-              handlerChange={handlerChange}
-              optionData={reasonLeaveOption}
-              inital="Please Select Attendance Status"
-            />
             <InputField
               labelName="Date*"
               type="date"
@@ -184,10 +182,19 @@ export const UpdateAttendance = ({
                 addUserAttendance?.attendanceStatus === "leave"
               }
             />
+
+            <OptionField
+              labelName="Attendance Status*"
+              name="attendanceStatus"
+              value={addUserAttendance?.attendanceStatus ?? ""}
+              handlerChange={handlerChange}
+              optionData={reasonLeaveOption}
+              inital="Please Select Attendance Status"
+            />
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
-            <CancelBtn setModal={() => setModal()} />
+          <div className="flex justify-end gap-3 px-4 py-3 bg-blue-600 border-t border-indigo-500">
+            <CancelBtn setModal={setModal} />
             <AddButton label="Update Attendance" />
           </div>
         </form>

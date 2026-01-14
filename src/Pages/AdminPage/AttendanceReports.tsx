@@ -274,7 +274,7 @@ export const AttendanceReports = () => {
           className="max-h-[28.4rem] overflow-y-auto mx-2"
         >
           <div
-            className="grid grid-cols-7 bg-gray-200 text-gray-900 font-semibold border border-gray-600 
+            className="grid grid-cols-7 bg-indigo-500 text-white font-semibold border border-gray-600 
         text-sm sticky top-0 z-10 p-[7px]"
           >
             <span>Sr#</span>

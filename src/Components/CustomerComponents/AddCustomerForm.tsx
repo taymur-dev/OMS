@@ -104,12 +104,21 @@ export const AddCustomer = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-500">
-        <form onSubmit={handlerSubmitted}>
-          <Title setModal={() => setIsOpenModal()}>Add Customer</Title>
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-10">
+      <div className="w-full max-w-3xl max-h-[90vh] bg-white rounded-xl border border-blue-600 shadow-lg overflow-y-auto">
+        <form onSubmit={handlerSubmitted} className="flex flex-col">
+          {/* Header */}
+          <div className="bg-blue-600 rounded-t-xl px-6">
+            <Title
+              setModal={setIsOpenModal}
+              className="text-white text-lg font-semibold"
+            >
+              Add Customer
+            </Title>
+          </div>
 
-          <div className="mx-2 flex-wrap gap-3">
+          {/* Form Body */}
+          <div className="px-6 py-6 grid grid-cols-1 md:grid-cols-2 gap-5">
             <InputField
               labelName="Customer Name*"
               placeHolder="Enter the Customer Name"
@@ -118,7 +127,6 @@ export const AddCustomer = ({
               handlerChange={handlerChange}
               value={customerData.customerName}
             />
-
             <InputField
               labelName="Customer Address*"
               placeHolder="Enter the Customer Address"
@@ -127,40 +135,41 @@ export const AddCustomer = ({
               handlerChange={handlerChange}
               value={customerData.customerAddress}
             />
-
             <InputField
               labelName="Customer Contact*"
-              placeHolder="Enter the Contact Number"
+              placeHolder="Enter Contact Number"
               type="text"
               name="customerContact"
               handlerChange={handlerChange}
               value={customerData.customerContact}
             />
-
             <InputField
               labelName="Company Name*"
-              placeHolder="Enter the Company Name"
+              placeHolder="Enter Company Name"
               type="text"
               name="companyName"
               handlerChange={handlerChange}
               value={customerData.companyName}
             />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Company Address*"
+                placeHolder="Enter Company Address"
+                type="text"
+                name="companyAddress"
+                handlerChange={handlerChange}
+                value={customerData.companyAddress}
+              />
+            </div>
           </div>
 
-          <div className="px-2">
-            <InputField
-              labelName="Company Address*"
-              placeHolder="Enter the Company Address"
-              type="text"
-              name="companyAddress"
-              handlerChange={handlerChange}
-              value={customerData.companyAddress}
+          {/* Footer */}
+          <div className="flex justify-end items-center gap-3 px-6 py-4 bg-blue-600 rounded-b-xl">
+            <CancelBtn setModal={setIsOpenModal} />
+            <AddButton
+              label={loading ? "Adding..." : "Add Customer"}
+              loading={loading}
             />
-          </div>
-
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
-            <CancelBtn setModal={() => setIsOpenModal()} />
-            <AddButton label="Add Customer" loading={loading} />
           </div>
         </form>
       </div>

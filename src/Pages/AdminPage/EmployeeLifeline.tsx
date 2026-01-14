@@ -175,8 +175,8 @@ export const EmployeeLifeline = () => {
 
         <div className="max-h-[28.4rem] overflow-y-auto mx-2">
           <div
-            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] bg-gray-200 text-gray-900 
-          font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
+            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] bg-indigo-500 text-white
+          font-semibold border  border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
           >
             <span>Sr#</span>
             <span className="text-left">Employee Name</span>

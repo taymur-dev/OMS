@@ -31,7 +31,7 @@ export const NewProject = ({
   const handleMoveToWorking = async (projectId: number) => {
     try {
       const res = await axios.post(
-        `${BASE_URL}/admin/handleDashboardProjects/${projectId}`
+        `${BASE_URL}/api/admin/handleDashboardProjects/${projectId}`
       );
       console.log(res.data);
       toast.success("Project moved to Working process successfully");
@@ -55,7 +55,7 @@ export const NewProject = ({
   return (
     <div className="w-full h-96 bg-white mt-4 rounded-lg shadow-lg overflow-y-auto p-4 relative">
       {/* Title */}
-      <h1 className="text-center text-lg font-semibold bg-indigo-500 text-white p-3 rounded-md sticky z-10 top-0">
+      <h1 className="text-center text-lg font-semibold bg-white border-blue-500  text-black p-3 rounded-md sticky z-10 top-0">
         New Project
       </h1>
 

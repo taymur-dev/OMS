@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BiArrowFromTop } from "react-icons/bi";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -25,9 +25,9 @@ export const CompleteProject = () => {
 
   const [catchId, setCatchId] = useState<number | null>(null);
 
-  const handleGetAllCompleteProjects = async () => {
+  const handleGetAllCompleteProjects = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getCompleteProjects`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getCompleteProjects`, {
         headers: {
           Authorization: token,
         },
@@ -36,16 +36,16 @@ export const CompleteProject = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  } , [token]);
 
   useEffect(() => {
     handleGetAllCompleteProjects();
-  }, []);
+  }, [handleGetAllCompleteProjects]);
 
   return (
     <div className="w-full max-w-2xl h-96 bg-white mt-4 rounded-lg shadow-lg overflow-y-auto p-4 mx-auto relative">
       {/* Title */}
-      <h1 className="text-center text-lg font-semibold bg-green-500 text-white p-3 rounded-md f sticky z-10 top-0">
+      <h1 className="text-center text-lg font-semibold bg-white border-blue-500  text-black p-3 rounded-md f sticky z-10 top-0">
         Complete Project
       </h1>
 

@@ -22,8 +22,11 @@ export const CustomerViewModal = ({
     <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
         <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg">
-          <Title setModal={setIsOpenModal}>User Details</Title>
-
+         <div className="bg-blue-600 rounded-t-xl px-4">
+            <div className="text-white">
+              <Title setModal={setIsOpenModal}>CUSTOMER DETAILS</Title>
+            </div>
+          </div>
           <div className="flex items-center gap-6 bg-white p-6 shadow-md rounded-lg">
             <img
               className="w-24 h-24 rounded-full border-4 border-indigo-500 object-cover"

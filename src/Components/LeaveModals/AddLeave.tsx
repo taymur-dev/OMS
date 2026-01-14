@@ -122,9 +122,16 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
     <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
       <div className="w-[42rem] bg-white rounded-xl border border-indigo-500">
         <form onSubmit={handlerSubmitted}>
-          <Title setModal={setModal}>Add Leave</Title>
+          <div className="bg-blue-600 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Add Leave
+            </Title>
+          </div>
 
-          <div className="mx-2 space-y-2">
+          <div className="mx-2 grid grid-cols-2 py-2 space-y-2 gap-3">
             {isAdmin && (
               <UserSelect
                 labelName="Employee*"
@@ -142,6 +149,13 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
               handlerChange={handlerChange}
             />
 
+            <TextareaField
+              labelName="Leave Reason*"
+              name="leaveReason"
+              inputVal={addLeave.leaveReason}
+              handlerChange={handlerChange}
+            />
+
             <InputField
               labelName="Date*"
               type="date"
@@ -149,18 +163,11 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
               value={addLeave.date}
               handlerChange={handlerChange}
             />
-
-            <TextareaField
-              labelName="Leave Reason*"
-              name="leaveReason"
-              inputVal={addLeave.leaveReason}
-              handlerChange={handlerChange}
-            />
           </div>
 
-          <div className="flex justify-center gap-2 m-2">
+          <div className="flex justify-end gap-3 rounded-b-xl px-4 py-3 bg-blue-600 border-t border-indigo-500">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save Leave" />
+            <AddButton label="Save" />
           </div>
         </form>
       </div>

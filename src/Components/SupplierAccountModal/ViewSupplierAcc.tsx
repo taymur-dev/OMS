@@ -115,7 +115,7 @@ export const ViewSupplierAcc = ({
 
         <div className="overflow-x-auto">
           <div
-            className="grid grid-cols-7 bg-gray-200 text-gray-900 font-semibold
+            className="grid grid-cols-7 bg-indigo-500 text-white font-semibold
             border border-gray-600 text-sm p-2 sticky top-0 z-10"
           >
             <span>Sr#</span>

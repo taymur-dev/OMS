@@ -181,7 +181,7 @@ export const Sales = () => {
         </div>
 
         <div className="flex-1 mx-2">
-          <div className="grid grid-cols-5 bg-gray-200 font-semibold text-sm p-3 sticky top-0">
+          <div className="grid grid-cols-5 bg-indigo-500 text-white font-semibold text-sm p-3 sticky top-0">
             <span>Sr#</span>
             <span>Customer</span>
             <span>Project</span>

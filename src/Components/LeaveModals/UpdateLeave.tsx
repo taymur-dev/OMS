@@ -104,12 +104,18 @@ export const UpdateLeave = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-500 p-4 overflow-auto">
-        <form onSubmit={handleSubmit}>
-          <Title setModal={setModal}>Update Leave</Title>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="w-full max-w-3xl bg-white rounded-xl border border-indigo-500 overflow-auto shadow-lg">
+        <form onSubmit={handleSubmit} className="flex flex-col">
+          {/* Header */}
+          <div className="bg-blue-600 rounded-t-xl px-6">
+            <Title setModal={setModal} className="text-white text-xl font-semibold">
+              Update Leave
+            </Title>
+          </div>
 
-          <div className="flex flex-col gap-3">
+          {/* Form Body */}
+          <div className="flex flex-col gap-4 px-6 py-5">
             <InputField
               labelName="Subject Leave*"
               placeHolder="Enter the Leave Subject"
@@ -145,9 +151,13 @@ export const UpdateLeave = ({
             />
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+          {/* Footer */}
+          <div className="flex justify-end gap-3 px-6 py-2 bg-blue-600 rounded-b-xl border-t border-indigo-500">
             <CancelBtn setModal={setModal} />
-            <AddButton label={submitting ? "Updating..." : "Update Leave"} />
+            <AddButton
+              label={submitting ? "Saving..." : "Save"}
+              loading={submitting}
+            />
           </div>
         </form>
       </div>

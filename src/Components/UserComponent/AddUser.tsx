@@ -244,11 +244,18 @@ export const AddUser = ({
   };
 
   return (
-    <div className="fixed inset-0 bg bg-opacity-90 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[35rem] overflow-y-scroll bg-white mx-auto rounded-xl border border-indigo-500">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-10">
+      <div className="w-[42rem] max-h-[40rem] overflow-y-auto bg-white mx-auto rounded-xl border border-blue-600">
         <form onSubmit={handlerSubmitted}>
-          <Title setModal={setModal}>{viewType} USER</Title>
-          <div className="mx-2 flex-wrap gap-3">
+          {/* ===== Header ===== */}
+          <div className="bg-blue-600 rounded-t-xl px-4">
+            <div className="text-white">
+              <Title setModal={setModal}>{viewType} USER</Title>
+            </div>
+          </div>
+
+          {/* ===== Body ===== */}
+          <div className="mx-4 my-4 grid grid-cols-2 gap-4">
             <InputField
               labelName="Name*"
               placeHolder="Enter the Name"
@@ -257,6 +264,7 @@ export const AddUser = ({
               handlerChange={handlerChange}
               value={userData.name}
             />
+
             <InputField
               labelName="Email*"
               placeHolder="abc123@gmail.com"
@@ -265,6 +273,7 @@ export const AddUser = ({
               handlerChange={handlerChange}
               value={userData.email}
             />
+
             <InputField
               labelName="Phone Number*"
               placeHolder="Enter the Contact Number"
@@ -273,6 +282,7 @@ export const AddUser = ({
               handlerChange={handlerChange}
               value={userData.contact}
             />
+
             <InputField
               labelName="CNIC*"
               placeHolder="12345-6789012-3"
@@ -281,6 +291,7 @@ export const AddUser = ({
               handlerChange={handlerChange}
               value={userData.cnic}
             />
+
             <InputField
               labelName="Address*"
               placeHolder="Enter the Address"
@@ -289,6 +300,7 @@ export const AddUser = ({
               handlerChange={handlerChange}
               value={userData.address}
             />
+
             <InputField
               labelName="Joining Date*"
               placeHolder="Enter the Date"
@@ -297,6 +309,7 @@ export const AddUser = ({
               handlerChange={handlerChange}
               value={userData.date}
             />
+
             <InputField
               labelName="Password*"
               placeHolder="Enter the Password"
@@ -305,6 +318,7 @@ export const AddUser = ({
               handlerChange={handlerChange}
               value={userData.password}
             />
+
             <InputField
               labelName="Confirm Password*"
               placeHolder="Enter the Confirm Password"
@@ -313,16 +327,22 @@ export const AddUser = ({
               handlerChange={handlerChange}
               value={userData.confirmPassword}
             />
-            <OptionField
-              value={userData.role}
-              labelName="Role*"
-              handlerChange={handlerChange}
-              name="role"
-              optionData={optionData}
-              inital="Please Select User"
-            />
+
+            {/* Full width row */}
+            <div className="col-span-2">
+              <OptionField
+                value={userData.role}
+                labelName="Role*"
+                handlerChange={handlerChange}
+                name="role"
+                optionData={optionData}
+                inital="Please Select User"
+              />
+            </div>
           </div>
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+
+          {/* ===== Footer ===== */}
+          <div className="bg-blue-600 rounded-b-xl py-3 flex justify-end gap-3 px-4">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

@@ -185,7 +185,7 @@ export const Promotion = () => {
 
         <div className="mx-2 flex-1 overflow-y-auto">
           <div
-            className={`grid grid-cols-6 bg-gray-200 font-semibold p-2 sticky top-0`}
+            className={`grid grid-cols-6 bg-indigo-500 text-white font-semibold p-2 sticky top-0`}
           >
             <span>Sr#</span>
             <span>Employee Name</span>

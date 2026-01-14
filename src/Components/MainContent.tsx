@@ -218,7 +218,7 @@ export const MainContent = () => {
           totalUser="Total Users"
           totalNumber={activeUsers.length}
           icon={<BiUser className="text-3xl" />}
-          style="bg-gradient-to-r from-purple-500 to-indigo-700"
+          style="bg-white"
         />
 
         <Card
@@ -226,7 +226,7 @@ export const MainContent = () => {
           totalUser="Total Projects"
           totalNumber={allAssignProjects.length}
           icon={<FaProjectDiagram className="text-3xl" />}
-          style="bg-gradient-to-r from-green-500 to-blue-700"
+          style="bg-white"
         />
 
         <Card
@@ -234,7 +234,7 @@ export const MainContent = () => {
           totalUser="Active Todo's"
           totalNumber={activeTodos.length}
           icon={<LuListTodo className="text-3xl" />}
-          style="bg-gradient-to-r from-yellow-400 to-orange-600"
+          style="bg-white"
         />
 
         <Card
@@ -242,7 +242,7 @@ export const MainContent = () => {
           totalUser="Total Categories"
           totalNumber={expenseCategory.length}
           icon={<CiViewList className="text-3xl" />}
-          style="bg-gradient-to-r from-fuchsia-500 to-fuchsia-700"
+          style="bg-white"
         />
 
         <Card
@@ -250,7 +250,7 @@ export const MainContent = () => {
           totalNumber={totalExpenseAmount}
           isCurrency
           icon={<GiTakeMyMoney className="text-3xl" />}
-          style="bg-gradient-to-r from-cyan-600 to-cyan-800"
+          style="bg-white"
         />
       </div>
     </div>

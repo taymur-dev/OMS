@@ -140,7 +140,7 @@ export const Jobs = () => {
         </div>
 
         <div className="overflow-y-auto mx-2">
-          <div className="grid grid-cols-4 bg-gray-200 font-semibold text-sm p-3 sticky top-0">
+          <div className="grid grid-cols-4 bg-indigo-500 text-white font-semibold text-sm p-3 sticky top-0">
             <span>Sr#</span>
             <span>Job Title</span>
             <span className="text-center">Actions</span>

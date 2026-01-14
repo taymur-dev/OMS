@@ -85,7 +85,7 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
 
         {/* Account Entries */}
         <div className="mx-2 my-3 max-h-[22rem] overflow-y-auto overflow-x-hidden border">
-          <div className="grid grid-cols-9 bg-gray-200 font-semibold text-sm p-2 sticky top-0 z-10">
+          <div className="grid grid-cols-9 bg-indigo-500 text-white font-semibold text-sm p-2 sticky top-0 z-10">
             <span>Sr#</span>
             <span>Ref No</span>
             <span>Debit</span>

@@ -141,8 +141,16 @@ export const AddAttendance = ({
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
         <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
           <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Add Attendance</Title>
-            <div className="mx-2   flex-wrap gap-3  ">
+            <div className="bg-blue-600 rounded-t-xl px-6">
+              <Title
+                setModal={setModal}
+                className="text-white text-lg font-semibold"
+              >
+                Add Attendance
+              </Title>
+            </div>
+
+            <div className="mx-2  grid grid-cols-2 gap-3  ">
               <UserSelect
                 labelName="Select User*"
                 name="selectUser"
@@ -151,14 +159,6 @@ export const AddAttendance = ({
                 optionData={allUsers}
               />
 
-              <OptionField
-                labelName="Attendance Status*"
-                name="attendanceStatus"
-                value={addUserAttendance.attendanceStatus}
-                handlerChange={handlerChange}
-                optionData={reasonLeaveOption}
-                inital="Please Select Status"
-              />
               <InputField
                 labelName="Date*"
                 placeHolder="Enter the Company Name"
@@ -187,11 +187,23 @@ export const AddAttendance = ({
                 handlerChange={handlerChange}
                 disabled={isAbsentOrLeave}
               />
+
+              <OptionField
+                labelName="Attendance Status*"
+                name="attendanceStatus"
+                value={addUserAttendance.attendanceStatus}
+                handlerChange={handlerChange}
+                optionData={reasonLeaveOption}
+                inital="Please Select Status"
+              />
             </div>
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Save Attendance"} loading={loading} />
+            <div className="flex justify-end  gap-3 px-6 py-4 bg-blue-600 rounded-b-xl">
+              <CancelBtn setModal={setModal} />
+              <AddButton
+                label={loading ? "Saving..." : "Save"}
+                loading={loading}
+              />
             </div>
           </form>
         </div>

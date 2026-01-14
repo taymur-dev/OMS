@@ -171,7 +171,8 @@ export const ConfigTime = () => {
 
         {/* Table */}
         <div className="max-h-[28.4rem] overflow-y-auto mx-2">
-          <div className="grid grid-cols-4 bg-gray-200 text-gray-900 font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]">
+          <div className="grid grid-cols-4 bg-indigo-500 text-white font-semibold border border-gray-600
+           text-sm sticky top-0 z-10 p-[10px]">
             <span>Sr#</span>
             <span>Config Time</span>
             <span>Type</span>
@@ -186,7 +187,8 @@ export const ConfigTime = () => {
             paginatedConfig.map((config, index) => (
               <div
                 key={config.id}
-                className="grid grid-cols-4 border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
+                className="grid grid-cols-4 border border-gray-600 text-gray-800 hover:bg-gray-100 transition
+                 duration-200 text-sm items-center justify-center p-[7px]"
               >
                 <span className="px-2">{startIndex + index + 1}</span>
                 <span>{config.configureTime ?? "N/A"}</span>
