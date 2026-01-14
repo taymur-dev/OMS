@@ -9,7 +9,6 @@ import { useAppSelector } from "../../redux/Hooks";
 import { UserSelect } from "../InputFields/UserSelect";
 import { toast } from "react-toastify";
 
-
 type UserOption = {
   id: number;
   name: string;
@@ -27,7 +26,6 @@ type AddWithdrawProps = {
   handlegetwithDrawEmployeess: () => void;
 };
 
-
 const initialState: WithdrawState = {
   id: "",
   withdrawReason: "",
@@ -41,13 +39,11 @@ export const AddWithdraw = ({
 
   const token = currentUser?.token;
 
-  const [addWithdraw, setAddWithdraw] =
-    useState<WithdrawState>(initialState);
+  const [addWithdraw, setAddWithdraw] = useState<WithdrawState>(initialState);
 
-  const [allUsers, setAllUsers] = useState<
-    { value: number; label: string }[]
-  >([]);
-
+  const [allUsers, setAllUsers] = useState<{ value: number; label: string }[]>(
+    []
+  );
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>
@@ -55,7 +51,6 @@ export const AddWithdraw = ({
     const { name, value } = e.target;
     setAddWithdraw((prev) => ({ ...prev, [name]: value }));
   };
-
 
   const getAllUsers = useCallback(async () => {
     try {
@@ -67,8 +62,7 @@ export const AddWithdraw = ({
 
       const filteredUsers = res?.data?.users
         ?.filter(
-          (user: UserOption) =>
-            user.role === "user" && user.loginStatus === "Y"
+          (user: UserOption) => user.role === "user" && user.loginStatus === "Y"
         )
         .map((user: UserOption) => ({
           value: user.id,
@@ -82,9 +76,7 @@ export const AddWithdraw = ({
     }
   }, [token]);
 
-  const handlerSubmitted = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -110,19 +102,23 @@ export const AddWithdraw = ({
     }
   };
 
-
   useEffect(() => {
     getAllUsers();
   }, [getAllUsers]);
-
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-500">
         <form onSubmit={handlerSubmitted}>
-          <Title setModal={setModal}>Add Employee Withdraw</Title>
-
-          <div className="mx-2 flex-wrap gap-3">
+          <div className="bg-blue-600 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Add Employee Withdraw
+            </Title>
+          </div>
+          <div className="mx-2 grid grid-cols-2 py-5  gap-3">
             <UserSelect
               labelName="Select Employee*"
               name="id"
@@ -139,9 +135,9 @@ export const AddWithdraw = ({
             />
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-blue-600 border-t border-indigo-500">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save Withdraw" />
+            <AddButton label="Save" />
           </div>
         </form>
       </div>

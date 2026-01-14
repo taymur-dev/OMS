@@ -95,8 +95,15 @@ export const ViewEmployeeLifeLine = ({
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg">
         <Toaster position="top-center" reverseOrder={false} />
-        <Title setModal={setIsOpenModal}>Employee Lifeline</Title>
 
+        <div className="bg-blue-600 rounded-t-xl px-6">
+          <Title
+            setModal={setIsOpenModal}
+            className="text-white text-lg font-semibold"
+          >
+            View Employee LifeLine
+          </Title>
+        </div>
         {/* Profile Section */}
         <div className="flex items-center gap-6 bg-white p-3 shadow-md rounded-lg mb-4">
           <img
@@ -131,8 +138,10 @@ export const ViewEmployeeLifeLine = ({
         </div>
 
         {/* Employee Details Table */}
-        <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr] bg-gray-100 text-gray-800 font-semibold
-         text-sm border border-gray-300 rounded-t-md">
+        <div
+          className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr] bg-blue-500 text-white font-semibold
+         text-sm border border-gray-300 rounded-t-md"
+        >
           <span className="p-2 text-left">Sr#</span>
           <span className="p-2 text-left">Date</span>
           <span className="p-2 text-left">Position</span>
@@ -141,8 +150,10 @@ export const ViewEmployeeLifeLine = ({
         </div>
 
         <div className="max-h-[20rem] overflow-y-auto border-x border-b border-gray-300">
-          <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr] text-sm text-gray-700 hover:bg-gray-50
-           transition duration-200 p-2 items-center">
+          <div
+            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr] text-sm text-gray-700 hover:bg-gray-50
+           transition duration-200 p-2 items-center"
+          >
             <span>1</span>
             <span>{new Date(employeeData.date).toLocaleDateString()}</span>
             <span>

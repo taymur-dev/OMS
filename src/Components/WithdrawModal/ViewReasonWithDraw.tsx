@@ -22,7 +22,15 @@ export const ViewReasonWithDraw = ({
       <div className="w-full flex justify-center">
         <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg">
           {/* Title */}
-          <Title setModal={setIsOpenModal}>Employee Withdraw Reason</Title>
+
+          <div className="bg-blue-600 rounded-t-xl px-6">
+            <Title
+              setModal={setIsOpenModal}
+              className="text-white text-lg font-semibold"
+            >
+              View Withdraw Reason
+            </Title>
+          </div>
 
           {/* Profile Section */}
           <div className="flex items-center gap-6 bg-white p-6 shadow-md rounded-lg">

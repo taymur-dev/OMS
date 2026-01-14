@@ -125,7 +125,9 @@ export const AddEmployeeLifeLine = ({
       setModal();
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message || "Failed to add lifeline");
+      toast.error(
+        axiosError.response?.data.message || "Failed to add lifeline"
+      );
     }
   };
 
@@ -133,9 +135,16 @@ export const AddEmployeeLifeLine = ({
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-500">
         <form onSubmit={handlerSubmitted}>
-          <Title setModal={setModal}>Add Employee LifeLine</Title>
+          <div className="bg-blue-600 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Add Employee LifeLine
+            </Title>
+          </div>
 
-          <div className="mx-2 flex-wrap gap-3">
+          <div className="mx-2 grid grid-cols-2 py-5 gap-3">
             <UserSelect
               labelName="Select Employee*"
               name="employee_id"
@@ -177,9 +186,9 @@ export const AddEmployeeLifeLine = ({
             />
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-blue-600 border-t border-indigo-500">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Add Employee" />
+            <AddButton label="Save" />
           </div>
         </form>
       </div>
