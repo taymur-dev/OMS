@@ -118,7 +118,7 @@ export const UpdateHoliday = ({
             />
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded-xl py-3 bg-blue-600 border-t border-indigo-500">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-blue-600 border-t border-indigo-500">
             <CancelBtn setModal={setModal} />
             <AddButton label="Save" />
           </div>
