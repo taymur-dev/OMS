@@ -245,10 +245,10 @@ export const AddUser = ({
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[40rem] overflow-y-auto bg-white mx-auto rounded-xl border border-blue-600">
+      <div className="w-[42rem] max-h-[40rem] overflow-y-auto bg-white mx-auto rounded-xl border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           {/* ===== Header ===== */}
-          <div className="bg-blue-600 rounded-t-xl px-4">
+          <div className="bg-indigo-900 rounded-t-xl px-4">
             <div className="text-white">
               <Title setModal={setModal}>{viewType} USER</Title>
             </div>
@@ -342,7 +342,7 @@ export const AddUser = ({
           </div>
 
           {/* ===== Footer ===== */}
-          <div className="bg-blue-600 rounded-b-xl py-3 flex justify-end gap-3 px-4">
+          <div className="bg-indigo-900 rounded-b-xl py-3 flex justify-end gap-3 px-4">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}
@@ -350,8 +350,8 @@ export const AddUser = ({
                 loading
                   ? "Loading..."
                   : viewType === "ADD"
-                  ? "Add User"
-                  : "Update User"
+                  ? "Save"
+                  : "Update"
               }
             />
           </div>

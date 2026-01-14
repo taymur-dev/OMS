@@ -21,7 +21,7 @@ const Card = ({
       className={`
        h-full min-h-[150px]
        rounded-xl
-       border-2 border-blue-500
+       border-2 border-indigo-900
        bg-white
        shadow-lg
       p-5
@@ -45,7 +45,7 @@ hover:border-white
         <h3 className="text-lg font-semibold text-black-">{titleName}</h3>
 
         {/* Icon with blue background */}
-        <div className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 text-white text-2xl">
+        <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-900 text-white text-2xl">
           {icon}
         </div>
       </div>

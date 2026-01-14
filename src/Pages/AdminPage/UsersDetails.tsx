@@ -150,13 +150,13 @@ export const UsersDetails = () => {
       <TableTitle tileName="User" activeFile="User list" />
 
       <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white 
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white 
       overflow-hidden flex flex-col"
       >
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total Number of Users :
-            <span className="text-2xl text-blue-500 font-semibold font-sans">
+            <span className="text-2xl text-indigo-900 font-semibold font-sans">
               [{allUsers.filter((u) => u.loginStatus === "Y").length}]
             </span>
           </span>
@@ -190,7 +190,7 @@ export const UsersDetails = () => {
 
         <div className="mx-2 max-h-[28.4rem] overflow-y-auto">
           <div
-            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1.5fr] bg-indigo-500 text-gray-900
+            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1.5fr] bg-indigo-900 text-gray-900
            font-semibold border border-gray-600 text-white text-sm sticky top-0 z-10 p-[10px]"
           >
             <span>Sr#</span>

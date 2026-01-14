@@ -105,10 +105,10 @@ export const UpdateLeave = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-3xl bg-white rounded-xl border border-indigo-500 overflow-auto shadow-lg">
+      <div className="w-full max-w-3xl bg-white rounded-xl border border-indigo-900 overflow-auto shadow-lg">
         <form onSubmit={handleSubmit} className="flex flex-col">
           {/* Header */}
-          <div className="bg-blue-600 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title setModal={setModal} className="text-white text-xl font-semibold">
               Update Leave
             </Title>
@@ -152,7 +152,7 @@ export const UpdateLeave = ({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 px-6 py-2 bg-blue-600 rounded-b-xl border-t border-indigo-500">
+          <div className="flex justify-end gap-3 px-6 py-2 bg-indigo-900 rounded-b-xl border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
             <AddButton
               label={submitting ? "Saving..." : "Save"}

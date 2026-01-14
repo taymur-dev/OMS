@@ -65,11 +65,11 @@ export const Columns = ({ colum, allProject }: columDataT) => {
       }`}
     >
       <h1
-        className={`text-center text-lg font-semibold text-white border-2 border-blue-500
+        className={`text-center text-lg font-semibold text-white border-2
   p-3 rounded-md sticky top-0 z-10 shadow ${
     (colum.id === "newProject" && "bg-blue-500") ||
-    (colum.id === "working" && "bg-blue-500") ||
-    (colum.id === "complete" && "bg-blue-500")
+    (colum.id === "working" && "bg-orange-500") ||
+    (colum.id === "complete" && "bg-green-500")
   }`}
       >
         {colum.title}

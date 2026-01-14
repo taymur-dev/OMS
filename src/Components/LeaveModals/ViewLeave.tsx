@@ -19,8 +19,8 @@ export const ViewLeave = ({ setIsOpenModal, data }: ViewLeaveProps) => {
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
-        <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg">
-          <div className="bg-blue-600 rounded-t-xl px-6">
+        <div className="bg-white w-full max-w-3xl border border-indigo-900 rounded-lg p-6 shadow-lg">
+          <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
               setModal={setIsOpenModal}
               className="text-white text-lg font-semibold"
@@ -34,7 +34,6 @@ export const ViewLeave = ({ setIsOpenModal, data }: ViewLeaveProps) => {
               <h2 className="text-2xl font-semibold text-gray-800">
                 {data.name}
               </h2>
-              <h4 className="text-sm text-gray-500">Employee</h4>
             </div>
           </div>
 

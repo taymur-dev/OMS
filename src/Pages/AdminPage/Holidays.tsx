@@ -147,7 +147,7 @@ export const Holidays = () => {
         <div className="flex items-center justify-between text-gray-800 mx-2">
           <span>
             Total Number of Holidays:{" "}
-            <span className="text-2xl text-blue-500 font-semibold font-sans">
+            <span className="text-2xl text-indigo-900 font-semibold font-sans">
               [{allHoliday.length}]
             </span>
           </span>
@@ -181,7 +181,7 @@ export const Holidays = () => {
 
         <div className="max-h-[28.4rem] overflow-y-auto mx-2">
           <div
-            className="grid grid-cols-[0.5fr_1fr_1fr_1fr] bg-indigo-500  text-white font-semibold
+            className="grid grid-cols-[0.5fr_1fr_1fr_1fr] bg-indigo-900  text-white font-semibold
            border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
           >
             <span>Sr#</span>

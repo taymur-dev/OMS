@@ -10,12 +10,12 @@ import { useAppSelector } from "../../redux/Hooks";
 import { BASE_URL } from "../../Content/URL";
 import { toast } from "react-toastify";
 
-type AddAttendanceProps = {
+type AddProjectProps = {
   setModal: () => void;
   handleGetAllProjects: () => void;
 };
-const currentDate =
-  new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
+
+const currentDate = new Date().toISOString().split("T")[0];
 
 type AllCategoryT = {
   id: number;
@@ -29,16 +29,14 @@ const initialState = {
   startDate: currentDate,
   endDate: currentDate,
 };
+
 export const AddProject = ({
   setModal,
   handleGetAllProjects,
-}: AddAttendanceProps) => {
+}: AddProjectProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-
   const [addProject, setAddProject] = useState(initialState);
-
   const [categories, setCategories] = useState<AllCategoryT[] | null>(null);
-
   const token = currentUser?.token;
 
   const handlerChange = (
@@ -46,7 +44,6 @@ export const AddProject = ({
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
-    e.preventDefault();
     const { name, value } = e.target;
     setAddProject({ ...addProject, [name]: value });
   };
@@ -54,101 +51,105 @@ export const AddProject = ({
   const handleGetAllCategories = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getCategory`, {
-        headers: {
-          Authorization: token,
-        },
+        headers: { Authorization: token },
       });
       setCategories(res.data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }, [token]);
 
-  console.log("submitted", addProject);
   const handlerSubmitted = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${BASE_URL}/api/admin/addProject`,
-        addProject,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-      console.log(res.data);
+      await axios.post(`${BASE_URL}/api/admin/addProject`, addProject, {
+        headers: { Authorization: token },
+      });
       handleGetAllProjects();
       setModal();
-      toast.success("Project is submit successfully!");
+      toast.success("Project submitted successfully!");
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Failed to submit project!");
     }
   };
+
   useEffect(() => {
     handleGetAllCategories();
   }, [handleGetAllCategories]);
+
   return (
-    <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem] min-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
-          <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Add Project</Title>
-            <div className="mx-2   flex-wrap gap-3  ">
-              <OptionField
-                labelName="Project Category*"
-                name="projectCategory"
-                value={addProject.projectCategory}
-                handlerChange={handlerChange}
-                optionData={categories?.map((category) => ({
-                  id: category.id,
-                  label: category.categoryName,
-                  value: category.categoryName,
-                }))}
-                inital="Select Project Category"
-              />
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="w-full max-w-3xl bg-white rounded-xl shadow-lg border border-indigo-500 overflow-hidden">
+        <form onSubmit={handlerSubmitted}>
+          {/* Header */}
+          <div className="bg-blue-600 px-6 ">
+            <Title
+              setModal={setModal}
+              className="text-white text-xl font-semibold"
+            >
+              Add Project
+            </Title>
+          </div>
 
-              <InputField
-                labelName="Project Name*"
-                placeHolder="Enter the Project Name"
-                type="text"
-                name="projectName"
-                value={addProject.projectName}
-                handlerChange={handlerChange}
-              />
+          {/* Body */}
+          <div className="px-6 py-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <OptionField
+              labelName="Project Category*"
+              name="projectCategory"
+              value={addProject.projectCategory}
+              handlerChange={handlerChange}
+              optionData={categories?.map((category) => ({
+                id: category.id,
+                label: category.categoryName,
+                value: category.categoryName,
+              }))}
+              inital="Select Project Category"
+            />
 
-              <TextareaField
-                labelName="Project Desciption"
-                name="description"
-                placeHolder="Enter Project Description..."
-                handlerChange={handlerChange}
-                inputVal={addProject.description}
-              />
-              <InputField
-                labelName="Start Date*"
-                placeHolder="Enter the Start Date"
-                type="Date"
-                name="startDate"
-                value={addProject.startDate}
-                handlerChange={handlerChange}
-              />
+            <InputField
+              labelName="Project Name*"
+              placeHolder="Enter the Project Name"
+              type="text"
+              name="projectName"
+              value={addProject.projectName}
+              handlerChange={handlerChange}
+            />
 
-              <InputField
-                labelName="End Date*"
-                placeHolder="Enter the End Date"
-                type="date"
-                name="endDate"
-                value={addProject.endDate}
-                handlerChange={handlerChange}
-              />
-            </div>
+            <InputField
+              labelName="Start Date*"
+              placeHolder="Enter Start Date"
+              type="date"
+              name="startDate"
+              value={addProject.startDate}
+              handlerChange={handlerChange}
+            />
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Save Project"} />
-            </div>
-          </form>
-        </div>
+            <InputField
+              labelName="End Date*"
+              placeHolder="Enter End Date"
+              type="date"
+              name="endDate"
+              value={addProject.endDate}
+              handlerChange={handlerChange}
+            />
+
+            <TextareaField
+              labelName="Project Description"
+              name="description"
+              placeHolder="Enter Project Description..."
+              handlerChange={handlerChange}
+              inputVal={addProject.description}
+              className="col-span-1 md:col-span-2"
+            />
+          </div>
+
+          {/* Footer */}
+          <div className="flex justify-end gap-3 px-6 py-4 bg-blue-600 border-t border-indigo-500 rounded-b-xl">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Save" />
+          </div>
+        </form>
       </div>
     </div>
   );

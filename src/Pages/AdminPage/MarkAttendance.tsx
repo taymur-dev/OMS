@@ -189,7 +189,7 @@ export const MarkAttendance = () => {
             <div className="grid grid-cols-5 gap-4 text-gray-700 bg-gray-100 p-4 rounded-lg">
               <span>Clock In</span>
               <span>Clock Out</span>
-              <span>Hours</span>
+              <span>Working Hours</span>
               <span>Date</span>
               <span>Status</span>
 
@@ -214,7 +214,7 @@ export const MarkAttendance = () => {
             ${
               isHoliday
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-indigo-500 hover:bg-indigo-600 text-white"
+                : "bg-indigo-900 hover:bg-indigo-800 text-white"
             }`}
           onClick={() => handleMarkAttendance(userId)}
         >

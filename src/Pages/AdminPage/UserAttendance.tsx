@@ -190,7 +190,7 @@ export const UserAttendance = () => {
               isAdmin
                 ? "grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr]"
                 : "grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr]"
-            } bg-indigo-500 text-white font-semibold p-2 sticky top-0`}
+            } bg-indigo-900 text-white font-semibold p-2 sticky top-0`}
           >
             <span>Sr#</span>
             {isAdmin && <span>User</span>}

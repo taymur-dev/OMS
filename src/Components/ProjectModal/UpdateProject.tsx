@@ -76,7 +76,7 @@ export const UpdateProject = ({
       );
 
       if (res.status === 200) {
-        onUpdate?.(res.data.project); // update parent state instantly
+        onUpdate?.(res.data.project);
         setModal();
       }
     } catch (error: unknown) {
@@ -86,21 +86,21 @@ export const UpdateProject = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] min-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-500">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="w-full max-w-3xl bg-white rounded-xl shadow-xl border border-indigo-500 overflow-hidden">
         <form onSubmit={handlerSubmitted}>
-          <Title setModal={setModal}>Update Project</Title>
+          {/* Header */}
+          <div className="bg-blue-600 px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-xl font-semibold"
+            >
+              Update Project
+            </Title>
+          </div>
 
-          <div className="mx-2 flex-wrap gap-3">
-            <InputField
-              labelName="Project Name*"
-              placeHolder="Enter the Project Name"
-              type="text"
-              name="projectName"
-              value={updateProject?.projectName}
-              handlerChange={handlerChange}
-            />
-
+          {/* Form Body */}
+          <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
             <OptionField
               labelName="Project Category*"
               name="projectCategory"
@@ -114,17 +114,18 @@ export const UpdateProject = ({
               inital="Please Select Project Category"
             />
 
-            <TextareaField
-              labelName="Project Description"
-              name="description"
-              placeHolder="Enter Project Description..."
+            <InputField
+              labelName="Project Name*"
+              placeHolder="Enter the Project Name"
+              type="text"
+              name="projectName"
+              value={updateProject?.projectName}
               handlerChange={handlerChange}
-              inputVal={updateProject?.description ?? ""}
             />
 
             <InputField
               labelName="Start Date*"
-              placeHolder="Enter the Start Date"
+              placeHolder="Select Start Date"
               type="date"
               name="startDate"
               value={updateProject?.startDate ?? ""}
@@ -133,17 +134,26 @@ export const UpdateProject = ({
 
             <InputField
               labelName="End Date*"
-              placeHolder="Enter the End Date"
+              placeHolder="Select End Date"
               type="date"
               name="endDate"
               value={updateProject?.endDate ?? ""}
               handlerChange={handlerChange}
             />
+
+            <TextareaField
+              labelName="Project Description"
+              name="description"
+              placeHolder="Enter Project Description..."
+              handlerChange={handlerChange}
+              inputVal={updateProject?.description ?? ""}
+            />
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+          {/* Footer */}
+          <div className="flex justify-end gap-4 px-6 py-4 bg-blue-600 border-t border-indigo-500 rounded-b-xl">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update Project" />
+            <AddButton label="Save" />
           </div>
         </form>
       </div>

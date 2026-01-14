@@ -7,7 +7,7 @@ export const CustomButton = ({ label, handleToggle }: buttonProps) => {
     <div>
       <button
         onClick={handleToggle}
-        className="bg-indigo-500 text-white px-2 py-1 rounded my-2 hover:opacity-95 hover:cursor-pointer active:scale-95 transition-all duration-200"
+        className="bg-indigo-900 text-white px-2 py-1 rounded my-2 hover:opacity-95 hover:cursor-pointer active:scale-95 transition-all duration-200"
       >
         {label}
       </button>

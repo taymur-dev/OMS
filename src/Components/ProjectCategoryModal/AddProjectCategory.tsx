@@ -53,8 +53,15 @@ export const AddProjectCategory = ({
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
         <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
           <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Add Category</Title>
-            <div className="mx-2   flex-wrap gap-3  ">
+            <div className="bg-indigo-500 rounded-t-xl px-6">
+              <Title
+                setModal={setModal}
+                className="text-white text-lg font-semibold"
+              >
+                Add Project Category
+              </Title>
+            </div>
+            <div className="mx-2   flex-wrap gap-3 py-5  ">
               <InputField
                 labelName="Category Name*"
                 placeHolder="Enter the Project Category"
@@ -65,9 +72,9 @@ export const AddProjectCategory = ({
               />
             </div>
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Save Category"} />
+            <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-500 border-t border-indigo-500">
+              <CancelBtn setModal={setModal} />
+              <AddButton label="Save" />
             </div>
           </form>
         </div>

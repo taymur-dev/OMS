@@ -13,7 +13,7 @@ export const Pagination = ({
     <div>
       <div className="join flex items-center justify-end my-2 gap-2 ">
         <button
-          className="join-item btn bg-indigo-500 border-indigo-600"
+          className="join-item btn bg-indigo-900 text-white border-indigo-600"
           onClick={handleDecrementPageButton}
         >
           «
@@ -22,7 +22,7 @@ export const Pagination = ({
           Page {pageNo}
         </button>
         <button
-          className="join-item btn bg-indigo-500 border-indigo-600"
+          className="join-item btn bg-indigo-900 text-white border-indigo-600"
           onClick={handleIncrementPageButton}
         >
           »

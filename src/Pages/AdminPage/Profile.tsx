@@ -13,7 +13,7 @@ export const Profile = () => {
             <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg mt-12">
               <div className="flex items-center gap-6 bg-white p-6 shadow-md rounded-lg">
                 <img
-                  className="w-24 h-24 rounded-full border-4 border-indigo-500 bg-indigo-500 object-cover"
+                  className="w-24 h-24 rounded-full border-4 border-indigo-900 bg-indigo-900 object-cover"
                   src={profileImage}
                   alt="Profile"
                 />

@@ -82,9 +82,16 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
   }, [getAllTodos]);
 
   return (
+    //   <div
+    //     className="w-52 bg-white overflow-y-auto transition-all duration-300 ease-in-out
+    // flex flex-col items-center py-4 shadow-lg"
+    //   >
+
     <div
-      className="w-52 bg-white overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out
-  flex flex-col items-center py-4 shadow-lg"
+      className={`${
+        isOpen ? "w-20" : "w-52"
+      } bg-white overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out
+  flex flex-col items-center py-2 shadow-lg`}
     >
       {!isOpen ? (
         <Link
@@ -92,8 +99,8 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
           onClick={() => setActiveBtns("Dashboard")}
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-500 hover:text-white transition border-b m-1  w-40 ${
-            activeBtns === "Dashboard" && "bg-indigo-500 text-white"
+          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b m-1  w-40 ${
+            activeBtns === "Dashboard" && "bg-indigo-900 text-white"
           } `}
         >
           <MdOutlineDashboard size={20} />
@@ -103,7 +110,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         <div
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-500 border-b  transition m-1  text-gray-900  `}
+          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  text-gray-900  `}
         >
           <MdOutlineDashboard size={20} />
         </div>
@@ -116,6 +123,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         handlerClick={() => toggleButtonActive("People")}
         activeBtns={activeBtns}
         activeBtn="People"
+        className="hover:bg-indigo-900"
       />
       <div>
         {activeBtns === "People" && (
@@ -159,6 +167,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         handlerClick={() => toggleButtonActive("Attendance")}
         activeBtns={activeBtns}
         activeBtn="Attendance"
+        className="hover:bg-indigo-900"
       />
       <div>
         {activeBtns === "Attendance" && (
@@ -208,6 +217,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         handlerClick={() => toggleButtonActive("Employee")}
         activeBtns={activeBtns}
         activeBtn="Employee"
+        className="hover:bg-indigo-900"
       />
       <div>
         {activeBtns === "Employee" && (
@@ -242,6 +252,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         handlerClick={() => toggleButtonActive("AssignProjects")}
         activeBtns={activeBtns}
         activeBtn="AssignProjects"
+        className="hover:bg-indigo-900"
       />
       <div>
         {activeBtns === "AssignProjects" && (
@@ -283,6 +294,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         handlerClick={() => toggleButtonActive("Performance")}
         activeBtns={activeBtns}
         activeBtn="Performance"
+        className="hover:bg-indigo-900"
       />
       <div>
         {activeBtns === "Performance" && (
@@ -296,7 +308,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
               >
                 <span className=""> Todo </span>{" "}
                 {allTodos.length > 0 ? (
-                  <span className="text-left font-bold text-gray-800 bg-indigo-500 rounded p-1">
+                  <span className="text-left font-bold text-white bg-indigo-900 rounded p-1">
                     {allTodos.length}
                   </span>
                 ) : null}
@@ -321,6 +333,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         handlerClick={() => toggleButtonActive("Sale")}
         activeBtns={activeBtns}
         activeBtn="Sale"
+        className="hover:bg-indigo-900"
       />
       <div>
         {activeBtns === "Sale" && (
@@ -362,6 +375,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         handlerClick={() => toggleButtonActive("manageExpense")}
         activeBtns={activeBtns}
         activeBtn="manageExpense"
+        className="hover:bg-indigo-900"
       />
       <div className="">
         {activeBtns === "manageExpense" && (
@@ -396,6 +410,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         handlerClick={() => toggleButtonActive("payroll")}
         activeBtns={activeBtns}
         activeBtn="payroll"
+        className="hover:bg-indigo-900"
       />
       <div>
         {activeBtns === "payroll" && (
@@ -466,6 +481,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         handlerClick={() => toggleButtonActive("Assets Management")}
         activeBtns={activeBtns}
         activeBtn="Assets Management"
+        className="hover:bg-indigo-900"
       />
       <div>
         {activeBtns === "Assets Management" && (
@@ -500,6 +516,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         handlerClick={() => toggleButtonActive("Recuritment")}
         activeBtns={activeBtns}
         activeBtn="Recuritment"
+        className="hover:bg-indigo-900"
       />
 
       <div>
@@ -561,6 +578,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         handlerClick={() => toggleButtonActive("Dynamic")}
         activeBtns={activeBtns}
         activeBtn="Dynamic"
+        className="hover:bg-indigo-900"
       />
 
       <div>
@@ -606,6 +624,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         handlerClick={() => toggleButtonActive("Accounts")}
         activeBtns={activeBtns}
         activeBtn="Accounts"
+        className="hover:bg-indigo-900"
       />
       <div>
         {activeBtns === "Accounts" && (
@@ -649,6 +668,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         handlerClick={() => toggleButtonActive("Reports")}
         activeBtns={activeBtns}
         activeBtn="Reports"
+        className="hover:bg-indigo-900"
       />
       <div
         className={`${
@@ -723,6 +743,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         handlerClick={() => toggleButtonActive("configureTime")}
         activeBtns={activeBtns}
         activeBtn="configure"
+        className="hover:bg-indigo-900"
       />
       <div>
         {activeBtns === "configureTime" && (

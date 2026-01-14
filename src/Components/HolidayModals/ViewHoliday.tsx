@@ -14,7 +14,7 @@ export const ViewHoliday = ({ setIsOpenModal, viewHoliday }: ViewHolidayProps) =
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white w-11/12 max-w-lg sm:max-w-md md:max-w-lg lg:max-w-xl rounded-xl shadow-xl overflow-hidden">
-        <div className="bg-blue-600 px-6">
+        <div className="bg-indigo-900 px-6">
           <Title setModal={setIsOpenModal} className="text-white text-xl font-semibold">
             Leave Details
           </Title>

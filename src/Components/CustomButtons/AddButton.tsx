@@ -19,7 +19,7 @@ export const AddButton = <T,>({
     <div>
       <button
         disabled={loading}
-        className="bg-white text-indigo-500 p-2 rounded hover:cursor-pointer hover:scale-105 duration-300"
+        className="bg-white text-indigo-900 p-2 rounded hover:cursor-pointer hover:scale-105 duration-300"
         onClick={(e) => handleClick && handleClick(e, param)}
       >
         {loading ? (

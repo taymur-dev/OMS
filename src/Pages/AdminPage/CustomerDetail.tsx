@@ -163,7 +163,7 @@ export const CustomerDetail = () => {
     <div className="w-full mx-2">
       <TableTitle tileName="Customer" activeFile="Customers list" />
 
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
         <div className="flex items-center justify-between mx-2 text-gray-800">
           <span>
             Total Numbers of Customer :
@@ -201,7 +201,7 @@ export const CustomerDetail = () => {
 
         <div className="max-h-[28.4rem] overflow-y-auto mx-2">
           <div
-            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1fr] bg-indigo-500 
+            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1fr] bg-indigo-900 
             text-white font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-2"
           >
             <span>Sr#</span>

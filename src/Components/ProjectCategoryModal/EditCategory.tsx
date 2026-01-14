@@ -69,8 +69,15 @@ export const EditCategory = ({
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
         <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
           <form onSubmit={handleUpdateCategory}>
-            <Title setModal={() => setModal()}>Update Category</Title>
-            <div className="mx-2   flex-wrap gap-3  ">
+            <div className="bg-blue-600 rounded-t-xl px-6">
+              <Title
+                setModal={setModal}
+                className="text-white text-lg font-semibold"
+              >
+                Edit Project Category
+              </Title>
+            </div>
+            <div className="mx-2   flex-wrap gap-3 py-5  ">
               <InputField
                 labelName="Category Name*"
                 placeHolder="Enter the Project Category"
@@ -81,9 +88,9 @@ export const EditCategory = ({
               />
             </div>
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Update Category"} />
+            <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-blue-600 border-t border-indigo-500">
+              <CancelBtn setModal={setModal} />
+              <AddButton label="Save" />
             </div>
           </form>
         </div>

@@ -105,10 +105,10 @@ export const AddCustomer = ({
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-10">
-      <div className="w-full max-w-3xl max-h-[90vh] bg-white rounded-xl border border-blue-600 shadow-lg overflow-y-auto">
+      <div className="w-full max-w-3xl max-h-[90vh] bg-white rounded-xl border border-indigo-900 shadow-lg overflow-y-auto">
         <form onSubmit={handlerSubmitted} className="flex flex-col">
           {/* Header */}
-          <div className="bg-blue-600 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
               setModal={setIsOpenModal}
               className="text-white text-lg font-semibold"
@@ -164,10 +164,10 @@ export const AddCustomer = ({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end items-center gap-3 px-6 py-4 bg-blue-600 rounded-b-xl">
+          <div className="flex justify-end items-center gap-3 px-6 py-4 bg-indigo-900 rounded-b-xl">
             <CancelBtn setModal={setIsOpenModal} />
             <AddButton
-              label={loading ? "Adding..." : "Add Customer"}
+              label={loading ? "Saving..." : "Save"}
               loading={loading}
             />
           </div>

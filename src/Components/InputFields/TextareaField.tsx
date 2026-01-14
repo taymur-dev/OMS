@@ -5,6 +5,7 @@ type TextareaFieldProps = {
   name: string;
   inputVal: string;
   disabled?: boolean;
+  className?: string;
 };
 
 export const TextareaField = ({

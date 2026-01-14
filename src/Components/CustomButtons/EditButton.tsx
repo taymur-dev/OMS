@@ -11,7 +11,7 @@ export const EditButton = ({ handleUpdate }: EditButtonProps) => {
         bg-grey
         p-1 py-0.5 px-2
         rounded-xl
-        border border-blue-500
+        border border-indigo-900
         hover:bg-blue-50
         hover:cursor-pointer
         active:scale-95
@@ -20,7 +20,7 @@ export const EditButton = ({ handleUpdate }: EditButtonProps) => {
     >
       <span className="text-[10px]"></span>
       <AiTwotoneEdit   size={20}
-        className="text-blue-500"
+        className="text-indigo-900"
         title="Edit" />
     </div>
   );

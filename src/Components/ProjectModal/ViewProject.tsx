@@ -22,7 +22,14 @@ export const ViewProject = ({
       <div className="w-full flex justify-center">
         <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg">
           {/* Title */}
-          <Title setModal={setIsOpenModal}>Project Detail</Title>
+          <div className="bg-blue-600 rounded">
+            <Title
+              setModal={setIsOpenModal}
+              className="text-white text-lg font-semibold"
+            >
+              Project Details
+            </Title>
+          </div>
 
           {/* User Details List */}
           <div className="mt-6 space-y-4">

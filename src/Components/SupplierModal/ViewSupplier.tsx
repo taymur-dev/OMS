@@ -20,8 +20,8 @@ export const ViewSupplierModal = ({ setModal, supplier }: ModalTProps) => {
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
-        <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg">
-           <div className="bg-blue-600 rounded-t-xl px-4">
+        <div className="bg-white w-full max-w-3xl border border-indigo-900 rounded-lg p-6 shadow-lg">
+           <div className="bg-indigo-900 rounded-t-xl px-4">
             <div className="text-white">
               <Title setModal={setModal}>SUPPLIER DETAILS</Title>
             </div>
