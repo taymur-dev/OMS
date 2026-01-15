@@ -1,3 +1,4 @@
+// AddProject.tsx
 import React, { FormEvent, useEffect, useState, useCallback } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
@@ -28,6 +29,7 @@ const initialState = {
   description: "",
   startDate: currentDate,
   endDate: currentDate,
+  completionStatus: "New", // default
 };
 
 export const AddProject = ({
@@ -59,13 +61,24 @@ export const AddProject = ({
     }
   }, [token]);
 
+  useEffect(() => {
+    handleGetAllCategories();
+  }, [handleGetAllCategories]);
+
   const handlerSubmitted = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await axios.post(`${BASE_URL}/api/admin/addProject`, addProject, {
-        headers: { Authorization: token },
-      });
-      handleGetAllProjects();
+      const res = await axios.post(
+        `${BASE_URL}/api/admin/addProject`,
+        addProject,
+        {
+          headers: { Authorization: `Bearer: ${token}` },
+        }
+      );
+
+      await handleGetAllProjects();
+      console.log(res);
+
       setModal();
       toast.success("Project submitted successfully!");
     } catch (error) {
@@ -73,10 +86,6 @@ export const AddProject = ({
       toast.error("Failed to submit project!");
     }
   };
-
-  useEffect(() => {
-    handleGetAllCategories();
-  }, [handleGetAllCategories]);
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
@@ -141,6 +150,20 @@ export const AddProject = ({
               handlerChange={handlerChange}
               inputVal={addProject.description}
               className="col-span-1 md:col-span-2"
+            />
+
+            {/* ✅ Completion Status Field */}
+            <OptionField
+              labelName="Completion Status*"
+              name="completionStatus"
+              value={addProject.completionStatus}
+              handlerChange={handlerChange}
+              optionData={[
+                { id: 1, label: "New", value: "New" },
+                { id: 2, label: "Working", value: "Working" },
+                { id: 3, label: "Complete", value: "Complete" },
+              ]}
+              inital="Select Status"
             />
           </div>
 

@@ -26,7 +26,7 @@ type TActivButton =
   | "People"
   | "Attendance"
   | "Employee"
-  | "AssignProjects"
+  | "Projects"
   | "Performance"
   | "Sale"
   | "manageExpense"
@@ -247,25 +247,18 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
       <SideBarButton
         isOpen={isOpen}
         icon={<GoProjectRoadmap size={20} />}
-        title={"Assign Project"}
+        title={"Project"}
         arrowIcon={<BiArrowBack />}
-        handlerClick={() => toggleButtonActive("AssignProjects")}
+        handlerClick={() => toggleButtonActive("Projects")}
         activeBtns={activeBtns}
-        activeBtn="AssignProjects"
+        activeBtn="Projects"
         className="hover:bg-indigo-900"
       />
       <div>
-        {activeBtns === "AssignProjects" && (
+        {activeBtns === "Projects" && (
           <AccordionItem isOpen={isOpen}>
             <ul className="flex flex-col ">
-              <Link
-                className={`my-button ${
-                  pathname === "/projects" && "bg-indigo-200"
-                } `}
-                to={"/projects"}
-              >
-                Projects
-              </Link>
+
               <Link
                 className={`my-button ${
                   pathname === "/projectCatogries" && "bg-indigo-200"
@@ -274,6 +267,16 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
               >
                 Project Categories
               </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/projects" && "bg-indigo-200"
+                } `}
+                to={"/projects"}
+              >
+                Projects List
+              </Link>
+             
               <Link
                 className={`my-button ${
                   pathname === "/assignprojects" && "bg-indigo-200"

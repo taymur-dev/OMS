@@ -7,7 +7,7 @@ type columT = {
 };
 
 type projectT = {
-  id: string;
+  id: string | number;
   projectName: string;
   status: string;
 };
@@ -17,17 +17,32 @@ type columDataT = {
   allProject: projectT[] | undefined;
 };
 
+const columnBorderColor = () => "border-indigo-900 hover:border-white";
+
+const columnHeaderBg = (id: string) => {
+  switch (id) {
+    case "New":
+      return "bg-blue-500";
+    case "Working":
+      return "bg-orange-500";
+    case "Complete":
+      return "bg-green-500";
+    default:
+      return "bg-gray-500";
+  }
+};
+
 const DraggableProjectCard = ({ project }: { project: projectT }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
-      id: project.id,
+      id: project.id.toString(),
     });
 
   const style = {
     transform: transform
       ? `translate(${transform.x}px, ${transform.y}px)`
       : undefined,
-    boxShadow: isDragging ? "0 10px 20px rgba(0,0,0,0.2)" : undefined,
+    boxShadow: isDragging ? "0 12px 25px rgba(0,0,0,0.25)" : undefined,
     zIndex: isDragging ? 50 : undefined,
   };
 
@@ -37,7 +52,8 @@ const DraggableProjectCard = ({ project }: { project: projectT }) => {
       {...listeners}
       {...attributes}
       style={style}
-      className="bg-white rounded-lg shadow-md hover:shadow-xl cursor-grab px-4 py-3 transition-all duration-200 border border-gray-100"
+      className="bg-white rounded-lg shadow-md hover:shadow-xl cursor-grab
+      px-4 py-3 transition-all duration-200 border border-gray-200"
     >
       <div className="flex items-center justify-between">
         <span className="text-gray-800 font-semibold">
@@ -49,7 +65,6 @@ const DraggableProjectCard = ({ project }: { project: projectT }) => {
   );
 };
 
-// 👇 Droppable column component
 export const Columns = ({ colum, allProject }: columDataT) => {
   const { setNodeRef, isOver } = useDroppable({
     id: colum.id,
@@ -58,19 +73,18 @@ export const Columns = ({ colum, allProject }: columDataT) => {
   return (
     <div
       ref={setNodeRef}
-      className={`w-full max-w-md h-96 mt-4 rounded-lg overflow-y-auto p-4 relative transition-all ${
+      className={`w-full max-w-md h-96 mt-1 mx-1 rounded-xl overflow-y-auto p-4
+      relative transition-all border-2 bg-white gap-6 shadow-sm
+      ${columnBorderColor()}
+      ${
         isOver
-          ? "bg-gray-50 border-2 border-dashed border-indigo-400"
-          : "bg-gray-100"
+          ? "ring-2 ring-white ring-offset-2 scale-[1.01]"
+          : "hover:shadow-md"
       }`}
     >
       <h1
-        className={`text-center text-lg font-semibold text-white border-2
-  p-3 rounded-md sticky top-0 z-10 shadow ${
-    (colum.id === "newProject" && "bg-blue-500") ||
-    (colum.id === "working" && "bg-orange-500") ||
-    (colum.id === "complete" && "bg-green-500")
-  }`}
+        className={`text-center text-lg font-semibold text-white p-3
+        rounded-lg sticky top-0 z-10 shadow ${columnHeaderBg(colum.id)}`}
       >
         {colum.title}
       </h1>
@@ -81,7 +95,7 @@ export const Columns = ({ colum, allProject }: columDataT) => {
             <DraggableProjectCard key={project.id} project={project} />
           ))
         ) : (
-          <p className="text-gray-400 text-center py-4">No projects yet</p>
+          <p className="text-gray-400 text-center py-6">No projects yet</p>
         )}
       </div>
     </div>

@@ -19,7 +19,12 @@ import { ViewProject } from "../../Components/ProjectModal/ViewProject";
 
 const numbers = [10, 25, 50, 100];
 
-type TPROJECT = "ADDPROJECT" | "EDITPROJECT" | "VIEWPROJECT" | "DELETEPROJECT" | "";
+type TPROJECT =
+  | "ADDPROJECT"
+  | "EDITPROJECT"
+  | "VIEWPROJECT"
+  | "DELETEPROJECT"
+  | "";
 
 type AllProjectT = {
   id: number;
@@ -28,6 +33,7 @@ type AllProjectT = {
   description: string;
   startDate: string;
   endDate: string;
+  completionStatus: string;
 };
 
 export const ProjectsDetails = () => {
@@ -92,8 +98,12 @@ export const ProjectsDetails = () => {
     () =>
       allProjects.filter(
         (project) =>
-          project.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          project.projectCategory.toLowerCase().includes(searchTerm.toLowerCase())
+          project.projectName
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          project.projectCategory
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
       ),
     [allProjects, searchTerm]
   );
@@ -117,7 +127,10 @@ export const ProjectsDetails = () => {
     <div className="w-full mx-2">
       <TableTitle tileName="Projects" activeFile="All Projects list" />
 
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
+      <div
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white
+       overflow-hidden flex flex-col"
+      >
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total Projects:{" "}
@@ -151,29 +164,44 @@ export const ProjectsDetails = () => {
             </span>
             <span>entries</span>
           </div>
-          <TableInputField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
 
         <div className="max-h-[28.4rem] overflow-y-auto mx-2">
-          <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr] bg-indigo-500  text-white font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]">
+          <div
+            className="grid grid-cols-5 bg-indigo-500  text-white font-semibold
+           border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
+          >
             <span>Sr#</span>
-            <span>Project</span>
             <span>Project Category</span>
+            <span>Project</span>
+            <span>Completion Status</span>
             <span className="text-center w-40">Actions</span>
           </div>
 
           {paginatedProjects?.map((project, index) => (
             <div
               key={project.id}
-              className="grid grid-cols-[0.5fr_1fr_1fr_1fr] border border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
+              className="grid grid-cols-5 border border-gray-600 text-gray-800 hover:bg-gray-100
+               transition duration-200 text-sm items-center justify-center p-[7px]"
             >
-              <span className="px-2">{(pageNo - 1) * entriesPerPage + index + 1}</span>
-              <span>{project.projectName}</span>
+              <span className="px-2">
+                {(pageNo - 1) * entriesPerPage + index + 1}
+              </span>
               <span>{project.projectCategory}</span>
+              <span>{project.projectName}</span>
+              <span>{project.completionStatus}</span>
               <span className="flex items-center gap-2">
-                <EditButton handleUpdate={() => handleClickEditButton(project)} />
+                <EditButton
+                  handleUpdate={() => handleClickEditButton(project)}
+                />
                 <ViewButton handleView={() => handleClickViewButton(project)} />
-                <DeleteButton handleDelete={() => handleClickDeleteButton(project.id)} />
+                <DeleteButton
+                  handleDelete={() => handleClickDeleteButton(project.id)}
+                />
               </span>
             </div>
           ))}
@@ -188,7 +216,9 @@ export const ProjectsDetails = () => {
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={() => setPageNo((prev) => (prev > 1 ? prev - 1 : 1))}
+          handleDecrementPageButton={() =>
+            setPageNo((prev) => (prev > 1 ? prev - 1 : 1))
+          }
           handleIncrementPageButton={() => setPageNo((prev) => prev + 1)}
         />
       </div>
@@ -222,7 +252,10 @@ export const ProjectsDetails = () => {
       )}
 
       {isOpenModal === "VIEWPROJECT" && viewProject && (
-        <ViewProject setIsOpenModal={() => setIsOpenModal("")} viewProject={viewProject} />
+        <ViewProject
+          setIsOpenModal={() => setIsOpenModal("")}
+          viewProject={viewProject}
+        />
       )}
     </div>
   );

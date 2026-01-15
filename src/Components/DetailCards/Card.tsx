@@ -24,14 +24,14 @@ const Card = ({
        border-2 border-indigo-900
        bg-white
        shadow-lg
-      p-5
-      flex flex-col justify-between
-text-gray-800
-relative overflow-hidden
-transform transition-all duration-300
-hover:scale-[1.03]
-hover:shadow-2xl
-hover:border-white
+       p-5
+       flex flex-col justify-between
+       text-gray-800
+       relative overflow-hidden
+       transform transition-all duration-300
+       hover:scale-[1.03]
+       hover:shadow-2xl
+       hover:border-white
 
         ${style}
       `}

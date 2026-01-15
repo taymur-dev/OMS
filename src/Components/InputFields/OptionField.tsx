@@ -37,8 +37,8 @@ export const OptionField = ({
           bg-white
           text-gray-900
           border
-          border-gray-300
-          focus:border-indigo-500
+          border-indigo-900
+          focus:border-indigo-900
           focus:ring
           focus:ring-indigo-200
           focus:outline-none

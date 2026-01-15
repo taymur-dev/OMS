@@ -16,6 +16,7 @@ type AllProjectT = {
   description: string;
   startDate: string;
   endDate: string;
+  completionStatus: string;
 };
 
 type AllCategoryT = {
@@ -52,7 +53,7 @@ export const UpdateProject = ({
   const handleGetAllCategories = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getCategory`, {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer: ${token}` },
       });
       setCategories(res.data);
     } catch (error) {
@@ -72,7 +73,7 @@ export const UpdateProject = ({
       const res = await axios.put(
         `${BASE_URL}/api/admin/updateProject/${updateProject.id}`,
         updateProject,
-        { headers: { Authorization: token } }
+        { headers: { Authorization: `Bearer: ${token}` } }
       );
 
       if (res.status === 200) {
@@ -147,6 +148,19 @@ export const UpdateProject = ({
               placeHolder="Enter Project Description..."
               handlerChange={handlerChange}
               inputVal={updateProject?.description ?? ""}
+            />
+
+            <OptionField
+              labelName="Completion Status*"
+              name="completionStatus"
+              value={updateProject?.completionStatus ?? "New"}
+              handlerChange={handlerChange}
+              optionData={[
+                { id: 1, label: "New", value: "New" },
+                { id: 2, label: "Working", value: "Working" },
+                { id: 3, label: "Complete", value: "Complete" },
+              ]}
+              inital="Select Status"
             />
           </div>
 

@@ -6,7 +6,6 @@ import { CiViewList } from "react-icons/ci";
 import { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/Hooks";
 import { navigationStart, navigationSuccess } from "../redux/NavigationSlice";
-// import { Loader } from "./LoaderComponent/Loader";
 import axios from "axios";
 import { BASE_URL } from "../Content/URL";
 import { OptionField } from "./InputFields/OptionField";
@@ -15,41 +14,37 @@ import Card from "./DetailCards/Card";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 
 type CategoryT = { id: number; categoryName: string };
-type DummyDataT = { id: string; projectName: string; status: string };
-
 type UserT = {
   id: number;
   name?: string;
   email?: string;
   loginStatus: "Y" | "N";
 };
+type TodoT = { id: number; todoStatus: "Y" | "N" };
 
-type TodoT = {
-  id: number;
-  todoStatus: "Y" | "N";
+type ProjectStatus = "New" | "Working" | "Complete";
+
+type AssignProjectAPIResponse = {
+  projectId: number;
+  projectName: string;
+  status: ProjectStatus;
+  projectCategory: string;
+};
+
+type ProjectT = {
+  id: string;
+  projectName: string;
+  status: ProjectStatus;
+  projectCategory: string;
 };
 
 const columsData = [
-  { id: "newProject", title: "New Project" },
-  { id: "working", title: "Working Project" },
-  { id: "complete", title: "Complete Project" },
-];
-
-const dummyProjects: DummyDataT[] = [
-  { id: "1", projectName: "Website Redesign", status: "newProject" },
-  { id: "2", projectName: "Marketing Strategy", status: "working" },
-  { id: "3", projectName: "Mobile App Launch", status: "complete" },
-  { id: "4", projectName: "CRM Integration", status: "working" },
-  { id: "5", projectName: "SEO Optimization", status: "newProject" },
-  { id: "6", projectName: "Cloud Migration", status: "complete" },
-  { id: "7", projectName: "Brand Identity Update", status: "working" },
-  { id: "8", projectName: "Internal Tooling", status: "newProject" },
-  { id: "9", projectName: "Sales Automation", status: "complete" },
-  { id: "10", projectName: "Customer Feedback System", status: "newProject" },
+  { id: "New", title: "New Project" },
+  { id: "Working", title: "Working Project" },
+  { id: "Complete", title: "Complete Project" },
 ];
 
 export const MainContent = () => {
-  // const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
   const dispatch = useAppDispatch();
   const token = currentUser?.token;
@@ -57,30 +52,38 @@ export const MainContent = () => {
   const [allUsers, setAllUsers] = useState<UserT[]>([]);
   const [allCategory, setAllCategory] = useState<CategoryT[] | null>(null);
   const [formData, setFormData] = useState({ categoryName: "" });
-  const [allAssignProjects, setAllAssignProjects] = useState([]);
+  const [allAssignProjects, setAllAssignProjects] = useState<ProjectT[]>([]);
   const [allTodos, setAllTodos] = useState<TodoT[]>([]);
   const [totalExpenseAmount, setTotalExpenseAmount] = useState(0);
   const [expenseCategory, setExpenseCategory] = useState([]);
-  const [dummyData, setDummyData] = useState<DummyDataT[]>(dummyProjects);
 
   const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
         headers: { Authorization: token },
       });
-
       setAllUsers(res?.data?.users);
     } catch (error) {
       console.log(error);
     }
   }, [token]);
 
-  const handlegetAssignProjects = useCallback(async () => {
+  const handleGetAssignProjects = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getAssignProjects`, {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer ${token}` },
       });
-      setAllAssignProjects(res.data);
+
+      const formattedProjects: ProjectT[] = res.data.map(
+        (p: AssignProjectAPIResponse) => ({
+          id: String(p.projectId),
+          projectName: p.projectName,
+          status: p.status,
+          projectCategory: p.projectCategory,
+        })
+      );
+
+      setAllAssignProjects(formattedProjects);
     } catch (error) {
       console.log(error);
     }
@@ -113,7 +116,6 @@ export const MainContent = () => {
       const res = await axios.get(`${BASE_URL}/api/admin/getTotalExpense`, {
         headers: { Authorization: token },
       });
-
       setTotalExpenseAmount(Number(res.data.totalExpense));
     } catch (error) {
       console.log(error);
@@ -136,16 +138,27 @@ export const MainContent = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
-    const taskId = active.id as string;
-    const newStatus = over.id as DummyDataT["status"];
-    setDummyData((prevData) =>
-      prevData.map((project) =>
-        project.id === taskId ? { ...project, status: newStatus } : project
-      )
+
+    const projectId = active.id;
+    const newStatus = over.id as ProjectStatus;
+
+    setAllAssignProjects((prev) =>
+      prev.map((p) => (p.id === projectId ? { ...p } : p))
     );
+
+    try {
+      await axios.put(
+        `${BASE_URL}/api/admin/updateProjectStatus/${projectId}`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (error) {
+      console.error(error);
+      handleGetAssignProjects();
+    }
   };
 
   useEffect(() => {
@@ -156,35 +169,27 @@ export const MainContent = () => {
 
   useEffect(() => {
     getAllUsers();
-    handlegetAssignProjects();
+    handleGetAssignProjects();
     handlegetTodos();
     handleGetTotalExpense();
     handleGetExpenseCategory();
     handleGetProjectsCategory();
   }, [
     getAllUsers,
-    handlegetAssignProjects,
+    handleGetAssignProjects,
     handlegetTodos,
     handleGetTotalExpense,
     handleGetExpenseCategory,
     handleGetProjectsCategory,
   ]);
 
-  // if (loader)
-  //   return (
-  //     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
-  //       <Loader />
-  //     </div>
-  //   );
-
   const activeUsers = allUsers.filter((user) => user.loginStatus === "Y");
-
   const activeTodos = allTodos.filter((todo) => todo.todoStatus === "Y");
 
   return (
     <div className="w-full h-full overflow-y-hidden p-1 space-y-6">
       <form className="flex-1 flex-col sm:flex-row gap-4">
-        <div className="ml-232  w-108  pt-1 pb-2  pr-2 pl-2">
+        <div className="ml-236 w-109">
           <OptionField
             labelName=""
             name="categoryName"
@@ -206,13 +211,23 @@ export const MainContent = () => {
             <Columns
               key={column.id}
               colum={column}
-              allProject={dummyData.filter((task) => task.status === column.id)}
+              allProject={
+                column.id === "New"
+                  ? // Only filter by category for New Project column
+                    allAssignProjects.filter(
+                      (project) =>
+                        !formData.categoryName ||
+                        project.projectCategory === formData.categoryName
+                    )
+                  : // For Working and Complete, show all projects (status-based filtering can go here later)
+                    allAssignProjects
+              }
             />
           ))}
         </DndContext>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 px-14">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-1 px-6.5">
         <Card
           titleName="Users"
           totalUser="Total Users"
