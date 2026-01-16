@@ -51,7 +51,7 @@ export const ViewEmployeeLifeLine = ({
       await axios.put(
         `${BASE_URL}/api/admin/updateEmpll/${editData.id}`,
         editData,
-        { headers: { Authorization: `Bearer: ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       handleEdit(editData);
@@ -77,7 +77,7 @@ export const ViewEmployeeLifeLine = ({
     try {
       await axios.delete(
         `${BASE_URL}/api/admin/deleteEmpll/${employeeData.id}`,
-        { headers: { Authorization: `Bearer: ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       handleDelete(employeeData.id);
       setIsOpenModal();

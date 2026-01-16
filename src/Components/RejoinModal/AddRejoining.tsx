@@ -74,7 +74,7 @@ export const AddRejoining = ({
   const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
-        headers: { Authorization: `Bearer: ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const filteredUsers = res.data.users.filter(
@@ -96,7 +96,7 @@ export const AddRejoining = ({
   const fetchLifeLines = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getEmployeeLifeLine`, {
-        headers: { Authorization: `Bearer: ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setLifeLines(Array.isArray(res.data) ? res.data : []);
     } catch {
@@ -107,7 +107,7 @@ export const AddRejoining = ({
   const fetchResignations = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getResignations`, {
-        headers: { Authorization: `Bearer: ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setResignations(Array.isArray(res.data) ? res.data : []);
     } catch {
@@ -166,7 +166,7 @@ export const AddRejoining = ({
       };
 
       const res = await axios.post(url, payload, {
-        headers: { Authorization: `Bearer: ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       toast.success(res.data.message);

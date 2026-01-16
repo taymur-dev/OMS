@@ -68,7 +68,7 @@ export const AddAssignProject = ({
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
         headers: {
-          Authorization: `Bearer: ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 

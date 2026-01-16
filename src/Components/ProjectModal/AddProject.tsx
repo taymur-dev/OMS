@@ -53,7 +53,7 @@ export const AddProject = ({
   const handleGetAllCategories = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getCategory`, {
-        headers: { Authorization: `Bearer: ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setCategories(res.data);
     } catch (error) {
@@ -72,7 +72,7 @@ export const AddProject = ({
         `${BASE_URL}/api/admin/addProject`,
         addProject,
         {
-          headers: { Authorization: `Bearer: ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 

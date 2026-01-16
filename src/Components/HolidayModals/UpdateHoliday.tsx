@@ -73,7 +73,7 @@ export const UpdateHoliday = ({
           date: holidayData.date,
         },
         {
-          headers: { Authorization: `Bearer: ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 

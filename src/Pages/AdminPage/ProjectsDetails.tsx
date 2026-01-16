@@ -53,7 +53,7 @@ export const ProjectsDetails = () => {
   const handleGetAllProjects = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getProjects`, {
-        headers: { Authorization: `Bearer: ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       const sortedProjects = res.data.sort(
         (a: AllProjectT, b: AllProjectT) => a.id - b.id
@@ -69,7 +69,7 @@ export const ProjectsDetails = () => {
       await axios.patch(
         `${BASE_URL}/api/admin/deleteProject/${catchId}`,
         {},
-        { headers: { Authorization: `Bearer: ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success("Project has been deleted successfully");
       setAllProjects((prev) => prev.filter((p) => p.id !== catchId));

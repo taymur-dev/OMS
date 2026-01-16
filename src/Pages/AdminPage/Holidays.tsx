@@ -110,15 +110,16 @@ export const Holidays = () => {
     setPageNo(1);
   };
 
-  const filteredHolidays = useMemo(
-    () =>
-      [...allHoliday]
-        .sort((a, b) => a.id - b.id)
-        .filter((holiday) =>
-          holiday.holiday.toLowerCase().includes(searchTerm.toLowerCase())
-        ),
-    [allHoliday, searchTerm]
-  );
+ const filteredHolidays = useMemo(
+  () =>
+    [...allHoliday]
+      .sort((a, b) => a.id - b.id) 
+      .filter((holiday) =>
+        holiday.holiday.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+  [allHoliday, searchTerm]
+);
+
 
   const paginatedHolidays = useMemo(
     () =>

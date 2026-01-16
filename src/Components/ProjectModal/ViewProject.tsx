@@ -67,13 +67,6 @@ export const ViewProject = ({
                 {viewProject?.endDate.slice(0, 10)}
               </p>
             </div>
-
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">
-                Status:
-              </span>
-              <p className="text-gray-600">{"Current"}</p>
-            </div>
           </div>
         </div>
       </div>
