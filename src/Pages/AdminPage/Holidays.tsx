@@ -112,9 +112,11 @@ export const Holidays = () => {
 
   const filteredHolidays = useMemo(
     () =>
-      allHoliday.filter((holiday) =>
-        holiday.holiday.toLowerCase().includes(searchTerm.toLowerCase())
-      ),
+      [...allHoliday]
+        .sort((a, b) => a.id - b.id)
+        .filter((holiday) =>
+          holiday.holiday.toLowerCase().includes(searchTerm.toLowerCase())
+        ),
     [allHoliday, searchTerm]
   );
 
