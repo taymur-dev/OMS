@@ -10,8 +10,8 @@ export const Profile = () => {
       <div className="h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white ">
         <div className="flex text-gray-800 items-center justify-between  m-2">
           <div className="w-full flex justify-center">
-            <div className="bg-indigo-900 w-full max-w-3xl border border-indigo-900 rounded-lg p-6 shadow-lg mt-12">
-              <div className="flex items-center gap-6 bg-white p-6 shadow-md rounded-lg">
+            <div className="bg-white w-full max-w-3xl border border-indigo-900 rounded-lg p-6 shadow-lg mt-12">
+              <div className="flex items-center gap-6 bg-indigo-900 p-6 shadow-md rounded-lg">
                 <img
                   className="w-24 h-24 rounded-full border-4 border-indigo-900 bg-indigo-900 object-cover"
                   src={profileImage}
