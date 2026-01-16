@@ -19,10 +19,10 @@ export const Profile = () => {
                 />
 
                 <div className="flex flex-col">
-                  <h2 className="text-2xl font-semibold text-gray-800">
+                  <h2 className="text-2xl font-semibold text-white">
                     {currentUser?.name ?? "Guest"}
                   </h2>
-                  <h4 className="text-sm text-gray-500">
+                  <h4 className="text-sm text-white">
                     {currentUser?.role ?? "Role"}
                   </h4>
                 </div>
