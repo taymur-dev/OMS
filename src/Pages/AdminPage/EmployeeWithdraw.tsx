@@ -132,11 +132,11 @@ export const EmployeeWithdraw = () => {
         activeFile="Employees Withdraw list"
       />
 
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Employees Withdraw:{" "}
-            <span className="text-2xl text-blue-500 font-semibold font-sans">
+            <span className="text-2xl text-indigo-900 font-semibold font-sans">
               [{filteredEmployees.length}]
             </span>
           </span>
@@ -169,8 +169,8 @@ export const EmployeeWithdraw = () => {
 
         <div className="max-h-[28.4rem] overflow-y-auto mx-2">
           <div
-            className="grid grid-cols-[0.5fr_1fr_1fr_1fr] bg-indigo-500 text-white font-semibold
-           border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
+            className="grid grid-cols-[0.5fr_1fr_1fr_1fr] bg-indigo-900 text-white font-semibold
+           border border-indigo-900 text-sm sticky top-0 z-10 p-[10px]"
           >
             <span>Sr#</span>
             <span>Employee Name</span>
@@ -180,7 +180,7 @@ export const EmployeeWithdraw = () => {
 
           {paginatedEmployees.map((withdraw, index) => (
             <div
-              className="grid grid-cols-[0.5fr_1fr_1fr_1fr] border border-gray-600 text-gray-800
+              className="grid grid-cols-[0.5fr_1fr_1fr_1fr] border border-indigo-900 text-gray-800
                 hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[4px]"
               key={withdraw.withdrawalId}
             >

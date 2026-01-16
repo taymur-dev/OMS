@@ -124,13 +124,13 @@ export const Payments = () => {
       <TableTitle tileName="Payment" activeFile="All Payment list" />
 
       <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
        overflow-hidden flex flex-col"
       >
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total Payments:
-            <span className="text-2xl text-blue-500 font-semibold ml-1">
+            <span className="text-2xl text-indigo-900 font-semibold ml-1">
               [{filteredPayments.length}]
             </span>
           </span>
@@ -168,7 +168,7 @@ export const Payments = () => {
 
         <div className="max-h-[28.4rem] overflow-y-auto mx-2">
           <div
-            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] bg-indigo-500  text-white
+            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] bg-indigo-900  text-white
            font-semibold border sticky top-0 p-[10px]"
           >
             <span>Sr</span>

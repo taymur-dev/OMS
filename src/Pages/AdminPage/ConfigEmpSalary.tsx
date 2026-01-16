@@ -110,11 +110,11 @@ export const ConfigEmpSalary = () => {
     <div className="w-full mx-2">
       <TableTitle tileName="Salaries" activeFile="Salaries list" />
 
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Salaries:{" "}
-            <span className="text-2xl text-blue-500 font-semibold font-sans">
+            <span className="text-2xl text-indigo-900 font-semibold font-sans">
               [{totalRecords}]
             </span>
           </span>
@@ -212,7 +212,7 @@ export const ConfigEmpSalary = () => {
 
         <div className="max-h-[28.4rem] overflow-y-auto overflow-x-hidden mx-2">
           <div
-            className="grid grid-cols-11 bg-indigo-500 text-white font-semibold 
+            className="grid grid-cols-11 bg-indigo-900 text-white font-semibold 
                border border-gray-600 text-sm sticky top-0 z-10 py-2 px-1"
           >
             <span className="truncate">Sr#</span>
@@ -258,7 +258,7 @@ export const ConfigEmpSalary = () => {
               <span className="truncate">
                 {new Date(salary.config_date).toLocaleDateString("en-CA")}
               </span>
-              <span className="flex items-center justify-center gap-1">
+              <span className="flex justify-center gap-1">
                 <EditButton
                   handleUpdate={() => {
                     setSelectedSalary(salary);

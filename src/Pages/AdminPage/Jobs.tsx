@@ -98,11 +98,11 @@ export const Jobs = () => {
     <div className="w-full mx-2">
       <TableTitle tileName="Jobs" activeFile="Jobs list" />
 
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white flex flex-col">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col">
         <div className="flex items-center justify-between mx-2 py-2">
           <span>
             Total number of Jobs :
-            <span className="text-2xl text-blue-500 font-semibold">
+            <span className="text-2xl text-indigo-900 font-semibold">
               [{totalJobs}]
             </span>
           </span>
@@ -140,7 +140,7 @@ export const Jobs = () => {
         </div>
 
         <div className="overflow-y-auto mx-2">
-          <div className="grid grid-cols-4 bg-indigo-500 text-white font-semibold text-sm p-3 sticky top-0">
+          <div className="grid grid-cols-4 bg-indigo-900 text-white font-semibold text-sm p-3 sticky top-0">
             <span>Sr#</span>
             <span>Job Title</span>
             <span className="text-center">Actions</span>

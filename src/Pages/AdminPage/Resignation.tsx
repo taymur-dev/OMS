@@ -160,13 +160,13 @@ export const Resignation = () => {
       />
 
       <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
        overflow-hidden flex flex-col"
       >
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total Resignations:{" "}
-            <span className="text-2xl text-blue-500 font-semibold font-sans">
+            <span className="text-2xl text-indigo-900 font-semibold font-sans">
               [{totalItems}]
             </span>
           </span>
@@ -199,7 +199,7 @@ export const Resignation = () => {
 
         <div className="mx-2 max-h-[28.4rem] overflow-y-auto">
           <div
-            className="grid grid-cols-6 bg-indigo-500 text-white font-semibold border border-gray-600
+            className="grid grid-cols-6 bg-indigo-900 text-white font-semibold border border-gray-600
            text-sm sticky top-0 z-10 p-[10px]"
           >
             <span>Sr#</span>

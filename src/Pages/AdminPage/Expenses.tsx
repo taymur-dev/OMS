@@ -110,13 +110,13 @@ export const Expenses = () => {
       <TableTitle tileName="Expenses" activeFile="Expenses list" />
 
       <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
   overflow-hidden flex flex-col"
       >
         <div className="flex items-center justify-between mx-2 py-2">
           <span>
             Total number of Expense:{" "}
-            <span className="text-2xl text-blue-500 font-semibold">
+            <span className="text-2xl text-indigo-900 font-semibold">
               {totalRecords}
             </span>
           </span>
@@ -154,7 +154,7 @@ export const Expenses = () => {
         </div>
 
         <div className="flex-1 mx-2">
-          <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] bg-indigo-500 text-white font-semibold p-2 sticky top-0">
+          <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] bg-indigo-900 text-white font-semibold p-2 sticky top-0">
             <span>Sr#</span>
             <span>Expense Name</span>
             <span>Category</span>
@@ -202,7 +202,7 @@ export const Expenses = () => {
               <span></span>
               <span></span>
               <span className="text-right">Total Expense:</span>
-              <span className="text-blue-600">
+              <span className="text-blue-500">
                 {totalExpenseAmount.toLocaleString()}
               </span>
               <span></span>

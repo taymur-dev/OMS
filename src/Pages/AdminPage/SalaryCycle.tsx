@@ -91,13 +91,13 @@ export const SalaryCycle = () => {
       <TableTitle tileName="Salary Cycle List" activeFile="Salary Cycle" />
 
       <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white 
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white 
       overflow-hidden flex flex-col"
       >
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total Salary Cycles :{" "}
-            <span className="text-2xl text-blue-500 font-semibold font-sans">
+            <span className="text-2xl text-indigo-900 font-semibold font-sans">
               [{filteredList.length}]
             </span>
           </span>
@@ -180,7 +180,7 @@ export const SalaryCycle = () => {
         {/* Table Header */}
         <div className="max-h-[28.4rem] overflow-y-auto mx-2">
           <div
-            className="grid grid-cols-4 bg-indigo-500 text-white font-semibold border border-gray-600
+            className="grid grid-cols-4 bg-indigo-900 text-white font-semibold border border-gray-600
  text-sm sticky top-0 z-10 p-[10px] text-center"
           >
             <span>Sr#</span>

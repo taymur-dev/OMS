@@ -21,9 +21,17 @@ export const ViewExpense = ({
   return (
     <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
-        <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg">
+        <div className="bg-white w-full max-w-3xl border border-indigo-900 rounded p-6 shadow-lg">
           {/* Title */}
-          <Title setModal={setIsOpenModal}>Expense Detail</Title>
+
+          <div className="bg-indigo-900 rounded px-6">
+            <Title
+              setModal={setIsOpenModal}
+              className="text-white text-lg font-semibold"
+            >
+              Expense Details
+            </Title>
+          </div>
 
           {/* User Details List */}
           <div className="mt-6 space-y-4">

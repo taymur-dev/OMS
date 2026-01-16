@@ -136,7 +136,7 @@ export const EmployeeDashboard = () => {
     <div className="w-full">
       <div className="flex flex-col md:flex-row gap-4 text-gray-700 p-4">
         <div className="bg-white rounded-xl shadow-md w-full h-80">
-          <div className="bg-indigo-500 text-white rounded-t-xl px-4 py-3 font-semibold text-lg">
+          <div className="bg-indigo-900 text-white rounded-t-xl px-4 py-3 font-semibold text-lg">
             Todo's
           </div>
           <div className="p-4 border-b flex justify-between items-center text-sm font-semibold">
@@ -149,13 +149,13 @@ export const EmployeeDashboard = () => {
               Deadline
             </div>
           </div>
-          <div className="p-4 text-center text-blue-500 text-sm font-medium hover:underline cursor-pointer">
+          <div className="p-4 text-center text-indigo-900 text-sm font-medium hover:underline cursor-pointer">
             <Link to={"/users/todo"}>For More</Link>
           </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-md h-80 w-full">
-          <div className="bg-indigo-500 text-white rounded-t-xl px-4 py-3 font-semibold text-lg">
+          <div className="bg-indigo-900 text-white rounded-t-xl px-4 py-3 font-semibold text-lg">
             Project's
           </div>
           <div className="p-4 border-b flex justify-between items-center text-sm font-semibold">

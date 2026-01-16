@@ -1,18 +1,27 @@
 import { Title } from "../Title";
-import { ALLPROGRESST } from "../../Pages/Progress"; 
+import { ALLPROGRESST } from "../../Pages/Progress";
 
 type ViewProgressProps = {
   setIsOpenModal: () => void;
   viewProgress: ALLPROGRESST | null;
 };
 
-export const ViewProgress = ({ setIsOpenModal, viewProgress }: ViewProgressProps) => {
+export const ViewProgress = ({
+  setIsOpenModal,
+  viewProgress,
+}: ViewProgressProps) => {
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
-        <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg">
-          <Title setModal={setIsOpenModal}>Progress Detail</Title>
-
+        <div className="bg-white w-full max-w-3xl border border-indigo-900 rounded p-6 shadow-lg">
+          <div className="bg-indigo-900 rounded px-6">
+            <Title
+              setModal={setIsOpenModal}
+              className="text-white text-lg font-semibold"
+            >
+              Progress Details
+            </Title>
+          </div>
           <div className="mt-6 space-y-4">
             {viewProgress?.employeeName && (
               <div className="flex justify-between border-b pb-2">
@@ -37,7 +46,9 @@ export const ViewProgress = ({ setIsOpenModal, viewProgress }: ViewProgressProps
                 <span className="text-lg font-semibold text-gray-800">
                   Date:
                 </span>
-                <p className="text-gray-600">{viewProgress.date.slice(0, 10)}</p>
+                <p className="text-gray-600">
+                  {viewProgress.date.slice(0, 10)}
+                </p>
               </div>
             )}
 

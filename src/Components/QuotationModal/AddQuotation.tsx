@@ -41,7 +41,7 @@ const initialState = {
   UnitPrice: "",
 };
 
-export const AddQuotation = ({ setModal , onAdded }: AddQuotationProps) => {
+export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
@@ -177,28 +177,33 @@ export const AddQuotation = ({ setModal , onAdded }: AddQuotationProps) => {
   const totalBill = subTotal;
 
   const closeModal = () => {
-  setCart([]);
-  sessionStorage.removeItem("cart");
-  setAddQuotation(initialState);
-  setSelectedProject("");
-  setSelectedCustomer("");
-  setModal(); 
-};
-
+    setCart([]);
+    sessionStorage.removeItem("cart");
+    setAddQuotation(initialState);
+    setSelectedProject("");
+    setSelectedCustomer("");
+    setModal();
+  };
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="w-[48rem] max-h-[100vh] overflow-y-auto bg-white rounded-2xl border border-indigo-300 shadow-lg p-6">
-        <Title setModal={setModal}>Add Quotation</Title>
-
+      <div className="w-[48rem] max-h-[100vh] overflow-y-auto bg-white rounded-2xl border border-indigo-900 shadow-lg  p-2">
+        <div className="bg-indigo-900 rounded-t-xl px-6">
+          <Title
+            setModal={setModal}
+            className="text-white text-lg font-semibold"
+          >
+            Add Quotation
+          </Title>
+        </div>
         <div className="space-y-4 mt-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 py-2 gap-4">
             <div>
               <label className="text-sm font-semibold text-gray-700 mb-1 block">
                 Project*
               </label>
               <select
-                className="w-full border rounded-md p-2 text-sm focus:ring-1 focus:ring-indigo-400"
+                className="w-full border rounded-md p-2 text-sm focus:ring-1 focus:ring-indigo-900"
                 value={selectedProject}
                 onChange={(e) => setSelectedProject(e.target.value)}
               >
@@ -245,7 +250,7 @@ export const AddQuotation = ({ setModal , onAdded }: AddQuotationProps) => {
         </div>
 
         <div className="mt-6 border rounded-lg overflow-hidden">
-          <div className="grid grid-cols-6 bg-indigo-50 text-sm font-semibold border-b text-center">
+          <div className="grid grid-cols-6 bg-indigo-900 text-sm text-white font-semibold border-b text-center">
             <span className="pt-2 pb-2">Sr</span>
             <span className="p-2">Project</span>
             <span className="p-2">Description</span>
@@ -262,7 +267,7 @@ export const AddQuotation = ({ setModal , onAdded }: AddQuotationProps) => {
             cart.map((item, index) => (
               <div
                 key={item.id}
-                className="grid grid-cols-6 text-sm border-b hover:bg-gray-50 text-center items-center gap-1"
+                className="grid grid-cols-6 text-sm border-b hover:bg-indigo-900 text-center items-center gap-1"
               >
                 <span>{index + 1}</span>
                 <span>{item.projectName}</span>
@@ -330,12 +335,12 @@ export const AddQuotation = ({ setModal , onAdded }: AddQuotationProps) => {
           )}
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 py-2">
           <label className="text-sm font-semibold text-gray-700 mb-1 block">
             Customer*
           </label>
           <select
-            className="w-full border rounded-md p-2 text-sm focus:ring-1 focus:ring-indigo-400"
+            className="w-full border rounded-md p-2 text-sm focus:ring-1 focus:ring-indigo-900"
             value={selectedCustomer}
             onChange={(e) => setSelectedCustomer(e.target.value)}
           >
@@ -356,7 +361,7 @@ export const AddQuotation = ({ setModal , onAdded }: AddQuotationProps) => {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full border rounded p-2 text-sm focus:ring-1 focus:ring-indigo-400"
+                className="w-full border rounded p-2 text-sm focus:ring-1 focus:ring-indigo-900"
               />
             </div>
             <div>
@@ -384,9 +389,9 @@ export const AddQuotation = ({ setModal , onAdded }: AddQuotationProps) => {
           </div>
         </div>
 
-        <div className="flex justify-center gap-3 mt-6">
+        <div className="flex justify-end gap-3 px-4 rounded-b-xl py-2 bg-indigo-900 border-t border-indigo-900">
           <CancelBtn setModal={closeModal} />
-          <AddButton label="Add Quotation" handleClick={handlerSubmitted} />
+          <AddButton label="Save" handleClick={handlerSubmitted} />
         </div>
       </div>
     </div>

@@ -31,7 +31,7 @@ export const UserSelect = ({
         onChange={handlerChange}
         name={name}
         disabled={disabled}
-        className="p-1 rounded bg-white text-gray-800 border border-gray-300 focus:outline-indigo-500"
+        className="p-1 rounded bg-white text-gray-800 border border-gray-300 focus:outline-indigo-900"
       >
         <option value="">Please Select User</option>
         {optionData?.map((opt, idx) => (

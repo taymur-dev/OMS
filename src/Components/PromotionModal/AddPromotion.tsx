@@ -131,7 +131,13 @@ export const AddPromotion = ({
     const { id, current_designation, requested_designation, note, date } =
       addPromotion;
 
-    if (!id || !current_designation || !requested_designation || !note || !date) {
+    if (
+      !id ||
+      !current_designation ||
+      !requested_designation ||
+      !note ||
+      !date
+    ) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -169,11 +175,18 @@ export const AddPromotion = ({
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white rounded-xl border border-indigo-500">
+      <div className="w-[42rem] bg-white rounded-xl border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
-          <Title setModal={setModal}>Add Employee Promotion</Title>
+          <div className="bg-indigo-900 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Add Employee Promotion
+            </Title>
+          </div>
 
-          <div className="mx-2 flex-wrap gap-3">
+          <div className="mx-2 grid grid-cols-2 py-2 gap-3">
             {isAdmin && (
               <UserSelect
                 labelName="Select Employee*"
@@ -203,14 +216,6 @@ export const AddPromotion = ({
               value={addPromotion.requested_designation}
             />
 
-            <TextareaField
-              labelName="Note*"
-              placeHolder="Write promotion reason"
-              handlerChange={handlerChange}
-              name="note"
-              inputVal={addPromotion.note}
-            />
-
             <InputField
               labelName="Date*"
               placeHolder="Select Date"
@@ -219,11 +224,19 @@ export const AddPromotion = ({
               handlerChange={handlerChange}
               value={addPromotion.date}
             />
+
+            <TextareaField
+              labelName="Note*"
+              placeHolder="Write promotion reason"
+              handlerChange={handlerChange}
+              name="note"
+              inputVal={addPromotion.note}
+            />
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Add Promotion" />
+            <AddButton label="Save" />
           </div>
         </form>
       </div>

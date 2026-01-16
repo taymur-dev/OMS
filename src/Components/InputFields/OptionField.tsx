@@ -40,7 +40,7 @@ export const OptionField = ({
           border-indigo-900
           focus:border-indigo-900
           focus:ring
-          focus:ring-indigo-200
+          focus:ring-indigo-900
           focus:outline-none
           transition
           duration-200

@@ -143,13 +143,13 @@ export const Promotion = () => {
       />
 
       <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
   overflow-hidden flex flex-col"
       >
         <div className="flex items-center justify-between mx-2">
           <span>
             Total Promotions:{" "}
-            <span className="text-2xl text-blue-500 font-semibold">
+            <span className="text-2xl text-indigo-900 font-semibold">
               {totalItems}
             </span>
           </span>
@@ -185,7 +185,7 @@ export const Promotion = () => {
 
         <div className="mx-2 flex-1 overflow-y-auto">
           <div
-            className={`grid grid-cols-6 bg-indigo-500 text-white font-semibold p-2 sticky top-0`}
+            className={`grid grid-cols-6 bg-indigo-900 text-white font-semibold p-2 sticky top-0`}
           >
             <span>Sr#</span>
             <span>Employee Name</span>

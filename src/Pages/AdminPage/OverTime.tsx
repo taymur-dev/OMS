@@ -125,13 +125,13 @@ export const OverTime = () => {
       <TableTitle tileName="Over Time" activeFile="Overtime List" />
 
       <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
        overflow-hidden flex flex-col"
       >
         <div className="flex items-center justify-between mx-2 text-gray-800">
           <span>
             Total Overtime Records:{" "}
-            <span className="text-2xl text-blue-500 font-semibold">
+            <span className="text-2xl text-indigo-900 font-semibold">
               {filteredOvertime.length}
             </span>
           </span>
@@ -170,7 +170,7 @@ export const OverTime = () => {
 
         <div className="max-h-[28.6rem] overflow-y-auto mx-2">
           <div
-            className="grid grid-cols-[0.3fr_1fr_1fr_1fr_1fr_1fr] bg-indigo-500 text-white font-semibold
+            className="grid grid-cols-[0.3fr_1fr_1fr_1fr_1fr_1fr] bg-indigo-900 text-white font-semibold
            border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
           >
             <span>Sr#</span>
@@ -192,7 +192,7 @@ export const OverTime = () => {
               <span>{new Date(ot.date).toLocaleDateString("sv-SE")}</span>
               <span>{ot.totalTime}</span>
               <span>{ot.approvalStatus}</span>
-              <span className="flex gap-1">
+              <span className="flex justify-center gap-1">
                 {(currentUser?.role === "admin" ||
                   ot.name === currentUser?.name) && (
                   <EditButton
@@ -247,7 +247,10 @@ export const OverTime = () => {
       </div>
 
       {isOpenModal === "ADD" && (
-        <AddOverTime setModal={() => setIsOpenModal("")} refreshOvertime={handleGetOvertime} />
+        <AddOverTime
+          setModal={() => setIsOpenModal("")}
+          refreshOvertime={handleGetOvertime}
+        />
       )}
 
       {isOpenModal === "UPDATE" && selectedOvertime && (

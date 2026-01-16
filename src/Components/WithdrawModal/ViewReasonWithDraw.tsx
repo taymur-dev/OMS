@@ -20,10 +20,10 @@ export const ViewReasonWithDraw = ({
   return (
     <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
-        <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg">
+        <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded p-6 shadow-lg">
           {/* Title */}
 
-          <div className="bg-blue-600 rounded-t-xl px-6">
+          <div className="bg-blue-600 rounded px-6">
             <Title
               setModal={setIsOpenModal}
               className="text-white text-lg font-semibold"

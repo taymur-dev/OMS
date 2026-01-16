@@ -18,9 +18,15 @@ export const ViewResignation = ({
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
-        <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg">
-          <Title setModal={setModal}>Resignation Details</Title>
-
+        <div className="bg-white w-full max-w-3xl border border-indigo-900 rounded p-6 shadow-lg">
+          <div className="bg-indigo-900 rounded px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Resignation Details
+            </Title>
+          </div>
           <div className="mt-6 space-y-4">
             {resignationData.employee_name && (
               <div className="flex justify-between border-b pb-2">
@@ -46,16 +52,18 @@ export const ViewResignation = ({
                   Resignation Date:
                 </span>
                 <p className="text-gray-600">
-                  {new Date(resignationData.resignation_date).toLocaleDateString(
-                    "en-CA"
-                  )}
+                  {new Date(
+                    resignationData.resignation_date
+                  ).toLocaleDateString("en-CA")}
                 </p>
               </div>
             )}
 
             {resignationData.note && (
               <div className="flex justify-between border-b pb-2">
-                <span className="text-lg font-semibold text-gray-800">Note:</span>
+                <span className="text-lg font-semibold text-gray-800">
+                  Note:
+                </span>
                 <p className="text-gray-600">{resignationData.note}</p>
               </div>
             )}
@@ -65,7 +73,9 @@ export const ViewResignation = ({
                 <span className="text-lg font-semibold text-gray-800">
                   Approval Status:
                 </span>
-                <p className="text-gray-600">{resignationData.approval_status}</p>
+                <p className="text-gray-600">
+                  {resignationData.approval_status}
+                </p>
               </div>
             )}
           </div>

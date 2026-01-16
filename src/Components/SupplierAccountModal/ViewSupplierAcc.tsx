@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 import { Loader } from "../LoaderComponent/Loader";
 
@@ -95,9 +94,15 @@ export const ViewSupplierAcc = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[60rem] max-h-[80vh] overflow-y-auto bg-white rounded-xl border border-indigo-500 p-4">
-        <Title setModal={setModal}>Supplier Account Details</Title>
-
+      <div className="w-[60rem] max-h-[80vh] overflow-y-auto bg-white rounded border border-indigo-900 p-4">
+        <div className="bg-indigo-900 rounded px-6">
+          <Title
+            setModal={setModal}
+            className="text-white text-lg font-semibold"
+          >
+            Supplier Account Details
+          </Title>
+        </div>
         <div className="my-4 grid line-height-4">
           <div>
             <span className="font-semibold">Name: </span>
@@ -115,7 +120,7 @@ export const ViewSupplierAcc = ({
 
         <div className="overflow-x-auto">
           <div
-            className="grid grid-cols-7 bg-indigo-500 text-white font-semibold
+            className="grid grid-cols-7 bg-indigo-900 text-white font-semibold
             border border-gray-600 text-sm p-2 sticky top-0 z-10"
           >
             <span>Sr#</span>
@@ -148,10 +153,6 @@ export const ViewSupplierAcc = ({
               </div>
             ))
           )}
-        </div>
-
-        <div className="flex justify-center mt-4">
-          <CancelBtn setModal={setModal} />
         </div>
       </div>
     </div>

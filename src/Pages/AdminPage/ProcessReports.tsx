@@ -200,7 +200,7 @@ export const ProcessReports = () => {
       </div>
 
       <div
-        className="max-h-[58vh] h-full shadow-lg border-t-2 border-indigo-500 
+        className="max-h-[58vh] h-full shadow-lg border-t-2 border-indigo-900 
   bg-white rounded overflow-hidden flex flex-col"
       >
         <div className="flex items-center justify-between mx-2">
@@ -246,7 +246,7 @@ export const ProcessReports = () => {
         </div>
 
         <div id="myDiv" className="mx-2 flex-1 overflow-y-auto">
-          <div className="grid grid-cols-7 bg-indigo-500 text-white font-semibold sticky top-0 p-2">
+          <div className="grid grid-cols-7 bg-indigo-900 text-white font-semibold sticky top-0 p-2">
             <span>Sr#</span>
             <span>Employee</span>
             <span>Task</span>

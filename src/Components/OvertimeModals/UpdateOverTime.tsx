@@ -60,7 +60,6 @@ export const UpdateOverTime = ({
 
   /* ------------------ STATE ------------------ */
   const [allUsers, setAllUsers] = useState<User[]>([]);
-  const [submitting, setSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     employeeId: "",
@@ -127,8 +126,6 @@ export const UpdateOverTime = ({
     e.preventDefault();
     if (!EditOvertime) return;
 
-    setSubmitting(true);
-
     try {
       const payload = {
         employeeId: Number(formData.employeeId),
@@ -153,29 +150,40 @@ export const UpdateOverTime = ({
       console.error(error);
       toast.error("Failed to update overtime.");
     } finally {
-      setSubmitting(false);
+      // setSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[30rem] bg-white mx-auto rounded-xl border border-indigo-500 p-4 overflow-auto">
-
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="w-[42rem] max-h-[85vh] bg-white rounded-xl border border-indigo-300 shadow-xl overflow-hidden">
         {currentUser?.role !== "admin" ? (
-          <div className="text-center p-4">
-            <p className="text-red-600 font-bold">Only admins can edit overtime.</p>
+          <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
+            <p className="text-red-600 font-semibold text-lg">
+              Only admins can edit overtime.
+            </p>
+
             <button
               onClick={setModal}
-              className="mt-4 px-4 py-2 border rounded bg-indigo-500 text-white hover:bg-indigo-600"
+              className="mt-6 px-6 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-900 transition"
             >
               Close
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit}>
-            <Title setModal={setModal}>Update Overtime</Title>
+          <form onSubmit={handleSubmit} className="flex flex-col">
+            {/* Header */}
+            <div className="bg-indigo-900 rounded-t-xl px-6">
+              <Title
+                setModal={setModal}
+                className="text-white text-lg font-semibold"
+              >
+                Update OverTime
+              </Title>
+            </div>
 
-            <div className="flex flex-col gap-3">
+            {/* Body */}
+            <div className="px-6 py-5 grid grid-cols-2 gap-x-5 gap-y-4 overflow-y-auto">
               <UserSelect
                 labelName="Employee*"
                 name="employeeId"
@@ -199,14 +207,6 @@ export const UpdateOverTime = ({
                 handlerChange={handleChange}
               />
 
-              <TextareaField
-                labelName="Description*"
-                name="description"
-                inputVal={formData.description}
-                handlerChange={handleChange}
-                placeHolder="Write overtime details..."
-              />
-
               <OptionField
                 labelName="Status"
                 name="status"
@@ -215,15 +215,26 @@ export const UpdateOverTime = ({
                 optionData={optionData}
                 inital="Pending"
               />
+
+              {/* Full width textarea */}
+              <div className="col-span-2">
+                <TextareaField
+                  labelName="Description*"
+                  name="description"
+                  inputVal={formData.description}
+                  handlerChange={handleChange}
+                  placeHolder="Write overtime details..."
+                />
+              </div>
             </div>
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs">
+            {/* Footer */}
+            <div className="flex justify-end gap-3 px-6 py-4 bg-indigo-900 border-t border-indigo-800">
               <CancelBtn setModal={setModal} />
-              <AddButton label={submitting ? "Updating..." : "Update Overtime"} />
+              <AddButton label="Update" />
             </div>
           </form>
         )}
-
       </div>
     </div>
   );

@@ -30,7 +30,7 @@ const ProfileDropdown = ({
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
-        setIsOpenModal(""); 
+        setIsOpenModal("");
       }
     }
 
@@ -39,7 +39,7 @@ const ProfileDropdown = ({
   }, [setIsOpenModal]);
 
   const handleClose = () => {
-    setIsOpenModal(""); 
+    setIsOpenModal("");
   };
   const handleLogoutUser = () => {
     setIsOpenModal("");
@@ -50,19 +50,19 @@ const ProfileDropdown = ({
   return (
     isOpenModal && (
       <div ref={dropdownRef} className="relative z-20">
-        <ul className="absolute right-0 mt-2 w-52 rounded-lg bg-white shadow-lg border border-gray-200">
-          <li className="border-b border-gray-200">
+        <ul className="absolute right-0 mt-2 w-52 rounded-lg bg-white shadow-lg border border-indigo-900">
+          <li className="border-b border-indigo-900">
             <Link
               to={isAdmin === "admin" ? "/profile" : "/user/profile"}
-              onClick={handleClose} 
+              onClick={handleClose}
               className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-gray-800"
             >
               <FiUser className="text-gray-800" /> Profile
             </Link>
           </li>
-          <li className="border-b border-gray-200">
+          <li className="border-b border-indigo-900">
             <span
-              onClick={() => setViewPasswordModal("VIEW")} 
+              onClick={() => setViewPasswordModal("VIEW")}
               className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-gray-800"
             >
               <FiLock className="text-gray-800" /> Change Password

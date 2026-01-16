@@ -24,9 +24,15 @@ export const ViewLoan = ({ setIsOpenModal, viewLoan }: ViewLoanProps) => {
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
-        <div className="bg-white w-full max-w-4xl border border-indigo-500 rounded-lg p-6 shadow-lg">
-          <Title setModal={setIsOpenModal}>Loan Details</Title>
-
+        <div className="bg-white w-full max-w-4xl border border-indigo-500 rounded p-6 shadow-lg">
+          <div className="bg-indigo-900 rounded px-6">
+            <Title
+              setModal={setIsOpenModal}
+              className="text-white text-lg font-semibold"
+            >
+              Loan Details
+            </Title>
+          </div>
           {/* User Info */}
           <div className="mt-4 mb-6 space-y-2">
             {viewLoan.employee_name && (
@@ -46,7 +52,7 @@ export const ViewLoan = ({ setIsOpenModal, viewLoan }: ViewLoanProps) => {
           {/* Loan Table */}
           <div className="overflow-x-auto">
             <table className="w-full border border-gray-300 text-left">
-              <thead className="bg-indigo-100">
+              <thead className="bg-indigo-900 text-white">
                 <tr>
                   <th className="px-4 py-2 border">Sr#</th>
                   <th className="px-4 py-2 border">Ref No</th>
@@ -69,7 +75,9 @@ export const ViewLoan = ({ setIsOpenModal, viewLoan }: ViewLoanProps) => {
                         : "-"}
                     </td>
                     <td className="px-4 py-2 border">{loan.loanAmount}</td>
-                    <td className="px-4 py-2 border">{loan.return_amount || 0}</td>
+                    <td className="px-4 py-2 border">
+                      {loan.return_amount || 0}
+                    </td>
                     <td className="px-4 py-2 border">{loan.deduction || 0}</td>
                     <td className="px-4 py-2 border">{loan.remainingAmount}</td>
                   </tr>

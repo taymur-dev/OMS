@@ -27,7 +27,11 @@ interface Category {
   category_name: string;
 }
 
-export const UpdateAsset = ({ setModal, assetData, refreshAssets }: UpdateAssetProps) => {
+export const UpdateAsset = ({
+  setModal,
+  assetData,
+  refreshAssets,
+}: UpdateAssetProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
@@ -38,11 +42,15 @@ export const UpdateAsset = ({ setModal, assetData, refreshAssets }: UpdateAssetP
     date: assetData.date,
   });
 
-  const [categories, setCategories] = useState<{ id: number; label: string; value: string }[]>([]);
+  const [categories, setCategories] = useState<
+    { id: number; label: string; value: string }[]
+  >([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
     setUpdateAsset((prev) => ({ ...prev, [name]: value }));
@@ -57,7 +65,8 @@ export const UpdateAsset = ({ setModal, assetData, refreshAssets }: UpdateAssetP
       let categoryArray: Category[] = [];
 
       if (Array.isArray(res.data)) categoryArray = res.data;
-      else if (Array.isArray(res.data.categories)) categoryArray = res.data.categories;
+      else if (Array.isArray(res.data.categories))
+        categoryArray = res.data.categories;
       else if (Array.isArray(res.data.data)) categoryArray = res.data.data;
 
       const options = categoryArray.map((cat: Category) => ({
@@ -68,7 +77,9 @@ export const UpdateAsset = ({ setModal, assetData, refreshAssets }: UpdateAssetP
 
       setCategories(options);
 
-      const exists = options.find((opt) => opt.value === String(assetData.category_id));
+      const exists = options.find(
+        (opt) => opt.value === String(assetData.category_id)
+      );
       if (!exists && options.length > 0) {
         setUpdateAsset((prev) => ({ ...prev, category_id: options[0].value }));
       }
@@ -105,10 +116,17 @@ export const UpdateAsset = ({ setModal, assetData, refreshAssets }: UpdateAssetP
   return (
     <div>
       <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-        <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-500">
+        <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-900">
           <form onSubmit={handlerSubmitted}>
-            <Title setModal={setModal}>Update Asset</Title>
-            <div className="mx-2 flex-wrap gap-3">
+            <div className="bg-indigo-900 rounded-t-xl px-6">
+              <Title
+                setModal={setModal}
+                className="text-white text-lg font-semibold"
+              >
+                Edit Asset
+              </Title>
+            </div>
+            <div className="mx-2 grid grid-cols-2 py-2 gap-3">
               {!loadingCategories && categories.length > 0 && (
                 <OptionField
                   labelName="Asset Category"
@@ -129,14 +147,6 @@ export const UpdateAsset = ({ setModal, assetData, refreshAssets }: UpdateAssetP
                 handlerChange={handlerChange}
               />
 
-              <TextareaField
-                labelName="Description*"
-                placeHolder="Write the asset description"
-                name="description"
-                inputVal={updateAsset.description}
-                handlerChange={handlerChange}
-              />
-
               <InputField
                 labelName="Created Date*"
                 placeHolder="Enter the created date"
@@ -145,11 +155,19 @@ export const UpdateAsset = ({ setModal, assetData, refreshAssets }: UpdateAssetP
                 value={updateAsset.date}
                 handlerChange={handlerChange}
               />
+
+              <TextareaField
+                labelName="Description*"
+                placeHolder="Write the asset description"
+                name="description"
+                inputVal={updateAsset.description}
+                handlerChange={handlerChange}
+              />
             </div>
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs">
+            <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
-              <AddButton label={"Update Asset"} />
+              <AddButton label="Update" />
             </div>
           </form>
         </div>

@@ -113,13 +113,20 @@ export const EditPayment = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-500 overflow-y-auto">
+      <div className="w-[42rem] max-h-[80rem] bg-white mx-auto rounded-xl border border-indigo-900 overflow-y-auto">
         <form onSubmit={handlerSubmitted}>
-          <Title setModal={setModal}>Update Payment</Title>
+          <div className="bg-indigo-900 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Edit Payment
+            </Title>
+          </div>
 
           <div className="mx-3 pt-3 flex lg:flex-row flex-col items-center text-gray-800">
             <h1 className="text-lg font-semibold underline">Account Type*</h1>
-            <div className="ml-5 lg:space-x-5 space-x-5">
+            <div className="ml-5 lg:space-x-5 py-2 space-x-5">
               <input
                 type="radio"
                 name="paymentMethod"
@@ -140,7 +147,7 @@ export const EditPayment = ({
             </div>
           </div>
 
-          <div className="mx-2 flex-wrap gap-3">
+          <div className="mx-2 flex-wrap py-2 gap-3">
             {!loadingCustomers && (
               <OptionField
                 labelName="Select Customer"
@@ -185,9 +192,9 @@ export const EditPayment = ({
             />
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update Payment" />
+            <AddButton label="Update" />
           </div>
         </form>
       </div>

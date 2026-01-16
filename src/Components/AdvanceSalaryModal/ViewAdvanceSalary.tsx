@@ -19,17 +19,25 @@ export const ViewAdvanceSalary = ({
   setIsOpenModal,
   viewAdvance,
 }: ViewAdvanceSalaryProps) => {
-  if (!viewAdvance) return null; 
+  if (!viewAdvance) return null;
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
-        <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg">
-          <Title setModal={setIsOpenModal}>Advance Salary Detail</Title>
-
+        <div className="bg-white w-full max-w-3xl border border-indigo-900 rounded-lg p-6 shadow-lg">
+          <div className="bg-indigo-900 rounded px-6">
+            <Title
+              setModal={setIsOpenModal}
+              className="text-white text-lg font-semibold"
+            >
+              Advance Salary Details
+            </Title>
+          </div>
           <div className="mt-6 space-y-4">
             <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">Employee:</span>
+              <span className="text-lg font-semibold text-gray-800">
+                Employee:
+              </span>
               <p className="text-gray-600">{viewAdvance.employee_name}</p>
             </div>
 
@@ -39,18 +47,24 @@ export const ViewAdvanceSalary = ({
             </div>
 
             <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">Amount:</span>
+              <span className="text-lg font-semibold text-gray-800">
+                Amount:
+              </span>
               <p className="text-gray-600">{viewAdvance.amount}</p>
             </div>
 
             <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">Approval Status:</span>
+              <span className="text-lg font-semibold text-gray-800">
+                Approval Status:
+              </span>
               <p className="text-gray-600">{viewAdvance.approvalStatus}</p>
             </div>
 
             {viewAdvance.description && (
               <div className="flex justify-between border-b pb-2">
-                <span className="text-lg font-semibold text-gray-800">Description:</span>
+                <span className="text-lg font-semibold text-gray-800">
+                  Description:
+                </span>
                 <p className="text-gray-600">{viewAdvance.description}</p>
               </div>
             )}
@@ -60,4 +74,3 @@ export const ViewAdvanceSalary = ({
     </div>
   );
 };
-

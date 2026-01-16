@@ -130,11 +130,18 @@ export const AddCustomerAccount = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[40rem] bg-white rounded-xl border border-indigo-500">
+      <div className="w-[40rem] bg-white rounded-xl border border-indigo-900">
         <form onSubmit={handleSubmit}>
-          <Title setModal={setModal}>Add Customer Account</Title>
+          <div className="bg-indigo-900 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Add Customer Account
+            </Title>
+          </div>
 
-          <div className="mx-2 flex-wrap gap-3">
+          <div className="mx-2 grid grid-cols-2 py-2 gap-3">
             <UserSelect
               labelName="Select Customer*"
               name="selectCustomer"
@@ -192,9 +199,9 @@ export const AddCustomerAccount = ({
             />
           </div>
 
-          <div className="flex justify-center gap-2 m-2">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Add Account" />
+            <AddButton label="Save" />
           </div>
         </form>
       </div>

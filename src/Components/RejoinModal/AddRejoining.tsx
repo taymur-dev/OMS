@@ -59,7 +59,10 @@ const initialState = {
   note: "",
 };
 
-export const AddRejoining = ({ setModal, handleRefresh }: AddRejoiningProps) => {
+export const AddRejoining = ({
+  setModal,
+  handleRefresh,
+}: AddRejoiningProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
@@ -119,7 +122,9 @@ export const AddRejoining = ({ setModal, handleRefresh }: AddRejoiningProps) => 
   }, [getAllUsers, fetchLifeLines, fetchResignations]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
     setAddRejoin((prev) => ({ ...prev, [name]: value }));
@@ -132,7 +137,9 @@ export const AddRejoining = ({ setModal, handleRefresh }: AddRejoiningProps) => 
 
     const latestLifeLine = lifeLines
       .filter((l) => l.id === uid)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+      .sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      )[0];
 
     const resignation = resignations.find((r) => r.user_id === uid);
 
@@ -168,17 +175,26 @@ export const AddRejoining = ({ setModal, handleRefresh }: AddRejoiningProps) => 
       setAddRejoin(initialState);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message || "Failed to add rejoin request");
+      toast.error(
+        axiosError.response?.data.message || "Failed to add rejoin request"
+      );
     }
   };
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-500">
+      <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-900">
         <form onSubmit={handlerSubmit}>
-          <Title setModal={setModal}>Add Rejoining Employee</Title>
+          <div className="bg-indigo-900 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Add Employee Rejoining
+            </Title>
+          </div>
 
-          <div className="mx-2 flex-wrap gap-3">
+          <div className="mx-2 grid grid-cols-2 py-2 gap-3">
             <UserSelect
               labelName="Select Employee*"
               name="id"
@@ -204,14 +220,6 @@ export const AddRejoining = ({ setModal, handleRefresh }: AddRejoiningProps) => 
               value={addRejoin.resignation_date}
             />
 
-            <TextareaField
-              labelName="Note*"
-              placeHolder="Write here your note"
-              handlerChange={handlerChange}
-              name="note"
-              inputVal={addRejoin.note}
-            />
-
             <InputField
               labelName="Rejoin Date*"
               type="date"
@@ -219,11 +227,19 @@ export const AddRejoining = ({ setModal, handleRefresh }: AddRejoiningProps) => 
               handlerChange={handlerChange}
               value={addRejoin.rejoin_date}
             />
+
+            <TextareaField
+              labelName="Note*"
+              placeHolder="Write here your note"
+              handlerChange={handlerChange}
+              name="note"
+              inputVal={addRejoin.note}
+            />
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Add Rejoining" />
+            <AddButton label="Save" />
           </div>
         </form>
       </div>

@@ -105,10 +105,17 @@ export const UpdateApplicant = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-500">
+      <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-900">
         <form onSubmit={handlerSubmit}>
-          <Title setModal={setModal}>Update Applicant</Title>
-          <div className="mx-2 flex-wrap gap-3">
+          <div className="bg-indigo-900 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Edit Applicant
+            </Title>
+          </div>
+          <div className="mx-2 grid grid-cols-2 py-2 gap-3">
             <InputField
               labelName="Applicant Name*"
               placeHolder="Enter the applicant name"
@@ -161,9 +168,9 @@ export const UpdateApplicant = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label={"Update Applicant"} />
+            <AddButton label="Update" />
           </div>
         </form>
       </div>

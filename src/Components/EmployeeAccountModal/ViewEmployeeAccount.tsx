@@ -2,7 +2,6 @@ import { useEffect, useCallback, useState } from "react";
 import axios from "axios";
 
 import { Title } from "../Title";
-import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Loader } from "../LoaderComponent/Loader";
 
 import { BASE_URL } from "../../Content/URL";
@@ -67,9 +66,15 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[56rem] bg-white rounded-xl border border-indigo-500">
-        <Title setModal={setModal}>Employee Account Details</Title>
-
+      <div className="w-[56rem] bg-white rounded border border-indigo-900">
+        <div className="bg-indigo-900 rounded px-6">
+          <Title
+            setModal={setModal}
+            className="text-white text-lg font-semibold"
+          >
+            Employee Account Details
+          </Title>
+        </div>
         {/* Employee Info */}
         <div className="mx-4 text-sm text-gray-800 space-y-1">
           <p>
@@ -85,7 +90,7 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
 
         {/* Account Entries */}
         <div className="mx-2 my-3 max-h-[22rem] overflow-y-auto overflow-x-hidden border">
-          <div className="grid grid-cols-9 bg-indigo-500 text-white font-semibold text-sm p-2 sticky top-0 z-10">
+          <div className="grid grid-cols-9 bg-indigo-900 text-white font-semibold text-sm p-2 sticky top-0 z-10">
             <span>Sr#</span>
             <span>Ref No</span>
             <span>Debit</span>
@@ -137,10 +142,6 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
               </div>
             );
           })}
-        </div>
-
-        <div className="flex justify-center m-2">
-          <CancelBtn setModal={setModal} />
         </div>
       </div>
     </div>

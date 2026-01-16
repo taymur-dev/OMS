@@ -39,10 +39,10 @@ export const AddCategory = ({ setModal, refreshTable }: AddCategoryProps) => {
             Authorization: `Bearer ${token}`,
           },
         }
-            );
+      );
 
       refreshTable();
-      console.log(res.data)
+      console.log(res.data);
       setModal();
     } catch (error) {
       console.log(error);
@@ -52,10 +52,17 @@ export const AddCategory = ({ setModal, refreshTable }: AddCategoryProps) => {
   return (
     <div>
       <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-500">
+        <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-900">
           <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Add Expense Category</Title>
-            <div className="mx-2 flex-wrap gap-3">
+            <div className="bg-indigo-900 rounded-t-xl px-6">
+              <Title
+                setModal={setModal}
+                className="text-white text-lg font-semibold"
+              >
+                Add Expense Category
+              </Title>
+            </div>
+            <div className="mx-2 flex-wrap py-4 gap-3">
               <InputField
                 labelName="Expense Category*"
                 name="categoryName"
@@ -63,9 +70,9 @@ export const AddCategory = ({ setModal, refreshTable }: AddCategoryProps) => {
                 handlerChange={handlerChange}
               />
             </div>
-            <div className="flex items-center justify-center m-2 gap-2 text-xs">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Save Category"} />
+            <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
+              <CancelBtn setModal={setModal} />
+              <AddButton label="Save" />
             </div>
           </form>
         </div>

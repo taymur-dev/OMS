@@ -223,7 +223,7 @@ export const AttendanceReports = () => {
         />
       </div>
 
-      <div className="max-h-[58vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
+      <div className="max-h-[58vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
         <div className="flex items-center justify-between text-gray-800 mx-2">
           <div className="flex flex-1 py-1 gap-1 items-center justify-center">
             <InputField
@@ -274,7 +274,7 @@ export const AttendanceReports = () => {
           className="max-h-[28.4rem] overflow-y-auto mx-2"
         >
           <div
-            className="grid grid-cols-7 bg-indigo-500 text-white font-semibold border border-gray-600 
+            className="grid grid-cols-7 bg-indigo-900 text-white font-semibold border border-gray-600 
         text-sm sticky top-0 z-10 p-[7px]"
           >
             <span>Sr#</span>

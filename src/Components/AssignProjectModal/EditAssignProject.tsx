@@ -12,8 +12,8 @@ import { useAppSelector } from "../../redux/Hooks";
 type Option = {
   id: number;
   name: string;
-  value: string;
   label: string;
+  value: string;
   projectName: string;
   loginStatus: string;
 };
@@ -57,6 +57,7 @@ export const EditAssignProject = ({
   const [allUsers, setAllUsers] = useState<Option[]>([]);
   const [allProjects, setAllProjects] = useState<Option[]>([]);
 
+  /* ================= PREFILL ================= */
   useEffect(() => {
     if (editData && allUsers.length > 0 && allProjects.length > 0) {
       setFormData({
@@ -66,11 +67,13 @@ export const EditAssignProject = ({
     }
   }, [editData, allUsers, allProjects]);
 
+  /* ================= HANDLER ================= */
   const handlerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  /* ================= USERS ================= */
   const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
@@ -81,6 +84,8 @@ export const EditAssignProject = ({
         (u: { id: number; name: string; loginStatus?: string }) => ({
           id: u.id,
           name: u.name,
+          label: u.name,
+          value: String(u.id), // 🔥 required for prefill
           projectName: "",
           loginStatus: u.loginStatus ?? "Y",
         })
@@ -92,6 +97,7 @@ export const EditAssignProject = ({
     }
   }, [token]);
 
+  /* ================= PROJECTS ================= */
   const getAllProjects = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getProjects`, {
@@ -102,6 +108,8 @@ export const EditAssignProject = ({
         (p: { id: number; projectName: string }) => ({
           id: p.id,
           name: p.projectName,
+          label: p.projectName,
+          value: String(p.id), // 🔥 required for prefill
           projectName: p.projectName,
           loginStatus: "Y",
         })
@@ -113,6 +121,7 @@ export const EditAssignProject = ({
     }
   }, [token]);
 
+  /* ================= SUBMIT ================= */
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -129,7 +138,7 @@ export const EditAssignProject = ({
           projectId: Number(formData.projectId),
         },
         {
-          headers: { Authorization: token },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
@@ -154,6 +163,7 @@ export const EditAssignProject = ({
     }
   };
 
+  /* ================= INIT ================= */
   useEffect(() => {
     getAllUsers();
     getAllProjects();
@@ -161,9 +171,9 @@ export const EditAssignProject = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-500">
+      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
-          <div className="bg-blue-600 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -172,7 +182,7 @@ export const EditAssignProject = ({
             </Title>
           </div>
 
-          <div className="mx-2 flex-wrap gap-3">
+          <div className="mx-2 flex-wrap gap-3 py-4">
             <UserSelect
               labelName="Employees*"
               name="employee_id"
@@ -190,9 +200,9 @@ export const EditAssignProject = ({
             />
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-blue-600 border-t border-indigo-500">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton label="Update" />
           </div>
         </form>
       </div>

@@ -1,11 +1,10 @@
-import React, { useEffect, useState , useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 import { AddButton } from "../CustomButtons/AddButton";
 
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 
 import { Title } from "../Title";
-
 
 import axios from "axios";
 
@@ -61,14 +60,14 @@ export const AddPayment = ({
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getAllCustomers`, {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
       });
       setAllCustomers(res?.data);
     } catch (error) {
       console.log(error);
     }
-  } , [token]);
+  }, [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -78,7 +77,7 @@ export const AddPayment = ({
         addProgress,
         {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -97,11 +96,18 @@ export const AddPayment = ({
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-500 ">
+        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Add Payment</Title>
+            <div className="bg-indigo-900 rounded-t-xl px-6">
+              <Title
+                setModal={setModal}
+                className="text-white text-lg font-semibold"
+              >
+                Add payment
+              </Title>
+            </div>
 
-            <div className="mx-3  pt-3 flex lg:flex-row flex-col items-center text-gray-800  ">
+            <div className="mx-3  pt-3 flex lg:flex-row flex-col items-center  text-gray-800  ">
               <h1 className="text-lg font-semibold underline ">
                 Account Type*
               </h1>
@@ -126,7 +132,7 @@ export const AddPayment = ({
                 <label>Bank Transfer</label>
               </div>
             </div>
-            <div className="mx-2 flex-wrap gap-3  ">
+            <div className="mx-2 flex-wrap py-2 gap-3  ">
               <OptionField
                 labelName="Select Customer"
                 name="customerId"
@@ -163,9 +169,9 @@ export const AddPayment = ({
               />
             </div>
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Save Payment"} />
+            <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
+              <CancelBtn setModal={setModal} />
+              <AddButton label="Save" />
             </div>
           </form>
         </div>

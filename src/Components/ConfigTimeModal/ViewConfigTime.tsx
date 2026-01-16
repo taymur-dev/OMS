@@ -22,9 +22,15 @@ export const ViewConfigTime = ({
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
-        <div className="bg-white w-full max-w-2xl border border-indigo-500 rounded-lg p-6 shadow-lg">
-          <Title setModal={setIsOpenModal}>Configuration Detail</Title>
-
+        <div className="bg-white w-full max-w-2xl border border-indigo-900 rounded p-6 shadow-lg">
+          <div className="bg-indigo-900 rounded px-6">
+            <Title
+              setModal={setIsOpenModal}
+              className="text-white text-lg font-semibold"
+            >
+              Configuration Details
+            </Title>
+          </div>
           <div className="mt-6 space-y-4">
             <div className="flex justify-between border-b pb-2">
               <span className="text-lg font-semibold text-gray-800">
@@ -37,7 +43,9 @@ export const ViewConfigTime = ({
               <span className="text-lg font-semibold text-gray-800">
                 Configure Time:
               </span>
-              <p className="text-gray-600">{formatTime(viewConfig?.configureTime ?? "")}</p>
+              <p className="text-gray-600">
+                {formatTime(viewConfig?.configureTime ?? "")}
+              </p>
             </div>
           </div>
         </div>

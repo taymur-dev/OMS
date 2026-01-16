@@ -122,9 +122,16 @@ export const EditAdvanceSalary = ({
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-[36rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-500 overflow-y-auto">
         <form onSubmit={handleSubmit}>
-          <Title setModal={setModal}>Edit Advance Salary</Title>
+          <div className="bg-indigo-900 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Edit Advance Salary
+            </Title>
+          </div>
 
-          <div className="mx-4 flex flex-col gap-3 mt-2">
+          <div className="mx-4 grid grid-cols-2 py-2 gap-3 mt-2">
             {currentUser?.role === "admin" && (
               <UserSelect
                 labelName="Employee*"
@@ -155,6 +162,13 @@ export const EditAdvanceSalary = ({
               handlerChange={handleChange}
             />
 
+            <InputField
+              labelName="Description"
+              name="description"
+              value={updateAdvance.description}
+              handlerChange={handleChange}
+            />
+
             <OptionField
               labelName="Approval*"
               name="approvalStatus"
@@ -167,18 +181,11 @@ export const EditAdvanceSalary = ({
               ]}
               inital="Select Approval"
             />
-
-            <InputField
-              labelName="Description"
-              name="description"
-              value={updateAdvance.description}
-              handlerChange={handleChange}
-            />
           </div>
 
-          <div className="flex items-center justify-center gap-2 mt-4">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-500">
             <CancelBtn setModal={setModal} />
-            {currentUser?.role === "admin" && <AddButton label="Update" />}
+            <AddButton label="Updatee" />
           </div>
         </form>
       </div>

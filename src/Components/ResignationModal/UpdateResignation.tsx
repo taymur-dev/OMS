@@ -11,7 +11,6 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { useAppSelector } from "../../redux/Hooks";
 import { BASE_URL } from "../../Content/URL";
 
-
 type UpdatedResignationT = {
   id: number;
   employee_name: string;
@@ -34,7 +33,6 @@ type UpdateResignationProps = {
   handleRefresh?: (updatedItem: UpdatedResignationT) => void;
 };
 
-
 export const UpdateResignation = ({
   setModal,
   resignationData,
@@ -51,7 +49,6 @@ export const UpdateResignation = ({
     resignation_date: "",
     approval_status: "PENDING",
   });
-
 
   useEffect(() => {
     if (!resignationData) return;
@@ -73,7 +70,6 @@ export const UpdateResignation = ({
     });
   }, [resignationData]);
 
-  
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -82,7 +78,6 @@ export const UpdateResignation = ({
     const { name, value } = e.target;
     setUpdateResignation((prev) => ({ ...prev, [name]: value }));
   };
-
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -129,11 +124,18 @@ export const UpdateResignation = ({
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white rounded-xl border border-indigo-500">
+      <div className="w-[42rem] bg-white rounded-xl border border-indigo-900">
         <form onSubmit={handleSubmit}>
-          <Title setModal={setModal}>Update Employee Resignation</Title>
+          <div className="bg-indigo-900 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Edit Employee Resignation
+            </Title>
+          </div>
 
-          <div className="mx-2 space-y-2">
+          <div className="mx-2 grid grid-cols-2 py-2 gap-2 space-y-2">
             <InputField
               labelName="Employee Name"
               name="employee_name"
@@ -152,20 +154,20 @@ export const UpdateResignation = ({
               disabled
             />
 
-            <TextareaField
-              labelName="Note*"
-              name="note"
-              inputVal={updateResignation.note}
-              handlerChange={handleChange}
-              placeHolder="Write resignation note"
-            />
-
             <InputField
               labelName="Date*"
               name="resignation_date"
               type="date"
               value={updateResignation.resignation_date}
               handlerChange={handleChange}
+            />
+
+            <TextareaField
+              labelName="Note*"
+              name="note"
+              inputVal={updateResignation.note}
+              handlerChange={handleChange}
+              placeHolder="Write resignation note"
             />
 
             <select
@@ -180,9 +182,9 @@ export const UpdateResignation = ({
             </select>
           </div>
 
-          <div className="flex justify-center gap-2 m-2">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update Resignation" />
+            <AddButton label="Update" />
           </div>
         </form>
       </div>

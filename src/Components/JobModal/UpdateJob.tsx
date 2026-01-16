@@ -23,7 +23,11 @@ type UpdateJobProps = {
   refreshJobs: () => void;
 };
 
-export const UpdateJob: React.FC<UpdateJobProps> = ({ job, setModal , refreshJobs }) => {
+export const UpdateJob: React.FC<UpdateJobProps> = ({
+  job,
+  setModal,
+  refreshJobs,
+}) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
@@ -69,7 +73,7 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({ job, setModal , refreshJob
       );
 
       toast.success(res.data.message || "Job updated successfully");
-      refreshJobs ();
+      refreshJobs();
       setModal();
     } catch (error) {
       console.error(error);
@@ -79,11 +83,18 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({ job, setModal , refreshJob
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-500">
+      <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-900">
         <form onSubmit={handleSubmit}>
-          <Title setModal={setModal}>Update Job</Title>
+          <div className="bg-indigo-900 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Edit Job
+            </Title>
+          </div>
 
-          <div className="mx-4 flex flex-col gap-3">
+          <div className="mx-4 grid grid-cols-2 py-2 gap-3">
             <InputField
               labelName="Job Title*"
               placeHolder="Enter job title"
@@ -102,9 +113,9 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({ job, setModal , refreshJob
             />
           </div>
 
-          <div className="flex items-center justify-center m-4 gap-2 text-xs">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update Job" />
+            <AddButton label="Update" />
           </div>
         </form>
       </div>

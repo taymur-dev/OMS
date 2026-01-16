@@ -53,7 +53,7 @@ export const AddProject = ({
   const handleGetAllCategories = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getCategory`, {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer: ${token}` },
       });
       setCategories(res.data);
     } catch (error) {
@@ -89,10 +89,10 @@ export const AddProject = ({
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="w-full max-w-3xl bg-white rounded-xl shadow-lg border border-indigo-500 overflow-hidden">
+      <div className="w-full max-w-3xl bg-white rounded-xl shadow-lg border border-indigo-900 overflow-hidden">
         <form onSubmit={handlerSubmitted}>
           {/* Header */}
-          <div className="bg-blue-600 px-6 ">
+          <div className="bg-indigo-900 px-6 ">
             <Title
               setModal={setModal}
               className="text-white text-xl font-semibold"
@@ -168,7 +168,7 @@ export const AddProject = ({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 px-6 py-4 bg-blue-600 border-t border-indigo-500 rounded-b-xl">
+          <div className="flex justify-end gap-3 px-6 py-4 bg-indigo-900 border-t border-indigo-900 rounded-b-xl">
             <CancelBtn setModal={setModal} />
             <AddButton label="Save" />
           </div>

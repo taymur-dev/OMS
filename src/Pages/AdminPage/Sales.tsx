@@ -139,11 +139,11 @@ export const Sales = () => {
     <div className="w-full mx-2">
       <TableTitle tileName="Sale" activeFile="Sales list" />
 
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white flex flex-col">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col">
         <div className="flex items-center justify-between mx-2 py-2">
           <span>
             Total Sales :
-            <span className="text-2xl text-blue-500 font-semibold">
+            <span className="text-2xl text-indigo-900 font-semibold">
               [{filteredSales.length}]
             </span>
           </span>
@@ -181,7 +181,7 @@ export const Sales = () => {
         </div>
 
         <div className="flex-1 mx-2">
-          <div className="grid grid-cols-5 bg-indigo-500 text-white font-semibold text-sm p-3 sticky top-0">
+          <div className="grid grid-cols-5 bg-indigo-900 text-white font-semibold text-sm p-3 sticky top-0">
             <span>Sr#</span>
             <span>Customer</span>
             <span>Project</span>

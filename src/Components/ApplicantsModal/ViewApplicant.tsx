@@ -18,26 +18,28 @@ export const ViewApplicant = ({ setModal, applicant }: ViewApplicantProps) => {
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
-        <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg">
-          <Title setModal={setModal}>Applicant Detail</Title>
-
+        <div className="bg-white w-full max-w-3xl border border-indigo-900 rounded p-6 shadow-lg">
+          <div className="bg-indigo-900 rounded px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Applicant Details
+            </Title>
+          </div>
           <div className="mt-6 space-y-4">
             <div className="flex justify-between border-b pb-2">
               <span className="text-lg font-semibold text-gray-800">
                 Applicant Name:
               </span>
-              <p className="text-gray-600">
-                {applicant?.applicant_name}
-              </p>
+              <p className="text-gray-600">{applicant?.applicant_name}</p>
             </div>
 
             <div className="flex justify-between border-b pb-2">
               <span className="text-lg font-semibold text-gray-800">
                 Contact:
               </span>
-              <p className="text-gray-600">
-                {applicant?.applicant_contact}
-              </p>
+              <p className="text-gray-600">{applicant?.applicant_contact}</p>
             </div>
 
             <div className="flex justify-between border-b pb-2">
@@ -53,9 +55,7 @@ export const ViewApplicant = ({ setModal, applicant }: ViewApplicantProps) => {
               <span className="text-lg font-semibold text-gray-800">
                 Job Title:
               </span>
-              <p className="text-gray-600">
-                {applicant?.job}
-              </p>
+              <p className="text-gray-600">{applicant?.job}</p>
             </div>
 
             <div className="flex justify-between border-b pb-2">

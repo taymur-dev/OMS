@@ -153,11 +153,18 @@ export const UpdateRejoining = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-500">
+      <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-900">
         <form onSubmit={handlerSubmit}>
-          <Title setModal={setModal}>Update Rejoining Employee</Title>
+          <div className="bg-indigo-900 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Edit Employee Rejoining
+            </Title>
+          </div>
 
-          <div className="mx-2 flex-wrap gap-3">
+          <div className="mx-2 grid grid-cols-2 py-2 gap-3">
             {currentUser?.role === "admin" && (
               <UserSelect
                 labelName="Select Employee*"
@@ -192,14 +199,6 @@ export const UpdateRejoining = ({
               disabled
             />
 
-            <TextareaField
-              labelName="Note*"
-              placeHolder="Write your rejoining description"
-              handlerChange={handlerChange}
-              name="note"
-              inputVal={updateData.note}
-            />
-
             <InputField
               labelName="Rejoin Date*"
               placeHolder="Enter the Rejoin Date"
@@ -207,6 +206,14 @@ export const UpdateRejoining = ({
               name="rejoin_date"
               handlerChange={handlerChange}
               value={updateData.rejoin_date}
+            />
+
+            <TextareaField
+              labelName="Note*"
+              placeHolder="Write your rejoining description"
+              handlerChange={handlerChange}
+              name="note"
+              inputVal={updateData.note}
             />
 
             <OptionField
@@ -219,9 +226,9 @@ export const UpdateRejoining = ({
             />
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update Rejoining" />
+            <AddButton label="Update" />
           </div>
         </form>
       </div>

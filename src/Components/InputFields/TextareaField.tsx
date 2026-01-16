@@ -22,7 +22,7 @@ export const TextareaField = ({
           {labelName}
         </label>
         <textarea
-          className="p-1 rounded bg-white text-gray-800 border border-gray-300 focus:border-indigo-400"
+          className="p-1 rounded bg-white text-gray-800 border border-gray-300 focus:border-indigo-900"
           placeholder={placeHolder}
           onChange={handlerChange}
           name={name}

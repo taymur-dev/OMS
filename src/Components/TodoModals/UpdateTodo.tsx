@@ -77,19 +77,17 @@ export const UpdateTodo = ({
   }, [token]);
 
   useEffect(() => {
-  if (!seleteTodo) return;
+    if (!seleteTodo) return;
 
-  const formatDate = (date?: string) =>
-    date ? date.split("T")[0] : "";
+    const formatDate = (date?: string) => (date ? date.split("T")[0] : "");
 
-  setTodo({
-    ...seleteTodo,
-    startDate: formatDate(seleteTodo.startDate),
-    endDate: formatDate(seleteTodo.endDate),
-    deadline: formatDate(seleteTodo.deadline),
-  });
-}, [seleteTodo]);
-
+    setTodo({
+      ...seleteTodo,
+      startDate: formatDate(seleteTodo.startDate),
+      endDate: formatDate(seleteTodo.endDate),
+      deadline: formatDate(seleteTodo.deadline),
+    });
+  }, [seleteTodo]);
 
   useEffect(() => {
     getAllUsers();
@@ -131,10 +129,17 @@ export const UpdateTodo = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-500 overflow-auto">
+      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-900 overflow-auto">
         <form onSubmit={handleSubmit}>
-          <Title setModal={setModal}>Update Todo</Title>
-          <div className="mx-2 flex flex-col gap-3">
+          <div className="bg-indigo-900 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Edit Todo
+            </Title>
+          </div>
+          <div className="mx-2 flex flex-col py-2 gap-3">
             <UserSelect
               labelName="Employees*"
               name="employee_id"
@@ -181,9 +186,9 @@ export const UpdateTodo = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-500">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update Todo" />
+            <AddButton label="Update" />
           </div>
         </form>
       </div>

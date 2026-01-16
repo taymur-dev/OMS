@@ -28,7 +28,7 @@ export const InputField = ({
           type={type}
           className={`p-2 rounded border border-gray-300 text-gray-800
             ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"}
-            focus:ring-2 focus:ring-indigo-400 focus:outline-none
+            focus:ring-2 focus:ring-indigo-900 focus:outline-none
             ${className || ""}`} // <-- merge parent classes
           placeholder={placeHolder}
           onChange={handlerChange}

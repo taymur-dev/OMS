@@ -81,10 +81,18 @@ export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-500 overflow-auto">
+      <div className="w-[42rem] max-h-[90rem] bg-white mx-auto rounded-xl border border-indigo-900 overflow-auto">
         <form onSubmit={handleSubmit}>
-          <Title setModal={setModal}>Update Expense</Title>
-          <div className="mx-2 flex-wrap gap-3">
+
+           <div className="bg-indigo-900 rounded-t-xl px-6">
+              <Title
+                setModal={setModal}
+                className="text-white text-lg font-semibold"
+              >
+                Edit Expense
+              </Title>
+            </div>
+          <div className="mx-2 flex-wrap py-2 gap-3">
             <OptionField
               labelName="Expense Category*"
               name="expenseCategoryId"
@@ -133,10 +141,10 @@ export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
             />
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
-            <CancelBtn setModal={setModal} />
-            <AddButton label="Update Expense" />
-          </div>
+           <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
+              <CancelBtn setModal={setModal} />
+              <AddButton label="Update" />
+            </div>
         </form>
       </div>
     </div>

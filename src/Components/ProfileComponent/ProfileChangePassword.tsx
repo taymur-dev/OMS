@@ -24,7 +24,6 @@ export const ProfileChangePassword = ({
   const token = currentUser?.token;
 
   const [changePassword, setChangePassword] = useState(initialState);
-  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,10 +33,6 @@ export const ProfileChangePassword = ({
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!id) {
-      console.error("User ID is missing");
-      return;
-    }
 
     if (!changePassword.oldPassword || !changePassword.newPassword) {
       setMessage("Please fill both old and new passwords.");
@@ -45,7 +40,6 @@ export const ProfileChangePassword = ({
     }
 
     try {
-      setLoading(true);
       const res = await axios.put(
         `${BASE_URL}/api/changePassword/${id}`,
         {
@@ -53,9 +47,7 @@ export const ProfileChangePassword = ({
           newPassword: changePassword.newPassword,
         },
         {
-          headers: {
-            Authorization: token || "",
-          },
+          headers: { Authorization: token || "" },
         }
       );
 
@@ -67,47 +59,55 @@ export const ProfileChangePassword = ({
       } else {
         setMessage("Network error or server is down");
       }
-      console.error(error);
     }
   };
 
   return (
-    <div>
-      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-500 p-6">
-          <form onSubmit={handlerSubmitted}>
-            <Title setModal={setModal}>Change Password</Title>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl border border-indigo-900 overflow-hidden">
+        <form onSubmit={handlerSubmitted}>
+          {/* Header */}
+          <div className="bg-indigo-900 px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-xl font-semibold"
+            >
+              Change Password
+            </Title>
+          </div>
 
-            <div className="flex flex-col gap-4 my-4">
-              <InputField
-                labelName="Old Password*"
-                placeHolder="Enter the old password"
-                type="password"
-                name="oldPassword"
-                value={changePassword.oldPassword}
-                handlerChange={handlerChange}
-              />
+          {/* Body */}
+          <div className="px-6 py-6 flex flex-col gap-5">
+            <InputField
+              labelName="Old Password*"
+              placeHolder="Enter your old password"
+              type="password"
+              name="oldPassword"
+              value={changePassword.oldPassword}
+              handlerChange={handlerChange}
+            />
 
-              <InputField
-                labelName="New Password*"
-                placeHolder="Enter the new password"
-                type="password"
-                name="newPassword"
-                value={changePassword.newPassword}
-                handlerChange={handlerChange}
-              />
-            </div>
+            <InputField
+              labelName="New Password*"
+              placeHolder="Enter your new password"
+              type="password"
+              name="newPassword"
+              value={changePassword.newPassword}
+              handlerChange={handlerChange}
+            />
 
             {message && (
-              <p className="text-center text-sm text-red-600 mb-2">{message}</p>
+              <p className="text-center text-sm font-medium text-red-600 bg-red-50 py-2 rounded-md">
+                {message}
+              </p>
             )}
+          </div>
 
-            <div className="flex items-center justify-center gap-4 mt-4">
-              <CancelBtn setModal={setModal} />
-              <AddButton label={loading ? "Saving..." : "Save Password"} />
-            </div>
-          </form>
-        </div>
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-500">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Save" />
+          </div>
+        </form>
       </div>
     </div>
   );

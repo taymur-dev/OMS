@@ -24,8 +24,8 @@ type ApiUser = {
 };
 
 type SalaryState = {
-  employee_id: string; 
-  employee_name: string; 
+  employee_id: string;
+  employee_name: string;
   salary_amount: string;
   emp_of_mon_allowance: string;
   transport_allowance: string;
@@ -45,7 +45,10 @@ const initialState: SalaryState = {
   config_date: "",
 };
 
-export const AddConfigEmpSalary = ({ setModal, refreshSalaries }: AddSalaryProps) => {
+export const AddConfigEmpSalary = ({
+  setModal,
+  refreshSalaries,
+}: AddSalaryProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
@@ -128,11 +131,18 @@ export const AddConfigEmpSalary = ({ setModal, refreshSalaries }: AddSalaryProps
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[39rem] bg-white mx-auto rounded-xl border border-indigo-500 overflow-y-auto">
+      <div className="w-[42rem] max-h-[39rem] bg-white mx-auto rounded-xl border border-indigo-900 overflow-y-auto">
         <form onSubmit={handlerSubmitted}>
-          <Title setModal={setModal}>Add Salary</Title>
+          <div className="bg-indigo-900 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Config Employee Salary
+            </Title>
+          </div>
 
-          <div className="mx-2 flex flex-col gap-3">
+          <div className="mx-2 grid  grid-cols-2 py-2 gap-3">
             <UserSelect
               labelName="Employee Name*"
               name="employee_id"
@@ -191,9 +201,9 @@ export const AddConfigEmpSalary = ({ setModal, refreshSalaries }: AddSalaryProps
             />
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label={"Save Salary"} />
+            <AddButton label="Save" />
           </div>
         </form>
       </div>

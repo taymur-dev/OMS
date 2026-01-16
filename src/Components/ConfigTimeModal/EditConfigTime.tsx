@@ -45,8 +45,6 @@ export const EditConfigTime = ({
 
   const token = currentUser?.token;
 
-
-
   const handlerChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
@@ -79,10 +77,25 @@ export const EditConfigTime = ({
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border  border-indigo-500 ">
+        <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border  border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
-            <Title setModal={() => setModal()}>Update Config Time</Title>
-            <div className="mx-2   flex-wrap gap-3  ">
+            <div className="bg-indigo-900 rounded px-6">
+              <Title
+                setModal={setModal}
+                className="text-white text-lg font-semibold"
+              >
+                Edit Config Time
+              </Title>
+            </div>
+            <div className="mx-2   grid grid-cols py-2 gap-3  ">
+              <InputField
+                labelName="Configure Time*"
+                name="configureTime"
+                type="time"
+                value={updateConfig?.configureTime ?? ""}
+                handlerChange={handlerChange}
+              />
+
               <OptionField
                 labelName="Configure Type*"
                 name="configureType"
@@ -91,18 +104,11 @@ export const EditConfigTime = ({
                 value={updateConfig?.configureType ?? ""}
                 inital="Please Select type"
               />
-              <InputField
-                labelName="Configure Time*"
-                name="configureTime"
-                type="time"
-                value={updateConfig?.configureTime ?? ""}
-                handlerChange={handlerChange}
-              />
             </div>
 
-            <div className="flex items-center justify-center m-2 gap-2 text-xs ">
-              <CancelBtn setModal={() => setModal()} />
-              <AddButton label={"Update Configuration"} />
+            <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
+              <CancelBtn setModal={setModal} />
+              <AddButton label="Update" />
             </div>
           </form>
         </div>

@@ -18,9 +18,15 @@ export const ViewOverTimeModal = ({ setModal, data }: ViewOvertimeProps) => {
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
-        <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg">
-          <Title setModal={setModal}>Over Time Details</Title>
-
+        <div className="bg-white w-full max-w-3xl border border-indigo-900 rounded p-6 shadow-lg">
+          <div className="bg-indigo-900 rounded px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              OverTime Details
+            </Title>
+          </div>
           <div className="flex items-center pt-4 space-x-4">
             <img
               src={profilePicture}

@@ -40,8 +40,16 @@ export const ViewQuotation = ({ setModal, quotation }: ViewQuotationProps) => {
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="w-[55rem] max-h-[95vh] overflow-y-auto bg-white rounded-2xl ">
-        <div className=" bg-indigo-600 text-white p-5 rounded-t-2xl">
-          <Title setModal={setModal}>Quotation Details</Title>
+        <div className=" bg-indigo-900 text-white p-5 rounded-t-2xl">
+          <div className="bg-indigo-900 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Quotation Details
+            </Title>
+          </div>
+
           <p className="text-sm opacity-90 mt-1">
             Ref No: <span className="font-semibold">{refNo}</span>
           </p>
@@ -65,7 +73,7 @@ export const ViewQuotation = ({ setModal, quotation }: ViewQuotationProps) => {
           </div>
 
           <div className="border rounded-lg overflow-hidden">
-            <div className="grid grid-cols-4 bg-indigo-50 text-sm font-semibold text-center">
+            <div className="grid grid-cols-4 bg-indigo-900 text-sm text-white font-semibold text-center">
               <span className="p-2">Sr</span>
               <span className="p-2">Project</span>
               <span className="p-2">QTY</span>
@@ -99,7 +107,7 @@ export const ViewQuotation = ({ setModal, quotation }: ViewQuotationProps) => {
             </div>
           </div>
 
-          <div className="flex justify-center gap-4 pt-4">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
             <button
               onClick={handlePrint}

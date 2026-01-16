@@ -13,9 +13,9 @@ export const ViewAssignProject = ({
   return (
     <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
       <div className="w-full max-w-3xl mx-4">
-        <div className="bg-white rounded-xl shadow-xl overflow-hidden border border-indigo-500">
+        <div className="bg-white rounded shadow-xl overflow-hidden border border-indigo-900">
           {/* Header */}
-          <div className="bg-blue-600 px-6">
+          <div className="bg-indigo-900 px-6">
             <Title
               setModal={setIsOpenModal}
               className="text-white text-xl font-semibold"

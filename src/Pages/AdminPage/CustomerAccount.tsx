@@ -35,7 +35,9 @@ export const CustomerAccount = () => {
   const dispatch = useAppDispatch();
 
   const [isOpenModal, setIsOpenModal] = useState<CustomerAccountT>("");
-  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(null);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
+    null
+  );
   const [pageNo, setPageNo] = useState(1);
   const [selectedValue, setSelectedValue] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,7 +53,10 @@ export const CustomerAccount = () => {
   const handleDecrementPageButton = () =>
     setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
 
-  const handleToggleViewModal = (type: CustomerAccountT, customerId?: number) => {
+  const handleToggleViewModal = (
+    type: CustomerAccountT,
+    customerId?: number
+  ) => {
     setIsOpenModal((prev) => (prev === type ? "" : type));
     if (customerId !== undefined) setSelectedCustomerId(customerId);
     else setSelectedCustomerId(null);
@@ -98,13 +103,13 @@ export const CustomerAccount = () => {
         activeFile="Customer Accounts list"
       />
       <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
        overflow-hidden flex flex-col"
       >
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Customer Accounts:{" "}
-            <span className="text-2xl text-blue-500 font-semibold font-sans">
+            <span className="text-2xl text-indigo-900 font-semibold font-sans">
               {customers.length}
             </span>
           </span>
@@ -134,14 +139,14 @@ export const CustomerAccount = () => {
         </div>
         <div className="max-h-[28.4rem] overflow-y-auto mx-2">
           <div
-            className="grid grid-cols-5 bg-gray-200 bg-indigo-500 text-white font-semibold border border-gray-600
+            className="grid grid-cols-5 bg-gray-200 bg-indigo-900 text-white font-semibold border border-gray-600
            text-sm sticky top-0 z-10 p-[10px]"
           >
             <span>Sr#</span>
             <span>Customer</span>
             <span>Contact#</span>
             <span>Customer Address</span>
-            <span className="text-center w-40">Actions</span>
+            <span className="text-center">Actions</span>
           </div>
           {customers.length === 0 ? (
             <div className="text-center text-gray-500 p-4 col-span-5">
@@ -159,7 +164,7 @@ export const CustomerAccount = () => {
                 <span>{customer.customerContact}</span>
                 <span>{customer.customerAddress}</span>
 
-                <span className="flex items-center gap-1">
+                <span className="flex justify-center">
                   <ViewButton
                     handleView={() =>
                       handleToggleViewModal("VIEW", customer.id)

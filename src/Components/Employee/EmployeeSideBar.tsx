@@ -22,8 +22,8 @@ type TActivButton =
   | "Progress"
   | "Todo"
   | "Dynamic"
-  | "payroll"
-  | "salary"
+  | "Payroll"
+  | "Salary"
   | "Apply Leave"
   | "Reports";
 export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
@@ -58,8 +58,8 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
           onClick={() => setActiveBtns("Dashboard")}
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-500 hover:text-white transition border-b m-1  w-40 ${
-            activeBtns === "Dashboard" && "bg-indigo-500 text-white"
+          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b m-1  w-40 ${
+            activeBtns === "Dashboard" && "bg-indigo-900 text-white"
           } `}
         >
           <MdOutlineDashboard size={20} />
@@ -69,7 +69,7 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
         <div
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-500 border-b  transition m-1  text-gray-900  `}
+          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  text-white  `}
         >
           <MdOutlineDashboard size={20} />
         </div>
@@ -81,8 +81,8 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
           onClick={() => setActiveBtns("Mark")}
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-500 hover:text-white transition border-b m-1  w-40 ${
-            activeBtns === "Mark" && "bg-indigo-500 text-white"
+          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b m-1  w-40 ${
+            activeBtns === "Mark" && "bg-indigo-900 text-white"
           } `}
         >
           <PiFingerprintDuotone size={20} />
@@ -92,7 +92,7 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
         <div
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-500 border-b  transition m-1  text-gray-900  `}
+          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  text-gray-900  `}
         >
           <PiFingerprintDuotone size={20} />
         </div>
@@ -104,8 +104,8 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
           onClick={() => setActiveBtns("Todo")}
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-500 hover:text-white transition border-b m-1  w-40 ${
-            activeBtns === "Todo" && "bg-indigo-500 text-white"
+          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b m-1  w-40 ${
+            activeBtns === "Todo" && "bg-indigo-900 text-white"
           } `}
         >
           <LuListTodo size={20} />
@@ -115,7 +115,7 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
         <div
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-500 border-b  transition m-1  text-gray-900  `}
+          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  text-white  `}
         >
           <LuListTodo size={20} />
         </div>
@@ -126,12 +126,12 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
         icon={<CiCreditCard1 size={20} />}
         title={"Payroll"}
         arrowIcon={<BiArrowBack />}
-        handlerClick={() => toggleButtonActive("payroll")}
+        handlerClick={() => toggleButtonActive("Payroll")}
         activeBtns={activeBtns}
-        activeBtn="payroll"
+        activeBtn="Payroll"
       />
       <div>
-        {activeBtns === "payroll" && (
+        {activeBtns === "Payroll" && (
           <AccordionItem isOpen={isOpen}>
             <ul className="flex flex-col ">
               <Link
@@ -171,8 +171,8 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
           onClick={() => setActiveBtns("AssignedProjects")}
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-500 hover:text-white transition border-b m-1  w-40 ${
-            activeBtns === "AssignedProjects" && "bg-indigo-500 text-white"
+          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b m-1  w-40 ${
+            activeBtns === "AssignedProjects" && "bg-indigo-900 text-white"
           } `}
         >
           <GoProjectRoadmap size={20} />
@@ -182,7 +182,7 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
         <div
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-500 border-b  transition m-1  text-gray-900  `}
+          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  text-gray-900  `}
         >
           <GoProjectRoadmap size={20} />
         </div>
@@ -194,8 +194,8 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
           onClick={() => setActiveBtns("Apply Leave")}
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-500 hover:text-white transition border-b m-1  w-40 ${
-            activeBtns === "Apply Leave" && "bg-indigo-500 text-white"
+          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b m-1  w-40 ${
+            activeBtns === "Apply Leave" && "bg-indigo-900 text-white"
           } `}
         >
           <FaUserSlash size={20} />
@@ -205,7 +205,7 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
         <div
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-500 border-b  transition m-1  text-gray-900  `}
+          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  text-gray-900  `}
         >
           <FaUserSlash size={20} />
         </div>
@@ -214,11 +214,11 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
       {!isOpen ? (
         <Link
           to={"/user/salarydetail"}
-          onClick={() => setActiveBtns("salary")}
+          onClick={() => setActiveBtns("Salary")}
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-500 hover:text-white transition border-b m-1  w-40 ${
-            activeBtns === "salary" && "bg-indigo-500 text-white"
+          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b m-1  w-40 ${
+            activeBtns === "Salary" && "bg-indigo-900 text-white"
           } `}
         >
           <FaMoneyCheck size={20} />
@@ -228,7 +228,7 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
         <div
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-500 border-b  transition m-1  text-gray-900  `}
+          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  text-gray-900  `}
         >
           <FaMoneyCheck size={20} />
         </div>
@@ -240,8 +240,8 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
           onClick={() => setActiveBtns("Progress")}
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-500 hover:text-white transition border-b m-1  w-40 ${
-            activeBtns === "Progress" && "bg-indigo-500 text-white"
+          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b m-1  w-40 ${
+            activeBtns === "Progress" && "bg-indigo-900 text-white"
           } `}
         >
           <GiProgression size={20} />
@@ -251,7 +251,7 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
         <div
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-500 border-b  transition m-1  text-gray-900  `}
+          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  text-white  `}
         >
           <GiProgression size={20} />
         </div>

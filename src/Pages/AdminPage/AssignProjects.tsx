@@ -127,11 +127,11 @@ export const AssignProjects = () => {
     <div className="w-full mx-2">
       <TableTitle tileName="Assign Project" activeFile="Assign Project list" />
 
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white flex flex-col overflow-hidden">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col overflow-hidden">
         <div className="flex items-center justify-between mx-2">
           <span>
             Total Assign Projects:{" "}
-            <span className="text-2xl text-blue-500 font-semibold">
+            <span className="text-2xl text-indigo-900 font-semibold">
               [{filteredProjects.length}]
             </span>
           </span>
@@ -172,7 +172,7 @@ export const AssignProjects = () => {
         </div>
 
         <div className="flex-1 mx-2">
-          <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr] bg-indigo-500 text-white font-semibold p-2 sticky top-0">
+          <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr] bg-indigo-900 text-white font-semibold p-2 sticky top-0">
             <span>Sr#</span>
             <span>User</span>
             <span>Project</span>

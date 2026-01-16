@@ -126,11 +126,18 @@ export const UpdatePromotion = ({
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white rounded-xl border border-indigo-500">
+      <div className="w-[42rem] bg-white rounded-xl border border-indigo-900">
         <form onSubmit={handleSubmit}>
-          <Title setModal={setModal}>Update Employee Promotion</Title>
+          <div className="bg-indigo-900 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Edit Employee Promotion
+            </Title>
+          </div>
 
-          <div className="mx-2 flex-wrap gap-3">
+          <div className="mx-2 grid grid-cols-2 py-2 gap-3">
             <InputField
               labelName="Current Designation*"
               name="current_designation"
@@ -149,20 +156,20 @@ export const UpdatePromotion = ({
               placeHolder="Enter requested designation"
             />
 
-            <TextareaField
-              labelName="Note*"
-              name="note"
-              inputVal={promotion.note}
-              handlerChange={handleChange}
-              placeHolder="Write promotion details"
-            />
-
             <InputField
               labelName="Date*"
               name="date"
               type="date"
               value={promotion.date}
               handlerChange={handleChange}
+            />
+
+            <TextareaField
+              labelName="Note*"
+              name="note"
+              inputVal={promotion.note}
+              handlerChange={handleChange}
+              placeHolder="Write promotion details"
             />
 
             {isAdmin && (
@@ -177,9 +184,9 @@ export const UpdatePromotion = ({
             )}
           </div>
 
-          <div className="flex items-center justify-center m-2 gap-2 text-xs">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update Promotion" />
+            <AddButton label="Update" />
           </div>
         </form>
       </div>

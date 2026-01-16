@@ -141,7 +141,7 @@ export const Holidays = () => {
       <TableTitle tileName="Configure Holidays" activeFile="Holidays List" />
 
       <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 
       bg-white overflow-hidden flex flex-col"
       >
         <div className="flex items-center justify-between text-gray-800 mx-2">

@@ -9,7 +9,7 @@ type columT = {
 type projectT = {
   id: string | number;
   projectName: string;
-  status: string;
+  completionStatus: string;
 };
 
 type columDataT = {

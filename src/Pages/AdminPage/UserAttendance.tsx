@@ -144,13 +144,13 @@ export const UserAttendance = () => {
       <TableTitle tileName="Attendance" activeFile="Attendance list" />
 
       <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
        overflow-hidden flex flex-col"
       >
         <div className="flex items-center justify-between mx-2">
           <span>
             Total Attendance:
-            <span className="text-2xl text-blue-500 font-semibold ml-1">
+            <span className="text-2xl text-indigo-900 font-semibold ml-1">
               [{filteredAttendance.length}]
             </span>
           </span>

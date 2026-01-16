@@ -53,7 +53,7 @@ export const ProjectsDetails = () => {
   const handleGetAllProjects = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getProjects`, {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer: ${token}` },
       });
       const sortedProjects = res.data.sort(
         (a: AllProjectT, b: AllProjectT) => a.id - b.id
@@ -69,7 +69,7 @@ export const ProjectsDetails = () => {
       await axios.patch(
         `${BASE_URL}/api/admin/deleteProject/${catchId}`,
         {},
-        { headers: { Authorization: token } }
+        { headers: { Authorization: `Bearer: ${token}` } }
       );
       toast.success("Project has been deleted successfully");
       setAllProjects((prev) => prev.filter((p) => p.id !== catchId));
@@ -128,13 +128,13 @@ export const ProjectsDetails = () => {
       <TableTitle tileName="Projects" activeFile="All Projects list" />
 
       <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
        overflow-hidden flex flex-col"
       >
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total Projects:{" "}
-            <span className="text-2xl text-blue-500 font-semibold font-sans">
+            <span className="text-2xl text-indigo-900 font-semibold font-sans">
               {filteredProjects.length}
             </span>
           </span>
@@ -172,7 +172,7 @@ export const ProjectsDetails = () => {
 
         <div className="max-h-[28.4rem] overflow-y-auto mx-2">
           <div
-            className="grid grid-cols-5 bg-indigo-500  text-white font-semibold
+            className="grid grid-cols-5 bg-indigo-900  text-white font-semibold
            border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
           >
             <span>Sr#</span>

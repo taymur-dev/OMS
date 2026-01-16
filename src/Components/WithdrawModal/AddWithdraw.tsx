@@ -108,9 +108,9 @@ export const AddWithdraw = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-500">
+      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
-          <div className="bg-blue-600 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -135,7 +135,7 @@ export const AddWithdraw = ({
             />
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-blue-600 border-t border-indigo-500">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
             <AddButton label="Save" />
           </div>

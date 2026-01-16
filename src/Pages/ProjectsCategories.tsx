@@ -119,13 +119,13 @@ export const ProjectsCatogries = () => {
       />
 
       <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900
        bg-white overflow-hidden flex flex-col"
       >
         <div className="flex items-center justify-between mx-2 text-gray-800">
           <span>
             Total Number of Project Categories :
-            <span className="text-2xl text-blue-500 font-semibold ml-1">
+            <span className="text-2xl text-indigo-900 font-semibold ml-1">
               [{filteredCategories.length}]
             </span>
           </span>
@@ -161,8 +161,8 @@ export const ProjectsCatogries = () => {
 
         <div className="max-h-[28.4rem] overflow-y-auto mx-2">
           <div
-            className="grid grid-cols-[0.5fr_1fr_1fr] bg-indigo-500 text-white font-semibold 
-    border border-gray-600 text-sm sticky top-0 z-10 px-3 py-2 items-center"
+            className="grid grid-cols-[0.5fr_1fr_1fr] bg-indigo-900 text-white font-semibold 
+    border border-gray-900 text-sm sticky top-0 z-10 px-3 py-2 items-center"
           >
             <span>Sr#</span>
             <span>Name</span>

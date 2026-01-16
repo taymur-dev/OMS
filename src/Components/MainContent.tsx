@@ -22,19 +22,19 @@ type UserT = {
 };
 type TodoT = { id: number; todoStatus: "Y" | "N" };
 
-type ProjectStatus = "New" | "Working" | "Complete";
+type completionStatus = "New" | "Working" | "Complete";
 
 type AssignProjectAPIResponse = {
   projectId: number;
   projectName: string;
-  status: ProjectStatus;
+  completionStatus: completionStatus;
   projectCategory: string;
 };
 
 type ProjectT = {
   id: string;
   projectName: string;
-  status: ProjectStatus;
+  completionStatus: string;
   projectCategory: string;
 };
 
@@ -78,7 +78,7 @@ export const MainContent = () => {
         (p: AssignProjectAPIResponse) => ({
           id: String(p.projectId),
           projectName: p.projectName,
-          status: p.status,
+          completionStatus: p.completionStatus,
           projectCategory: p.projectCategory,
         })
       );
@@ -143,16 +143,18 @@ export const MainContent = () => {
     if (!over) return;
 
     const projectId = active.id;
-    const newStatus = over.id as ProjectStatus;
+    const newStatus = over.id as completionStatus;
 
     setAllAssignProjects((prev) =>
-      prev.map((p) => (p.id === projectId ? { ...p } : p))
+      prev.map((p) =>
+        p.id === projectId ? { ...p, completionStatus: newStatus } : p
+      )
     );
 
     try {
       await axios.put(
-        `${BASE_URL}/api/admin/updateProjectStatus/${projectId}`,
-        { status: newStatus },
+        `${BASE_URL}/api/admin/updateCompletionStatus/${projectId}`,
+        { completionStatus: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (error) {
@@ -211,17 +213,12 @@ export const MainContent = () => {
             <Columns
               key={column.id}
               colum={column}
-              allProject={
-                column.id === "New"
-                  ? // Only filter by category for New Project column
-                    allAssignProjects.filter(
-                      (project) =>
-                        !formData.categoryName ||
-                        project.projectCategory === formData.categoryName
-                    )
-                  : // For Working and Complete, show all projects (status-based filtering can go here later)
-                    allAssignProjects
-              }
+              allProject={allAssignProjects.filter(
+                (project) =>
+                  project.completionStatus === column.id &&
+                  (!formData.categoryName ||
+                    project.projectCategory === formData.categoryName)
+              )}
             />
           ))}
         </DndContext>

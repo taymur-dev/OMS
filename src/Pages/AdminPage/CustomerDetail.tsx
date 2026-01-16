@@ -39,7 +39,7 @@ import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 
 const numbers = [10, 25, 50, 100];
 
-type ModalT = "ADD" | "UPDATE" | "VIEW" | "DELETE";
+type ModalT = "ADD" | "UPDATE" | "VIEW" | "DELETE" | "";
 
 type AllcustomerT = {
   id: number;
@@ -167,7 +167,7 @@ export const CustomerDetail = () => {
         <div className="flex items-center justify-between mx-2 text-gray-800">
           <span>
             Total Numbers of Customer :
-            <span className="text-2xl text-blue-500 font-semibold font-sans">
+            <span className="text-2xl text-indigo-900 font-semibold font-sans">
               [{allCustomers.length}]
             </span>
           </span>

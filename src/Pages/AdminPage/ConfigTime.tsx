@@ -130,12 +130,12 @@ export const ConfigTime = () => {
     <div className="w-full mx-2">
       <TableTitle tileName="Configure Time" activeFile="Late List" />
 
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white overflow-hidden flex flex-col">
+      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total Configurations:{" "}
-            <span className="text-2xl text-blue-500 font-semibold font-sans">
+            <span className="text-2xl text-indigo-900 font-semibold font-sans">
               {filteredConfig.length}
             </span>
           </span>
@@ -171,8 +171,10 @@ export const ConfigTime = () => {
 
         {/* Table */}
         <div className="max-h-[28.4rem] overflow-y-auto mx-2">
-          <div className="grid grid-cols-4 bg-indigo-500 text-white font-semibold border border-gray-600
-           text-sm sticky top-0 z-10 p-[10px]">
+          <div
+            className="grid grid-cols-4 bg-indigo-900 text-white font-semibold border border-gray-600
+           text-sm sticky top-0 z-10 p-[10px]"
+          >
             <span>Sr#</span>
             <span>Config Time</span>
             <span>Type</span>

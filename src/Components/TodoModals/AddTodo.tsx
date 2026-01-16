@@ -19,22 +19,21 @@ type UserT = {
   name?: string;
   employeeName?: string;
   loginStatus?: string;
-  role: string; 
+  role: string;
 };
 
 type UserOption = {
   id: number;
   value: string;
   label: string;
-  name: string; 
-  loginStatus: string; 
+  name: string;
+  loginStatus: string;
   projectName: string;
   role: string;
 };
 
 const today = new Date();
 const currentDate = today.toLocaleDateString("en-CA");
-
 
 const initialState = {
   employee_id: "",
@@ -121,17 +120,24 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
       label: u.employeeName || u.name || "User",
       name: u.employeeName || u.name || "User",
       loginStatus: u.loginStatus ?? "Y",
-      projectName: "", 
-      role: u.role, 
+      projectName: "",
+      role: u.role,
     }));
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[28rem] bg-white rounded-xl border border-indigo-500 overflow-auto">
+      <div className="w-[42rem] max-h-[28rem] bg-white rounded-xl border border-indigo-900 overflow-auto">
         <form onSubmit={handleSubmit}>
-          <Title setModal={setModal}>Add Todo</Title>
+          <div className="bg-indigo-900 rounded-t-xl px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Add Todo
+            </Title>
+          </div>
 
-          <div className="mx-2 flex flex-col gap-3">
+          <div className="mx-2 flex flex-col py-2 gap-3">
             {isAdmin && (
               <UserSelect
                 labelName="Employees*"
@@ -181,9 +187,9 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
             </div>
           </div>
 
-          <div className="flex justify-center gap-2 m-2">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-500">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save Todo" />
+            <AddButton label="Save" />
           </div>
         </form>
       </div>

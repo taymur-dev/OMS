@@ -132,11 +132,19 @@ export const AddOverTime = ({
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white rounded-xl border border-indigo-500">
+      <div className="w-[42rem] bg-white rounded-xl border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
-          <Title setModal={setModal}>Add Overtime</Title>
 
-          <div className="mx-2 space-y-2">
+           <div className="bg-indigo-900 rounded-t-xl px-6">
+              <Title
+                setModal={setModal}
+                className="text-white text-lg font-semibold"
+              >
+                Add OverTime
+              </Title>
+            </div>
+
+          <div className="mx-2 grid grid-cols-2 py-2 gap-5 space-y-2">
             {isAdmin && (
               <UserSelect
                 labelName="Employee*"
@@ -171,10 +179,10 @@ export const AddOverTime = ({
             />
           </div>
 
-          <div className="flex justify-center gap-2 m-2">
-            <CancelBtn setModal={setModal} />
-            <AddButton label="Save Overtime" />
-          </div>
+           <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
+              <CancelBtn setModal={setModal} />
+              <AddButton label="Save" />
+            </div>
         </form>
       </div>
     </div>

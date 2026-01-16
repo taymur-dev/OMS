@@ -258,7 +258,6 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
         {activeBtns === "Projects" && (
           <AccordionItem isOpen={isOpen}>
             <ul className="flex flex-col ">
-
               <Link
                 className={`my-button ${
                   pathname === "/projectCatogries" && "bg-indigo-200"
@@ -276,7 +275,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
               >
                 Projects List
               </Link>
-             
+
               <Link
                 className={`my-button ${
                   pathname === "/assignprojects" && "bg-indigo-200"
@@ -386,19 +385,20 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
             <ul className="flex flex-col ">
               <Link
                 className={`my-button ${
-                  pathname === "/expenses" && "bg-indigo-200"
-                } `}
-                to={"/expenses"}
-              >
-                Expense
-              </Link>
-              <Link
-                className={`my-button ${
                   pathname === "/expensesCatogries" && "bg-indigo-200"
                 } `}
                 to={"/expensesCatogries"}
               >
                 Expense Category
+              </Link>
+
+              <Link
+                className={`my-button ${
+                  pathname === "/expenses" && "bg-indigo-200"
+                } `}
+                to={"/expenses"}
+              >
+                Expense
               </Link>
             </ul>
           </AccordionItem>

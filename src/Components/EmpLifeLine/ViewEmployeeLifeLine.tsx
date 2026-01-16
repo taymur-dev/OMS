@@ -93,10 +93,10 @@ export const ViewEmployeeLifeLine = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded-lg p-6 shadow-lg">
+      <div className="bg-white w-full max-w-3xl border border-indigo-500 rounded p-6 shadow-lg">
         <Toaster position="top-center" reverseOrder={false} />
 
-        <div className="bg-blue-600 rounded-t-xl px-6">
+        <div className="bg-indigo-900 rounded px-6">
           <Title
             setModal={setIsOpenModal}
             className="text-white text-lg font-semibold"
@@ -139,7 +139,7 @@ export const ViewEmployeeLifeLine = ({
 
         {/* Employee Details Table */}
         <div
-          className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr] bg-blue-500 text-white font-semibold
+          className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr] bg-indigo-900 text-white font-semibold
          text-sm border border-gray-300 rounded-t-md"
         >
           <span className="p-2 text-left">Sr#</span>

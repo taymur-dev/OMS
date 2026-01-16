@@ -132,13 +132,13 @@ export const Todo = () => {
     <div className="w-full mx-2">
       <TableTitle tileName="Todo's" activeFile="All Todos list" />
       <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white
+        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
        overflow-hidden flex flex-col "
       >
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Todos:{" "}
-            <span className="text-2xl text-blue-500 font-semibold font-sans">
+            <span className="text-2xl text-indigo-900 font-semibold font-sans">
               [{allTodos?.length}]
             </span>
           </span>
@@ -177,7 +177,7 @@ export const Todo = () => {
 
         <div className="max-h-[28.4rem] overflow-y-auto mx-2">
           <div
-            className="grid grid-cols-[0.5fr_1fr_2fr_1fr_1fr_1fr_1fr] bg-indigo-500  text-white
+            className="grid grid-cols-[0.5fr_1fr_2fr_1fr_1fr_1fr_1fr] bg-indigo-900  text-white
            font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
           >
             <span>Sr#</span>

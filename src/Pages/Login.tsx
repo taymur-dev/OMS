@@ -48,8 +48,8 @@ export const Login = () => {
   if (showSplash) {
     return (
       <div
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600
-       to-blue-600 relative"
+        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900
+       to-indigo-900 relative"
       >
         <div className="w-72 relative">
           <Lottie animationData={SplashAnimation} loop={false} />
@@ -91,7 +91,7 @@ export const Login = () => {
   return (
     <div
       className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br
-     from-indigo-500 via-blue-500 to-indigo-600"
+     from-indigo-500 via-indigo-900 to-indigo-600"
     >
       <div className="absolute top-1/2 -left-24 w-96 h-96 bg-blue-100/40 rounded-full animate-pulse" />
       <div
@@ -103,10 +103,10 @@ export const Login = () => {
         <div className="flex flex-col items-center mb-6">
           <div className="relative mb-4">
             <div
-              className="relative w-32 h-32 rounded-full bg-blue-500 flex items-center
+              className="relative w-32 h-32 rounded-full bg-indigo-900 flex items-center
              justify-center shadow-xl animate-[float_3s_ease-in-out_infinite]"
             >
-              <div className="absolute inset-0 rounded-full bg-blue-500/30 blur-3xl animate-[pulse_2s_ease-in-out_infinite]" />
+              <div className="absolute inset-0 rounded-full bg-indigo-900/30 blur-3xl animate-[pulse_2s_ease-in-out_infinite]" />
               <img
                 src={technic}
                 alt="Logo"
@@ -130,7 +130,7 @@ export const Login = () => {
               name="email"
               handlerChange={handlerChange}
               value={formData.email}
-              className="pl-10 pr-10 border border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg w-full h-12"
+              className="pl-10 pr-10 border border-gray-300 focus:border-indigo-900 focus:outline-none rounded-lg w-full h-12"
             />
             <div className="absolute inset-y-0 top-3 left-0 flex items-center pl-3 pointer-events-none">
               <FiMail className="w-5 h-5" />
@@ -164,8 +164,8 @@ export const Login = () => {
 
           <button
             disabled={loading}
-            className="w-full h-12 rounded-lg bg-blue-500 text-white font-semibold tracking-wide transition-all
-       duration-300 hover:bg-blue-600 hover:shadow-lg active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full h-12 rounded-lg bg-indigo-900 text-white font-semibold tracking-wide transition-all
+       duration-300 hover:bg-indigo-900 hover:shadow-lg active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {loading ? (
               <div className="flex items-center justify-center gap-2">

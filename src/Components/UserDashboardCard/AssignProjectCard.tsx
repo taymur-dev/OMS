@@ -46,7 +46,7 @@ const TodoCard = () => {
   return (
     <div className="max-w-lg mx-8 bg-white shadow-lg rounded-lg mt-16 w-full max-h-screen">
       {/* Header */}
-      <div className="bg-indigo-500 text-white text-lg font-semibold p-4">
+      <div className="bg-indigo-900 text-white text-lg font-semibold p-4">
         Projects
       </div>
 
@@ -54,11 +54,11 @@ const TodoCard = () => {
       <div className="p-4 border-b">
         <div className="flex justify-between items-center border-b pb-3 text-gray-700 font-semibold">
           <div className="flex items-center gap-2">
-            <FaTasks className="text-indigo-500" />
+            <FaTasks className="text-indigo-900" />
             Project Name
           </div>
           <div className="flex items-center gap-2">
-            <BsCalendarDate className="text-indigo-500" />
+            <BsCalendarDate className="text-indigo-900" />
             Assigned Date
           </div>
         </div>
@@ -80,7 +80,7 @@ const TodoCard = () => {
 
       {/* Footer */}
       <div className="p-3 text-center">
-        <Link to="/users/projects" className="text-blue-500 hover:underline font-medium">
+        <Link to="/users/projects" className="text-indigo-900 hover:underline font-medium">
           For More
         </Link>
       </div>

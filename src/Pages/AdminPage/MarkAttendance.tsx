@@ -140,7 +140,7 @@ export const MarkAttendance = () => {
     <div className="w-full mx-auto p-6">
       <TableTitle tileName="Attendance" activeFile="Attendance Page" />
 
-      <div className="bg-white shadow-lg border-t-4 border-indigo-500 rounded-lg p-6">
+      <div className="bg-white shadow-lg border-t-4 border-indigo-900 rounded-lg p-6">
         <div className="flex justify-between items-center border-b pb-4">
           <div className="flex items-center space-x-3">
             <FaUserShield className="text-green-500 text-3xl" />
