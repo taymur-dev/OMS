@@ -4,6 +4,8 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { InputField } from "../InputFields/InputField";
 import { TextareaField } from "../InputFields/TextareaField";
 import { OptionField } from "../InputFields/OptionField";
+import { useAppSelector } from "../../redux/Hooks";
+
 import { Title } from "../Title";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -18,28 +20,29 @@ type UpdateLEAVET = {
   date: string;
 };
 
-
 type UpdateLeaveProps = {
   setModal: () => void;
   EditLeave: UpdateLEAVET | null;
   refreshLeaves: () => Promise<void>;
-  userRole: "admin" | "user"; 
 };
 
-const optionData = [ { id: 1, label: "Approved", value: "approved" },
-                     { id: 2, label: "Rejected", value: "rejected" },
-                     { id: 3, label: "Pending", value: "pending" },
-                     ];
+const optionData = [
+  { id: 1, label: "Approved", value: "approved" },
+  { id: 2, label: "Rejected", value: "rejected" },
+  { id: 3, label: "Pending", value: "pending" },
+];
 
-
-const currentDate = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Karachi", });
+const currentDate = new Date().toLocaleDateString("sv-SE", {
+  timeZone: "Asia/Karachi",
+});
 
 export const UpdateLeave = ({
   setModal,
   EditLeave,
   refreshLeaves,
-  userRole,
 }: UpdateLeaveProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState); // ✅ inside component
+
   const [updateLeave, setUpdateLeave] = useState({
     leaveSubject: "",
     date: currentDate,
@@ -145,8 +148,8 @@ export const UpdateLeave = ({
               handlerChange={handleChange}
             />
 
-            {/* Only render status field for admin */}
-            {userRole === "admin" && (
+            {/* Only show status dropdown for admins */}
+            {currentUser?.role === "admin" && (
               <OptionField
                 labelName="Status"
                 name="status"
