@@ -22,6 +22,7 @@ type User = {
   value: string;
   label: string;
   loginStatus: "Y" | "N";
+  role: "admin" | "user";
 };
 
 const currentDate = new Date().toLocaleDateString("sv-SE");
@@ -75,28 +76,32 @@ export const AddAttendance = ({
     addUserAttendance.attendanceStatus === "absent" ||
     addUserAttendance.attendanceStatus === "leave";
 
-  const handlerGetUsers = useCallback(async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+ const handlerGetUsers = useCallback(async () => {
+  try {
+    const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      const activeUsers = res.data.users
-        .filter((user: User) => user.loginStatus === "Y")
-        .map((user: User) => ({
-          ...user,
-          value: user.id,
-          label: user.name,
-        }));
+    const filteredUsers = res.data.users
+      .filter(
+        (user: User) =>
+          user.loginStatus === "Y" && user.role === "user"
+      )
+      .map((user: User) => ({
+        ...user,
+        value: user.id,
+        label: user.name,
+      }));
 
-      setAllUsers(activeUsers);
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError?.response?.data?.message);
-    }
-  }, [token]);
+    setAllUsers(filteredUsers);
+  } catch (error) {
+    const axiosError = error as AxiosError<{ message: string }>;
+    toast.error(axiosError?.response?.data?.message);
+  }
+}, [token]);
+
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -165,7 +165,7 @@ export const ProjectsCatogries = () => {
     border border-gray-900 text-sm sticky top-0 z-10 px-3 py-2 items-center"
           >
             <span>Sr#</span>
-            <span>Name</span>
+            <span>Project Category</span>
             <span className="text-center">Actions</span>
           </div>
 

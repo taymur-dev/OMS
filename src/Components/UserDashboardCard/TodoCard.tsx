@@ -43,7 +43,7 @@ const TodoCard = () => {
     <div className="max-w-lg bg-white shadow-lg rounded-lg mt-16 w-full max-h-screen">
       {/* Header */}
       <div className="bg-indigo-900 text-white text-lg font-semibold p-4">
-        Todo'sssss
+        Todo's
       </div>
 
       {/* Content */}

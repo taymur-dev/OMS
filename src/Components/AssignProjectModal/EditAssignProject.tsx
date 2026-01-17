@@ -26,6 +26,7 @@ type EditAssignProjectProps = {
     name: string;
     projectName: string;
     projectId: number;
+    date: string;
   };
   onUpdate: (updated: {
     id: number;
@@ -33,12 +34,14 @@ type EditAssignProjectProps = {
     name: string;
     projectName: string;
     projectId: number;
+    date: string; 
   }) => void;
 };
 
 type FormState = {
   employee_id: string;
   projectId: string;
+  date: string; 
 };
 
 export const EditAssignProject = ({
@@ -52,6 +55,7 @@ export const EditAssignProject = ({
   const [formData, setFormData] = useState<FormState>({
     employee_id: "",
     projectId: "",
+    date: "", // 🔥 initialize date
   });
 
   const [allUsers, setAllUsers] = useState<Option[]>([]);
@@ -63,12 +67,14 @@ export const EditAssignProject = ({
       setFormData({
         employee_id: String(editData.employee_id),
         projectId: String(editData.projectId),
+        date: editData.date ? editData.date.split("T")[0] : "", 
+
       });
     }
   }, [editData, allUsers, allProjects]);
 
   /* ================= HANDLER ================= */
-  const handlerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handlerChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -85,7 +91,7 @@ export const EditAssignProject = ({
           id: u.id,
           name: u.name,
           label: u.name,
-          value: String(u.id), // 🔥 required for prefill
+          value: String(u.id),
           projectName: "",
           loginStatus: u.loginStatus ?? "Y",
         })
@@ -109,7 +115,7 @@ export const EditAssignProject = ({
           id: p.id,
           name: p.projectName,
           label: p.projectName,
-          value: String(p.id), // 🔥 required for prefill
+          value: String(p.id),
           projectName: p.projectName,
           loginStatus: "Y",
         })
@@ -125,8 +131,8 @@ export const EditAssignProject = ({
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.employee_id || !formData.projectId) {
-      alert("Please select employee and project");
+    if (!formData.employee_id || !formData.projectId || !formData.date) {
+      alert("Please select employee, project and date");
       return;
     }
 
@@ -136,6 +142,7 @@ export const EditAssignProject = ({
         {
           employee_id: Number(formData.employee_id),
           projectId: Number(formData.projectId),
+          date: formData.date, // 🔥 send date to backend
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -155,6 +162,7 @@ export const EditAssignProject = ({
         projectId: Number(formData.projectId),
         name: selectedUser?.name || "",
         projectName: selectedProject?.projectName || "",
+        date: formData.date, // 🔥 pass updated date
       });
 
       setModal();
@@ -198,6 +206,18 @@ export const EditAssignProject = ({
               handlerChange={handlerChange}
               optionData={allProjects}
             />
+
+            {/* 🔥 Date Input */}
+            <div className="flex flex-col mb-3">
+              <label className="text-sm font-medium text-gray-700">Date*</label>
+              <input
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handlerChange}
+                className="border border-gray-300 rounded px-2 py-1 mt-1"
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">

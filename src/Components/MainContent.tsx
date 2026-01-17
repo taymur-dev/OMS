@@ -11,17 +11,10 @@ import { BASE_URL } from "../Content/URL";
 import { OptionField } from "./InputFields/OptionField";
 import { Columns } from "./MenuCards/Colums";
 import Card from "./DetailCards/Card";
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
 
 type CategoryT = { id: number; categoryName: string };
-type UserT = {
-  id: number;
-  name?: string;
-  email?: string;
-  loginStatus: "Y" | "N";
-};
+type UserT = { id: number; name?: string; email?: string; loginStatus: "Y" | "N" };
 type TodoT = { id: number; todoStatus: "Y" | "N" };
-
 type completionStatus = "New" | "Working" | "Complete";
 
 type AssignProjectAPIResponse = {
@@ -60,7 +53,7 @@ export const MainContent = () => {
   const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setAllUsers(res?.data?.users);
     } catch (error) {
@@ -70,7 +63,7 @@ export const MainContent = () => {
 
   const handleGetAssignProjects = useCallback(async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/api/admin/getAssignProjects`, {
+      const res = await axios.get(`${BASE_URL}/api/admin/getProjects`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -103,7 +96,7 @@ export const MainContent = () => {
   const handleGetExpenseCategory = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getExpenseCategory`, {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setExpenseCategory(res.data);
     } catch (error) {
@@ -136,31 +129,6 @@ export const MainContent = () => {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-  };
-
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over) return;
-
-    const projectId = active.id;
-    const newStatus = over.id as completionStatus;
-
-    setAllAssignProjects((prev) =>
-      prev.map((p) =>
-        p.id === projectId ? { ...p, completionStatus: newStatus } : p
-      )
-    );
-
-    try {
-      await axios.put(
-        `${BASE_URL}/api/admin/updateCompletionStatus/${projectId}`,
-        { completionStatus: newStatus },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-    } catch (error) {
-      console.error(error);
-      handleGetAssignProjects();
-    }
   };
 
   useEffect(() => {
@@ -208,20 +176,18 @@ export const MainContent = () => {
       </form>
 
       <div className="flex flex-col lg:flex-row gap-0 ml-6">
-        <DndContext onDragEnd={handleDragEnd}>
-          {columsData.map((column) => (
-            <Columns
-              key={column.id}
-              colum={column}
-              allProject={allAssignProjects.filter(
-                (project) =>
-                  project.completionStatus === column.id &&
-                  (!formData.categoryName ||
-                    project.projectCategory === formData.categoryName)
-              )}
-            />
-          ))}
-        </DndContext>
+        {columsData.map((column) => (
+          <Columns
+            key={column.id}
+            colum={column}
+            allProject={allAssignProjects.filter(
+              (project) =>
+                project.completionStatus === column.id &&
+                (!formData.categoryName ||
+                  project.projectCategory === formData.categoryName)
+            )}
+          />
+        ))}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-1 px-6.5">

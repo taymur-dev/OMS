@@ -43,12 +43,16 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
 
     setLoading(true);
     try {
-      const res = await axios.get(
-        `${BASE_URL}/api/admin/getEmployeeAccount/${employee.id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+
+       const endpoint =
+  currentUser?.role === "admin"
+    ? `${BASE_URL}/api/admin/getEmployeeAccount/${employee.id}`
+    : `${BASE_URL}/api/user/getMyEmployeeAccount`;
+
+
+      const res = await axios.get(endpoint, {
+  headers: { Authorization: `Bearer ${token}` },
+});
 
       setAccounts(res.data.accounts || []);
     } catch (error) {
@@ -56,7 +60,7 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
     } finally {
       setLoading(false);
     }
-  }, [employee.id, token]);
+  }, [employee.id, token , currentUser?.role]);
 
   useEffect(() => {
     fetchEmployeeAccounts();

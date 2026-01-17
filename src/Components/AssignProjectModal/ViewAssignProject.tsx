@@ -39,6 +39,18 @@ export const ViewAssignProject = ({
               </span>
               <p className="text-gray-600">{viewProject?.projectName || "-"}</p>
             </div>
+
+            <div className="flex justify-between items-center border-b pb-3">
+            <span className="text-gray-800 font-medium text-lg">
+              Assigned Date:
+            </span>
+            <p className="text-gray-600">
+            {viewProject?.date
+             ? new Date(viewProject.date).toLocaleDateString('sv-SE')
+             : "-"}
+            </p>
+           </div>
+
           </div>
         </div>
       </div>

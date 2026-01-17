@@ -96,7 +96,7 @@ export const UpdateProject = ({
               setModal={setModal}
               className="text-white text-xl font-semibold"
             >
-              Update Project
+              Edit Project
             </Title>
           </div>
 
@@ -167,7 +167,7 @@ export const UpdateProject = ({
           {/* Footer */}
           <div className="flex justify-end gap-4 px-6 py-4 bg-indigo-900 border-t border-indigo-900 rounded-b-xl">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton label="Update" />
           </div>
         </form>
       </div>

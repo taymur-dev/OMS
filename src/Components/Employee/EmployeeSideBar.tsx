@@ -69,7 +69,7 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
         <div
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  text-white  `}
+          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  `}
         >
           <MdOutlineDashboard size={20} />
         </div>
@@ -115,7 +115,7 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
         <div
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  text-white  `}
+          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1`}
         >
           <LuListTodo size={20} />
         </div>
@@ -251,7 +251,7 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
         <div
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  text-white  `}
+          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1`}
         >
           <GiProgression size={20} />
         </div>

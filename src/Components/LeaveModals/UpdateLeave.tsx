@@ -18,26 +18,27 @@ type UpdateLEAVET = {
   date: string;
 };
 
+
 type UpdateLeaveProps = {
   setModal: () => void;
   EditLeave: UpdateLEAVET | null;
   refreshLeaves: () => Promise<void>;
+  userRole: "admin" | "user"; 
 };
 
-const optionData = [
-  { id: 1, label: "Approved", value: "approved" },
-  { id: 2, label: "Rejected", value: "rejected" },
-  { id: 3, label: "Pending", value: "pending" },
-];
+const optionData = [ { id: 1, label: "Approved", value: "approved" },
+                     { id: 2, label: "Rejected", value: "rejected" },
+                     { id: 3, label: "Pending", value: "pending" },
+                     ];
 
-const currentDate = new Date().toLocaleDateString("sv-SE", {
-  timeZone: "Asia/Karachi",
-});
+
+const currentDate = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Karachi", });
 
 export const UpdateLeave = ({
   setModal,
   EditLeave,
   refreshLeaves,
+  userRole,
 }: UpdateLeaveProps) => {
   const [updateLeave, setUpdateLeave] = useState({
     leaveSubject: "",
@@ -109,13 +110,16 @@ export const UpdateLeave = ({
         <form onSubmit={handleSubmit} className="flex flex-col">
           {/* Header */}
           <div className="bg-indigo-900 rounded-t-xl px-6">
-            <Title setModal={setModal} className="text-white text-xl font-semibold">
+            <Title
+              setModal={setModal}
+              className="text-white text-xl font-semibold"
+            >
               Update Leave
             </Title>
           </div>
 
           {/* Form Body */}
-          <div className="flex flex-col gap-4 px-6 py-5">
+          <div className="grid grid-cols-2 gap-4 px-6 py-2">
             <InputField
               labelName="Subject Leave*"
               placeHolder="Enter the Leave Subject"
@@ -141,21 +145,24 @@ export const UpdateLeave = ({
               handlerChange={handleChange}
             />
 
-            <OptionField
-              labelName="Status"
-              name="status"
-              value={updateLeave.status}
-              handlerChange={handleChange}
-              optionData={optionData}
-              inital="Pending"
-            />
+            {/* Only render status field for admin */}
+            {userRole === "admin" && (
+              <OptionField
+                labelName="Status"
+                name="status"
+                value={updateLeave.status}
+                handlerChange={handleChange}
+                optionData={optionData}
+                inital="Pending"
+              />
+            )}
           </div>
 
           {/* Footer */}
           <div className="flex justify-end gap-3 px-6 py-2 bg-indigo-900 rounded-b-xl border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
             <AddButton
-              label={submitting ? "Saving..." : "Save"}
+              label={submitting ? "Updating..." : "Update"}
               loading={submitting}
             />
           </div>
@@ -164,3 +171,4 @@ export const UpdateLeave = ({
     </div>
   );
 };
+
