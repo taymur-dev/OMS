@@ -49,7 +49,7 @@ const formatDate = (dateStr?: string) => {
   return `${year}-${month}-${day}`;
 };
 
-const today = formatDate(new Date().toISOString());
+const today = formatDate(new Date().toLocaleDateString('sv-SE'));
 
 const initialState = {
   id: "",

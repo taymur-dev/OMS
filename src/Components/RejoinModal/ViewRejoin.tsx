@@ -9,7 +9,7 @@ type ViewRejoinProps = {
 const formatDate = (dateString?: string | null) => {
   if (!dateString) return "";
   const date = new Date(dateString);
-  return isNaN(date.getTime()) ? "" : date.toISOString().slice(0, 10);
+  return isNaN(date.getTime()) ? "" : date.toLocaleDateString('sv-SE');
 };
 
 export const ViewRejoin = ({ setIsOpenModal, viewRejoin }: ViewRejoinProps) => {

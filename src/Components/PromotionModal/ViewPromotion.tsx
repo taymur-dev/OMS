@@ -17,7 +17,7 @@ type ViewPromotionModalProps = {
 const formatDate = (dateString?: string) => {
   if (!dateString) return "";
   const date = new Date(dateString);
-  return isNaN(date.getTime()) ? "" : date.toISOString().slice(0, 10);
+  return isNaN(date.getTime()) ? "" : date.toLocaleDateString('sv-SE');
 };
 
 export const ViewPromotion = ({

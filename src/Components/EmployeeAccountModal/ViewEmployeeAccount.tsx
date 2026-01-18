@@ -32,6 +32,7 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
 
   const [accounts, setAccounts] = useState<AccountEntry[]>([]);
   const [loading, setLoading] = useState(false);
+  const isAdmin = currentUser?.role === "admin";
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "-";
@@ -39,20 +40,19 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
   };
 
   const fetchEmployeeAccounts = useCallback(async () => {
-    if (!employee?.id) return;
+    if (!currentUser || !token) return; // 🔥 REQUIRED
+    if (currentUser.role === "admin" && !employee?.id) return;
 
     setLoading(true);
+
     try {
-
-       const endpoint =
-  currentUser?.role === "admin"
-    ? `${BASE_URL}/api/admin/getEmployeeAccount/${employee.id}`
-    : `${BASE_URL}/api/user/getMyEmployeeAccount`;
-
+      const endpoint = isAdmin
+        ? `${BASE_URL}/api/admin/getEmployeeAccount/${employee.id}`
+        : `${BASE_URL}/api/user/getMyEmployeeAccount`;
 
       const res = await axios.get(endpoint, {
-  headers: { Authorization: `Bearer ${token}` },
-});
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       setAccounts(res.data.accounts || []);
     } catch (error) {
@@ -60,7 +60,7 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
     } finally {
       setLoading(false);
     }
-  }, [employee.id, token , currentUser?.role]);
+  }, [employee?.id, token, currentUser, isAdmin]);
 
   useEffect(() => {
     fetchEmployeeAccounts();

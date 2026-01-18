@@ -69,7 +69,7 @@ export const ConfigTime = () => {
       await axios.delete(`${BASE_URL}/api/admin/deleteTime/${catchId}`, {
         headers: { Authorization: token },
       });
-      toast.info("Time configuration deleted");
+      toast.error("Time configuration deleted");
       handleGetAllTimeConfig();
       handleToggleViewModal("");
     } catch (error) {

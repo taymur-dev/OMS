@@ -12,7 +12,7 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { useAppSelector } from "../../redux/Hooks";
 import { BASE_URL } from "../../Content/URL";
 
-const today = new Date().toISOString().split("T")[0];
+const today = new Date().toLocaleDateString('sv-SE');
 
 type AddResignationProps = {
   setModal: () => void;

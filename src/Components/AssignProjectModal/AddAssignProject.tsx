@@ -37,7 +37,7 @@ type AddAttendanceProps = {
 const initialState = {
   userId: "",
   projectId: "",
-  date: new Date().toISOString().split("T")[0],
+  date: new Date().toLocaleDateString('sv-SE'),
 };
 
 export const AddAssignProject = ({

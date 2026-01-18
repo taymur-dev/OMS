@@ -12,7 +12,7 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 
-const currentDate = new Date().toISOString().slice(0, 10);
+const currentDate = new Date().toLocaleDateString('sv-SE');
 
 type PromotionType = {
   id: number;

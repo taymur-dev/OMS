@@ -31,7 +31,7 @@ type User = {
   role: string;
 };
 
-const currentDate = new Date().toISOString().split("T")[0];
+const currentDate = new Date().toLocaleDateString('sv-SE');
 
 const initialState = {
   employee_id: "",

@@ -31,7 +31,7 @@ type AdvanceSalaryFormType = {
 };
 
 const today = new Date();
-const currentDate = today.toISOString().split("T")[0];
+const currentDate = today.toLocaleDateString('sv-SE');
 
 const initialState: AdvanceSalaryFormType = {
   employee_id: "",

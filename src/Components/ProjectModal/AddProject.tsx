@@ -16,7 +16,7 @@ type AddProjectProps = {
   handleGetAllProjects: () => void;
 };
 
-const currentDate = new Date().toISOString().split("T")[0];
+const currentDate = new Date().toLocaleDateString('sv-SE');
 
 type AllCategoryT = {
   id: number;

@@ -36,7 +36,7 @@ export const ProcessReports = () => {
   const token = currentUser?.token;
   const userId = currentUser?.userId;
 
-  const currentDate = new Date().toISOString().split("T")[0];
+  const currentDate = new Date().toLocaleDateString('sv-SE');
 
   const [reportData, setReportData] = useState({
     startDate: currentDate,

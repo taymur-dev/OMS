@@ -34,7 +34,7 @@ export const ProgressReports = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
-  const currentDate = new Date().toISOString().split("T")[0];
+  const currentDate = new Date().toLocaleDateString('sv-SE');
 
   const [reportData, setReportData] = useState({
     startDate: currentDate,

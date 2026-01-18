@@ -161,7 +161,7 @@ export const ProjectsCatogries = () => {
 
         <div className="max-h-[28.4rem] overflow-y-auto mx-2">
           <div
-            className="grid grid-cols-[0.5fr_1fr_1fr] bg-indigo-900 text-white font-semibold 
+            className="grid grid-cols-3 bg-indigo-900 text-white font-semibold 
     border border-gray-900 text-sm sticky top-0 z-10 px-3 py-2 items-center"
           >
             <span>Sr#</span>
@@ -172,7 +172,7 @@ export const ProjectsCatogries = () => {
           {paginatedCategories.map((category, index) => (
             <div
               key={category.id}
-              className="grid grid-cols-[0.5fr_1fr_1fr] border border-gray-600 text-gray-800 
+              className="grid grid-cols-3 border border-gray-600 text-gray-800 
               hover:bg-gray-100 transition text-sm items-center p-[7px]"
             >
               <span>{startIndex + index + 1}</span>

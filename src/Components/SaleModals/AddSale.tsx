@@ -26,7 +26,7 @@ type ProjectT = {
 const initialState = {
   customerId: "",
   projectId: "",
-  saleDate: new Date().toISOString().split("T")[0],
+  saleDate: new Date().toLocaleDateString('sv-SE'),
 };
 
 export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {

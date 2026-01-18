@@ -185,7 +185,7 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
             </Title>
           </div>
 
-          <div className="mx-2 py-2 space-y-2">
+          <div className="grid grid-cols-2 gap-2 mx-2 py-2 space-y-2">
             {isAdmin && (
               <UserSelect
                 labelName="Employees*"

@@ -19,8 +19,8 @@ type AddAttendanceProps = {
   setModal: () => void;
 };
 
-const currentDate =
-  new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
+const currentDate = new Date().toLocaleDateString('sv-SE');
+
 
 type CategoryT = { id: number; categoryName: string };
 

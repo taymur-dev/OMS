@@ -128,7 +128,7 @@ export const UserAttendance = () => {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      toast.success("Attendance deleted successfully");
+      toast.error("Attendance deleted successfully");
       handleGetAttendance();
       setIsOpenModal("");
     } catch (error) {
