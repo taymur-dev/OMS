@@ -122,13 +122,7 @@ export const Profile = () => {
                 </p>
               </div>
 
-              {/* Optional Address Section */}
-              {/* <div className="flex flex-col sm:flex-row justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">Address:</span>
-              <p className="text-gray-600 sm:text-right">
-                {currentUser?.address ?? "Jalhan tehsil nowshera virkan district gujranwala..."}
-              </p>
-            </div> */}
+              
             </div>
           </div>
         </div>

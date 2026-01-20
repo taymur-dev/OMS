@@ -87,11 +87,22 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
     // flex flex-col items-center py-4 shadow-lg"
     //   >
 
+    //   <div
+    //     className={`${
+    //       isOpen ? "w-20" : "w-52"
+    //     } bg-white overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out
+    // flex flex-col items-center py-2 shadow-lg`}
+    //   >
+
     <div
-      className={`${
-        isOpen ? "w-20" : "w-52"
-      } bg-white overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out
-  flex flex-col items-center py-2 shadow-lg`}
+      className={`
+    bg-white overflow-y-auto overflow-x-hidden
+    transition-all duration-300 ease-in-out
+    flex flex-col items-center py-2 shadow-lg
+
+    w-52
+    sm:${isOpen ? "w-20" : "w-52"}
+  `}
     >
       {!isOpen ? (
         <Link
