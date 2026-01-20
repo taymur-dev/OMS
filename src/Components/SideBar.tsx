@@ -96,13 +96,13 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
 
     <div
       className={`
-    bg-white overflow-y-auto overflow-x-hidden
-    transition-all duration-300 ease-in-out
-    flex flex-col items-center py-2 shadow-lg
+        bg-white overflow-y-auto overflow-x-hidden
+        transition-all duration-300 sm:text-sm ease-in-out
+        flex flex-col items-center py-2 shadow-lg
 
-    w-52
-    sm:${isOpen ? "w-20" : "w-52"}
-  `}
+        w-70
+        sm:${isOpen ? "w-20" : "w-52"}
+      `}
     >
       {!isOpen ? (
         <Link
