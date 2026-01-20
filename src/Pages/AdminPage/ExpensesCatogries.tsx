@@ -61,7 +61,7 @@ export const ExpensesCatogries = () => {
       });
 
       const sortedCategories = res.data.sort(
-        (a: AllExpenseCategoryT, b: AllExpenseCategoryT) => a.id - b.id
+        (a: AllExpenseCategoryT, b: AllExpenseCategoryT) => a.id - b.id,
       );
       setAllExpenseCategory(sortedCategories);
     } catch (error) {
@@ -86,7 +86,7 @@ export const ExpensesCatogries = () => {
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       toast.info("Category has been deleted successfully");
       handlegetExpenseCategory();
@@ -106,40 +106,166 @@ export const ExpensesCatogries = () => {
   if (loader) return <Loader />;
 
   const filteredCategories = allExpenseCategory?.filter((category) =>
-    category.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
+    category.categoryName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const paginatedCategories = filteredCategories?.slice(
     (pageNo - 1) * itemsPerPage,
-    pageNo * itemsPerPage
+    pageNo * itemsPerPage,
   );
 
+  // return (
+  //   <div className="w-full mx-2">
+  //     <TableTitle
+  //       tileName="Expense Category List"
+  //       activeFile="Expense Category list"
+  //     />
+
+  //     <div
+  //       className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
+  //      overflow-hidden flex flex-col "
+  //     >
+  //       <div className="flex text-gray-800 items-center justify-between mx-2">
+  //         <span>
+  //           Total number of Categories :{" "}
+  //           <span className="text-2xl text-indigo-900 font-semibold font-sans">
+  //             [{filteredCategories?.length || 0}]
+  //           </span>
+  //         </span>
+  //         <CustomButton
+  //           label="Add Expense Category"
+  //           handleToggle={() => handleToggleViewModal("ADD")}
+  //         />
+  //       </div>
+
+  //       <div className="flex items-center justify-between text-gray-800 mx-2">
+  //         <div>
+  //           <span>Show</span>
+  //           <span className="bg-gray-200 rounded mx-1 p-1">
+  //             <select
+  //               value={itemsPerPage}
+  //               onChange={(e) => {
+  //                 setItemsPerPage(Number(e.target.value));
+  //                 setPageNo(1);
+  //               }}
+  //             >
+  //               {numbers.map((num) => (
+  //                 <option key={num} value={num}>
+  //                   {num}
+  //                 </option>
+  //               ))}
+  //             </select>
+  //           </span>
+  //           <span>entries</span>
+  //         </div>
+  //         <TableInputField
+  //           searchTerm={searchTerm}
+  //           setSearchTerm={(value) => {
+  //             setSearchTerm(value);
+  //             setPageNo(1);
+  //           }}
+  //         />
+  //       </div>
+
+  //       <div className="max-h-[28.4rem] overflow-y-auto  mx-2">
+  //         <div
+  //           className="grid grid-cols-[0.5fr_1fr_1fr] bg-indigo-900 text-white font-semibold
+  //          border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
+  //         >
+  //           <span>Sr#</span>
+  //           <span>Category Name</span>
+  //           <span className="text-center w-28">Actions</span>
+  //         </div>
+
+  //         {paginatedCategories?.map((category, index) => (
+  //           <div
+  //             key={category.id}
+  //             className="grid grid-cols-[0.5fr_1fr_1fr] border border-gray-600 text-gray-800
+  //              hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
+  //           >
+  //             <span className="px-2">
+  //               {(pageNo - 1) * itemsPerPage + index + 1}
+  //             </span>
+  //             <span>{category.categoryName}</span>
+  //             <span className="flex items-center gap-1">
+  //               <EditButton
+  //                 handleUpdate={() => handleClickEditButton(category)}
+  //               />
+  //               <DeleteButton
+  //                 handleDelete={() => handleClickDeleteButton(category.id)}
+  //               />
+  //             </span>
+  //           </div>
+  //         ))}
+  //       </div>
+  //     </div>
+
+  //     <div className="flex items-center justify-between">
+  //       <ShowDataNumber
+  //         start={(pageNo - 1) * itemsPerPage + 1}
+  //         end={Math.min(pageNo * itemsPerPage, filteredCategories?.length || 0)}
+  //         total={filteredCategories?.length || 0}
+  //       />
+  //       <Pagination
+  //         pageNo={pageNo}
+  //         handleDecrementPageButton={handleDecrementPageButton}
+  //         handleIncrementPageButton={handleIncrementPageButton}
+  //       />
+  //     </div>
+
+  //     {isOpenModal === "ADD" && (
+  //       <AddCategory
+  //         setModal={() => handleToggleViewModal("")}
+  //         refreshTable={handlegetExpenseCategory}
+  //       />
+  //     )}
+
+  //     {isOpenModal === "EDIT" && selectCategory && (
+  //       <EditCategory
+  //         setModal={() => handleToggleViewModal("")}
+  //         categoryId={selectCategory.id}
+  //         categoryName={selectCategory.categoryName}
+  //         refreshTable={handlegetExpenseCategory}
+  //       />
+  //     )}
+
+  //     {isOpenModal === "DELETE" && (
+  //       <ConfirmationModal
+  //         isOpen={() => handleToggleViewModal("DELETE")}
+  //         onClose={() => handleToggleViewModal("")}
+  //         onConfirm={() => handleDeleteCategory()}
+  //         message="Are you sure you want to delete this category?"
+  //       />
+  //     )}
+  //   </div>
+  // );
+
   return (
-    <div className="w-full mx-2">
+    <div className="w-full px-2 sm:px-4">
       <TableTitle
         tileName="Expense Category List"
         activeFile="Expense Category list"
       />
 
-      <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
-       overflow-hidden flex flex-col "
-      >
-        <div className="flex text-gray-800 items-center justify-between mx-2">
-          <span>
-            Total number of Categories :{" "}
-            <span className="text-2xl text-indigo-900 font-semibold font-sans">
+      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
+        {/* Top Bar */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
+          <span className="text-sm sm:text-base">
+            Total Number of Categories :{" "}
+            <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
               [{filteredCategories?.length || 0}]
             </span>
           </span>
+
           <CustomButton
             label="Add Expense Category"
             handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
 
-        <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div>
+        {/* Filter Row */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
+          <div className="text-sm">
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
               <select
@@ -148,6 +274,7 @@ export const ExpensesCatogries = () => {
                   setItemsPerPage(Number(e.target.value));
                   setPageNo(1);
                 }}
+                className="bg-transparent outline-none"
               >
                 {numbers.map((num) => (
                   <option key={num} value={num}>
@@ -158,54 +285,60 @@ export const ExpensesCatogries = () => {
             </span>
             <span>entries</span>
           </div>
+
           <TableInputField
             searchTerm={searchTerm}
-            setSearchTerm={(value) => {
-              setSearchTerm(value);
-              setPageNo(1);
-            }}
+            setSearchTerm={(value) => setSearchTerm(value)}
           />
         </div>
 
-        <div className="max-h-[28.4rem] overflow-y-auto  mx-2">
-          <div
-            className="grid grid-cols-[0.5fr_1fr_1fr] bg-indigo-900 text-white font-semibold
-           border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
-          >
-            <span>Sr#</span>
-            <span>Category Name</span>
-            <span className="text-center w-28">Actions</span>
-          </div>
-
-          {paginatedCategories?.map((category, index) => (
-            <div
-              key={category.id}
-              className="grid grid-cols-[0.5fr_1fr_1fr] border border-gray-600 text-gray-800
-               hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
-            >
-              <span className="px-2">
-                {(pageNo - 1) * itemsPerPage + index + 1}
-              </span>
-              <span>{category.categoryName}</span>
-              <span className="flex items-center gap-1">
-                <EditButton
-                  handleUpdate={() => handleClickEditButton(category)}
-                />
-                <DeleteButton
-                  handleDelete={() => handleClickDeleteButton(category.id)}
-                />
-              </span>
+        {/* Table Wrapper */}
+        <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
+          <div className="min-w-[600px]">
+            {/* Table Header */}
+            <div className="grid grid-cols-[0.5fr_1.5fr_1fr] bg-indigo-900 items-center text-white font-semibold text-sm sticky top-0 z-10 p-2">
+              <span>Sr#</span>
+              <span>Category Name</span>
+              <span className="text-center">Actions</span>
             </div>
-          ))}
+
+            {/* Table Body */}
+            {(paginatedCategories ?? []).length === 0 ? (
+              <div className="text-gray-800 text-lg text-center py-4">
+                No records available at the moment!
+              </div>
+            ) : (
+              (paginatedCategories ?? []).map((category, index) => (
+                <div
+                  key={category.id}
+                  className="grid grid-cols-[0.5fr_1.5fr_1fr] border border-gray-300 items-center text-gray-800 text-sm p-2
+       hover:bg-gray-100 transition items-center"
+                >
+                  <span>{(pageNo - 1) * itemsPerPage + index + 1}</span>
+                  <span className="truncate">{category.categoryName}</span>
+                  <span className="flex items-center justify-center gap-1">
+                    <EditButton
+                      handleUpdate={() => handleClickEditButton(category)}
+                    />
+                    <DeleteButton
+                      handleDelete={() => handleClickDeleteButton(category.id)}
+                    />
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
+      {/* Pagination */}
+      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
         <ShowDataNumber
           start={(pageNo - 1) * itemsPerPage + 1}
           end={Math.min(pageNo * itemsPerPage, filteredCategories?.length || 0)}
           total={filteredCategories?.length || 0}
         />
+
         <Pagination
           pageNo={pageNo}
           handleDecrementPageButton={handleDecrementPageButton}
@@ -213,6 +346,7 @@ export const ExpensesCatogries = () => {
         />
       </div>
 
+      {/* Modals */}
       {isOpenModal === "ADD" && (
         <AddCategory
           setModal={() => handleToggleViewModal("")}

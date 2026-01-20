@@ -136,51 +136,187 @@ export const Progress = () => {
 
   if (loader) return <Loader />;
 
-  return (
-    <div className="w-full mx-2">
-      <TableTitle tileName="Progress" activeFile="All Progress list" />
+  // return (
+  //   <div className="w-full mx-2">
+  //     <TableTitle tileName="Progress" activeFile="All Progress list" />
 
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between mx-2">
-          <span>
-            Total number of Progress:{" "}
-            <span className="text-2xl text-indigo-900 font-semibold">
-              [{totalItems}]
-            </span>
+  //     <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col overflow-hidden">
+  //       <div className="flex items-center justify-between mx-2">
+  //         <span>
+  //           Total number of Progress:{" "}
+  //           <span className="text-2xl text-indigo-900 font-semibold">
+  //             [{totalItems}]
+  //           </span>
+  //         </span>
+
+  //         <CustomButton
+  //           label="Add Progress"
+  //           handleToggle={() => setIsOpenModal("ADD")}
+  //         />
+  //       </div>
+
+  //       <div className="flex justify-between mx-2">
+  //         <div className="flex items-center gap-2">
+  //           <span>Show</span>
+  //           <select
+  //             value={selectedValue}
+  //             onChange={handleChangeShowData}
+  //             className="bg-gray-200 rounded px-2 py-1"
+  //           >
+  //             {numbers.map((num) => (
+  //               <option key={num}>{num}</option>
+  //             ))}
+  //           </select>
+  //           <span>entries</span>
+  //         </div>
+
+  //         <TableInputField
+  //           searchTerm={searchTerm}
+  //           setSearchTerm={(term) => {
+  //             setSearchTerm(term);
+  //             setPageNo(1);
+  //           }}
+  //         />
+  //       </div>
+
+  //       <div className="flex-1 mx-2">
+  //         <div className="grid grid-cols-[1fr_1fr_2fr_1fr_1fr] bg-indigo-900 text-white font-semibold p-2 sticky top-0">
+  //           <span>Sr#</span>
+  //           {currentUser?.role === "admin" && <span>Employee</span>}
+  //           <span>Project</span>
+  //           <span>Date</span>
+  //           <span className="text-center">Actions</span>
+  //         </div>
+
+  //         {paginatedProgress.map((item, index) => (
+  //           <div
+  //             key={item.id}
+  //             className="grid grid-cols-[1fr_1fr_2fr_1fr_1fr] p-2 border hover:bg-gray-100"
+  //           >
+  //             <span>{startIndex + index + 1}</span>
+  //             {currentUser?.role === "admin" && (
+  //               <span>{item.employeeName}</span>
+  //             )}
+  //             <span>{item.projectName}</span>
+  //             <span>{new Date(item.date).toLocaleDateString("en-CA")}</span>
+  //             <span className="flex justify-center gap-1">
+  //               <EditButton handleUpdate={() => handleEdit(item)} />
+
+  //               <ViewButton handleView={() => handleView(item)} />
+
+  //               <DeleteButton
+  //                 handleDelete={() => {
+  //                   setSelectedId(item.id);
+  //                   setIsOpenModal("DELETE");
+  //                 }}
+  //               />
+  //             </span>
+  //           </div>
+  //         ))}
+  //       </div>
+  //     </div>
+
+  //     <div className="flex items-center justify-between mt-2 px-2">
+  //       <ShowDataNumber
+  //         start={startIndex + 1}
+  //         end={endIndex}
+  //         total={totalItems}
+  //       />
+
+  //       <Pagination
+  //         pageNo={pageNo}
+  //         handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+  //         handleIncrementPageButton={() =>
+  //           pageNo * selectedValue < totalItems && setPageNo((p) => p + 1)
+  //         }
+  //       />
+  //     </div>
+
+  //     {isOpenModal === "ADD" && (
+  //       <AddProgress
+  //         setModal={() => setIsOpenModal("")}
+  //         handleRefresh={handleGetAllProgress}
+  //       />
+  //     )}
+
+  //     {isOpenModal === "EDIT" && selectedProgress && (
+  //       <EditProgress
+  //         setModal={() => setIsOpenModal("")}
+  //         progressData={selectedProgress}
+  //         handleRefresh={handleGetAllProgress}
+  //       />
+  //     )}
+
+  //     {isViewModalOpen && viewProgressData && (
+  //       <ViewProgress
+  //         setIsOpenModal={() => setIsViewModalOpen(false)}
+  //         viewProgress={viewProgressData}
+  //       />
+  //     )}
+
+  //     {isOpenModal === "DELETE" && (
+  //       <ConfirmationModal
+  //         isOpen={() => {}}
+  //         onClose={() => setIsOpenModal("")}
+  //         onConfirm={handleDeleteProgress}
+  //       />
+  //     )}
+  //   </div>
+  // );
+
+   return (
+  <div className="w-full px-2 sm:px-4">
+    <TableTitle tileName="Progress" activeFile="All Progress list" />
+
+    <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col overflow-hidden">
+      {/* Top Bar */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
+        <span className="text-sm sm:text-base">
+          Total number of Progress:
+          <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
+            [{totalItems}]
           </span>
+        </span>
 
-          <CustomButton
-            label="Add Progress"
-            handleToggle={() => setIsOpenModal("ADD")}
-          />
+        <CustomButton
+          label="Add Progress"
+          handleToggle={() => setIsOpenModal("ADD")}
+        />
+      </div>
+
+      {/* Filter Row */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
+        <div className="text-sm flex items-center gap-2">
+          <span>Show</span>
+          <select
+            value={selectedValue}
+            onChange={handleChangeShowData}
+            className="bg-gray-200 rounded px-2 py-1"
+          >
+            {numbers.map((num) => (
+              <option key={num} value={num}>
+                {num}
+              </option>
+            ))}
+          </select>
+          <span>entries</span>
         </div>
 
-        <div className="flex justify-between mx-2">
-          <div className="flex items-center gap-2">
-            <span>Show</span>
-            <select
-              value={selectedValue}
-              onChange={handleChangeShowData}
-              className="bg-gray-200 rounded px-2 py-1"
-            >
-              {numbers.map((num) => (
-                <option key={num}>{num}</option>
-              ))}
-            </select>
-            <span>entries</span>
-          </div>
+        <TableInputField
+          searchTerm={searchTerm}
+          setSearchTerm={(term) => {
+            setSearchTerm(term);
+            setPageNo(1);
+          }}
+        />
+      </div>
 
-          <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={(term) => {
-              setSearchTerm(term);
-              setPageNo(1);
-            }}
-          />
-        </div>
-
-        <div className="flex-1 mx-2">
-          <div className="grid grid-cols-[1fr_1fr_2fr_1fr_1fr] bg-indigo-900 text-white font-semibold p-2 sticky top-0">
+      {/* Table Wrapper */}
+      <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
+        <div className="min-w-[600px]">
+          {/* Table Header */}
+          <div className="grid grid-cols-[1fr_1fr_2fr_1fr_1fr] sm:grid-cols-[0.5fr_1fr_2fr_1fr_1fr]
+           items-center bg-indigo-900 text-white font-semibold text-sm sticky top-0 z-10 p-2">
             <span>Sr#</span>
             {currentUser?.role === "admin" && <span>Employee</span>}
             <span>Project</span>
@@ -188,79 +324,93 @@ export const Progress = () => {
             <span className="text-center">Actions</span>
           </div>
 
-          {paginatedProgress.map((item, index) => (
-            <div
-              key={item.id}
-              className="grid grid-cols-[1fr_1fr_2fr_1fr_1fr] p-2 border hover:bg-gray-100"
-            >
-              <span>{startIndex + index + 1}</span>
-              {currentUser?.role === "admin" && (
-                <span>{item.employeeName}</span>
-              )}
-              <span>{item.projectName}</span>
-              <span>{new Date(item.date).toLocaleDateString("en-CA")}</span>
-              <span className="flex justify-center gap-1">
-                <EditButton handleUpdate={() => handleEdit(item)} />
-
-                <ViewButton handleView={() => handleView(item)} />
-
-                <DeleteButton
-                  handleDelete={() => {
-                    setSelectedId(item.id);
-                    setIsOpenModal("DELETE");
-                  }}
-                />
-              </span>
+          {/* Table Body */}
+          {paginatedProgress.length === 0 ? (
+            <div className="text-gray-800 text-lg text-center py-4">
+              No records available at the moment!
             </div>
-          ))}
+          ) : (
+            paginatedProgress.map((item, index) => (
+              <div
+                key={item.id}
+                className="grid grid-cols-[1fr_1fr_2fr_1fr_1fr] sm:grid-cols-[0.5fr_1fr_2fr_1fr_1fr]  items-center
+                 p-2 border border-gray-300 text-gray-800 text-sm hover:bg-gray-100 transition"
+              >
+                <span>{startIndex + index + 1}</span>
+                {currentUser?.role === "admin" && (
+                  <span className="truncate">{item.employeeName}</span>
+                )}
+                <span className="truncate">{item.projectName}</span>
+                <span>
+                  {new Date(item.date).toLocaleDateString("en-CA")}
+                </span>
+                <span className="flex flex-nowrap items-center justify-center gap-1">
+                  <EditButton handleUpdate={() => handleEdit(item)} />
+                  <ViewButton handleView={() => handleView(item)} />
+                  <DeleteButton
+                    handleDelete={() => {
+                      setSelectedId(item.id);
+                      setIsOpenModal("DELETE");
+                    }}
+                  />
+                </span>
+              </div>
+            ))
+          )}
         </div>
       </div>
-
-      <div className="flex items-center justify-between mt-2 px-2">
-        <ShowDataNumber
-          start={startIndex + 1}
-          end={endIndex}
-          total={totalItems}
-        />
-
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-          handleIncrementPageButton={() =>
-            pageNo * selectedValue < totalItems && setPageNo((p) => p + 1)
-          }
-        />
-      </div>
-
-      {isOpenModal === "ADD" && (
-        <AddProgress
-          setModal={() => setIsOpenModal("")}
-          handleRefresh={handleGetAllProgress}
-        />
-      )}
-
-      {isOpenModal === "EDIT" && selectedProgress && (
-        <EditProgress
-          setModal={() => setIsOpenModal("")}
-          progressData={selectedProgress}
-          handleRefresh={handleGetAllProgress}
-        />
-      )}
-
-      {isViewModalOpen && viewProgressData && (
-        <ViewProgress
-          setIsOpenModal={() => setIsViewModalOpen(false)}
-          viewProgress={viewProgressData}
-        />
-      )}
-
-      {isOpenModal === "DELETE" && (
-        <ConfirmationModal
-          isOpen={() => {}}
-          onClose={() => setIsOpenModal("")}
-          onConfirm={handleDeleteProgress}
-        />
-      )}
     </div>
-  );
+
+    {/* Pagination */}
+    <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3 px-2">
+      <ShowDataNumber
+        start={startIndex + 1}
+        end={endIndex}
+        total={totalItems}
+      />
+
+      <Pagination
+        pageNo={pageNo}
+        handleDecrementPageButton={() =>
+          setPageNo((p) => Math.max(p - 1, 1))
+        }
+        handleIncrementPageButton={() =>
+          pageNo * selectedValue < totalItems && setPageNo((p) => p + 1)
+        }
+      />
+    </div>
+
+    {/* Modals */}
+    {isOpenModal === "ADD" && (
+      <AddProgress
+        setModal={() => setIsOpenModal("")}
+        handleRefresh={handleGetAllProgress}
+      />
+    )}
+
+    {isOpenModal === "EDIT" && selectedProgress && (
+      <EditProgress
+        setModal={() => setIsOpenModal("")}
+        progressData={selectedProgress}
+        handleRefresh={handleGetAllProgress}
+      />
+    )}
+
+    {isViewModalOpen && viewProgressData && (
+      <ViewProgress
+        setIsOpenModal={() => setIsViewModalOpen(false)}
+        viewProgress={viewProgressData}
+      />
+    )}
+
+    {isOpenModal === "DELETE" && (
+      <ConfirmationModal
+        isOpen={() => {}}
+        onClose={() => setIsOpenModal("")}
+        onConfirm={handleDeleteProgress}
+      />
+    )}
+  </div>
+);
+
 };

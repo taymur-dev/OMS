@@ -152,148 +152,315 @@ export const Resignation = () => {
 
   if (loader) return <Loader />;
 
+  // return (
+  //   <div className="w-full mx-2">
+  //     <TableTitle
+  //       tileName="Resignation Request"
+  //       activeFile="Resignation Request list"
+  //     />
+
+  //     <div
+  //       className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
+  //      overflow-hidden flex flex-col"
+  //     >
+  //       <div className="flex text-gray-800 items-center justify-between mx-2">
+  //         <span>
+  //           Total Resignations:{" "}
+  //           <span className="text-2xl text-indigo-900 font-semibold font-sans">
+  //             [{totalItems}]
+  //           </span>
+  //         </span>
+
+  //         <CustomButton
+  //           label="Add Resignation"
+  //           handleToggle={() => handleToggleViewModal("ADD")}
+  //         />
+  //       </div>
+
+  //       <div className="flex items-center justify-between text-gray-800 mx-2">
+  //         <div>
+  //           <span>Show</span>
+  //           <span className="bg-gray-200 rounded mx-1 p-1">
+  //             <select value={selectedValue} onChange={handleChangeShowData}>
+  //               {numbers.map((num) => (
+  //                 <option key={num} value={num}>
+  //                   {num}
+  //                 </option>
+  //               ))}
+  //             </select>
+  //           </span>
+  //           <span>entries</span>
+  //         </div>
+  //         <TableInputField
+  //           searchTerm={searchTerm}
+  //           setSearchTerm={setSearchTerm}
+  //         />
+  //       </div>
+
+  //       <div className="mx-2 max-h-[28.4rem] overflow-y-auto">
+  //         <div
+  //           className="grid grid-cols-6 bg-indigo-900 text-white font-semibold border border-gray-600
+  //          text-sm sticky top-0 z-10 p-[10px]"
+  //         >
+  //           <span>Sr#</span>
+  //           <span>Employee Name</span>
+  //           <span>Designation</span>
+  //           <span>Resignation Date</span>
+  //           <span>Approval</span>
+  //           <span className="text-center w-40">Actions</span>
+  //         </div>
+
+  //         {paginatedResignations.map((res, index) => (
+  //           <div
+  //             key={res.id}
+  //             className="grid grid-cols-6 border border-gray-600 text-gray-800 hover:bg-gray-100 transition 
+  //             duration-200 text-sm items-center justify-center p-[7px]"
+  //           >
+  //             <span className="px-2">{startIndex + index + 1}</span>
+  //             <span>{res.employee_name}</span>
+  //             <span>{res.designation}</span>
+  //             <span>
+  //               {new Date(res.resignation_date).toLocaleDateString("en-CA")}
+  //             </span>
+  //             <span>{res.approval_status}</span>
+  //             <span className="flex items-center gap-1">
+  //               <EditButton handleUpdate={() => handleEditClick(res)} />
+  //               <ViewButton handleView={() => handleViewClick(res)} />
+  //               <DeleteButton
+  //                 handleDelete={() => {
+  //                   setSelectedId(res.id);
+  //                   handleToggleViewModal("DELETE");
+  //                 }}
+  //               />
+  //             </span>
+  //           </div>
+  //         ))}
+  //       </div>
+  //     </div>
+
+  //     <div className="flex items-center justify-between mt-2">
+  //       <ShowDataNumber
+  //         start={startIndex + 1}
+  //         end={endIndex}
+  //         total={totalItems}
+  //       />
+  //       <Pagination
+  //         pageNo={pageNo}
+  //         handleIncrementPageButton={handleIncrementPageButton}
+  //         handleDecrementPageButton={handleDecrementPageButton}
+  //       />
+  //     </div>
+
+  //     {isOpenModal === "ADD" && (
+  //       <AddResignation
+  //         setModal={() => handleToggleViewModal("")}
+  //         handleRefresh={handleGetAllResignations}
+  //       />
+  //     )}
+
+  //     {isOpenModal === "EDIT" && selectedResignation && (
+  //       <UpdateResignation
+  //         setModal={() => handleToggleViewModal("")}
+  //         resignationData={{
+  //           id: String(selectedResignation.id),
+  //           employee_name: selectedResignation.employee_name,
+  //           designation: selectedResignation.designation,
+  //           note: selectedResignation.note,
+  //           date: selectedResignation.resignation_date,
+  //           approval_status: selectedResignation.approval_status,
+  //         }}
+  //         handleRefresh={handleGetAllResignations}
+  //       />
+  //     )}
+
+  //     {isOpenModal === "VIEW" && selectedResignation && (
+  //       <ViewResignation
+  //         setModal={() => handleToggleViewModal("")}
+  //         resignationData={{
+  //           employee_name: selectedResignation.employee_name,
+  //           designation: selectedResignation.designation,
+  //           note: "",
+  //           resignation_date: selectedResignation.resignation_date,
+  //           approval_status: selectedResignation.approval_status,
+  //         }}
+  //       />
+  //     )}
+
+  //     {isOpenModal === "DELETE" && (
+  //       <ConfirmationModal
+  //         isOpen={() => {}}
+  //         onClose={() => handleToggleViewModal("")}
+  //         onConfirm={handleDeleteResignation}
+  //         message="Are you sure you want to delete this Resignation?"
+  //       />
+  //     )}
+  //   </div>
+  // );
   return (
-    <div className="w-full mx-2">
-      <TableTitle
-        tileName="Resignation Request"
-        activeFile="Resignation Request list"
-      />
+  <div className="w-full px-2 sm:px-4">
+    <TableTitle
+      tileName="Resignation Request"
+      activeFile="Resignation Request list"
+    />
 
-      <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
-       overflow-hidden flex flex-col"
-      >
-        <div className="flex text-gray-800 items-center justify-between mx-2">
-          <span>
-            Total Resignations:{" "}
-            <span className="text-2xl text-indigo-900 font-semibold font-sans">
-              [{totalItems}]
-            </span>
+    <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
+      {/* Top Bar */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
+        <span className="text-sm sm:text-base">
+          Total Resignations :
+          <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
+            [{totalItems}]
           </span>
+        </span>
 
-          <CustomButton
-            label="Add Resignation"
-            handleToggle={() => handleToggleViewModal("ADD")}
-          />
+        <CustomButton
+          handleToggle={() => handleToggleViewModal("ADD")}
+          label="Add Resignation"
+        />
+      </div>
+
+      {/* Filter Row */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
+        <div className="text-sm">
+          <span>Show</span>
+          <span className="bg-gray-200 rounded mx-1 p-1">
+            <select
+              value={selectedValue}
+              onChange={handleChangeShowData}
+              className="bg-transparent outline-none"
+            >
+              {numbers.map((num, index) => (
+                <option key={index} value={num}>
+                  {num}
+                </option>
+              ))}
+            </select>
+          </span>
+          <span>entries</span>
         </div>
 
-        <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div>
-            <span>Show</span>
-            <span className="bg-gray-200 rounded mx-1 p-1">
-              <select value={selectedValue} onChange={handleChangeShowData}>
-                {numbers.map((num) => (
-                  <option key={num} value={num}>
-                    {num}
-                  </option>
-                ))}
-              </select>
-            </span>
-            <span>entries</span>
-          </div>
-          <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-          />
-        </div>
+        <TableInputField
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
+      </div>
 
-        <div className="mx-2 max-h-[28.4rem] overflow-y-auto">
+      {/* Table Wrapper */}
+      <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
+        <div className="min-w-[900px]">
+          {/* Table Header */}
           <div
-            className="grid grid-cols-6 bg-indigo-900 text-white font-semibold border border-gray-600
-           text-sm sticky top-0 z-10 p-[10px]"
+            className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr_1fr_1.5fr]
+bg-indigo-900 text-white font-semibold items-center text-sm sticky top-0 z-10 p-2"
           >
             <span>Sr#</span>
             <span>Employee Name</span>
             <span>Designation</span>
             <span>Resignation Date</span>
             <span>Approval</span>
-            <span className="text-center w-40">Actions</span>
+            <span className="text-center">Actions</span>
           </div>
 
-          {paginatedResignations.map((res, index) => (
-            <div
-              key={res.id}
-              className="grid grid-cols-6 border border-gray-600 text-gray-800 hover:bg-gray-100 transition 
-              duration-200 text-sm items-center justify-center p-[7px]"
-            >
-              <span className="px-2">{startIndex + index + 1}</span>
-              <span>{res.employee_name}</span>
-              <span>{res.designation}</span>
-              <span>
-                {new Date(res.resignation_date).toLocaleDateString("en-CA")}
-              </span>
-              <span>{res.approval_status}</span>
-              <span className="flex items-center gap-1">
-                <EditButton handleUpdate={() => handleEditClick(res)} />
-                <ViewButton handleView={() => handleViewClick(res)} />
-                <DeleteButton
-                  handleDelete={() => {
-                    setSelectedId(res.id);
-                    handleToggleViewModal("DELETE");
-                  }}
-                />
-              </span>
+          {/* Table Body */}
+          {paginatedResignations.length === 0 ? (
+            <div className="text-gray-800 text-lg text-center py-4">
+              No records available at the moment!
             </div>
-          ))}
+          ) : (
+            paginatedResignations.map((res, index) => (
+              <div
+                key={res.id}
+                className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr_1fr_1.5fr]
+border border-gray-300 text-gray-800 text-sm p-2
+hover:bg-gray-100 transition  items-center"
+              >
+                <span>{startIndex + index + 1}</span>
+                <span className="truncate">{res.employee_name}</span>
+                <span>{res.designation}</span>
+                <span>
+                  {new Date(res.resignation_date).toLocaleDateString("en-CA")}
+                </span>
+                <span>{res.approval_status}</span>
+
+                {/* Actions */}
+                <span className="flex flex-nowrap items-center justify-center gap-1">
+                  <EditButton handleUpdate={() => handleEditClick(res)} />
+                  <ViewButton handleView={() => handleViewClick(res)} />
+                  <DeleteButton
+                    handleDelete={() => {
+                      setSelectedId(res.id);
+                      handleToggleViewModal("DELETE");
+                    }}
+                  />
+                </span>
+              </div>
+            ))
+          )}
         </div>
       </div>
-
-      <div className="flex items-center justify-between mt-2">
-        <ShowDataNumber
-          start={startIndex + 1}
-          end={endIndex}
-          total={totalItems}
-        />
-        <Pagination
-          pageNo={pageNo}
-          handleIncrementPageButton={handleIncrementPageButton}
-          handleDecrementPageButton={handleDecrementPageButton}
-        />
-      </div>
-
-      {isOpenModal === "ADD" && (
-        <AddResignation
-          setModal={() => handleToggleViewModal("")}
-          handleRefresh={handleGetAllResignations}
-        />
-      )}
-
-      {isOpenModal === "EDIT" && selectedResignation && (
-        <UpdateResignation
-          setModal={() => handleToggleViewModal("")}
-          resignationData={{
-            id: String(selectedResignation.id),
-            employee_name: selectedResignation.employee_name,
-            designation: selectedResignation.designation,
-            note: selectedResignation.note,
-            date: selectedResignation.resignation_date,
-            approval_status: selectedResignation.approval_status,
-          }}
-          handleRefresh={handleGetAllResignations}
-        />
-      )}
-
-      {isOpenModal === "VIEW" && selectedResignation && (
-        <ViewResignation
-          setModal={() => handleToggleViewModal("")}
-          resignationData={{
-            employee_name: selectedResignation.employee_name,
-            designation: selectedResignation.designation,
-            note: "",
-            resignation_date: selectedResignation.resignation_date,
-            approval_status: selectedResignation.approval_status,
-          }}
-        />
-      )}
-
-      {isOpenModal === "DELETE" && (
-        <ConfirmationModal
-          isOpen={() => {}}
-          onClose={() => handleToggleViewModal("")}
-          onConfirm={handleDeleteResignation}
-          message="Are you sure you want to delete this Resignation?"
-        />
-      )}
     </div>
-  );
+
+    {/* Pagination */}
+    <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
+      <ShowDataNumber
+        start={totalItems === 0 ? 0 : startIndex + 1}
+        end={Math.min(endIndex, totalItems)}
+        total={totalItems}
+      />
+
+      <Pagination
+        pageNo={pageNo}
+        handleDecrementPageButton={handleDecrementPageButton}
+        handleIncrementPageButton={handleIncrementPageButton}
+      />
+    </div>
+
+    {/* Modals */}
+    {isOpenModal === "ADD" && (
+      <AddResignation
+        setModal={() => handleToggleViewModal("")}
+        handleRefresh={handleGetAllResignations}
+      />
+    )}
+
+    {isOpenModal === "EDIT" && selectedResignation && (
+      <UpdateResignation
+        setModal={() => handleToggleViewModal("")}
+        resignationData={{
+          id: String(selectedResignation.id),
+          employee_name: selectedResignation.employee_name,
+          designation: selectedResignation.designation,
+          note: selectedResignation.note,
+          date: selectedResignation.resignation_date,
+          approval_status: selectedResignation.approval_status,
+        }}
+        handleRefresh={handleGetAllResignations}
+      />
+    )}
+
+    {isOpenModal === "VIEW" && selectedResignation && (
+      <ViewResignation
+        setModal={() => handleToggleViewModal("")}
+        resignationData={{
+          employee_name: selectedResignation.employee_name,
+          designation: selectedResignation.designation,
+          note: "",
+          resignation_date: selectedResignation.resignation_date,
+          approval_status: selectedResignation.approval_status,
+        }}
+      />
+    )}
+
+    {isOpenModal === "DELETE" && (
+      <ConfirmationModal
+        isOpen={() => {}}
+        onClose={() => handleToggleViewModal("")}
+        onConfirm={handleDeleteResignation}
+        message="Are you sure you want to delete this Resignation?"
+      />
+    )}
+  </div>
+);
+
+
 };

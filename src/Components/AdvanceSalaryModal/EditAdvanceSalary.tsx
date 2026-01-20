@@ -119,8 +119,8 @@ export const EditAdvanceSalary = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[36rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-500 overflow-y-auto">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs items-center flex items-center justify-center z-10">
+      <div className="w-[36rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-900 overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
@@ -131,7 +131,7 @@ export const EditAdvanceSalary = ({
             </Title>
           </div>
 
-          <div className="mx-4 grid grid-cols-2 py-2 gap-3 mt-2">
+          <div className="mx-4 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3 mt-2">
             {currentUser?.role === "admin" && (
               <UserSelect
                 labelName="Employee*"
@@ -183,7 +183,7 @@ export const EditAdvanceSalary = ({
             />
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-500">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
             <AddButton label="Updatee" />
           </div>

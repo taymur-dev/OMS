@@ -53,7 +53,7 @@ export const EditCategory = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
       <div className="w-[42rem] bg-white rounded-xl border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded-t-xl px-6">

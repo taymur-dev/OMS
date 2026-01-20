@@ -34,7 +34,7 @@ export const ProgressReports = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
-  const currentDate = new Date().toLocaleDateString('sv-SE');
+  const currentDate = new Date().toLocaleDateString("sv-SE");
 
   const [reportData, setReportData] = useState({
     startDate: currentDate,
@@ -102,7 +102,7 @@ export const ProgressReports = () => {
   const paginatedData = filteredProgress.slice(startIndex, endIndex);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setReportData((prev) => ({ ...prev, [name]: value }));
@@ -160,12 +160,157 @@ export const ProgressReports = () => {
 
   if (loader) return <Loader />;
 
+  // return (
+  //   <div className="w-full mx-2">
+  //     <TableTitle tileName="Progress Report" activeFile="Progress Report" />
+
+  //     <div className="flex items-center justify-between text-gray-800 py-2 mx-2">
+  //       <div>
+  //         <span>Show</span>
+  //         <span className="bg-gray-200 rounded mx-1 p-1">
+  //           <select
+  //             value={itemsPerPage}
+  //             onChange={(e) => {
+  //               setItemsPerPage(Number(e.target.value));
+  //               setPageNo(1);
+  //             }}
+  //           >
+  //             {itemsPerPageOptions.map((num) => (
+  //               <option key={num} value={num}>
+  //                 {num}
+  //               </option>
+  //             ))}
+  //           </select>
+  //         </span>
+  //         <span>entries</span>
+  //       </div>
+
+  //       <TableInputField
+  //         searchTerm={searchTerm}
+  //         setSearchTerm={(term) => {
+  //           setSearchTerm(term);
+  //           setPageNo(1);
+  //         }}
+  //       />
+  //     </div>
+
+  //     {/* Card */}
+  //     <div
+  //       className="max-h-[58vh] h-full shadow-lg border-t-2 rounded
+  //     border-indigo-900 bg-white overflow-hidden flex flex-col"
+  //     >
+  //       {/* Filters */}
+  //       <div className="flex items-center justify-between text-gray-800 mx-2">
+  //         <div className="flex flex-1 py-1 gap-1 items-center justify-center">
+  //           <InputField
+  //             labelName="From"
+  //             type="date"
+  //             name="startDate"
+  //             value={reportData.startDate}
+  //             handlerChange={handleChange}
+  //           />
+
+  //           <InputField
+  //             labelName="To"
+  //             type="date"
+  //             name="endDate"
+  //             value={reportData.endDate}
+  //             handlerChange={handleChange}
+  //           />
+
+  //           {currentUser?.role === "admin" && (
+  //             <OptionField
+  //               labelName="Employee"
+  //               name="employeeId"
+  //               value={reportData.employeeId}
+  //               optionData={employeeOptions}
+  //               inital="Select Employee"
+  //               handlerChange={handleChange}
+  //             />
+  //           )}
+
+  //           {/* Date Preview (right aligned like SalesReports) */}
+  //           <div className="w-full flex justify-end mt-4">
+  //             <div className="text-gray-800 flex items-center py-2 font-semibold">
+  //               <span className="mr-1">From</span>
+  //               <span className="text-red-500 mr-1">
+  //                 {reportData.startDate}
+  //               </span>
+  //               <span className="mr-1">To</span>
+  //               <span className="text-red-500">{reportData.endDate}</span>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+
+  //       {/* Table */}
+  //       <div
+  //         id="myDiv"
+  //         className="max-h-[28.4rem] overflow-y-auto mx-2"
+  //       >
+  //         <div
+  //           className="grid grid-cols-4 bg-indigo-900 text-white font-semibold
+  //         border border-gray-600 text-sm sticky top-0 z-10 p-[7px]"
+  //         >
+  //           <span>Sr#</span>
+  //           <span>Employee</span>
+  //           <span>Project</span>
+  //           <span>Progress</span>
+  //         </div>
+
+  //         {paginatedData.map((item, index) => (
+  //           <div
+  //             key={item.id}
+  //             className="grid grid-cols-4 border border-gray-600
+  //           text-gray-800 hover:bg-gray-100 transition duration-200
+  //           text-sm items-center justify-center p-[5px]"
+  //           >
+  //             <span>{startIndex + index + 1}</span>
+  //             <span>{item.employeeName}</span>
+  //             <span>{item.projectName}</span>
+  //             <span className="break-words">{item.note}</span>
+  //           </div>
+  //         ))}
+  //       </div>
+  //     </div>
+
+  //     {/* Pagination */}
+  //     <div className="flex items-center justify-between">
+  //       <ShowDataNumber
+  //         start={startIndex + 1}
+  //         end={Math.min(endIndex, totalItems)}
+  //         total={totalItems}
+  //       />
+
+  //       <Pagination
+  //         pageNo={pageNo}
+  //         handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+  //         handleIncrementPageButton={() =>
+  //           pageNo * itemsPerPage < totalItems && setPageNo((p) => p + 1)
+  //         }
+  //       />
+  //     </div>
+
+  //     {/* Download */}
+  //     <div className="flex items-center justify-center mt-4">
+  //       <button
+  //         onClick={printDiv}
+  //         className="bg-green-500 text-white py-2 px-4 rounded
+  //       font-semibold hover:cursor-pointer"
+  //       >
+  //         Download
+  //       </button>
+  //     </div>
+  //   </div>
+  // );
+
   return (
-    <div className="w-full mx-2">
+    <div className="w-full px-2 sm:px-4">
       <TableTitle tileName="Progress Report" activeFile="Progress Report" />
 
-      <div className="flex items-center justify-between text-gray-800 py-2 mx-2">
-        <div>
+      {/* Top Bar: Show entries and search */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-gray-800 py-2 gap-2 mx-2">
+        <div className="flex items-center gap-1 text-sm sm:text-base">
           <span>Show</span>
           <span className="bg-gray-200 rounded mx-1 p-1">
             <select
@@ -174,6 +319,7 @@ export const ProgressReports = () => {
                 setItemsPerPage(Number(e.target.value));
                 setPageNo(1);
               }}
+              className="bg-transparent outline-none"
             >
               {itemsPerPageOptions.map((num) => (
                 <option key={num} value={num}>
@@ -194,14 +340,11 @@ export const ProgressReports = () => {
         />
       </div>
 
-      {/* Card */}
-      <div
-        className="max-h-[58vh] h-full shadow-lg border-t-2 rounded 
-      border-indigo-900 bg-white overflow-hidden flex flex-col"
-      >
+      {/* Card wrapper */}
+      <div className="max-h-[58vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
         {/* Filters */}
-        <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div className="flex flex-1 py-1 gap-1 items-center justify-center">
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
+          <div className="flex flex-col sm:flex-row flex-1 gap-2 sm:gap-1 py-1 items-center">
             <InputField
               labelName="From"
               type="date"
@@ -209,7 +352,6 @@ export const ProgressReports = () => {
               value={reportData.startDate}
               handlerChange={handleChange}
             />
-
             <InputField
               labelName="To"
               type="date"
@@ -217,7 +359,6 @@ export const ProgressReports = () => {
               value={reportData.endDate}
               handlerChange={handleChange}
             />
-
             {currentUser?.role === "admin" && (
               <OptionField
                 labelName="Employee"
@@ -228,54 +369,54 @@ export const ProgressReports = () => {
                 handlerChange={handleChange}
               />
             )}
+          </div>
 
-            {/* Date Preview (right aligned like SalesReports) */}
-            <div className="w-full flex justify-end mt-4">
-              <div className="text-gray-800 flex items-center py-2 font-semibold">
-                <span className="mr-1">From</span>
-                <span className="text-red-500 mr-1">
-                  {reportData.startDate}
-                </span>
-                <span className="mr-1">To</span>
-                <span className="text-red-500">{reportData.endDate}</span>
-              </div>
+          {/* Date preview */}
+          <div className="w-full flex justify-end mt-2 sm:mt-0">
+            <div className="text-gray-800 flex items-center py-2 font-semibold text-sm sm:text-base">
+              <span className="mr-1">From</span>
+              <span className="text-red-500 mr-1">{reportData.startDate}</span>
+              <span className="mr-1">To</span>
+              <span className="text-red-500">{reportData.endDate}</span>
             </div>
           </div>
         </div>
 
         {/* Table */}
-        <div
-          id="myDiv"
-          className="max-h-[28.4rem] overflow-y-auto mx-2"
-        >
-          <div
-            className="grid grid-cols-4 bg-indigo-900 text-white font-semibold 
-          border border-gray-600 text-sm sticky top-0 z-10 p-[7px]"
-          >
-            <span>Sr#</span>
-            <span>Employee</span>
-            <span>Project</span>
-            <span>Progress</span>
-          </div>
-
-          {paginatedData.map((item, index) => (
-            <div
-              key={item.id}
-              className="grid grid-cols-4 border border-gray-600 
-            text-gray-800 hover:bg-gray-100 transition duration-200 
-            text-sm items-center justify-center p-[5px]"
-            >
-              <span>{startIndex + index + 1}</span>
-              <span>{item.employeeName}</span>
-              <span>{item.projectName}</span>
-              <span className="break-words">{item.note}</span>
+        <div id="myDiv" className=" overflow-x-auto mt-2 mx-2 flex-1">
+          <div className="min-w-[600px] max-h-[28.4rem] overflow-y-auto">
+            {/* Table Header */}
+            <div className="grid grid-cols-4 sm:grid-cols-[0.5fr_1fr_1fr_2fr] bg-indigo-900 text-white font-semibold text-sm sticky top-0 z-10 p-2">
+              <span>Sr#</span>
+              <span>Employee</span>
+              <span>Project</span>
+              <span>Progress</span>
             </div>
-          ))}
+
+            {/* Table Body */}
+            {paginatedData.length === 0 ? (
+              <div className="text-gray-800 text-center py-4 text-sm sm:text-base">
+                No records available at the moment!
+              </div>
+            ) : (
+              paginatedData.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="grid grid-cols-4 sm:grid-cols-[0.5fr_1fr_1fr_2fr] border border-gray-300 text-gray-800 text-sm sm:text-base p-2 hover:bg-gray-100 transition break-words"
+                >
+                  <span>{startIndex + index + 1}</span>
+                  <span className="truncate">{item.employeeName}</span>
+                  <span className="truncate">{item.projectName}</span>
+                  <span className="break-words">{item.note}</span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
         <ShowDataNumber
           start={startIndex + 1}
           end={Math.min(endIndex, totalItems)}
@@ -291,12 +432,11 @@ export const ProgressReports = () => {
         />
       </div>
 
-      {/* Download */}
+      {/* Download Button */}
       <div className="flex items-center justify-center mt-4">
         <button
           onClick={printDiv}
-          className="bg-green-500 text-white py-2 px-4 rounded 
-        font-semibold hover:cursor-pointer"
+          className="bg-green-500 text-white py-2 px-4 rounded font-semibold hover:cursor-pointer"
         >
           Download
         </button>

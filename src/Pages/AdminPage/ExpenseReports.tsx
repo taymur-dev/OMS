@@ -53,7 +53,7 @@ export const ExpenseReports = () => {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
@@ -148,26 +148,156 @@ export const ExpenseReports = () => {
       .filter((e) =>
         filters.expenseCategoryId
           ? e.expenseCategoryId.toString() === filters.expenseCategoryId
-          : true
+          : true,
       )
       .filter((e) =>
         `${e.expenseName} ${e.categoryName}`
           .toLowerCase()
-          .includes(searchTerm.toLowerCase())
+          .includes(searchTerm.toLowerCase()),
       );
   }, [expenses, filters, searchTerm]);
 
   if (loader) return <Loader />;
 
+  // return (
+  //   <div className="w-full mx-2">
+  //     <TableTitle tileName="Expense Report" activeFile="Expense Report" />
+
+  //     <div className="flex items-center justify-between text-gray-800 py-2 mx-2">
+  //       <div>
+  //         Show
+  //         <span className="bg-gray-200 rounded mx-1 p-1">
+  //           <select value={selectedValue} onChange={handleChangeShowData}>
+  //             {pageSizes.map((num) => (
+  //               <option key={num} value={num}>
+  //                 {num}
+  //               </option>
+  //             ))}
+  //           </select>
+  //         </span>
+  //         entries
+  //       </div>
+  //       <TableInputField
+  //         searchTerm={searchTerm}
+  //         setSearchTerm={setSearchTerm}
+  //       />
+  //     </div>
+
+  //     <div
+  //       className="max-h-[58vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
+  //      overflow-hidden flex flex-col"
+  //     >
+  //       <div className="flex items-center justify-between text-gray-800 mx-2">
+  //         <div className="flex flex-1 py-1 gap-1 items-center justify-center">
+  //           <InputField
+  //             labelName="From"
+  //             type="date"
+  //             value={filters.startDate}
+  //             handlerChange={handleChange}
+  //             name="startDate"
+  //           />
+  //           <InputField
+  //             labelName="To"
+  //             type="date"
+  //             value={filters.endDate}
+  //             handlerChange={handleChange}
+  //             name="endDate"
+  //           />
+  //           <OptionField
+  //             labelName="Category"
+  //             name="expenseCategoryId"
+  //             value={filters.expenseCategoryId}
+  //             optionData={categories.map((c) => ({
+  //               id: c.id,
+  //               label: c.categoryName,
+  //               value: c.id,
+  //             }))}
+  //             inital="All Categories"
+  //             handlerChange={handleChange}
+  //           />
+
+  //           <div className="w-full flex justify-end mt-4">
+  //             <div className="text-gray-800 flex items-center py-2 font-semibold">
+  //               <span className="mr-1">From</span>
+  //               <span className="text-red-500 mr-1">{filters.startDate}</span>
+  //               <span className="mr-1">To</span>
+  //               <span className="text-red-500">{filters.endDate}</span>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+
+  //       <div
+  //         id="myDiv"
+  //         className="max-h-[28.4rem] overflow-y-auto mx-2"
+  //       >
+  //         <div
+  //           className="grid grid-cols-5 bg-indigo-900 text-white font-semibold border border-gray-600 text-sm
+  //          sticky top-0 z-10 p-[7px]"
+  //         >
+  //           <span>Sr#</span>
+  //           <span>Category</span>
+  //           <span>Expense</span>
+  //           <span>Amount</span>
+  //           <span>Date</span>
+  //         </div>
+
+  //         {filteredExpenses
+  //           .slice((pageNo - 1) * selectedValue, pageNo * selectedValue)
+  //           .map((e, index) => (
+  //             <div
+  //               key={e.id}
+  //               className="grid grid-cols-5 border border-gray-600 text-gray-800 hover:bg-gray-100 transition
+  //               duration-200 text-sm items-center justify-center p-[5px]"
+  //             >
+  //               <span>{(pageNo - 1) * selectedValue + index + 1}</span>
+  //               <span>{e.categoryName}</span>
+  //               <span>{e.expenseName}</span>
+  //               <span>{e.amount}</span>
+  //               <span>{e.date}</span>
+  //             </div>
+  //           ))}
+  //       </div>
+  //     </div>
+
+  //     <div className="flex items-center justify-between">
+  //       <ShowDataNumber
+  //         start={(pageNo - 1) * selectedValue + 1}
+  //         end={Math.min(pageNo * selectedValue, filteredExpenses.length)}
+  //         total={filteredExpenses.length}
+  //       />
+  //       <Pagination
+  //         pageNo={pageNo}
+  //         handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+  //         handleIncrementPageButton={() => setPageNo((p) => p + 1)}
+  //       />
+  //     </div>
+
+  //     <div className="flex items-center justify-center mt-4">
+  //       <button
+  //         onClick={printDiv}
+  //         className="bg-green-500 text-white py-2 px-4 rounded font-semibold hover:cursor-pointer"
+  //       >
+  //         Download
+  //       </button>
+  //     </div>
+  //   </div>
+  // );
+
   return (
-    <div className="w-full mx-2">
+    <div className="w-full px-2 sm:px-4">
       <TableTitle tileName="Expense Report" activeFile="Expense Report" />
 
-      <div className="flex items-center justify-between text-gray-800 py-2 mx-2">
-        <div>
-          Show
+      {/* Top Bar */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between text-gray-800 py-2">
+        <div className="text-sm">
+          <span>Show</span>
           <span className="bg-gray-200 rounded mx-1 p-1">
-            <select value={selectedValue} onChange={handleChangeShowData}>
+            <select
+              value={selectedValue}
+              onChange={handleChangeShowData}
+              className="bg-transparent outline-none"
+            >
               {pageSizes.map((num) => (
                 <option key={num} value={num}>
                   {num}
@@ -175,92 +305,92 @@ export const ExpenseReports = () => {
               ))}
             </select>
           </span>
-          entries
+          <span>entries</span>
         </div>
+
         <TableInputField
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
       </div>
 
-      <div
-        className="max-h-[58vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
-       overflow-hidden flex flex-col"
-      >
-        <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div className="flex flex-1 py-1 gap-1 items-center justify-center">
-            <InputField
-              labelName="From"
-              type="date"
-              value={filters.startDate}
-              handlerChange={handleChange}
-              name="startDate"
-            />
-            <InputField
-              labelName="To"
-              type="date"
-              value={filters.endDate}
-              handlerChange={handleChange}
-              name="endDate"
-            />
-            <OptionField
-              labelName="Category"
-              name="expenseCategoryId"
-              value={filters.expenseCategoryId}
-              optionData={categories.map((c) => ({
-                id: c.id,
-                label: c.categoryName,
-                value: c.id,
-              }))}
-              inital="All Categories"
-              handlerChange={handleChange}
-            />
-
-            <div className="w-full flex justify-end mt-4">
-              <div className="text-gray-800 flex items-center py-2 font-semibold">
-                <span className="mr-1">From</span>
-                <span className="text-red-500 mr-1">{filters.startDate}</span>
-                <span className="mr-1">To</span>
-                <span className="text-red-500">{filters.endDate}</span>
-              </div>
-            </div>
-          </div>
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between text-gray-800 mt-2">
+        <div className="flex flex-col sm:flex-row gap-2 flex-1 items-center">
+          <InputField
+            labelName="From"
+            type="date"
+            value={filters.startDate}
+            handlerChange={handleChange}
+            name="startDate"
+          />
+          <InputField
+            labelName="To"
+            type="date"
+            value={filters.endDate}
+            handlerChange={handleChange}
+            name="endDate"
+          />
+          <OptionField
+            labelName="Category"
+            name="expenseCategoryId"
+            value={filters.expenseCategoryId}
+            optionData={categories.map((c) => ({
+              id: c.id,
+              label: c.categoryName,
+              value: c.id,
+            }))}
+            inital="All Categories"
+            handlerChange={handleChange}
+          />
         </div>
 
-        <div
-          id="myDiv"
-          className="max-h-[28.4rem] overflow-y-auto mx-2"
-        >
-          <div
-            className="grid grid-cols-5 bg-indigo-900 text-white font-semibold border border-gray-600 text-sm
-           sticky top-0 z-10 p-[7px]"
-          >
-            <span>Sr#</span>
-            <span>Category</span>
-            <span>Expense</span>
-            <span>Amount</span>
-            <span>Date</span>
-          </div>
-
-          {filteredExpenses
-            .slice((pageNo - 1) * selectedValue, pageNo * selectedValue)
-            .map((e, index) => (
-              <div
-                key={e.id}
-                className="grid grid-cols-5 border border-gray-600 text-gray-800 hover:bg-gray-100 transition 
-                duration-200 text-sm items-center justify-center p-[5px]"
-              >
-                <span>{(pageNo - 1) * selectedValue + index + 1}</span>
-                <span>{e.categoryName}</span>
-                <span>{e.expenseName}</span>
-                <span>{e.amount}</span>
-                <span>{e.date}</span>
-              </div>
-            ))}
+        <div className="flex justify-end text-gray-800 font-semibold mt-2 sm:mt-0">
+          <span className="mr-1">From</span>
+          <span className="text-red-500 mr-1">{filters.startDate}</span>
+          <span className="mr-1">To</span>
+          <span className="text-red-500">{filters.endDate}</span>
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
+      {/* Table */}
+      <div className="mt-2 shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
+        <div id="myDiv" className="overflow-x-auto">
+          <div className="min-w-[700px]">
+            {/* Header */}
+            <div
+              className="grid grid-cols-5 bg-indigo-900 text-white font-semibold text-sm
+            sticky top-0 z-10 p-2"
+            >
+              <span>Sr#</span>
+              <span>Category</span>
+              <span>Expense</span>
+              <span>Amount</span>
+              <span>Date</span>
+            </div>
+
+            {/* Body */}
+            {filteredExpenses
+              .slice((pageNo - 1) * selectedValue, pageNo * selectedValue)
+              .map((e, index) => (
+                <div
+                  key={e.id}
+                  className="grid grid-cols-5 border border-gray-300 text-gray-800 text-sm
+                p-2 hover:bg-gray-100 transition"
+                >
+                  <span>{(pageNo - 1) * selectedValue + index + 1}</span>
+                  <span className="truncate">{e.categoryName}</span>
+                  <span className="truncate">{e.expenseName}</span>
+                  <span>{e.amount}</span>
+                  <span>{e.date}</span>
+                </div>
+              ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Pagination (UNCHANGED & stays at bottom) */}
+      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
         <ShowDataNumber
           start={(pageNo - 1) * selectedValue + 1}
           end={Math.min(pageNo * selectedValue, filteredExpenses.length)}
@@ -273,6 +403,7 @@ export const ExpenseReports = () => {
         />
       </div>
 
+      {/* Download */}
       <div className="flex items-center justify-center mt-4">
         <button
           onClick={printDiv}

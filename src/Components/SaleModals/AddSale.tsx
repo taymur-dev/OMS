@@ -88,7 +88,7 @@ export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {
 
   return (
     <div>
-      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
         <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-900">
           <form onSubmit={handlerSubmitted}>
 

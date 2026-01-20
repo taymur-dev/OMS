@@ -123,54 +123,204 @@ export const Rejoin = () => {
 
   if (loader) return <Loader />;
 
+  // return (
+  //   <div className="w-full mx-2">
+  //     <TableTitle tileName="Rejoining" activeFile="Rejoining list" />
+
+  //     <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col overflow-hidden">
+  //       <div className="flex items-center justify-between mx-2">
+  //         <span>
+  //           Total Rejoining Requests:{" "}
+  //           <span className="text-2xl text-indigo-900 font-semibold">
+  //             [{totalItems}]
+  //           </span>
+  //         </span>
+
+  //         <CustomButton
+  //           label="Add Rejoin"
+  //           handleToggle={() => setIsOpenModal("ADD")}
+  //         />
+  //       </div>
+
+  //       <div className="flex justify-between mx-2">
+  //         <div className="flex items-center gap-2">
+  //           <span>Show</span>
+  //           <select
+  //             value={selectedValue}
+  //             onChange={(e) => {
+  //               setSelectedValue(Number(e.target.value));
+  //               setPageNo(1);
+  //             }}
+  //             className="bg-gray-200 rounded px-2 py-1"
+  //           >
+  //             {numbers.map((num) => (
+  //               <option key={num}>{num}</option>
+  //             ))}
+  //           </select>
+  //           <span>entries</span>
+  //         </div>
+
+  //         <TableInputField
+  //           searchTerm={searchTerm}
+  //           setSearchTerm={(term) => {
+  //             setSearchTerm(term);
+  //             setPageNo(1);
+  //           }}
+  //         />
+  //       </div>
+
+  //       <div className="flex-1 mx-2 overflow-y-auto">
+  //         <div className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr_1fr_1fr_1fr] bg-indigo-900 text-white font-semibold p-2 sticky top-0">
+  //           <span>Sr#</span>
+  //           <span>Employee</span>
+  //           <span>Designation</span>
+  //           <span>Resignation Date</span>
+  //           <span>Rejoin Date</span>
+  //           <span>Status</span>
+  //           <span className="text-center">Actions</span>
+  //         </div>
+
+  //         {paginatedData.map((item, index) => (
+  //           <div
+  //             key={item.id}
+  //             className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr_1fr_1fr_1fr] p-2 border hover:bg-gray-100"
+  //           >
+  //             <span>{startIndex + index + 1}</span>
+  //             <span>{item.employee_name}</span>
+  //             <span>{item.designation}</span>
+  //             <span>{formatDate(item.resignation_date)}</span>
+  //             <span>{formatDate(item.rejoinRequest_date)}</span>
+  //             <span>{item.approval_status}</span>
+
+  //             <span className="flex justify-center gap-1">
+  //               <EditButton
+  //                 handleUpdate={() => {
+  //                   setSelectedRejoin(item);
+  //                   setIsOpenModal("EDIT");
+  //                 }}
+  //               />
+  //               <ViewButton
+  //                 handleView={() => {
+  //                   setSelectedRejoin(item);
+  //                   setIsOpenModal("VIEW");
+  //                 }}
+  //               />
+
+  //               {currentUser?.role === "admin" && (
+  //                 <DeleteButton
+  //                   handleDelete={() => {
+  //                     setSelectedId(item.id);
+  //                     setIsOpenModal("DELETE");
+  //                   }}
+  //                 />
+  //               )}
+  //             </span>
+  //           </div>
+  //         ))}
+  //       </div>
+  //     </div>
+
+  //     <div className="flex justify-between mt-2">
+  //       <ShowDataNumber
+  //         start={startIndex + 1}
+  //         end={endIndex}
+  //         total={totalItems}
+  //       />
+
+  //       <Pagination
+  //         pageNo={pageNo}
+  //         handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+  //         handleIncrementPageButton={() =>
+  //           pageNo * selectedValue < totalItems && setPageNo((p) => p + 1)
+  //         }
+  //       />
+  //     </div>
+
+  //     {isOpenModal === "ADD" && (
+  //       <AddRejoining
+  //         setModal={() => setIsOpenModal("")}
+  //         handleRefresh={handleGetRejoinRequests}
+  //       />
+  //     )}
+
+  //     {isOpenModal === "EDIT" && selectedRejoin && (
+  //       <UpdateRejoining
+  //         setModal={() => setIsOpenModal("")}
+  //         rejoinData={selectedRejoin}
+  //         handleRefresh={handleGetRejoinRequests}
+  //       />
+  //     )}
+
+  //     {isOpenModal === "DELETE" && (
+  //       <ConfirmationModal
+  //         isOpen={() => {}}
+  //         onClose={() => setIsOpenModal("")}
+  //         onConfirm={handleDeleteRejoin}
+  //         message="Are you sure you want to delete this rejoining request?"
+  //       />
+  //     )}
+
+  //     {isOpenModal === "VIEW" && selectedRejoin && (
+  //       <ViewRejoin
+  //         setIsOpenModal={() => setIsOpenModal("")}
+  //         viewRejoin={selectedRejoin}
+  //       />
+  //     )}
+  //   </div>
+  // );
   return (
-    <div className="w-full mx-2">
-      <TableTitle tileName="Rejoining" activeFile="Rejoining list" />
+  <div className="w-full px-2 sm:px-4">
+    <TableTitle tileName="Rejoining" activeFile="Rejoining list" />
 
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between mx-2">
-          <span>
-            Total Rejoining Requests:{" "}
-            <span className="text-2xl text-indigo-900 font-semibold">
-              [{totalItems}]
-            </span>
+    <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
+      {/* Top Bar */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
+        <span className="text-sm sm:text-base">
+          Total Rejoining Requests:{" "}
+          <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
+            [{totalItems}]
           </span>
+        </span>
 
-          <CustomButton
-            label="Add Rejoin"
-            handleToggle={() => setIsOpenModal("ADD")}
-          />
-        </div>
+        <CustomButton
+          label="Add Rejoin"
+          handleToggle={() => setIsOpenModal("ADD")}
+        />
+      </div>
 
-        <div className="flex justify-between mx-2">
-          <div className="flex items-center gap-2">
-            <span>Show</span>
-            <select
-              value={selectedValue}
-              onChange={(e) => {
-                setSelectedValue(Number(e.target.value));
-                setPageNo(1);
-              }}
-              className="bg-gray-200 rounded px-2 py-1"
-            >
-              {numbers.map((num) => (
-                <option key={num}>{num}</option>
-              ))}
-            </select>
-            <span>entries</span>
-          </div>
-
-          <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={(term) => {
-              setSearchTerm(term);
+      {/* Filter Row */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
+        <div className="text-sm flex items-center gap-2">
+          <span>Show</span>
+          <select
+            value={selectedValue}
+            onChange={(e) => {
+              setSelectedValue(Number(e.target.value));
               setPageNo(1);
             }}
-          />
+            className="bg-gray-200 rounded px-2 py-1"
+          >
+            {numbers.map((num) => (
+              <option key={num}>{num}</option>
+            ))}
+          </select>
+          <span>entries</span>
         </div>
 
-        <div className="flex-1 mx-2 overflow-y-auto">
-          <div className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr_1fr_1fr_1fr] bg-indigo-900 text-white font-semibold p-2 sticky top-0">
+        <TableInputField
+          searchTerm={searchTerm}
+          setSearchTerm={(term) => {
+            setSearchTerm(term);
+            setPageNo(1);
+          }}
+        />
+      </div>
+
+      {/* Table Wrapper */}
+      <div className="mx-2 mt-2 overflow-x-auto flex-1">
+        <div className="min-w-[900px]">
+          {/* Table Header */}
+          <div className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr_1fr_1fr_1fr] items-center bg-indigo-900 text-white font-semibold text-sm sticky top-0 z-10 p-2">
             <span>Sr#</span>
             <span>Employee</span>
             <span>Designation</span>
@@ -180,92 +330,105 @@ export const Rejoin = () => {
             <span className="text-center">Actions</span>
           </div>
 
-          {paginatedData.map((item, index) => (
-            <div
-              key={item.id}
-              className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr_1fr_1fr_1fr] p-2 border hover:bg-gray-100"
-            >
-              <span>{startIndex + index + 1}</span>
-              <span>{item.employee_name}</span>
-              <span>{item.designation}</span>
-              <span>{formatDate(item.resignation_date)}</span>
-              <span>{formatDate(item.rejoinRequest_date)}</span>
-              <span>{item.approval_status}</span>
+          {/* Table Body */}
+          {paginatedData.length === 0 ? (
+            <div className="text-gray-800 text-lg text-center py-4">
+              No records available at the moment!
+            </div>
+          ) : (
+            paginatedData.map((item, index) => (
+              <div
+                key={item.id}
+                className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr_1fr_1fr_1fr] items-center p-2 border border-gray-300 text-gray-800 hover:bg-gray-100 transition"
+              >
+                <span>{startIndex + index + 1}</span>
+                <span className="truncate">{item.employee_name}</span>
+                <span className="truncate">{item.designation}</span>
+                <span>{formatDate(item.resignation_date)}</span>
+                <span>{formatDate(item.rejoinRequest_date)}</span>
+                <span>{item.approval_status}</span>
 
-              <span className="flex justify-center gap-1">
-                <EditButton
-                  handleUpdate={() => {
-                    setSelectedRejoin(item);
-                    setIsOpenModal("EDIT");
-                  }}
-                />
-                <ViewButton
-                  handleView={() => {
-                    setSelectedRejoin(item);
-                    setIsOpenModal("VIEW");
-                  }}
-                />
-
-                {currentUser?.role === "admin" && (
-                  <DeleteButton
-                    handleDelete={() => {
-                      setSelectedId(item.id);
-                      setIsOpenModal("DELETE");
+                <span className="flex flex-wrap justify-center gap-1">
+                  <EditButton
+                    handleUpdate={() => {
+                      setSelectedRejoin(item);
+                      setIsOpenModal("EDIT");
                     }}
                   />
-                )}
-              </span>
-            </div>
-          ))}
+                  <ViewButton
+                    handleView={() => {
+                      setSelectedRejoin(item);
+                      setIsOpenModal("VIEW");
+                    }}
+                  />
+                  {currentUser?.role === "admin" && (
+                    <DeleteButton
+                      handleDelete={() => {
+                        setSelectedId(item.id);
+                        setIsOpenModal("DELETE");
+                      }}
+                    />
+                  )}
+                </span>
+              </div>
+            ))
+          )}
         </div>
       </div>
-
-      <div className="flex justify-between mt-2">
-        <ShowDataNumber
-          start={startIndex + 1}
-          end={endIndex}
-          total={totalItems}
-        />
-
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-          handleIncrementPageButton={() =>
-            pageNo * selectedValue < totalItems && setPageNo((p) => p + 1)
-          }
-        />
-      </div>
-
-      {isOpenModal === "ADD" && (
-        <AddRejoining
-          setModal={() => setIsOpenModal("")}
-          handleRefresh={handleGetRejoinRequests}
-        />
-      )}
-
-      {isOpenModal === "EDIT" && selectedRejoin && (
-        <UpdateRejoining
-          setModal={() => setIsOpenModal("")}
-          rejoinData={selectedRejoin}
-          handleRefresh={handleGetRejoinRequests}
-        />
-      )}
-
-      {isOpenModal === "DELETE" && (
-        <ConfirmationModal
-          isOpen={() => {}}
-          onClose={() => setIsOpenModal("")}
-          onConfirm={handleDeleteRejoin}
-          message="Are you sure you want to delete this rejoining request?"
-        />
-      )}
-
-      {isOpenModal === "VIEW" && selectedRejoin && (
-        <ViewRejoin
-          setIsOpenModal={() => setIsOpenModal("")}
-          viewRejoin={selectedRejoin}
-        />
-      )}
     </div>
-  );
+
+    {/* Pagination */}
+    <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
+      <ShowDataNumber
+        start={totalItems === 0 ? 0 : startIndex + 1}
+        end={Math.min(endIndex, totalItems)}
+        total={totalItems}
+      />
+
+      <Pagination
+        pageNo={pageNo}
+        handleDecrementPageButton={() =>
+          setPageNo((p) => Math.max(p - 1, 1))
+        }
+        handleIncrementPageButton={() =>
+          pageNo * selectedValue < totalItems && setPageNo((p) => p + 1)
+        }
+      />
+    </div>
+
+    {/* Modals */}
+    {isOpenModal === "ADD" && (
+      <AddRejoining
+        setModal={() => setIsOpenModal("")}
+        handleRefresh={handleGetRejoinRequests}
+      />
+    )}
+
+    {isOpenModal === "EDIT" && selectedRejoin && (
+      <UpdateRejoining
+        setModal={() => setIsOpenModal("")}
+        rejoinData={selectedRejoin}
+        handleRefresh={handleGetRejoinRequests}
+      />
+    )}
+
+    {isOpenModal === "DELETE" && (
+      <ConfirmationModal
+        isOpen={() => {}}
+        onClose={() => setIsOpenModal("")}
+        onConfirm={handleDeleteRejoin}
+        message="Are you sure you want to delete this rejoining request?"
+      />
+    )}
+
+    {isOpenModal === "VIEW" && selectedRejoin && (
+      <ViewRejoin
+        setIsOpenModal={() => setIsOpenModal("")}
+        viewRejoin={selectedRejoin}
+      />
+    )}
+  </div>
+);
+
+
 };

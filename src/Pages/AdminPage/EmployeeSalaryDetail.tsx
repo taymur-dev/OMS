@@ -65,7 +65,7 @@ export const EmployeeSalaryDetail = () => {
   return (
     <div className="w-full mx-2">
       <TableTitle tileName="Salary" activeFile="Salary  Cycle" />
-      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-500 bg-white ">
+      <div className="max-h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white ">
         <div className="flex text-gray-800 items-center justify-between mx-2">
           <span>
             Total number of Salary Record:{" "}

@@ -88,7 +88,7 @@ export const AddCustomer = ({
       const res = await axios.post(
         `${BASE_URL}/api/admin/addCustomer`,
         cleanedData,
-        { headers: { Authorization: token } }
+        { headers: { Authorization: token } },
       );
 
       toast.success(res.data.message);
@@ -104,7 +104,7 @@ export const AddCustomer = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-10">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-10">
       <div className="w-full max-w-3xl max-h-[90vh] bg-white rounded-xl border border-indigo-900 shadow-lg overflow-y-auto">
         <form onSubmit={handlerSubmitted} className="flex flex-col">
           {/* Header */}
@@ -118,7 +118,7 @@ export const AddCustomer = ({
           </div>
 
           {/* Form Body */}
-          <div className="px-6 py-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="px-6 py-6 grid grid-cols-2 md:grid-cols-2 sm:grid-cols-2 gap-5">
             <InputField
               labelName="Customer Name*"
               placeHolder="Enter the Customer Name"

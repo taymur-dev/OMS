@@ -13,7 +13,12 @@ import { Columns } from "./MenuCards/Colums";
 import Card from "./DetailCards/Card";
 
 type CategoryT = { id: number; categoryName: string };
-type UserT = { id: number; name?: string; email?: string; loginStatus: "Y" | "N" };
+type UserT = {
+  id: number;
+  name?: string;
+  email?: string;
+  loginStatus: "Y" | "N";
+};
 type TodoT = { id: number; todoStatus: "Y" | "N" };
 type completionStatus = "New" | "Working" | "Complete";
 
@@ -73,7 +78,7 @@ export const MainContent = () => {
           projectName: p.projectName,
           completionStatus: p.completionStatus,
           projectCategory: p.projectCategory,
-        })
+        }),
       );
 
       setAllAssignProjects(formattedProjects);
@@ -107,7 +112,7 @@ export const MainContent = () => {
   const handleGetTotalExpense = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getTotalExpense`, {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setTotalExpenseAmount(Number(res.data.totalExpense));
     } catch (error) {
@@ -118,7 +123,7 @@ export const MainContent = () => {
   const handleGetProjectsCategory = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getCategory`, {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setAllCategory(res.data);
     } catch (error) {
@@ -157,9 +162,10 @@ export const MainContent = () => {
   const activeTodos = allTodos.filter((todo) => todo.todoStatus === "Y");
 
   return (
-    <div className="w-full h-full overflow-y-hidden p-1 space-y-6">
-      <form className="flex-1 flex-col sm:flex-row gap-4">
-        <div className="ml-236 w-109">
+    <div className="w-full h-full overflow-y-auto p-4 space-y-6">
+      {/* Category Filter */}
+      <form className="flex flex-col sm:flex-row gap-4 w-full">
+        <div className="sm:w-1/3 ml-2">
           <OptionField
             labelName=""
             name="categoryName"
@@ -175,7 +181,8 @@ export const MainContent = () => {
         </div>
       </form>
 
-      <div className="flex flex-col lg:flex-row gap-0 ml-6">
+      {/* Projects Columns */}
+      <div className="flex flex-col lg:flex-row gap-4 px-2 lg:px-6">
         {columsData.map((column) => (
           <Columns
             key={column.id}
@@ -184,18 +191,19 @@ export const MainContent = () => {
               (project) =>
                 project.completionStatus === column.id &&
                 (!formData.categoryName ||
-                  project.projectCategory === formData.categoryName)
+                  project.projectCategory === formData.categoryName),
             )}
           />
         ))}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-1 px-6.5">
+      {/* Dashboard Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 px-2 sm:px-4 xl:px-6">
         <Card
           titleName="Users"
           totalUser="Total Users"
           totalNumber={activeUsers.length}
-          icon={<BiUser className="text-3xl" />}
+          icon={<BiUser className="text-2xl sm:text-3xl" />}
           style="bg-white"
         />
 
@@ -203,7 +211,7 @@ export const MainContent = () => {
           titleName="Assigned Projects"
           totalUser="Total Projects"
           totalNumber={allAssignProjects.length}
-          icon={<FaProjectDiagram className="text-3xl" />}
+          icon={<FaProjectDiagram className="text-2xl sm:text-3xl" />}
           style="bg-white"
         />
 
@@ -211,7 +219,7 @@ export const MainContent = () => {
           titleName="Todo's"
           totalUser="Active Todo's"
           totalNumber={activeTodos.length}
-          icon={<LuListTodo className="text-3xl" />}
+          icon={<LuListTodo className="text-2xl sm:text-3xl" />}
           style="bg-white"
         />
 
@@ -219,7 +227,7 @@ export const MainContent = () => {
           titleName="Expense Categories"
           totalUser="Total Categories"
           totalNumber={expenseCategory.length}
-          icon={<CiViewList className="text-3xl" />}
+          icon={<CiViewList className="text-2xl sm:text-3xl" />}
           style="bg-white"
         />
 
@@ -227,7 +235,7 @@ export const MainContent = () => {
           titleName="Total Expense"
           totalNumber={totalExpenseAmount}
           isCurrency
-          icon={<GiTakeMyMoney className="text-3xl" />}
+          icon={<GiTakeMyMoney className="text-2xl sm:text-3xl" />}
           style="bg-white"
         />
       </div>

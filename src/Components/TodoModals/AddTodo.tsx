@@ -125,8 +125,8 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
     }));
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[28rem] bg-white rounded-xl border border-indigo-900 overflow-auto">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center px-4  justify-center z-10">
+      <div className="w-[42rem] max-h-[28rem] bg-white rounded-xl border border-indigo-900">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
@@ -137,7 +137,7 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
             </Title>
           </div>
 
-          <div className="mx-2 flex flex-col py-2 gap-3">
+          <div className="mx-2 flex flex-col  py-2 gap-3">
             {isAdmin && (
               <UserSelect
                 labelName="Employees*"
@@ -162,7 +162,7 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
               handlerChange={handleChange}
             />
 
-            <div className="flex flex-wrap gap-4 ml-20">
+            <div className="flex flex-wrap items-center justify-center gap-4 lg:ml-20">
               <InputField
                 labelName="Start Date*"
                 name="startDate"
@@ -187,7 +187,7 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-500">
+          <div className="flex justify-end gap-3 px-4 py-3 rounded-b-xl bg-indigo-900  border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
             <AddButton label="Save" />
           </div>

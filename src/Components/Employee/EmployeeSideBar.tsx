@@ -47,10 +47,15 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
 
   return (
     <div
-      className={`${
-        isOpen ? "w-16" : "w-52"
-      } bg-white overflow-y-auto transition-all duration-300 ease-in-out flex flex-col items-center py-4 shadow-lg 
-     `}
+      className={`
+    ${isOpen ? "w-16" : "w-52"}
+    bg-white
+    transition-all duration-300 ease-in-out
+    flex flex-col items-center py-4
+    shadow-lg
+    sticky top-0 h-screen
+    overflow-y-hidden
+  `}
     >
       {!isOpen ? (
         <Link

@@ -90,7 +90,7 @@ export const Login = () => {
 
   return (
     <div
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br
+      className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden bg-gradient-to-br
      from-indigo-500 via-indigo-900 to-indigo-600"
     >
       <div className="absolute top-1/2 -left-24 w-96 h-96 bg-blue-100/40 rounded-full animate-pulse" />

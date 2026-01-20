@@ -36,7 +36,7 @@ export const ProcessReports = () => {
   const token = currentUser?.token;
   const userId = currentUser?.userId;
 
-  const currentDate = new Date().toLocaleDateString('sv-SE');
+  const currentDate = new Date().toLocaleDateString("sv-SE");
 
   const [reportData, setReportData] = useState({
     startDate: currentDate,
@@ -94,7 +94,7 @@ export const ProcessReports = () => {
   const paginatedData = filteredTasks.slice(startIndex, endIndex);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setReportData((prev) => ({ ...prev, [name]: value }));
@@ -167,86 +167,224 @@ export const ProcessReports = () => {
 
   if (loader) return <Loader />;
 
-  return (
-    <div className="w-full mx-2">
-      <TableTitle tileName="Task Report" activeFile="Process Report" />
+  // return (
+  //   <div className="w-full mx-2">
+  //     <TableTitle tileName="Task Report" activeFile="Process Report" />
 
-      <div className="flex items-center justify-between text-gray-800 py-2 mx-2">
-        <div>
-          <span>Show</span>
-          <span className="bg-gray-200 rounded mx-1 p-1">
-            <select
-              value={itemsPerPage}
-              onChange={(e) => {
-                setItemsPerPage(Number(e.target.value));
-                setPageNo(1);
-              }}
-            >
-              {itemsPerPageOptions.map((num) => (
-                <option key={num}>{num}</option>
-              ))}
-            </select>
-          </span>
-          <span>entries</span>
-        </div>
+  //     <div className="flex items-center justify-between text-gray-800 py-2 mx-2">
+  //       <div>
+  //         <span>Show</span>
+  //         <span className="bg-gray-200 rounded mx-1 p-1">
+  //           <select
+  //             value={itemsPerPage}
+  //             onChange={(e) => {
+  //               setItemsPerPage(Number(e.target.value));
+  //               setPageNo(1);
+  //             }}
+  //           >
+  //             {itemsPerPageOptions.map((num) => (
+  //               <option key={num}>{num}</option>
+  //             ))}
+  //           </select>
+  //         </span>
+  //         <span>entries</span>
+  //       </div>
 
-        <TableInputField
-          searchTerm={searchTerm}
-          setSearchTerm={(term) => {
-            setSearchTerm(term);
-            setPageNo(1);
-          }}
-        />
+  //       <TableInputField
+  //         searchTerm={searchTerm}
+  //         setSearchTerm={(term) => {
+  //           setSearchTerm(term);
+  //           setPageNo(1);
+  //         }}
+  //       />
+  //     </div>
+
+  //     <div
+  //       className="max-h-[58vh] h-full shadow-lg border-t-2 border-indigo-900
+  // bg-white rounded overflow-hidden flex flex-col"
+  //     >
+  //       <div className="flex items-center justify-between mx-2">
+  //         <div className="flex flex-1 py-1 gap-2 items-center justify-center">
+  //           <InputField
+  //             labelName="From"
+  //             type="date"
+  //             name="startDate"
+  //             value={reportData.startDate}
+  //             handlerChange={handleChange}
+  //           />
+
+  //           <InputField
+  //             labelName="To"
+  //             type="date"
+  //             name="endDate"
+  //             value={reportData.endDate}
+  //             handlerChange={handleChange}
+  //           />
+
+  //           {currentUser?.role === "admin" && (
+  //             <OptionField
+  //               labelName="Employee"
+  //               name="employeeId"
+  //               value={reportData.employeeId}
+  //               optionData={employeeOptions}
+  //               inital="Select Employee"
+  //               handlerChange={handleChange}
+  //             />
+  //           )}
+
+  //           <div className="w-full flex justify-end mt-4">
+  //             <div className="flex items-center font-semibold text-gray-800">
+  //               <span className="mr-1">From</span>
+  //               <span className="text-red-500 mr-1">
+  //                 {reportData.startDate}
+  //               </span>
+  //               <span className="mr-1">To</span>
+  //               <span className="text-red-500">{reportData.endDate}</span>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+
+  //       <div id="myDiv" className="mx-2 flex-1 overflow-y-auto">
+  //         <div className="grid grid-cols-7 bg-indigo-900 text-white font-semibold sticky top-0 p-2">
+  //           <span>Sr#</span>
+  //           <span>Employee</span>
+  //           <span>Task</span>
+  //           <span>Start</span>
+  //           <span>End</span>
+  //           <span>Deadline</span>
+  //         </div>
+
+  //         {paginatedData.length === 0 ? (
+  //           <div className="text-center py-4 text-gray-600">
+  //             No records found
+  //           </div>
+  //         ) : (
+  //           paginatedData.map((item, index) => (
+  //             <div
+  //               key={item.id}
+  //               className="grid grid-cols-7 border p-2 text-sm hover:bg-gray-100"
+  //             >
+  //               <span>{startIndex + index + 1}</span>
+  //               <span>{item.employeeName}</span>
+  //               <span>{item.task}</span>
+  //               <span>{item.startDate.slice(0, 10)}</span>
+  //               <span>{item.endDate.slice(0, 10)}</span>
+  //               <span>{item.deadline?.slice(0, 10)}</span>
+  //             </div>
+  //           ))
+  //         )}
+  //       </div>
+  //     </div>
+
+  //     <div className="flex items-center justify-between">
+  //       <ShowDataNumber
+  //         start={startIndex + 1}
+  //         end={endIndex}
+  //         total={totalItems}
+  //       />
+
+  //       <Pagination
+  //         pageNo={pageNo}
+  //         handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+  //         handleIncrementPageButton={() =>
+  //           pageNo * itemsPerPage < totalItems && setPageNo((p) => p + 1)
+  //         }
+  //       />
+  //     </div>
+
+  //     <div className="flex items-center justify-center mt-4">
+  //       <button
+  //         onClick={printDiv}
+  //         className="bg-green-500 text-white py-2 px-4 rounded font-semibold hover:cursor-pointer"
+  //       >
+  //         Download
+  //       </button>
+  //     </div>
+  //   </div>
+  // );
+
+ return (
+  <div className="w-full px-2 sm:px-4">
+    <TableTitle tileName="Task Report" activeFile="Task Report" />
+
+    {/* Top Bar: Items per page & Search */}
+    <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between text-gray-800 py-2">
+      <div className="text-sm">
+        <span>Show</span>
+        <span className="bg-gray-200 rounded mx-1 p-1">
+          <select
+            value={itemsPerPage}
+            onChange={(e) => {
+              setItemsPerPage(Number(e.target.value));
+              setPageNo(1);
+            }}
+            className="bg-transparent outline-none"
+          >
+            {itemsPerPageOptions.map((num) => (
+              <option key={num} value={num}>
+                {num}
+              </option>
+            ))}
+          </select>
+        </span>
+        <span>entries</span>
       </div>
 
-      <div
-        className="max-h-[58vh] h-full shadow-lg border-t-2 border-indigo-900 
-  bg-white rounded overflow-hidden flex flex-col"
-      >
-        <div className="flex items-center justify-between mx-2">
-          <div className="flex flex-1 py-1 gap-2 items-center justify-center">
-            <InputField
-              labelName="From"
-              type="date"
-              name="startDate"
-              value={reportData.startDate}
-              handlerChange={handleChange}
-            />
+      <TableInputField
+        searchTerm={searchTerm}
+        setSearchTerm={(term) => {
+          setSearchTerm(term);
+          setPageNo(1);
+        }}
+      />
+    </div>
 
-            <InputField
-              labelName="To"
-              type="date"
-              name="endDate"
-              value={reportData.endDate}
-              handlerChange={handleChange}
-            />
+    {/* Filters: Dates & Employee */}
+    <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between text-gray-800 mt-2">
+      <div className="flex flex-col sm:flex-row gap-2 flex-1 items-center">
+        <InputField
+          labelName="From"
+          type="date"
+          name="startDate"
+          value={reportData.startDate}
+          handlerChange={handleChange}
+        />
+        <InputField
+          labelName="To"
+          type="date"
+          name="endDate"
+          value={reportData.endDate}
+          handlerChange={handleChange}
+        />
 
-            {currentUser?.role === "admin" && (
-              <OptionField
-                labelName="Employee"
-                name="employeeId"
-                value={reportData.employeeId}
-                optionData={employeeOptions}
-                inital="Select Employee"
-                handlerChange={handleChange}
-              />
-            )}
+        {currentUser?.role === "admin" && (
+          <OptionField
+            labelName="Employee"
+            name="employeeId"
+            value={reportData.employeeId}
+            optionData={employeeOptions}
+            inital="Select Employee"
+            handlerChange={handleChange}
+          />
+        )}
+      </div>
 
-            <div className="w-full flex justify-end mt-4">
-              <div className="flex items-center font-semibold text-gray-800">
-                <span className="mr-1">From</span>
-                <span className="text-red-500 mr-1">
-                  {reportData.startDate}
-                </span>
-                <span className="mr-1">To</span>
-                <span className="text-red-500">{reportData.endDate}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Display Selected Dates */}
+      <div className="flex justify-end text-gray-800 font-semibold mt-2 sm:mt-0">
+        <span className="mr-1">From</span>
+        <span className="text-red-500 mr-1">{reportData.startDate}</span>
+        <span className="mr-1">To</span>
+        <span className="text-red-500">{reportData.endDate}</span>
+      </div>
+    </div>
 
-        <div id="myDiv" className="mx-2 flex-1 overflow-y-auto">
-          <div className="grid grid-cols-7 bg-indigo-900 text-white font-semibold sticky top-0 p-2">
+    {/* Table */}
+    <div className="mt-2 shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
+      <div id= "myDiv" className=" overflow-x-auto">
+        <div className="min-w-[700px]">
+          {/* Table Header */}
+          <div className="grid grid-cols-6 sm:grid-cols-[0.5fr_1fr_1.5fr_1fr_1fr_1fr] bg-indigo-900 text-white font-semibold text-sm sticky top-0 z-10 p-2">
             <span>Sr#</span>
             <span>Employee</span>
             <span>Task</span>
@@ -255,6 +393,7 @@ export const ProcessReports = () => {
             <span>Deadline</span>
           </div>
 
+          {/* Table Body */}
           {paginatedData.length === 0 ? (
             <div className="text-center py-4 text-gray-600">
               No records found
@@ -263,11 +402,11 @@ export const ProcessReports = () => {
             paginatedData.map((item, index) => (
               <div
                 key={item.id}
-                className="grid grid-cols-7 border p-2 text-sm hover:bg-gray-100"
+                className="grid grid-cols-6 sm:grid-cols-[0.5fr_1fr_1.5fr_1fr_1fr_1fr] border border-gray-300 text-gray-800 text-sm p-2 hover:bg-gray-100 transition"
               >
                 <span>{startIndex + index + 1}</span>
-                <span>{item.employeeName}</span>
-                <span>{item.task}</span>
+                <span className="truncate">{item.employeeName}</span>
+                <span className="truncate">{item.task}</span>
                 <span>{item.startDate.slice(0, 10)}</span>
                 <span>{item.endDate.slice(0, 10)}</span>
                 <span>{item.deadline?.slice(0, 10)}</span>
@@ -276,31 +415,30 @@ export const ProcessReports = () => {
           )}
         </div>
       </div>
-
-      <div className="flex items-center justify-between">
-        <ShowDataNumber
-          start={startIndex + 1}
-          end={endIndex}
-          total={totalItems}
-        />
-
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-          handleIncrementPageButton={() =>
-            pageNo * itemsPerPage < totalItems && setPageNo((p) => p + 1)
-          }
-        />
-      </div>
-
-      <div className="flex items-center justify-center mt-4">
-        <button
-          onClick={printDiv}
-          className="bg-green-500 text-white py-2 px-4 rounded font-semibold hover:cursor-pointer"
-        >
-          Download
-        </button>
-      </div>
     </div>
-  );
+
+    {/* Pagination */}
+    <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
+      <ShowDataNumber start={startIndex + 1} end={endIndex} total={totalItems} />
+      <Pagination
+        pageNo={pageNo}
+        handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+        handleIncrementPageButton={() =>
+          pageNo * itemsPerPage < totalItems && setPageNo((p) => p + 1)
+        }
+      />
+    </div>
+
+    {/* Download Button */}
+    <div className="flex items-center justify-center mt-4">
+      <button
+        onClick={printDiv}
+        className="bg-green-500 text-white py-2 px-4 rounded font-semibold hover:cursor-pointer"
+      >
+        Download
+      </button>
+    </div>
+  </div>
+);
+
 };

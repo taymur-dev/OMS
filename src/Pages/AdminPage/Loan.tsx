@@ -49,7 +49,7 @@ export const Loan = () => {
   const [allLoans, setAllLoans] = useState<ALLLOANT[]>([]);
   const [isOpenModal, setIsOpenModal] = useState<LoanT>("");
   const [selectedLoan, setSelectedLoan] = useState<UserLoanSummary | null>(
-    null
+    null,
   );
 
   const [pageNo, setPageNo] = useState(1);
@@ -70,7 +70,7 @@ export const Loan = () => {
       });
 
       setAllLoans(
-        Array.isArray(res.data) ? res.data.sort((a, b) => b.id - a.id) : []
+        Array.isArray(res.data) ? res.data.sort((a, b) => b.id - a.id) : [],
       );
     } catch (error) {
       console.error("Failed to fetch loans:", error);
@@ -78,6 +78,7 @@ export const Loan = () => {
     }
   }, [token, currentUser]);
 
+  // Combine loans for admin or keep individual loans for user
   const displayLoans: UserLoanSummary[] =
     currentUser?.role === "admin"
       ? Object.values(
@@ -85,18 +86,18 @@ export const Loan = () => {
             if (!acc[loan.employee_id]) acc[loan.employee_id] = [];
             acc[loan.employee_id].push(loan);
             return acc;
-          }, {})
+          }, {}),
         ).map((loans) => {
           const firstLoan = loans[0];
           const totalLoan = loans.reduce((sum, l) => sum + l.loanAmount, 0);
           const totalDeduction = loans.reduce((sum, l) => sum + l.deduction, 0);
           const totalReturn = loans.reduce(
             (sum, l) => sum + l.return_amount,
-            0
+            0,
           );
           const totalRemaining = loans.reduce(
             (sum, l) => sum + l.remainingAmount,
-            0
+            0,
           );
 
           return {
@@ -110,14 +111,20 @@ export const Loan = () => {
         })
       : allLoans.map((loan) => ({ ...loan, allLoans: [loan] }));
 
+  // Filter loans by search term
   const filteredLoans = displayLoans.filter((l) =>
-    l.employee_name?.toLowerCase().includes(searchTerm.toLowerCase())
+    l.employee_name?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
+  // Pagination logic
   const totalItems = filteredLoans.length;
+  const totalPages = Math.ceil(totalItems / selectedValue);
   const startIndex = (pageNo - 1) * selectedValue;
   const endIndex = Math.min(startIndex + selectedValue, totalItems);
   const paginatedLoans = filteredLoans.slice(startIndex, endIndex);
+
+  // Reset pageNo if searchTerm or selectedValue changes
+  useEffect(() => setPageNo(1), [searchTerm, selectedValue]);
 
   useEffect(() => {
     handleGetAllLoans();
@@ -129,26 +136,130 @@ export const Loan = () => {
 
   if (loader) return <Loader />;
 
+  // return (
+  //   <div className="w-full mx-2">
+  //     <TableTitle tileName="Loan" activeFile="Loan list" />
+
+  //     <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col overflow-hidden">
+  //       <div className="flex items-center justify-between mx-2 my-2">
+  //         <span>
+  //           Total Loan Applications:{" "}
+  //           <span className="text-2xl text-indigo-900 font-semibold">
+  //             [{totalItems}]
+  //           </span>
+  //         </span>
+  //         <CustomButton
+  //           label="Add Loan"
+  //           handleToggle={() => setIsOpenModal("ADD")}
+  //         />
+  //       </div>
+
+  //       <div className="flex justify-between mx-2 mb-2">
+  //         <div className="flex items-center gap-2">
+  //           <span>Show</span>
+  //           <select
+  //             value={selectedValue}
+  //             onChange={(e) => setSelectedValue(Number(e.target.value))}
+  //             className="bg-gray-200 rounded px-2 py-1"
+  //           >
+  //             {numbers.map((num) => (
+  //               <option key={num} value={num}>
+  //                 {num}
+  //               </option>
+  //             ))}
+  //           </select>
+  //           <span>entries</span>
+  //         </div>
+
+  //         <TableInputField
+  //           searchTerm={searchTerm}
+  //           setSearchTerm={setSearchTerm}
+  //         />
+  //       </div>
+
+  //       <div className="flex-1 overflow-y-auto mx-2">
+  //         <div className="grid grid-cols-4 items-center bg-indigo-900 text-white font-semibold p-2 sticky top-0 z-10">
+  //           <span>Sr#</span>
+  //           <span>Employee</span>
+  //           <span>Contact</span>
+  //           <span className="text-center">Actions</span>
+  //         </div>
+
+  //         {paginatedLoans.map((item, index) => (
+  //           <div
+  //             key={item.id}
+  //             className="grid grid-cols-4 items-center p-2 border-b hover:bg-gray-100"
+  //           >
+  //             <span>{startIndex + index + 1}</span>
+  //             <span>{item.employee_name}</span>
+  //             <span>{item.contact}</span>
+  //             <span className="flex justify-center">
+  //               <ViewButton
+  //                 handleView={() => {
+  //                   setSelectedLoan(item);
+  //                   setIsOpenModal("VIEW");
+  //                 }}
+  //               />
+  //             </span>
+  //           </div>
+  //         ))}
+  //       </div>
+  //     </div>
+
+  //     <div className="flex items-center justify-between mt-2 px-2">
+  //       <ShowDataNumber
+  //         start={totalItems ? startIndex + 1 : 0}
+  //         end={endIndex}
+  //         total={totalItems}
+  //       />
+
+  //       <Pagination
+  //         pageNo={pageNo}
+  //         handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+  //         handleIncrementPageButton={() =>
+  //           pageNo < totalPages && setPageNo((p) => p + 1)
+  //         }
+  //       />
+  //     </div>
+
+  //     {isOpenModal === "VIEW" && selectedLoan && (
+  //       <ViewLoan
+  //         setIsOpenModal={() => setIsOpenModal("")}
+  //         viewLoan={selectedLoan}
+  //       />
+  //     )}
+  //     {isOpenModal === "ADD" && (
+  //       <AddLoan
+  //         setModal={() => setIsOpenModal("")}
+  //         handleRefresh={handleGetAllLoans}
+  //       />
+  //     )}
+  //   </div>
+  // );
+
   return (
-    <div className="w-full mx-2">
+    <div className="w-full px-2 sm:px-4">
       <TableTitle tileName="Loan" activeFile="Loan list" />
 
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between mx-2 my-2">
-          <span>
+      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col overflow-hidden">
+        {/* Top Bar */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
+          <span className="text-sm sm:text-base">
             Total Loan Applications :
-            <span className="text-2xl text-indigo-900 font-semibold">
+            <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
               [{totalItems}]
             </span>
           </span>
+
           <CustomButton
-            label="Add Loan"
             handleToggle={() => setIsOpenModal("ADD")}
+            label="Add Loan"
           />
         </div>
 
-        <div className="flex justify-between mx-2 mb-2">
-          <div className="flex items-center gap-2">
+        {/* Filter Row */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
+          <div className="text-sm flex items-center gap-2">
             <span>Show</span>
             <select
               value={selectedValue}
@@ -159,7 +270,9 @@ export const Loan = () => {
               className="bg-gray-200 rounded px-2 py-1"
             >
               {numbers.map((num) => (
-                <option key={num}>{num}</option>
+                <option key={num} value={num}>
+                  {num}
+                </option>
               ))}
             </select>
             <span>entries</span>
@@ -167,58 +280,69 @@ export const Loan = () => {
 
           <TableInputField
             searchTerm={searchTerm}
-            setSearchTerm={(term) => {
-              setSearchTerm(term);
-              setPageNo(1);
-            }}
+            setSearchTerm={setSearchTerm}
           />
         </div>
 
-        <div className="flex-1  overflow-y-auto mx-2">
-          <div className="grid grid-cols-4 items-center bg-indigo-900 text-white font-semibold p-2 sticky top-0 z-10">
-            <span>Sr#</span>
-            <span>Employee</span>
-            <span>Contact</span>
-            <span className="text-center">Actions</span>
-          </div>
-
-          {paginatedLoans.map((item, index) => (
-            <div
-              key={item.id}
-              className="grid grid-cols-4 items-center p-2 border-b hover:bg-gray-100"
-            >
-              <span>{startIndex + index + 1}</span>
-                <span>{item.employee_name}</span>
-              
-              <span>{item.contact}</span>
-              <span className="flex justify-center">
-                <ViewButton
-                  handleView={() => {
-                    setSelectedLoan(item);
-                    setIsOpenModal("VIEW");
-                  }}
-                />
-              </span>
+        {/* Table Wrapper */}
+        <div className="flex-1 overflow-auto mt-2 mx-2">
+          <div className="min-w-[600px]">
+            {/* Table Header */}
+            <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr] items-center sm:grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1.5fr] bg-indigo-900 text-white font-semibold text-sm sticky top-0 z-10 p-2">
+              <span>Sr#</span>
+              <span>Employee</span>
+              <span>Contact</span>
+              <span className="text-center">Actions</span>
+              {/* Extra columns for larger screens */}
             </div>
-          ))}
+
+            {/* Table Body */}
+            {paginatedLoans.length === 0 ? (
+              <div className="text-gray-800 text-lg text-center py-4">
+                No records available at the moment!
+              </div>
+            ) : (
+              paginatedLoans.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="grid grid-cols-[0.5fr_1fr_1fr_1fr] items-center sm:grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1.5fr] border border-gray-300 text-gray-800 text-sm p-2 hover:bg-gray-100 transition"
+                >
+                  <span>{startIndex + index + 1}</span>
+                  <span className="truncate">{item.employee_name}</span>
+                  <span>{item.contact}</span>
+                  <span className="flex justify-center gap-1">
+                    <ViewButton
+                      handleView={() => {
+                        setSelectedLoan(item);
+                        setIsOpenModal("VIEW");
+                      }}
+                    />
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-between mt-2">
+      {/* Pagination */}
+      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3 px-2">
         <ShowDataNumber
-          start={totalItems ? startIndex + 1 : 0}
-          end={endIndex}
+          start={totalItems === 0 ? 0 : startIndex + 1}
+          end={Math.min(endIndex, totalItems)}
           total={totalItems}
         />
+
         <Pagination
           pageNo={pageNo}
           handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
           handleIncrementPageButton={() =>
-            pageNo * selectedValue < totalItems && setPageNo((p) => p + 1)
+            pageNo < totalPages && setPageNo((p) => p + 1)
           }
         />
       </div>
 
+      {/* Modals */}
       {isOpenModal === "VIEW" && selectedLoan && (
         <ViewLoan
           setIsOpenModal={() => setIsOpenModal("")}

@@ -143,7 +143,7 @@ export const AddAttendance = ({
 
   return (
     <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
+      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-10">
         <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 rounded-t-xl px-6">
@@ -155,7 +155,7 @@ export const AddAttendance = ({
               </Title>
             </div>
 
-            <div className="mx-2  grid grid-cols-2 gap-3  ">
+            <div className="mx-2  grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-3  ">
               <UserSelect
                 labelName="Select User*"
                 name="selectUser"

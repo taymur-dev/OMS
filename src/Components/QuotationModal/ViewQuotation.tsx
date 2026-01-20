@@ -38,7 +38,7 @@ export const ViewQuotation = ({ setModal, quotation }: ViewQuotationProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4  flex items-center justify-center z-50">
       <div className="w-[55rem] max-h-[95vh] overflow-y-auto bg-white rounded-2xl ">
         <div className=" bg-indigo-900 text-white p-5 rounded-t-2xl">
           <div className="bg-indigo-900 rounded-t-xl px-6">

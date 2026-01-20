@@ -108,7 +108,7 @@ export const UpdateLeave = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center px-4 justify-center bg-black/40 backdrop-blur-sm">
       <div className="w-full max-w-3xl bg-white rounded-xl border border-indigo-900 overflow-auto shadow-lg">
         <form onSubmit={handleSubmit} className="flex flex-col">
           {/* Header */}
@@ -122,7 +122,7 @@ export const UpdateLeave = ({
           </div>
 
           {/* Form Body */}
-          <div className="grid grid-cols-2 gap-4 px-6 py-2">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-4 px-6 py-2">
             <InputField
               labelName="Subject Leave*"
               placeHolder="Enter the Leave Subject"

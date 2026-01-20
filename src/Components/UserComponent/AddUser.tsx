@@ -244,7 +244,7 @@ export const AddUser = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-10">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-10">
       <div className="w-[42rem] max-h-[40rem] overflow-y-auto bg-white mx-auto rounded-xl border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           {/* ===== Header ===== */}

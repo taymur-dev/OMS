@@ -123,7 +123,7 @@ export const AddAdvanceSalary = ({ setModal, handleRefresh }: AddAdvanceSalaryPr
     }));
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center justify-center z-10">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-10">
       <div className="w-[42rem] bg-white rounded-xl border border-indigo-900">
         <form onSubmit={handleSubmit}>
 
@@ -135,7 +135,7 @@ export const AddAdvanceSalary = ({ setModal, handleRefresh }: AddAdvanceSalaryPr
                 Add Advance Salary
               </Title>
             </div>
-          <div className="grid grid-cols-2 mx-2 gap-2 py-2 space-y-2">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 mx-2 gap-2 py-2 space-y-2">
             {isAdmin && (
               <UserSelect
                 labelName="Employees*"

@@ -91,7 +91,7 @@ export const AttendanceReports = () => {
       });
 
       const activeUsers = (res.data.users || []).filter(
-        (u: UserType) => u.loginStatus === "Y"
+        (u: UserType) => u.loginStatus === "Y",
       );
       setUsers(activeUsers);
     } catch (error) {
@@ -133,7 +133,7 @@ export const AttendanceReports = () => {
 
   /* ================= HANDLERS ================= */
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setReportData((prev) => ({ ...prev, [name]: value }));
@@ -192,12 +192,157 @@ export const AttendanceReports = () => {
 
   if (loader) return <Loader />;
 
+  // return (
+  //   <div className="w-full mx-2">
+  //     <TableTitle tileName="Attendance Report" activeFile="Attendance Report" />
+
+  //     <div className="flex items-center justify-between text-gray-800 py-2 mx-2">
+  //       <div>
+  //         <span>Show</span>
+  //         <span className="bg-gray-200 rounded mx-1 p-1">
+  //           <select
+  //             value={itemsPerPage}
+  //             onChange={(e) => {
+  //               setItemsPerPage(Number(e.target.value));
+  //               setPageNo(1);
+  //             }}
+  //           >
+  //             {itemsPerPageOptions.map((num) => (
+  //               <option key={num}>{num}</option>
+  //             ))}
+  //           </select>
+  //         </span>
+  //         <span>entries</span>
+  //       </div>
+  //       <TableInputField
+  //         searchTerm={searchTerm}
+  //         setSearchTerm={(term) => {
+  //           setSearchTerm(term);
+  //           setPageNo(1);
+  //         }}
+  //       />
+  //     </div>
+
+  //     <div className="max-h-[58vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
+  //       <div className="flex items-center justify-between text-gray-800 mx-2">
+  //         <div className="flex flex-1 py-1 gap-1 items-center justify-center">
+  //           <InputField
+  //             labelName="From"
+  //             type="date"
+  //             value={reportData.startDate}
+  //             handlerChange={handleChange}
+  //             name="startDate"
+  //           />
+  //           <InputField
+  //             labelName="To"
+  //             type="date"
+  //             value={reportData.endDate}
+  //             handlerChange={handleChange}
+  //             name="endDate"
+  //           />
+
+  //           {isAdmin && (
+  //             <OptionField
+  //               labelName="User"
+  //               name="userId"
+  //               value={reportData.userId}
+  //               optionData={users.map((u) => ({
+  //                 id: u.id,
+  //                 label: u.name,
+  //                 value: u.id,
+  //               }))}
+  //               inital="Select User"
+  //               handlerChange={handleChange}
+  //             />
+  //           )}
+
+  //           <div className="w-full flex justify-end mt-4">
+  //             <div className="text-gray-800 flex items-center py-2 font-semibold">
+  //               <span className="mr-1">From</span>
+  //               <span className="text-red-500 mr-1">
+  //                 {reportData.startDate}
+  //               </span>
+  //               <span className="mr-1">To</span>
+  //               <span className="text-red-500">{reportData.endDate}</span>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+
+  //       <div
+  //         id="attendanceDiv"
+  //         className="max-h-[28.4rem] overflow-y-auto mx-2"
+  //       >
+  //         <div
+  //           className="grid grid-cols-7 bg-indigo-900 text-white font-semibold border border-gray-600
+  //       text-sm sticky top-0 z-10 p-[7px]"
+  //         >
+  //           <span>Sr#</span>
+  //           <span>Date</span>
+  //           <span>User</span>
+  //           <span>Clock In</span>
+  //           <span>Clock Out</span>
+  //           <span>Hours</span>
+  //           <span>Day</span>
+  //         </div>
+
+  //         {paginatedData.length === 0 ? (
+  //           <div className="text-center p-4 text-gray-700">
+  //             No attendance records found.
+  //           </div>
+  //         ) : (
+  //           paginatedData.map((item, index) => (
+  //             <div
+  //               key={item.id}
+  //               className="grid grid-cols-7 border border-gray-600 text-gray-800 hover:bg-gray-100 transition
+  //              duration-200 text-sm items-center justify-center p-[5px]"
+  //             >
+  //               <span>{startIndex + index + 1}</span>
+  //               <span>{item.date}</span>
+  //               <span>{item.name}</span>
+  //               <span>{item.clockIn ?? "--"}</span>
+  //               <span>{item.clockOut ?? "--"}</span>
+  //               <span>{item.workingHours ?? "--"}</span>
+  //               <span>{item.day ?? "--"}</span>
+  //             </div>
+  //           ))
+  //         )}
+  //       </div>
+  //     </div>
+
+  //     <div className="flex items-center justify-between">
+  //       <ShowDataNumber
+  //         start={startIndex + 1}
+  //         end={endIndex}
+  //         total={totalItems}
+  //       />
+  //       <Pagination
+  //         pageNo={pageNo}
+  //         handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+  //         handleIncrementPageButton={() =>
+  //           endIndex < totalItems && setPageNo((p) => p + 1)
+  //         }
+  //       />
+  //     </div>
+
+  //     <div className="flex items-center justify-center mt-4">
+  //       <button
+  //         onClick={printDiv}
+  //         className="bg-green-500 text-white py-2 px-4 rounded font-semibold hover:cursor-pointer"
+  //       >
+  //         Download
+  //       </button>
+  //     </div>
+  //   </div>
+  // );
+
   return (
-    <div className="w-full mx-2">
+    <div className="w-full px-2 sm:px-4">
       <TableTitle tileName="Attendance Report" activeFile="Attendance Report" />
 
-      <div className="flex items-center justify-between text-gray-800 py-2 mx-2">
-        <div>
+      {/* Top Bar: Show entries & search */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 py-2 text-gray-800">
+        <div className="text-sm">
           <span>Show</span>
           <span className="bg-gray-200 rounded mx-1 p-1">
             <select
@@ -206,6 +351,7 @@ export const AttendanceReports = () => {
                 setItemsPerPage(Number(e.target.value));
                 setPageNo(1);
               }}
+              className="bg-transparent outline-none"
             >
               {itemsPerPageOptions.map((num) => (
                 <option key={num}>{num}</option>
@@ -223,94 +369,92 @@ export const AttendanceReports = () => {
         />
       </div>
 
-      <div className="max-h-[58vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
-        <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div className="flex flex-1 py-1 gap-1 items-center justify-center">
-            <InputField
-              labelName="From"
-              type="date"
-              value={reportData.startDate}
-              handlerChange={handleChange}
-              name="startDate"
-            />
-            <InputField
-              labelName="To"
-              type="date"
-              value={reportData.endDate}
-              handlerChange={handleChange}
-              name="endDate"
-            />
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between text-gray-800 mt-2">
+        <div className="flex flex-col sm:flex-row gap-2 flex-1 items-center">
+          <InputField
+            labelName="From"
+            type="date"
+            value={reportData.startDate}
+            handlerChange={handleChange}
+            name="startDate"
+          />
+          <InputField
+            labelName="To"
+            type="date"
+            value={reportData.endDate}
+            handlerChange={handleChange}
+            name="endDate"
+          />
 
-            {isAdmin && (
-              <OptionField
-                labelName="User"
-                name="userId"
-                value={reportData.userId}
-                optionData={users.map((u) => ({
-                  id: u.id,
-                  label: u.name,
-                  value: u.id,
-                }))}
-                inital="Select User"
-                handlerChange={handleChange}
-              />
-            )}
-
-            <div className="w-full flex justify-end mt-4">
-              <div className="text-gray-800 flex items-center py-2 font-semibold">
-                <span className="mr-1">From</span>
-                <span className="text-red-500 mr-1">
-                  {reportData.startDate}
-                </span>
-                <span className="mr-1">To</span>
-                <span className="text-red-500">{reportData.endDate}</span>
-              </div>
-            </div>
-          </div>
+          {isAdmin && (
+            <OptionField
+              labelName="User"
+              name="userId"
+              value={reportData.userId}
+              optionData={users.map((u) => ({
+                id: u.id,
+                label: u.name,
+                value: u.id,
+              }))}
+              inital="Select User"
+              handlerChange={handleChange}
+            />
+          )}
         </div>
 
-        <div
-          id="attendanceDiv"
-          className="max-h-[28.4rem] overflow-y-auto mx-2"
-        >
-          <div
-            className="grid grid-cols-7 bg-indigo-900 text-white font-semibold border border-gray-600 
-        text-sm sticky top-0 z-10 p-[7px]"
-          >
-            <span>Sr#</span>
-            <span>Date</span>
-            <span>User</span>
-            <span>Clock In</span>
-            <span>Clock Out</span>
-            <span>Hours</span>
-            <span>Day</span>
+        <div className="w-full sm:w-auto flex justify-end mt-2 sm:mt-0">
+          <div className="text-gray-800 flex items-center py-2 font-semibold text-sm sm:text-base">
+            <span className="mr-1">From</span>
+            <span className="text-red-500 mr-1">{reportData.startDate}</span>
+            <span className="mr-1">To</span>
+            <span className="text-red-500">{reportData.endDate}</span>
           </div>
-
-          {paginatedData.length === 0 ? (
-            <div className="text-center p-4 text-gray-700">
-              No attendance records found.
-            </div>
-          ) : (
-            paginatedData.map((item, index) => (
-              <div
-                key={item.id}
-                className="grid grid-cols-7 border border-gray-600 text-gray-800 hover:bg-gray-100 transition
-               duration-200 text-sm items-center justify-center p-[5px]"
-              >
-                <span>{startIndex + index + 1}</span>
-                <span>{item.date}</span>
-                <span>{item.name}</span>
-                <span>{item.clockIn ?? "--"}</span>
-                <span>{item.clockOut ?? "--"}</span>
-                <span>{item.workingHours ?? "--"}</span>
-                <span>{item.day ?? "--"}</span>
-              </div>
-            ))
-          )}
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
+      {/* Table */}
+      <div className="flex flex-col max-h-[58vh] shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden">
+        <div id="attendanceDiv" className="overflow-x-auto">
+          <div className="min-w-[700px]">
+            {/* Table Header */}
+            <div className="grid grid-cols-7 bg-indigo-900 text-white font-semibold text-sm sticky top-0 z-10 p-2">
+              <span>Sr#</span>
+              <span>Date</span>
+              <span>User</span>
+              <span>Clock In</span>
+              <span>Clock Out</span>
+              <span>Hours</span>
+              <span>Day</span>
+            </div>
+
+            {/* Table Body */}
+            {paginatedData.length === 0 ? (
+              <div className="text-center p-4 text-gray-700">
+                No attendance records found.
+              </div>
+            ) : (
+              paginatedData.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="grid grid-cols-7 border border-gray-300 text-gray-800 text-sm hover:bg-gray-100 transition p-1 sm:p-2 items-center"
+                >
+                  <span>{startIndex + index + 1}</span>
+                  <span>{item.date}</span>
+                  <span className="truncate">{item.name}</span>
+                  <span>{item.clockIn ?? "--"}</span>
+                  <span>{item.clockOut ?? "--"}</span>
+                  <span>{item.workingHours ?? "--"}</span>
+                  <span>{item.day ?? "--"}</span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Pagination & Data Count */}
+      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
         <ShowDataNumber
           start={startIndex + 1}
           end={endIndex}
@@ -325,6 +469,7 @@ export const AttendanceReports = () => {
         />
       </div>
 
+      {/* Download Button */}
       <div className="flex items-center justify-center mt-4">
         <button
           onClick={printDiv}

@@ -14,7 +14,7 @@ type ViewAssetProps = {
 
 export const ViewAsset = ({ setIsOpenModal, viewAsset }: ViewAssetProps) => {
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
         <div className="bg-white w-full max-w-3xl border border-indigo-900 rounded-lg p-6 shadow-lg">
           {/* Title */}

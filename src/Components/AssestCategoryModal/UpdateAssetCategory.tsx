@@ -72,7 +72,7 @@ export const UpdateAssetCategory = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+    <div className="fixed inset-0 bg-opacity-50 px-4  backdrop-blur-xs flex items-center justify-center z-10">
       <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded-t-xl px-6">

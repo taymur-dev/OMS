@@ -88,7 +88,7 @@ export const AddProject = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4  flex items-center justify-center z-50">
       <div className="w-full max-w-3xl bg-white rounded-xl shadow-lg border border-indigo-900 overflow-hidden">
         <form onSubmit={handlerSubmitted}>
           {/* Header */}
@@ -102,7 +102,7 @@ export const AddProject = ({
           </div>
 
           {/* Body */}
-          <div className="px-6 py-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="px-6 py-5 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-4">
             <OptionField
               labelName="Project Category*"
               name="projectCategory"

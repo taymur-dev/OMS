@@ -87,7 +87,7 @@ export const UpdateProject = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm px-4  flex items-center justify-center z-50">
       <div className="w-full max-w-3xl bg-white rounded-xl shadow-xl border border-indigo-900 overflow-hidden">
         <form onSubmit={handlerSubmitted}>
           {/* Header */}
@@ -101,7 +101,7 @@ export const UpdateProject = ({
           </div>
 
           {/* Form Body */}
-          <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-6 grid grid-cols-2 md:grid-cols-2 sm:grid-cols-2 gap-6">
             <OptionField
               labelName="Project Category*"
               name="projectCategory"

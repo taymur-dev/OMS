@@ -111,7 +111,7 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
 
   return (
     <div>
-      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
         <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-900">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 rounded-t-xl px-6">
@@ -122,7 +122,7 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
                 Add Asset
               </Title>
             </div>
-            <div className="mx-2 grid grid-cols-2 py-2 gap-3">
+            <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
               <OptionField
                 labelName="Asset Category"
                 name="category_id"

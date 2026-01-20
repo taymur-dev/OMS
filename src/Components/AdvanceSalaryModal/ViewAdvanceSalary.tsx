@@ -22,7 +22,7 @@ export const ViewAdvanceSalary = ({
   if (!viewAdvance) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-xs flex items-center justify-center z-10">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-xs px-4  flex items-center justify-center z-10">
       <div className="w-full flex justify-center">
         <div className="bg-white w-full max-w-3xl border border-indigo-900 rounded-lg p-6 shadow-lg">
           <div className="bg-indigo-900 rounded px-6">

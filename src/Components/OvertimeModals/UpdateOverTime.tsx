@@ -155,7 +155,7 @@ export const UpdateOverTime = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex px-4  items-center justify-center z-50">
       <div className="w-[42rem] max-h-[85vh] bg-white rounded-xl border border-indigo-300 shadow-xl overflow-hidden">
         {currentUser?.role !== "admin" ? (
           <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
@@ -183,7 +183,7 @@ export const UpdateOverTime = ({
             </div>
 
             {/* Body */}
-            <div className="px-6 py-5 grid grid-cols-2 gap-x-5 gap-y-4 overflow-y-auto">
+            <div className="px-6 py-5 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-x-5 gap-y-4 overflow-y-auto">
               <UserSelect
                 labelName="Employee*"
                 name="employeeId"

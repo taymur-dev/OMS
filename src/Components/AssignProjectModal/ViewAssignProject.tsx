@@ -11,7 +11,7 @@ export const ViewAssignProject = ({
   viewProject,
 }: ViewAssignProjectProps) => {
   return (
-    <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
+    <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-10">
       <div className="w-full max-w-3xl mx-4">
         <div className="bg-white rounded shadow-xl overflow-hidden border border-indigo-900">
           {/* Header */}
@@ -41,16 +41,15 @@ export const ViewAssignProject = ({
             </div>
 
             <div className="flex justify-between items-center border-b pb-3">
-            <span className="text-gray-800 font-medium text-lg">
-              Assigned Date:
-            </span>
-            <p className="text-gray-600">
-            {viewProject?.date
-             ? new Date(viewProject.date).toLocaleDateString('sv-SE')
-             : "-"}
-            </p>
-           </div>
-
+              <span className="text-gray-800 font-medium text-lg">
+                Assigned Date:
+              </span>
+              <p className="text-gray-600">
+                {viewProject?.date
+                  ? new Date(viewProject.date).toLocaleDateString("sv-SE")
+                  : "-"}
+              </p>
+            </div>
           </div>
         </div>
       </div>

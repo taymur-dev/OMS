@@ -49,7 +49,7 @@ export const Suppliers = () => {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(
-    null
+    null,
   );
 
   const handleToggleViewModal = (active: SuppliersT) => {
@@ -57,7 +57,7 @@ export const Suppliers = () => {
   };
 
   const handleChangeShowData = (
-    event: React.ChangeEvent<HTMLSelectElement>
+    event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setSelectedValue(Number(event.target.value));
     setPageNo(1);
@@ -78,7 +78,7 @@ export const Suppliers = () => {
       });
 
       const sortedData = (res.data.data || []).sort(
-        (a: Supplier, b: Supplier) => a.supplierId - b.supplierId
+        (a: Supplier, b: Supplier) => a.supplierId - b.supplierId,
       );
 
       setSuppliers(sortedData);
@@ -95,7 +95,7 @@ export const Suppliers = () => {
         `${BASE_URL}/api/admin/deleteSupplier/${deleteId}`,
         {
           headers: { Authorization: token || "" },
-        }
+        },
       );
       toast.success(res.data.message);
       handleGetAllSupplier();
@@ -113,13 +113,13 @@ export const Suppliers = () => {
     handleGetAllSupplier();
     const timer = setTimeout(
       () => dispatch(navigationSuccess("All Suppliers")),
-      1000
+      1000,
     );
     return () => clearTimeout(timer);
   }, [dispatch, handleGetAllSupplier]);
 
   const filteredSuppliers = suppliers.filter((item) =>
-    item.supplierName.toLowerCase().includes(searchTerm.toLowerCase())
+    item.supplierName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   useEffect(() => {
@@ -130,37 +130,41 @@ export const Suppliers = () => {
 
   const paginatedData = filteredSuppliers.slice(
     (pageNo - 1) * selectedValue,
-    pageNo * selectedValue
+    pageNo * selectedValue,
   );
 
   if (loader) return <Loader />;
 
   return (
-    <div className="w-full mx-2">
+    <div className="w-full px-2 sm:px-4">
       <TableTitle tileName="Supplier" activeFile="Suppliers list" />
 
-      <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900
-       bg-white overflow-hidden flex flex-col"
-      >
-        <div className="flex text-gray-800 items-center justify-between mx-2">
-          <span>
-            Total number of Supplier:{" "}
-            <span className="text-2xl text-indigo-900 font-semibold font-sans">
+      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
+        {/* Top Bar */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
+          <span className="text-sm sm:text-base">
+            Total number of Suppliers:
+            <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
               [{suppliers.length}]
             </span>
           </span>
+
           <CustomButton
-            label="Add supplier"
+            label="Add Supplier"
             handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
 
-        <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div>
+        {/* Filter Row */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
+          <div className="text-sm">
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
-              <select value={selectedValue} onChange={handleChangeShowData}>
+              <select
+                value={selectedValue}
+                onChange={handleChangeShowData}
+                className="bg-transparent outline-none"
+              >
                 {numbers.map((num) => (
                   <option key={num} value={num}>
                     {num}
@@ -170,63 +174,72 @@ export const Suppliers = () => {
             </span>
             <span>entries</span>
           </div>
+
           <TableInputField
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
           />
         </div>
 
-        <div className="max-h-[28.4rem] overflow-y-auto mx-2">
-          <div
-            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] bg-indigo-900  text-white
-           font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
-          >
-            <span>Sr#</span>
-            <span className="text-left">Supplier Name</span>
-            <span className="text-left">Email</span>
-            <span className="text-left">Phone No</span>
-            <span className="text-left">Address</span>
-            <span className="text-center w-40">Actions</span>
-          </div>
-
-          {paginatedData.map((item, index) => (
-            <div
-              key={item.supplierId}
-              className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] border border-gray-600
-                text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
-            >
-              <span>{index + 1 + (pageNo - 1) * selectedValue}</span>
-              <span>{item.supplierName}</span>
-              <span>{item.supplierEmail}</span>
-              <span>{item.supplierContact}</span>
-              <span>{item.supplierAddress}</span>
-              <span className="flex items-center gap-1">
-                <EditButton
-                  handleUpdate={() => {
-                    setSelectedSupplier(item);
-                    handleToggleViewModal("EDIT");
-                  }}
-                />
-                <ViewButton
-                  handleView={() => {
-                    setSelectedSupplier(item);
-                    handleToggleViewModal("VIEW");
-                  }}
-                />
-
-                <DeleteButton
-                  handleDelete={() => {
-                    setDeleteId(item.supplierId);
-                    handleToggleViewModal("DELETE");
-                  }}
-                />
-              </span>
+        {/* Table Wrapper */}
+        <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
+          <div className="min-w-[900px]">
+            {/* Table Header */}
+            <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] bg-indigo-900 text-white irems-center font-semibold text-sm sticky top-0 z-10 p-2">
+              <span>Sr#</span>
+              <span>Supplier Name</span>
+              <span>Email</span>
+              <span>Phone No</span>
+              <span>Address</span>
+              <span className="text-center">Actions</span>
             </div>
-          ))}
+
+            {/* Table Body */}
+            {paginatedData.length === 0 ? (
+              <div className="text-gray-800 text-lg text-center py-4">
+                No suppliers available at the moment!
+              </div>
+            ) : (
+              paginatedData.map((item, index) => (
+                <div
+                  key={item.supplierId}
+                  className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] border border-gray-300 items-center text-gray-800 text-sm p-2 hover:bg-gray-100 transition"
+                >
+                  <span>{index + 1 + (pageNo - 1) * selectedValue}</span>
+                  <span className="truncate">{item.supplierName}</span>
+                  <span className="truncate">{item.supplierEmail}</span>
+                  <span>{item.supplierContact}</span>
+                  <span className="truncate">{item.supplierAddress}</span>
+
+                  <span className="flex flex-wrap items-center justify-center gap-1">
+                    <EditButton
+                      handleUpdate={() => {
+                        setSelectedSupplier(item);
+                        handleToggleViewModal("EDIT");
+                      }}
+                    />
+                    <ViewButton
+                      handleView={() => {
+                        setSelectedSupplier(item);
+                        handleToggleViewModal("VIEW");
+                      }}
+                    />
+                    <DeleteButton
+                      handleDelete={() => {
+                        setDeleteId(item.supplierId);
+                        handleToggleViewModal("DELETE");
+                      }}
+                    />
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-between mt-2">
+      {/* Pagination */}
+      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
         <ShowDataNumber
           start={
             filteredSuppliers.length === 0
@@ -238,12 +251,13 @@ export const Suppliers = () => {
         />
 
         <Pagination
-          handleIncrementPageButton={handleIncrementPageButton}
-          handleDecrementPageButton={handleDecrementPageButton}
           pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
         />
       </div>
 
+      {/* Modals */}
       {isOpenModal === "ADD" && (
         <AddSupplier
           setModal={() => handleToggleViewModal("")}
@@ -263,7 +277,6 @@ export const Suppliers = () => {
           supplier={selectedSupplier}
         />
       )}
-
       {isOpenModal === "DELETE" && (
         <ConfirmationModal
           isOpen={() => handleToggleViewModal("")}

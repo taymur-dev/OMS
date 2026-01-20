@@ -50,7 +50,7 @@ export const EditPayment = ({
   const [loadingCustomers, setLoadingCustomers] = useState(true);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setUpdatePayment((prev) => ({ ...prev, [name]: value }));
@@ -99,7 +99,7 @@ export const EditPayment = ({
           customerId: Number(updatePayment.customerId),
           date: formattedDate,
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       toast.success("Payment updated successfully");
@@ -112,7 +112,7 @@ export const EditPayment = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
       <div className="w-[42rem] max-h-[80rem] bg-white mx-auto rounded-xl border border-indigo-900 overflow-y-auto">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded-t-xl px-6">
@@ -126,7 +126,7 @@ export const EditPayment = ({
 
           <div className="mx-3 pt-3 flex lg:flex-row flex-col items-center text-gray-800">
             <h1 className="text-lg font-semibold underline">Account Type*</h1>
-            <div className="ml-5 lg:space-x-5 py-2 space-x-5">
+            <div className="ml-5 lg:space-x-2 py-2 space-x-2">
               <input
                 type="radio"
                 name="paymentMethod"
@@ -147,7 +147,7 @@ export const EditPayment = ({
             </div>
           </div>
 
-          <div className="mx-2 flex-wrap py-2 gap-3">
+          <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
             {!loadingCustomers && (
               <OptionField
                 labelName="Select Customer"

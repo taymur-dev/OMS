@@ -43,7 +43,7 @@ const CARD_CONFIG = [
     key: "workingDays",
     titleName: "Working Days",
     icon: <FaComputer />,
-    style: "bg-indigo-500",
+    style: "bg-indigo-900",
   },
   {
     key: "holidays",

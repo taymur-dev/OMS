@@ -106,51 +106,284 @@ export const ConfigEmpSalary = () => {
 
   if (loader) return <Loader />;
 
+  // return (
+  //   <div className="w-full mx-2">
+  //     <TableTitle tileName="Salaries" activeFile="Salaries list" />
+
+  //     <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
+  //       <div className="flex text-gray-800 items-center justify-between mx-2">
+  //         <span>
+  //           Total number of Salaries:{" "}
+  //           <span className="text-2xl text-indigo-900 font-semibold font-sans">
+  //             [{totalRecords}]
+  //           </span>
+  //         </span>
+  //         <CustomButton
+  //           label="Add Salaries"
+  //           handleToggle={() => handleToggleViewModal("ADD")}
+  //         />
+  //       </div>
+
+  //       <div className="flex items-center justify-between text-gray-800 mx-2 my-2">
+  //         <div>
+  //           <span>Show</span>
+  //           <span className="bg-gray-200 rounded mx-1 p-1">
+  //             <select
+  //               value={limit}
+  //               onChange={(e) => setLimit(Number(e.target.value))}
+  //             >
+  //               {numbers.map((num) => (
+  //                 <option key={num} value={num}>
+  //                   {num}
+  //                 </option>
+  //               ))}
+  //             </select>
+  //           </span>
+  //           <span>entries</span>
+  //         </div>
+  //         <TableInputField
+  //           searchTerm={searchTerm}
+  //           setSearchTerm={setSearchTerm}
+  //         />
+  //       </div>
+
+  //       {/* <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
+  //         <div
+  //           className="grid grid-cols-11 bg-gray-200 text-gray-900
+  //          font-semibold border border-gray-600 text-sm sticky top-0 z-10 py-2 px-1"
+  //         >
+  //           <span>Sr#</span>
+  //           <span>Employee Name</span>
+  //           <span>Monthly Pay</span>
+  //           <span>House Rent</span>
+  //           <span>Transport</span>
+  //           <span>Medical</span>
+  //           <span>Total Salary</span>
+  //           <span>Loan Deduction</span>
+  //           <span>Net Salary</span>
+  //           <span>Date</span>
+  //           <span>Action</span>
+  //         </div>
+
+  //         {salaries.map((salary, idx) => (
+  //           <div
+  //             key={salary.id}
+  //             className="grid grid-cols-11 border
+  //              border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center py-1 px-1"
+  //           >
+  //             <span>{(pageNo - 1) * limit + idx + 1}</span>
+  //             <span>{salary.employee_name}</span>
+  //             <span>{salary.salary_amount}</span>
+  //             <span>{Number(salary.emp_of_mon_allowance) || 0}</span>
+  //             <span>{Number(salary.transport_allowance) || 0}</span>
+  //             <span>{Number(salary.medical_allowance) || 0}</span>
+  //             <span>{Number(salary.total_salary) || 0}</span>
+  //             <span>{salary.total_loan_deduction}</span>
+  //             <span className="font-semibold text-green-600">
+  //               {salary.net_salary}
+  //             </span>
+
+  //             <span>
+  //               {new Date(salary.config_date).toLocaleDateString("en-CA")}
+  //             </span>
+  //             <span className="flex items-center justify-center gap-1">
+  //               <EditButton
+  //                 handleUpdate={() => {
+  //                   setSelectedSalary(salary);
+  //                   handleToggleViewModal("EDIT");
+  //                 }}
+  //               />
+  //               <ViewButton
+  //                 handleView={() => {
+  //                   setSelectedSalary(salary);
+  //                   handleToggleViewModal("VIEW");
+  //                 }}
+  //               />
+  //               <DeleteButton
+  //                 handleDelete={() => {
+  //                   setSelectedSalary(salary);
+  //                   handleToggleViewModal("DELETE");
+  //                 }}
+  //               />
+  //             </span>
+  //           </div>
+  //         ))}
+  //       </div> */}
+
+  //       <div className="max-h-[28.4rem] overflow-y-auto overflow-x-hidden mx-2">
+  //         <div
+  //           className="grid grid-cols-11 bg-indigo-900 text-white font-semibold 
+  //              border border-gray-600 text-sm sticky top-0 z-10 py-2 px-1"
+  //         >
+  //           <span className="truncate">Sr#</span>
+  //           <span className="truncate">Employee Name</span>
+  //           <span className="truncate">Monthly Pay</span>
+  //           <span className="truncate">House Rent</span>
+  //           <span className="truncate">Transport</span>
+  //           <span className="truncate">Medical</span>
+  //           <span className="truncate">Total Salary</span>
+  //           <span className="truncate">Loan Deduction</span>
+  //           <span className="truncate">Net Salary</span>
+  //           <span className="truncate">Date</span>
+  //           <span className="truncate">Action</span>
+  //         </div>
+
+  //         {salaries.map((salary, idx) => (
+  //           <div
+  //             key={salary.id}
+  //             className="grid grid-cols-11 border border-gray-600 text-gray-800 
+  //                hover:bg-gray-100 transition duration-200 text-sm items-center py-1 px-1"
+  //           >
+  //             <span className="truncate">{(pageNo - 1) * limit + idx + 1}</span>
+  //             <span className="truncate">{salary.employee_name}</span>
+  //             <span className="truncate">{salary.salary_amount}</span>
+  //             <span className="truncate">
+  //               {Number(salary.emp_of_mon_allowance) || 0}
+  //             </span>
+  //             <span className="truncate">
+  //               {Number(salary.transport_allowance) || 0}
+  //             </span>
+  //             <span className="truncate">
+  //               {Number(salary.medical_allowance) || 0}
+  //             </span>
+  //             <span className="truncate">
+  //               {Number(salary.total_salary) || 0}
+  //             </span>
+  //             <span className="truncate">
+  //               {salary.total_loan_deduction || 0}
+  //             </span>
+  //             <span className="truncate font-semibold text-green-600">
+  //               {salary.net_salary || 0}
+  //             </span>
+  //             <span className="truncate">
+  //               {new Date(salary.config_date).toLocaleDateString("en-CA")}
+  //             </span>
+  //             <span className="flex justify-center gap-1">
+  //               <EditButton
+  //                 handleUpdate={() => {
+  //                   setSelectedSalary(salary);
+  //                   handleToggleViewModal("EDIT");
+  //                 }}
+  //               />
+  //               <ViewButton
+  //                 handleView={() => {
+  //                   setSelectedSalary(salary);
+  //                   handleToggleViewModal("VIEW");
+  //                 }}
+  //               />
+  //               <DeleteButton
+  //                 handleDelete={() => {
+  //                   setSelectedSalary(salary);
+  //                   handleToggleViewModal("DELETE");
+  //                 }}
+  //               />
+  //             </span>
+  //           </div>
+  //         ))}
+  //       </div>
+  //     </div>
+
+  //     <div className="flex items-center justify-between my-2">
+  //       <ShowDataNumber
+  //         start={(pageNo - 1) * limit + 1}
+  //         total={totalRecords}
+  //         end={Math.min(pageNo * limit, totalRecords)}
+  //       />
+  //       <Pagination
+  //         handleIncrementPageButton={handleIncrementPageButton}
+  //         handleDecrementPageButton={handleDecrementPageButton}
+  //         pageNo={pageNo}
+  //       />
+  //     </div>
+
+  //     {isOpenModal === "ADD" && (
+  //       <AddConfigEmpSalary
+  //         setModal={() => handleToggleViewModal("")}
+  //         refreshSalaries={fetchSalaries}
+  //       />
+  //     )}
+  //     {isOpenModal === "EDIT" && selectedSalary && (
+  //       <EditConfigEmpSalary
+  //         setModal={() => handleToggleViewModal("")}
+  //         refreshSalaries={fetchSalaries}
+  //         editData={selectedSalary}
+  //       />
+  //     )}
+
+  //     {isOpenModal === "VIEW" && selectedSalary && (
+  //       <ViewConfigEmpSalary
+  //         setModal={() => handleToggleViewModal("")}
+  //         viewSalary={{
+  //           employeeName: selectedSalary.employee_name,
+  //           employeeSalary: selectedSalary.salary_amount.toString(),
+  //           empMonthAllowance: selectedSalary.emp_of_mon_allowance?.toString(),
+  //           transportAllowance: selectedSalary.transport_allowance?.toString(),
+  //           medicalAllowance: selectedSalary.medical_allowance?.toString(),
+  //           totalSalary: selectedSalary.total_salary?.toString(),
+  //           date: selectedSalary.config_date,
+  //         }}
+  //       />
+  //     )}
+
+  //     {isOpenModal === "DELETE" && selectedSalary && (
+  //       <ConfirmationModal
+  //         isOpen={() => handleToggleViewModal("DELETE")}
+  //         onClose={() => handleToggleViewModal("")}
+  //         onConfirm={handleDeleteSalary}
+  //       />
+  //     )}
+  //   </div>
+  // );
   return (
-    <div className="w-full mx-2">
-      <TableTitle tileName="Salaries" activeFile="Salaries list" />
+  <div className="w-full px-2 sm:px-4">
+    <TableTitle tileName="Salaries" activeFile="Salaries list" />
 
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
-        <div className="flex text-gray-800 items-center justify-between mx-2">
-          <span>
-            Total number of Salaries:{" "}
-            <span className="text-2xl text-indigo-900 font-semibold font-sans">
-              [{totalRecords}]
-            </span>
+    <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
+      {/* Top Bar */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
+        <span className="text-sm sm:text-base">
+          Total number of Salaries:
+          <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
+            [{totalRecords}]
           </span>
-          <CustomButton
-            label="Add Salaries"
-            handleToggle={() => handleToggleViewModal("ADD")}
-          />
+        </span>
+
+        <CustomButton
+          handleToggle={() => handleToggleViewModal("ADD")}
+          label="Add Salaries"
+        />
+      </div>
+
+      {/* Filter Row */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
+        <div className="text-sm">
+          <span>Show</span>
+          <span className="bg-gray-200 rounded mx-1 p-1">
+            <select
+              value={limit}
+              onChange={(e) => setLimit(Number(e.target.value))}
+              className="bg-transparent outline-none"
+            >
+              {numbers.map((num, idx) => (
+                <option key={idx} value={num}>
+                  {num}
+                </option>
+              ))}
+            </select>
+          </span>
+          <span>entries</span>
         </div>
 
-        <div className="flex items-center justify-between text-gray-800 mx-2 my-2">
-          <div>
-            <span>Show</span>
-            <span className="bg-gray-200 rounded mx-1 p-1">
-              <select
-                value={limit}
-                onChange={(e) => setLimit(Number(e.target.value))}
-              >
-                {numbers.map((num) => (
-                  <option key={num} value={num}>
-                    {num}
-                  </option>
-                ))}
-              </select>
-            </span>
-            <span>entries</span>
-          </div>
-          <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-          />
-        </div>
+        <TableInputField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      </div>
 
-        {/* <div className="w-full max-h-[28.4rem] overflow-y-auto mx-auto">
+      {/* Table Wrapper */}
+      <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
+        <div className="min-w-[900px]">
+          {/* Table Header */}
           <div
-            className="grid grid-cols-11 bg-gray-200 text-gray-900
-           font-semibold border border-gray-600 text-sm sticky top-0 z-10 py-2 px-1"
+            className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1.5fr]
+  bg-indigo-900 text-white  items-center font-semibold text-sm sticky top-0 z-10 p-2"
           >
             <span>Sr#</span>
             <span>Employee Name</span>
@@ -162,176 +395,115 @@ export const ConfigEmpSalary = () => {
             <span>Loan Deduction</span>
             <span>Net Salary</span>
             <span>Date</span>
-            <span>Action</span>
+            <span className="text-center">Action</span>
           </div>
 
-          {salaries.map((salary, idx) => (
-            <div
-              key={salary.id}
-              className="grid grid-cols-11 border
-               border-gray-600 text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center py-1 px-1"
-            >
-              <span>{(pageNo - 1) * limit + idx + 1}</span>
-              <span>{salary.employee_name}</span>
-              <span>{salary.salary_amount}</span>
-              <span>{Number(salary.emp_of_mon_allowance) || 0}</span>
-              <span>{Number(salary.transport_allowance) || 0}</span>
-              <span>{Number(salary.medical_allowance) || 0}</span>
-              <span>{Number(salary.total_salary) || 0}</span>
-              <span>{salary.total_loan_deduction}</span>
-              <span className="font-semibold text-green-600">
-                {salary.net_salary}
-              </span>
-
-              <span>
-                {new Date(salary.config_date).toLocaleDateString("en-CA")}
-              </span>
-              <span className="flex items-center justify-center gap-1">
-                <EditButton
-                  handleUpdate={() => {
-                    setSelectedSalary(salary);
-                    handleToggleViewModal("EDIT");
-                  }}
-                />
-                <ViewButton
-                  handleView={() => {
-                    setSelectedSalary(salary);
-                    handleToggleViewModal("VIEW");
-                  }}
-                />
-                <DeleteButton
-                  handleDelete={() => {
-                    setSelectedSalary(salary);
-                    handleToggleViewModal("DELETE");
-                  }}
-                />
-              </span>
+          {/* Table Body */}
+          {salaries.length === 0 ? (
+            <div className="text-gray-800 text-lg text-center py-4">
+              No records available at the moment!
             </div>
-          ))}
-        </div> */}
+          ) : (
+            salaries.map((salary, idx) => (
+              <div
+                key={salary.id}
+                className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1.5fr]
+      border border-gray-300 text-gray-800 items-center text-sm p-2
+      hover:bg-gray-100 transition"
+              >
+                <span>{(pageNo - 1) * limit + idx + 1}</span>
+                <span className="truncate">{salary.employee_name}</span>
+                <span className="truncate">{salary.salary_amount}</span>
+                <span className="truncate">{Number(salary.emp_of_mon_allowance) || 0}</span>
+                <span className="truncate">{Number(salary.transport_allowance) || 0}</span>
+                <span className="truncate">{Number(salary.medical_allowance) || 0}</span>
+                <span className="truncate">{Number(salary.total_salary) || 0}</span>
+                <span className="truncate">{salary.total_loan_deduction || 0}</span>
+                <span className="truncate font-semibold text-green-600">{salary.net_salary || 0}</span>
+                <span className="truncate">{new Date(salary.config_date).toLocaleDateString("en-CA")}</span>
 
-        <div className="max-h-[28.4rem] overflow-y-auto overflow-x-hidden mx-2">
-          <div
-            className="grid grid-cols-11 bg-indigo-900 text-white font-semibold 
-               border border-gray-600 text-sm sticky top-0 z-10 py-2 px-1"
-          >
-            <span className="truncate">Sr#</span>
-            <span className="truncate">Employee Name</span>
-            <span className="truncate">Monthly Pay</span>
-            <span className="truncate">House Rent</span>
-            <span className="truncate">Transport</span>
-            <span className="truncate">Medical</span>
-            <span className="truncate">Total Salary</span>
-            <span className="truncate">Loan Deduction</span>
-            <span className="truncate">Net Salary</span>
-            <span className="truncate">Date</span>
-            <span className="truncate">Action</span>
-          </div>
-
-          {salaries.map((salary, idx) => (
-            <div
-              key={salary.id}
-              className="grid grid-cols-11 border border-gray-600 text-gray-800 
-                 hover:bg-gray-100 transition duration-200 text-sm items-center py-1 px-1"
-            >
-              <span className="truncate">{(pageNo - 1) * limit + idx + 1}</span>
-              <span className="truncate">{salary.employee_name}</span>
-              <span className="truncate">{salary.salary_amount}</span>
-              <span className="truncate">
-                {Number(salary.emp_of_mon_allowance) || 0}
-              </span>
-              <span className="truncate">
-                {Number(salary.transport_allowance) || 0}
-              </span>
-              <span className="truncate">
-                {Number(salary.medical_allowance) || 0}
-              </span>
-              <span className="truncate">
-                {Number(salary.total_salary) || 0}
-              </span>
-              <span className="truncate">
-                {salary.total_loan_deduction || 0}
-              </span>
-              <span className="truncate font-semibold text-green-600">
-                {salary.net_salary || 0}
-              </span>
-              <span className="truncate">
-                {new Date(salary.config_date).toLocaleDateString("en-CA")}
-              </span>
-              <span className="flex justify-center gap-1">
-                <EditButton
-                  handleUpdate={() => {
-                    setSelectedSalary(salary);
-                    handleToggleViewModal("EDIT");
-                  }}
-                />
-                <ViewButton
-                  handleView={() => {
-                    setSelectedSalary(salary);
-                    handleToggleViewModal("VIEW");
-                  }}
-                />
-                <DeleteButton
-                  handleDelete={() => {
-                    setSelectedSalary(salary);
-                    handleToggleViewModal("DELETE");
-                  }}
-                />
-              </span>
-            </div>
-          ))}
+                {/* Actions */}
+                <span className="flex flex-nowrap items-center justify-center gap-1">
+                  <EditButton
+                    handleUpdate={() => {
+                      setSelectedSalary(salary);
+                      handleToggleViewModal("EDIT");
+                    }}
+                  />
+                  <ViewButton
+                    handleView={() => {
+                      setSelectedSalary(salary);
+                      handleToggleViewModal("VIEW");
+                    }}
+                  />
+                  <DeleteButton
+                    handleDelete={() => {
+                      setSelectedSalary(salary);
+                      handleToggleViewModal("DELETE");
+                    }}
+                  />
+                </span>
+              </div>
+            ))
+          )}
         </div>
       </div>
-
-      <div className="flex items-center justify-between my-2">
-        <ShowDataNumber
-          start={(pageNo - 1) * limit + 1}
-          total={totalRecords}
-          end={Math.min(pageNo * limit, totalRecords)}
-        />
-        <Pagination
-          handleIncrementPageButton={handleIncrementPageButton}
-          handleDecrementPageButton={handleDecrementPageButton}
-          pageNo={pageNo}
-        />
-      </div>
-
-      {isOpenModal === "ADD" && (
-        <AddConfigEmpSalary
-          setModal={() => handleToggleViewModal("")}
-          refreshSalaries={fetchSalaries}
-        />
-      )}
-      {isOpenModal === "EDIT" && selectedSalary && (
-        <EditConfigEmpSalary
-          setModal={() => handleToggleViewModal("")}
-          refreshSalaries={fetchSalaries}
-          editData={selectedSalary}
-        />
-      )}
-
-      {isOpenModal === "VIEW" && selectedSalary && (
-        <ViewConfigEmpSalary
-          setModal={() => handleToggleViewModal("")}
-          viewSalary={{
-            employeeName: selectedSalary.employee_name,
-            employeeSalary: selectedSalary.salary_amount.toString(),
-            empMonthAllowance: selectedSalary.emp_of_mon_allowance?.toString(),
-            transportAllowance: selectedSalary.transport_allowance?.toString(),
-            medicalAllowance: selectedSalary.medical_allowance?.toString(),
-            totalSalary: selectedSalary.total_salary?.toString(),
-            date: selectedSalary.config_date,
-          }}
-        />
-      )}
-
-      {isOpenModal === "DELETE" && selectedSalary && (
-        <ConfirmationModal
-          isOpen={() => handleToggleViewModal("DELETE")}
-          onClose={() => handleToggleViewModal("")}
-          onConfirm={handleDeleteSalary}
-        />
-      )}
     </div>
-  );
+
+    {/* Pagination */}
+    <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
+      <ShowDataNumber
+        start={salaries.length === 0 ? 0 : (pageNo - 1) * limit + 1}
+        end={Math.min(pageNo * limit, totalRecords)}
+        total={totalRecords}
+      />
+
+      <Pagination
+        pageNo={pageNo}
+        handleDecrementPageButton={handleDecrementPageButton}
+        handleIncrementPageButton={handleIncrementPageButton}
+      />
+    </div>
+
+    {/* Modals */}
+    {isOpenModal === "ADD" && (
+      <AddConfigEmpSalary
+        setModal={() => handleToggleViewModal("")}
+        refreshSalaries={fetchSalaries}
+      />
+    )}
+    {isOpenModal === "EDIT" && selectedSalary && (
+      <EditConfigEmpSalary
+        setModal={() => handleToggleViewModal("")}
+        refreshSalaries={fetchSalaries}
+        editData={selectedSalary}
+      />
+    )}
+
+    {isOpenModal === "VIEW" && selectedSalary && (
+      <ViewConfigEmpSalary
+        setModal={() => handleToggleViewModal("")}
+        viewSalary={{
+          employeeName: selectedSalary.employee_name,
+          employeeSalary: selectedSalary.salary_amount.toString(),
+          empMonthAllowance: selectedSalary.emp_of_mon_allowance?.toString(),
+          transportAllowance: selectedSalary.transport_allowance?.toString(),
+          medicalAllowance: selectedSalary.medical_allowance?.toString(),
+          totalSalary: selectedSalary.total_salary?.toString(),
+          date: selectedSalary.config_date,
+        }}
+      />
+    )}
+
+    {isOpenModal === "DELETE" && selectedSalary && (
+      <ConfirmationModal
+        isOpen={() => handleToggleViewModal("DELETE")}
+        onClose={() => handleToggleViewModal("")}
+        onConfirm={handleDeleteSalary}
+      />
+    )}
+  </div>
+);
+
+
 };

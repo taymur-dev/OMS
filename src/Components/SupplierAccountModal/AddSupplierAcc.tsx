@@ -131,7 +131,7 @@ export const AddSupplierAccount = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
       <div className="w-[40rem] bg-white rounded-xl border border-indigo-900">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded-t-xl px-6">
@@ -143,7 +143,7 @@ export const AddSupplierAccount = ({
             </Title>
           </div>
 
-          <div className="mx-2 grid grid-cols-2 gap-3">
+          <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-3">
             <UserSelect
               labelName="Select Supplier*"
               name="selectSupplier"

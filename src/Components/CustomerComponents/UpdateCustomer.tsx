@@ -110,7 +110,7 @@ export const UpdateCustomer = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex px-4 items-center justify-center z-50">
       <div className="w-[42rem] max-h-[29rem] bg-white rounded-xl border border-indigo-900 shadow-lg overflow-hidden">
         <form
           onSubmit={(e) => handlerSubmitted(e, customerData?.id ?? null)}
@@ -127,7 +127,7 @@ export const UpdateCustomer = ({
           </div>
 
           {/* Body */}
-          <div className="flex-1 overflow-y-auto p-4 grid grid-cols-2 gap-4">
+          <div className="overflow-y-auto p-4 grid grid-cols-2 sm-grid-cols-2 md-grid-cols-2 gap-4">
             <InputField
               labelName="Customer Name*"
               placeHolder="Enter the Customer Name"

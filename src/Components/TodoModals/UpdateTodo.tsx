@@ -128,8 +128,8 @@ export const UpdateTodo = ({
   }));
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-900 overflow-auto">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
+      <div className="w-[42rem] max-h-[30rem] bg-white mx-auto rounded-xl border border-indigo-900 ">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
@@ -139,7 +139,7 @@ export const UpdateTodo = ({
               Edit Todo
             </Title>
           </div>
-          <div className="mx-2 flex flex-col py-2 gap-3">
+          <div className="mx-2 flex flex-col  py-2 gap-3">
             <UserSelect
               labelName="Employees*"
               name="employee_id"
@@ -161,7 +161,7 @@ export const UpdateTodo = ({
               value={todo?.note}
             />
 
-            <div className="flex items-center justify-center gap-6">
+            <div className="flex flex-wrap items-center justify-center gap-6">
               <InputField
                 labelName="Start Date*"
                 type="date"
@@ -186,7 +186,7 @@ export const UpdateTodo = ({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-500">
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
             <AddButton label="Update" />
           </div>

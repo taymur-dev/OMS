@@ -58,7 +58,7 @@ export const UserAttendance = () => {
   const [selectedValue, setSelectedValue] = useState(10);
 
   const [viewAttendance, setViewAttendance] = useState<AttendanceT | null>(
-    null
+    null,
   );
 
   const [isOpenModal, setIsOpenModal] = useState<ISOPENMODALT | "">("");
@@ -81,12 +81,12 @@ export const UserAttendance = () => {
       });
 
       setAllAttendance(
-        Array.isArray(res.data) ? res.data.sort((a, b) => a.id - b.id) : []
+        Array.isArray(res.data) ? res.data.sort((a, b) => a.id - b.id) : [],
       );
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(
-        axiosError?.response?.data?.message || "Failed to fetch attendance"
+        axiosError?.response?.data?.message || "Failed to fetch attendance",
       );
       setAllAttendance([]);
     }
@@ -111,7 +111,7 @@ export const UserAttendance = () => {
       (att) =>
         att.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         att.date.includes(searchTerm) ||
-        att.attendanceStatus?.toLowerCase().includes(searchTerm.toLowerCase())
+        att.attendanceStatus?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }, [allAttendance, searchTerm]);
 
@@ -126,7 +126,7 @@ export const UserAttendance = () => {
       await axios.patch(
         `${BASE_URL}/api/admin/deleteAttendance/${id}`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       toast.error("Attendance deleted successfully");
       handleGetAttendance();
@@ -140,17 +140,15 @@ export const UserAttendance = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="w-full mx-2">
+    <div className="w-full px-2 sm:px-4">
       <TableTitle tileName="Attendance" activeFile="Attendance list" />
 
-      <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
-       overflow-hidden flex flex-col"
-      >
-        <div className="flex items-center justify-between mx-2">
-          <span>
+      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
+        {/* Top Bar */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
+          <span className="text-sm sm:text-base">
             Total Attendance:
-            <span className="text-2xl text-indigo-900 font-semibold ml-1">
+            <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
               [{filteredAttendance.length}]
             </span>
           </span>
@@ -163,13 +161,14 @@ export const UserAttendance = () => {
           )}
         </div>
 
-        <div className="flex justify-between mx-2">
-          <div>
+        {/* Filter Row */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
+          <div className="text-sm flex items-center gap-1">
             <span>Show</span>
             <select
               value={selectedValue}
               onChange={(e) => setSelectedValue(+e.target.value)}
-              className="bg-gray-200 mx-1 p-1 rounded"
+              className="bg-gray-200 p-1 rounded"
             >
               {numbers.map((num) => (
                 <option key={num}>{num}</option>
@@ -184,68 +183,78 @@ export const UserAttendance = () => {
           />
         </div>
 
-        <div className="flex-1 overflow-y-auto mx-2">
-          <div
-            className={`grid ${
-              isAdmin
-                ? "grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr]"
-                : "grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr]"
-            } bg-indigo-900 text-white font-semibold p-2 sticky top-0`}
-          >
-            <span>Sr#</span>
-            {isAdmin && <span>User</span>}
-            <span>Clock In</span>
-            <span>Clock Out</span>
-            <span>Working Hours</span>
-            <span>Date</span>
-            <span>Day</span>
-            {isAdmin && <span className="text-center">Actions</span>}
-          </div>
-
-          {paginatedAttendance.map((att, index) => (
+        {/* Table Wrapper */}
+        <div className="mx-2 mt-2 overflow-x-auto overflow-y-auto flex-1 max-h-[28.4rem]">
+          <div className={`min-w-[700px] sm:min-w-[900px]`}>
+            {/* Table Header */}
             <div
-              key={att.id}
               className={`grid ${
                 isAdmin
                   ? "grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr]"
                   : "grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr]"
-              } border p-2 hover:bg-gray-100`}
+              } bg-indigo-900 text-white font-semibold text-sm items-center sticky top-0 z-10 p-2`}
             >
-              <span>{startIndex + index + 1}</span>
-              {isAdmin && <span>{att.name}</span>}
-              <span>{att.clockIn ?? "--"}</span>
-              <span>{att.clockOut ?? "--"}</span>
-              <span>{att.workingHours ?? "--"}</span>
-              <span>{att.date.slice(0, 10)}</span>
-              <span>{att.day ?? "--"}</span>
-
-              {isAdmin && (
-                <span className="flex justify-center gap-1">
-                  <EditButton
-                    handleUpdate={() => {
-                      setUpdatedAttendance(att);
-                      setIsOpenModal("EDITATTENDANCE");
-                    }}
-                  />
-
-                  <ViewButton handleView={() => setViewAttendance(att)} />
-
-                  <DeleteButton
-                    handleDelete={() => {
-                      setRecordToDelete(att.id);
-                      setIsOpenModal("DELETE");
-                    }}
-                  />
-                </span>
-              )}
+              <span>Sr#</span>
+              {isAdmin && <span>User</span>}
+              <span>Clock In</span>
+              <span>Clock Out</span>
+              <span>Working Hours</span>
+              <span>Date</span>
+              <span>Day</span>
+              {isAdmin && <span className="text-center">Actions</span>}
             </div>
-          ))}
+
+            {/* Table Body */}
+            {paginatedAttendance.length === 0 ? (
+              <div className="text-gray-800 text-lg text-center py-4">
+                No records available at the moment!
+              </div>
+            ) : (
+              paginatedAttendance.map((att, index) => (
+                <div
+                  key={att.id}
+                  className={`grid ${
+                    isAdmin
+                      ? "grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr]"
+                      : "grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr]"
+                  } border border-gray-300 text-gray-800 text-sm p-2 items-center hover:bg-gray-100 transition`}
+                >
+                  <span>{startIndex + index + 1}</span>
+                  {isAdmin && <span className="truncate">{att.name}</span>}
+                  <span>{att.clockIn ?? "--"}</span>
+                  <span>{att.clockOut ?? "--"}</span>
+                  <span>{att.workingHours ?? "--"}</span>
+                  <span>{att.date.slice(0, 10)}</span>
+                  <span>{att.day ?? "--"}</span>
+
+                  {isAdmin && (
+                    <span className="flex flex-nowrap justify-center gap-1">
+                      <EditButton
+                        handleUpdate={() => {
+                          setUpdatedAttendance(att);
+                          setIsOpenModal("EDITATTENDANCE");
+                        }}
+                      />
+                      <ViewButton handleView={() => setViewAttendance(att)} />
+                      <DeleteButton
+                        handleDelete={() => {
+                          setRecordToDelete(att.id);
+                          setIsOpenModal("DELETE");
+                        }}
+                      />
+                    </span>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="flex justify-between mt-2">
+      {/* Pagination */}
+      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
         <ShowDataNumber
-          start={startIndex + 1}
+          start={paginatedAttendance.length === 0 ? 0 : startIndex + 1}
           end={Math.min(endIndex, filteredAttendance.length)}
           total={filteredAttendance.length}
         />
@@ -258,6 +267,7 @@ export const UserAttendance = () => {
         />
       </div>
 
+      {/* Modals */}
       {isOpenModal === "ADDATTENDANCE" && (
         <AddAttendance
           setModal={() => setIsOpenModal("")}

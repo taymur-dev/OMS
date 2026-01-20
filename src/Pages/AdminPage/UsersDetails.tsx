@@ -51,7 +51,7 @@ export const UsersDetails = () => {
   const dispatch = useAppDispatch();
 
   const [viewUserDetail, setViewUserDetail] = useState<UserType>(
-    {} as UserType
+    {} as UserType,
   );
   const [modalTypeTooPen, setModalTypeTooPen] = useState<
     "ADD" | "UPDATE" | "VIEW" | "CONFIRM PASSWORD" | "DELETE" | ""
@@ -84,7 +84,7 @@ export const UsersDetails = () => {
       user.loginStatus === "Y" &&
       (user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.contact.includes(searchTerm))
+        user.contact.includes(searchTerm)),
   );
 
   const totalNum = activeUsers.length;
@@ -95,7 +95,7 @@ export const UsersDetails = () => {
   const paginatedUsers = activeUsers.slice(startIndex, endIndex);
 
   const handleChangeShowData = (
-    event: React.ChangeEvent<HTMLSelectElement>
+    event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setSelectedValue(Number(event.target.value));
     setPageNo(1);
@@ -115,7 +115,7 @@ export const UsersDetails = () => {
       await axios.patch(
         `${BASE_URL}/api/admin/deleteUser/${id}`,
         {},
-        { headers: { Authorization: token } }
+        { headers: { Authorization: token } },
       );
       handlerGetUsers();
       toast.info("User deleted successfully");
@@ -146,17 +146,15 @@ export const UsersDetails = () => {
   };
 
   return (
-    <div className="w-full mx-2">
+    <div className="w-full px-2 sm:px-4">
       <TableTitle tileName="User" activeFile="User list" />
 
-      <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white 
-      overflow-hidden flex flex-col"
-      >
-        <div className="flex text-gray-800 items-center justify-between mx-2">
-          <span>
+      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
+        {/* Top Bar */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
+          <span className="text-sm sm:text-base">
             Total Number of Users :
-            <span className="text-2xl text-indigo-900 font-semibold font-sans">
+            <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
               [{allUsers.filter((u) => u.loginStatus === "Y").length}]
             </span>
           </span>
@@ -167,11 +165,16 @@ export const UsersDetails = () => {
           />
         </div>
 
-        <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div>
+        {/* Filter Row */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
+          <div className="text-sm">
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
-              <select value={selectedValue} onChange={handleChangeShowData}>
+              <select
+                value={selectedValue}
+                onChange={handleChangeShowData}
+                className="bg-transparent outline-none"
+              >
                 {numbers.map((num, index) => (
                   <option key={index} value={num}>
                     {num}
@@ -188,79 +191,70 @@ export const UsersDetails = () => {
           />
         </div>
 
-        <div className="mx-2 max-h-[28.4rem] overflow-y-auto">
-          <div
-            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1.5fr] bg-indigo-900 text-gray-900
-           font-semibold border border-gray-600 text-white text-sm sticky top-0 z-10 p-[10px]"
-          >
-            <span>Sr#</span>
-            <span className="text-left">Users</span>
-            <span className="text-left">Email</span>
-            <span className="text-left">Contact No</span>
-            <span className="text-left">Position</span>
-            <span className="text-left">Joining Date</span>
-            <span className="text-center">Actions</span>
-          </div>
-
-          {paginatedUsers.length === 0 ? (
-            <div className="text-gray-800 text-lg text-center py-2">
-              No records available at the moment!
+        {/* Table Wrapper */}
+        <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
+          <div className="min-w-[900px]">
+            {/* Table Header */}
+            {/* Table Header */}
+            <div
+              className="grid grid-cols-[0.5fr_1fr_1.5fr_1fr_1fr_1fr_1.5fr]
+  bg-indigo-900 text-white items-center font-semibold text-sm sticky top-0 z-10 p-2"
+            >
+              <span>Sr#</span>
+              <span>Users</span>
+              <span>Email</span>
+              <span>Contact No</span>
+              <span>Position</span>
+              <span>Joining Date</span>
+              <span className="text-center">Actions</span>
             </div>
-          ) : (
-            paginatedUsers.map((user, index) => (
-              <div
-                className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1.5fr] border border-gray-600 
-                text-gray-800 hover:bg-gray-100 transition duration-200 text-sm p-[7px]"
-                key={user.id}
-              >
-                <span>{startIndex + index + 1}</span>
-                <span>{user.name}</span>
-                <span>{user.email.slice(0, 15)}</span>
-                <span>{user.contact}</span>
-                <span>{user.role}</span>
-                <span>
-                  {new Date(user.date).toLocaleDateString("sv-SE", {
-                    timeZone: "Asia/Karachi",
-                  })}
-                </span>
 
-                <span className="flex items-center justify-center gap-1">
-                  <EditButton
-                    handleUpdate={() => handleUpdateSingleUser(user)}
-                  />
-                  <ViewButton handleView={() => handleViewUserDetail(user)} />
-                  <DeleteButton
-                    handleDelete={() => handleDeleteModal(user.id)}
-                  />
-
-                  <div
-                    onClick={() => handleCatchId(user.id)}
-                    className="
-                    flex items-center gap-0.5
-                    bg-grey
-                    p-1 py-0.5 px-2
-                    rounded-xl
-                    border border-grey-500
-                    hover:bg-grey-50
-                    hover:cursor-pointer
-                    active:scale-95
-                    transition-all duration-300
-                    "
-                  >
-                    <span className="text-[10px]"></span>
-                    <RiLockPasswordFill
-                      size={20}
-                      className="text-gainsboro-500"
-                      title="Password"
-                    />
-                  </div>
-                </span>
+            {/* Table Body */}
+            {paginatedUsers.length === 0 ? (
+              <div className="text-gray-800 text-lg text-center py-4">
+                No records available at the moment!
               </div>
-            ))
-          )}
+            ) : (
+              paginatedUsers.map((user, index) => (
+                <div
+                  key={user.id}
+                  className="grid grid-cols-[0.5fr_1fr_1.5fr_1fr_1fr_1fr_1.5fr]
+      border border-gray-300 text-gray-800 text-sm pt-2 
+      hover:bg-gray-100 transition"
+                >
+                  <span>{startIndex + index + 1}</span>
+                  <span className="truncate">{user.name}</span>
+                  <span className="truncate">{user.email}</span>
+                  <span>{user.contact}</span>
+                  <span>{user.role}</span>
+                  <span>
+                    {new Date(user.date).toLocaleDateString("sv-SE", {
+                      timeZone: "Asia/Karachi",
+                    })}
+                  </span>
+
+                  {/* Actions */}
+                  <span className="flex flex-wrap items-center justify-center gap-1">
+                    <EditButton
+                      handleUpdate={() => handleUpdateSingleUser(user)}
+                    />
+                    <ViewButton handleView={() => handleViewUserDetail(user)} />
+                    <DeleteButton
+                      handleDelete={() => handleDeleteModal(user.id)}
+                    />
+                    <div
+                      onClick={() => handleCatchId(user.id)}
+                      className="flex items-center p-1 px-2 rounded-xl border hover:bg-gray-100 cursor-pointer transition"
+                    >
+                      <RiLockPasswordFill size={18} title="Password" />
+                    </div>
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
-
       {(modalTypeTooPen === "ADD" || modalTypeTooPen === "UPDATE") && (
         <AddUser
           viewType={modalTypeTooPen}
@@ -314,7 +308,7 @@ export const UsersDetails = () => {
         />
       )}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
         <ShowDataNumber
           start={totalNum === 0 ? 0 : startIndex + 1}
           end={Math.min(endIndex, totalNum)}

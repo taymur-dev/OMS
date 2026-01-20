@@ -47,7 +47,7 @@ export const AddPayment = ({
   const token = currentUser?.token;
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
   ) => {
     e.preventDefault();
 
@@ -79,7 +79,7 @@ export const AddPayment = ({
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       console.log(res.data);
       handleGetPayments();
@@ -95,7 +95,7 @@ export const AddPayment = ({
   }, [getAllCustomers]);
   return (
     <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
+      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-10">
         <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 rounded-t-xl px-6">
@@ -107,15 +107,15 @@ export const AddPayment = ({
               </Title>
             </div>
 
-            <div className="mx-3  pt-3 flex lg:flex-row flex-col items-center  text-gray-800  ">
+            <div className="mx-3  pt-3 flex lg:flex-row flex-cols items-center  text-gray-800  ">
               <h1 className="text-lg font-semibold underline ">
                 Account Type*
               </h1>
-              <div className=" ml-5 lg:space-x-5 space-x-5">
+              <div className=" ml-5 lg:space-x-2 space-x-2">
                 <input
                   type="radio"
                   name="paymentMethod"
-                  className="radio border-gray-500 text-indigo-500"
+                  className="radio border-gray-500 text-indigo-900"
                   value={"cash"}
                   checked={addProgress?.paymentMethod === "cash"}
                   onChange={handlerChange}
@@ -124,7 +124,7 @@ export const AddPayment = ({
                 <input
                   type="radio"
                   name="paymentMethod"
-                  className="radio border-gray-500 text-indigo-500"
+                  className="radio border-gray-500 text-indigo-900"
                   value={"bankTransfer"}
                   checked={addProgress?.paymentMethod === "bankTransfer"}
                   onChange={handlerChange}
@@ -132,7 +132,7 @@ export const AddPayment = ({
                 <label>Bank Transfer</label>
               </div>
             </div>
-            <div className="mx-2 flex-wrap py-2 gap-3  ">
+            <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3  ">
               <OptionField
                 labelName="Select Customer"
                 name="customerId"

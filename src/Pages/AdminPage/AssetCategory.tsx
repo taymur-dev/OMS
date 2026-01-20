@@ -41,13 +41,13 @@ export const AssetCategory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [categories, setCategories] = useState<AssetCategoryItem[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    null
+    null,
   );
 
   const token = currentUser?.token;
 
   const handleChangeShowData = (
-    event: React.ChangeEvent<HTMLSelectElement>
+    event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setSelectedValue(Number(event.target.value));
     setPageNo(1);
@@ -55,7 +55,7 @@ export const AssetCategory = () => {
 
   const handleToggleViewModal = (
     modal: AssetCategoryT,
-    categoryId: number | null = null
+    categoryId: number | null = null,
   ) => {
     setSelectedCategoryId(categoryId);
     setIsOpenModal(modal);
@@ -67,7 +67,7 @@ export const AssetCategory = () => {
         `${BASE_URL}/api/admin/assetCategories`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       const data: AssetCategoryItem[] = Array.isArray(response.data)
@@ -90,7 +90,7 @@ export const AssetCategory = () => {
         `${BASE_URL}/api/admin/deleteAssetCategory/${selectedCategoryId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       await fetchCategories();
@@ -120,7 +120,7 @@ export const AssetCategory = () => {
   const filteredCategories = categories.filter(
     (cat) =>
       cat.category_name &&
-      cat.category_name.toLowerCase().includes(searchTerm.toLowerCase())
+      cat.category_name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const totalPages = Math.ceil(filteredCategories.length / selectedValue);
@@ -128,37 +128,161 @@ export const AssetCategory = () => {
   const endIndex = startIndex + selectedValue;
   const paginatedCategories = filteredCategories.slice(startIndex, endIndex);
 
+  // return (
+  //   <div className="w-full mx-2">
+  //     <TableTitle
+  //       tileName="Assets Category"
+  //       activeFile="Assets Category list"
+  //     />
+
+  //     <div
+  //       className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white|
+  //      overflow-hidden flex flex-col"
+  //     >
+  //       <div className="flex text-gray-800 items-center justify-between mx-2">
+  //         <span>
+  //           Total number of Assets Category:{" "}
+  //           <span className="text-2xl text-indigo-900 font-semibold">
+  //             [{categories.length}]
+  //           </span>
+  //         </span>
+  //         <CustomButton
+  //           label="Add Category"
+  //           handleToggle={() => handleToggleViewModal("ADD")}
+  //         />
+  //       </div>
+
+  //       <div className="flex items-center justify-between text-gray-800 mx-2">
+  //         <div>
+  //           <span>Show</span>
+  //           <span className="bg-gray-200 rounded mx-1 p-1">
+  //             <select value={selectedValue} onChange={handleChangeShowData}>
+  //               {numbers.map((num) => (
+  //                 <option key={num} value={num}>
+  //                   {num}
+  //                 </option>
+  //               ))}
+  //             </select>
+  //           </span>
+  //           <span>entries</span>
+  //         </div>
+
+  //         <TableInputField
+  //           searchTerm={searchTerm}
+  //           setSearchTerm={setSearchTerm}
+  //         />
+  //       </div>
+
+  //       <div className="max-h-[28.4rem] overflow-y-auto mx-2">
+  //         <div
+  //           className="grid grid-cols-3 bg-indigo-900 text-white font-semibold border border-gray-600
+  //          text-sm sticky top-0 z-10 p-[10px]"
+  //         >
+  //           <span>Sr#</span>
+  //           <span>Category Name</span>
+  //           <span className="text-center">Actions</span>
+  //         </div>
+
+  //         {paginatedCategories.map((cat, index) => (
+  //           <div
+  //             key={cat.id}
+  //             className="grid grid-cols-3 border border-gray-600 text-sm items-center p-[7px] hover:bg-gray-100"
+  //           >
+  //             <span>{startIndex + index + 1}</span>
+  //             <span>{cat.category_name}</span>
+  //             <span className="flex gap-1 justify-center">
+  //               <EditButton
+  //                 handleUpdate={() => handleToggleViewModal("EDIT", cat.id)}
+  //               />
+  //               <DeleteButton
+  //                 handleDelete={() => handleToggleViewModal("DELETE", cat.id)}
+  //               />
+  //             </span>
+  //           </div>
+  //         ))}
+  //       </div>
+  //     </div>
+
+  //     <div className="flex items-center justify-between mt-2">
+  //       <ShowDataNumber
+  //         start={filteredCategories.length ? startIndex + 1 : 0}
+  //         end={Math.min(endIndex, filteredCategories.length)}
+  //         total={filteredCategories.length}
+  //       />
+  //       <Pagination
+  //         pageNo={pageNo}
+  //         handleIncrementPageButton={() =>
+  //           setPageNo((p) => Math.min(p + 1, totalPages))
+  //         }
+  //         handleDecrementPageButton={() => setPageNo((p) => Math.max(1, p - 1))}
+  //       />
+  //     </div>
+
+  //     {isOpenModal === "ADD" && (
+  //       <AddAssetCategory
+  //         setModal={() => handleToggleViewModal("")}
+  //         refreshCategories={async () => {
+  //           await fetchCategories();
+  //           const lastPage = Math.ceil(categories.length / selectedValue);
+  //           setPageNo(lastPage);
+  //         }}
+  //       />
+  //     )}
+
+  //     {isOpenModal === "EDIT" && selectedCategoryId !== null && (
+  //       <UpdateAssetCategory
+  //         categoryId={selectedCategoryId}
+  //         setModal={() => handleToggleViewModal("")}
+  //         refreshCategories={fetchCategories}
+  //       />
+  //     )}
+
+  //     {isOpenModal === "DELETE" && selectedCategoryId !== null && (
+  //       <ConfirmationModal
+  //         isOpen={() => handleToggleViewModal("")}
+  //         onClose={() => handleToggleViewModal("")}
+  //         onConfirm={deleteCategory}
+  //         message="Are you sure you want to delete this Category?"
+  //       />
+  //     )}
+  //   </div>
+  // );
+
   return (
-    <div className="w-full mx-2">
+    <div className="w-full px-2 sm:px-4">
       <TableTitle
         tileName="Assets Category"
         activeFile="Assets Category list"
       />
 
-      <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white|
-       overflow-hidden flex flex-col"
-      >
-        <div className="flex text-gray-800 items-center justify-between mx-2">
-          <span>
-            Total number of Assets Category:{" "}
-            <span className="text-2xl text-indigo-900 font-semibold">
+      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
+        {/* Top Bar */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
+          <span className="text-sm sm:text-base">
+            Total Number of Assets Category:{" "}
+            <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
               [{categories.length}]
             </span>
           </span>
+
           <CustomButton
-            label="Add Category"
             handleToggle={() => handleToggleViewModal("ADD")}
+            label="Add Category"
           />
         </div>
 
-        <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div>
+        {/* Filter Row */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
+          <div className="text-sm">
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
-              <select value={selectedValue} onChange={handleChangeShowData}>
-                {numbers.map((num) => (
-                  <option key={num} value={num}>
+              <select
+                value={selectedValue}
+                onChange={handleChangeShowData}
+                className="bg-transparent outline-none"
+              >
+                {numbers.map((num, index) => (
+                  <option key={index} value={num}>
                     {num}
                   </option>
                 ))}
@@ -173,51 +297,64 @@ export const AssetCategory = () => {
           />
         </div>
 
-        <div className="max-h-[28.4rem] overflow-y-auto mx-2">
-          <div
-            className="grid grid-cols-3 bg-indigo-900 text-white font-semibold border border-gray-600
-           text-sm sticky top-0 z-10 p-[10px]"
-          >
-            <span>Sr#</span>
-            <span>Category Name</span>
-            <span className="text-center">Actions</span>
-          </div>
-
-          {paginatedCategories.map((cat, index) => (
-            <div
-              key={cat.id}
-              className="grid grid-cols-3 border border-gray-600 text-sm items-center p-[7px] hover:bg-gray-100"
-            >
-              <span>{startIndex + index + 1}</span>
-              <span>{cat.category_name}</span>
-              <span className="flex gap-1 justify-center">
-                <EditButton
-                  handleUpdate={() => handleToggleViewModal("EDIT", cat.id)}
-                />
-                <DeleteButton
-                  handleDelete={() => handleToggleViewModal("DELETE", cat.id)}
-                />
-              </span>
+        {/* Table Wrapper */}
+        <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
+          <div className="min-w-[600px]">
+            {/* Table Header */}
+            <div className="grid grid-cols-[0.5fr_1.5fr_1fr] bg-indigo-900 items-center text-white font-semibold text-sm sticky top-0 z-10 p-2">
+              <span>Sr#</span>
+              <span>Category Name</span>
+              <span className="text-center">Actions</span>
             </div>
-          ))}
+
+            {/* Table Body */}
+            {paginatedCategories.length === 0 ? (
+              <div className="text-gray-800 text-lg text-center py-4">
+                No records available at the moment!
+              </div>
+            ) : (
+              paginatedCategories.map((cat, index) => (
+                <div
+                  key={cat.id}
+                  className="grid grid-cols-[0.5fr_1.5fr_1fr] border border-gray-300 items-center text-gray-800 text-sm p-2 hover:bg-gray-100 transition"
+                >
+                  <span>{startIndex + index + 1}</span>
+                  <span className="truncate">{cat.category_name}</span>
+                  <span className="flex flex-wrap items-center justify-center gap-1">
+                    <EditButton
+                      handleUpdate={() => handleToggleViewModal("EDIT", cat.id)}
+                    />
+                    <DeleteButton
+                      handleDelete={() =>
+                        handleToggleViewModal("DELETE", cat.id)
+                      }
+                    />
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-between mt-2">
+      {/* Pagination */}
+      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
         <ShowDataNumber
           start={filteredCategories.length ? startIndex + 1 : 0}
           end={Math.min(endIndex, filteredCategories.length)}
           total={filteredCategories.length}
         />
+
         <Pagination
           pageNo={pageNo}
+          handleDecrementPageButton={() => setPageNo((p) => Math.max(1, p - 1))}
           handleIncrementPageButton={() =>
             setPageNo((p) => Math.min(p + 1, totalPages))
           }
-          handleDecrementPageButton={() => setPageNo((p) => Math.max(1, p - 1))}
         />
       </div>
 
+      {/* Modals */}
       {isOpenModal === "ADD" && (
         <AddAssetCategory
           setModal={() => handleToggleViewModal("")}

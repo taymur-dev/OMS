@@ -42,7 +42,7 @@ export const EmployeeLifeline = () => {
 
   const [isOpenModal, setIsOpenModal] = useState<LoanT>("");
   const [selectedEmployee, setSelectedEmployee] = useState<LifeLine | null>(
-    null
+    null,
   );
 
   const [pageNo, setPageNo] = useState(1);
@@ -52,7 +52,7 @@ export const EmployeeLifeline = () => {
   const [selectedValue, setSelectedValue] = useState(10);
 
   const handleChangeShowData = (
-    event: React.ChangeEvent<HTMLSelectElement>
+    event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setSelectedValue(Number(event.target.value));
     setPageNo(1);
@@ -92,7 +92,7 @@ export const EmployeeLifeline = () => {
       });
 
       const sorted = res.data.data.sort(
-        (a: LifeLine, b: LifeLine) => a.id - b.id
+        (a: LifeLine, b: LifeLine) => a.id - b.id,
       );
 
       setLifeLines(sorted);
@@ -126,22 +126,20 @@ export const EmployeeLifeline = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="w-full mx-2">
+    <div className="w-full px-2 sm:px-4">
       <Toaster position="top-center" reverseOrder={false} />
 
       <TableTitle
         tileName="Employee LifeLine"
-        activeFile=" Employee LifeLine list"
+        activeFile="Employee LifeLine list"
       />
 
-      <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 
-      bg-white overflow-hidden flex flex-col"
-      >
-        <div className="flex text-gray-800 items-center justify-between mx-2">
-          <span>
-            Total number of Employee LifeLine:{" "}
-            <span className="text-2xl text-indigo-900 font-semibold font-sans">
+      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
+        {/* Top Bar */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
+          <span className="text-sm sm:text-base">
+            Total number of Employee LifeLine:
+            <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
               [{lifeLines.length}]
             </span>
           </span>
@@ -152,11 +150,16 @@ export const EmployeeLifeline = () => {
           />
         </div>
 
-        <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div>
+        {/* Filter Row */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
+          <div className="text-sm">
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
-              <select value={selectedValue} onChange={handleChangeShowData}>
+              <select
+                value={selectedValue}
+                onChange={handleChangeShowData}
+                className="bg-transparent outline-none"
+              >
                 {numbers.map((num, index) => (
                   <option key={index} value={num}>
                     {num}
@@ -173,51 +176,54 @@ export const EmployeeLifeline = () => {
           />
         </div>
 
-        <div className="max-h-[28.4rem] overflow-y-auto mx-2">
-          <div
-            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] bg-indigo-900 text-white
-          font-semibold border  border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
-          >
-            <span>Sr#</span>
-            <span className="text-left">Employee Name</span>
-            <span className="text-left">Contact</span>
-            <span className="text-left">Position</span>
-            <span className="text-left">Date</span>
-            <span className="text-left">Actions</span>
-          </div>
-
-          {paginatedLifeLines.length > 0 ? (
-            paginatedLifeLines.map((item: LifeLine, index: number) => (
-              <div
-                key={item.id || index}
-                className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] border border-gray-600 
-                text-gray-800 hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
-              >
-                <span>{startIndex + index + 1}</span>
-                <span>{item.employeeName}</span>
-                <span>{item.contact}</span>
-                <span>{item.position}</span>
-                <span>{new Date(item.date).toLocaleDateString("sv-SA")}</span>
-
-                <span className="flex items-center gap-1">
-                  <ViewButton
-                    handleView={() => {
-                      setSelectedEmployee(item);
-                      handleToggleViewModal("VIEW");
-                    }}
-                  />
-                </span>
-              </div>
-            ))
-          ) : (
-            <div className="text-center py-4 text-gray-500">
-              No records found
+        {/* Table Wrapper */}
+        <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
+          <div className="min-w-[700px]">
+            {/* Table Header */}
+            <div className="grid grid-cols-6 items-center bg-indigo-900 text-white font-semibold text-sm sticky top-0 z-10 p-2">
+              <span>Sr#</span>
+              <span className="text-left">Employee Name</span>
+              <span className="text-left">Contact</span>
+              <span className="text-left">Position</span>
+              <span className="text-left">Date</span>
+              <span className="text-left">Actions</span>
             </div>
-          )}
+
+            {/* Table Body */}
+            {paginatedLifeLines.length === 0 ? (
+              <div className="text-gray-800 text-lg text-center py-4">
+                No records found
+              </div>
+            ) : (
+              paginatedLifeLines.map((item: LifeLine, index: number) => (
+                <div
+                  key={item.id || index}
+                  className="grid grid-cols-6 items-center border border-gray-300 text-gray-800 text-sm p-2 hover:bg-gray-100 transition items-center"
+                >
+                  <span>{startIndex + index + 1}</span>
+                  <span className="truncate">{item.employeeName}</span>
+                  <span>{item.contact}</span>
+                  <span>{item.position}</span>
+                  <span>{new Date(item.date).toLocaleDateString("sv-SE")}</span>
+
+                  {/* Action column */}
+                  <span className="flex flex-col items-start gap-1">
+                    <ViewButton
+                      handleView={() => {
+                        setSelectedEmployee(item);
+                        handleToggleViewModal("VIEW");
+                      }}
+                    />
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-between mt-2">
+      {/* Pagination */}
+      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
         <ShowDataNumber
           start={paginatedLifeLines.length ? startIndex + 1 : 0}
           end={Math.min(endIndex, filteredLifeLines.length)}
@@ -225,14 +231,15 @@ export const EmployeeLifeline = () => {
         />
 
         <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
           handleIncrementPageButton={() =>
             handleIncrementPageButton(totalPages)
           }
-          handleDecrementPageButton={handleDecrementPageButton}
-          pageNo={pageNo}
         />
       </div>
 
+      {/* Modals */}
       {isOpenModal === "ADD" && (
         <AddEmployeeLifeLine
           setModal={() => handleToggleViewModal("")}
@@ -247,14 +254,14 @@ export const EmployeeLifeline = () => {
           handleEdit={(updatedEmployee: LifeLine) => {
             setLifeLines((prev) =>
               prev.map((item) =>
-                item.id === updatedEmployee.id ? updatedEmployee : item
-              )
+                item.id === updatedEmployee.id ? updatedEmployee : item,
+              ),
             );
-            handleToggleViewModal(""); 
+            handleToggleViewModal("");
           }}
           handleDelete={(id: number) => {
             setLifeLines((prev) => prev.filter((item) => item.id !== id));
-            handleToggleViewModal(""); 
+            handleToggleViewModal("");
           }}
         />
       )}

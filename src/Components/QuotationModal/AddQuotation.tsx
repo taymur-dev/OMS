@@ -55,8 +55,8 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
     return storedCart ? JSON.parse(storedCart) : [];
   });
 
-  const [date, setDate] = useState(
-    () => new Date().toLocaleDateString('sv-SE')
+  const [date, setDate] = useState(() =>
+    new Date().toLocaleDateString("sv-SE"),
   );
 
   useEffect(() => {
@@ -91,7 +91,7 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
   }, [cart]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value, type } = e.target;
     setAddQuotation((prev) => ({
@@ -186,7 +186,7 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex px-4  items-center justify-center z-50">
       <div className="w-[48rem] max-h-[100vh] overflow-y-auto bg-white rounded-2xl border border-indigo-900 shadow-lg  p-2">
         <div className="bg-indigo-900 rounded-t-xl px-6">
           <Title

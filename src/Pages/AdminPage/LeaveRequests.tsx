@@ -95,7 +95,7 @@ export const LeaveRequests = () => {
     async (updatedLeave?: ADDLEAVET) => {
       if (updatedLeave) {
         setAllLeaves((prev) =>
-          prev.map((l) => (l.id === updatedLeave.id ? updatedLeave : l))
+          prev.map((l) => (l.id === updatedLeave.id ? updatedLeave : l)),
         );
       } else {
         await handleGetAllLeaves();
@@ -103,7 +103,7 @@ export const LeaveRequests = () => {
       setPageNo(1);
       setSearchTerm("");
     },
-    [handleGetAllLeaves]
+    [handleGetAllLeaves],
   );
 
   useEffect(() => {
@@ -134,7 +134,7 @@ export const LeaveRequests = () => {
     return allLeaves.filter(
       (leave) =>
         leave.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        leave.leaveSubject.toLowerCase().includes(searchTerm.toLowerCase())
+        leave.leaveSubject.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }, [allLeaves, searchTerm]);
 
@@ -143,34 +143,40 @@ export const LeaveRequests = () => {
     return filteredLeaves.slice(startIndex, startIndex + selectedValue);
   }, [filteredLeaves, pageNo, selectedValue]);
 
-  const totalPages = Math.ceil(filteredLeaves.length / selectedValue);
   const startIndex = (pageNo - 1) * selectedValue;
 
   if (loader) return <Loader />;
 
   return (
-    <div className="w-full mx-2">
+    <div className="w-full px-2 sm:px-4">
       <TableTitle tileName="Leave" activeFile="Users Leaves list" />
 
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
-        <div className="flex items-center justify-between mx-2 text-gray-800">
-          <span>
+      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
+        {/* Top Bar */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
+          <span className="text-sm sm:text-base">
             Total Leaves:{" "}
-            <span className="text-2xl text-indigo-900 font-semibold font-sans">
+            <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
               {filteredLeaves.length}
             </span>
           </span>
+
           <CustomButton
             label="Add Leave"
             handleToggle={() => handleToggleViewModal("ADDLEAVE")}
           />
         </div>
 
-        <div className="flex items-center justify-between mx-2 text-gray-800">
-          <div>
+        {/* Filter Row */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
+          <div className="text-sm">
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
-              <select value={selectedValue} onChange={handleChangeShowData}>
+              <select
+                value={selectedValue}
+                onChange={handleChangeShowData}
+                className="bg-transparent outline-none"
+              >
                 {numbers.map((num, index) => (
                   <option key={index} value={num}>
                     {num}
@@ -187,87 +193,102 @@ export const LeaveRequests = () => {
           />
         </div>
 
-        <div className="max-h-[28.4rem] mx-2">
-          <div
-            className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] bg-indigo-900  text-white font-semibold
-           border border-indigo-900 text-sm sticky top-0 z-10 p-[10px]"
-          >
-            <span>Sr#</span>
-            {currentUser?.role === "admin" && <span>Employee Name</span>}
-            <span>Subject Leave</span>
-            <span>Date</span>
-            <span>Status</span>
-            <span className="text-center w-28">Actions</span>
-          </div>
-
-          {paginatedLeaves.map((leave, index) => (
+        {/* Table Wrapper */}
+        <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
+          <div className="min-w-[700px]">
+            {/* Table Header */}
             <div
-              key={leave.id}
-              className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800
-                hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[7px]"
+              className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] items-center sm:grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] 
+          bg-indigo-900 text-white font-semibold text-sm sticky top-0 z-10 p-2"
             >
-              <span className="text-left">{startIndex + index + 1}</span>
-              {currentUser?.role === "admin" && (
-                <span className="text-left">{leave.name}</span>
-              )}
-
-              <span className="text-left">{leave.leaveSubject}</span>
-              <span className="text-left">
-                {new Date(leave.date).toLocaleDateString("sv-SE")}
-              </span>
-              <span className="text-left">{leave.leaveStatus}</span>
-              <span className="text-left flex items-center gap-1">
-                {(currentUser?.role === "admin" ||
-                  leave.name === currentUser?.name) && (
-                  <EditButton
-                    handleUpdate={() => handleClickEditButton(leave)}
-                  />
-                )}
-                <ViewButton
-                  handleView={() => {
-                    setViewLeave(leave);
-                    handleToggleViewModal("VIEW");
-                  }}
-                />
-
-                {(currentUser?.role === "admin" ||
-                  leave.name === currentUser?.name) && (
-                  <DeleteButton
-                    handleDelete={() => {
-                      setSelectedLeave(leave);
-                      setIsOpenModal("DELETE");
-                    }}
-                  />
-                )}
-              </span>
+              <span>Sr#</span>
+              {currentUser?.role === "admin" && <span>Employee Name</span>}
+              <span>Subject Leave</span>
+              <span>Date</span>
+              <span>Status</span>
+              <span className="text-center w-28">Actions</span>
             </div>
-          ))}
 
-          {paginatedLeaves.length === 0 && (
-            <div className="text-center py-4 text-gray-500">
-              No leaves found
-            </div>
-          )}
+            {/* Table Body */}
+            {paginatedLeaves.length === 0 ? (
+              <div className="text-gray-800 text-lg text-center py-4">
+                No leaves found
+              </div>
+            ) : (
+              paginatedLeaves.map((leave, index) => (
+                <div
+                  key={leave.id}
+                  className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] items-center sm:grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] 
+            border border-gray-300 text-gray-800 text-sm p-2
+            hover:bg-gray-100 transition items-center"
+                >
+                  <span className="text-left">{startIndex + index + 1}</span>
+                  {currentUser?.role === "admin" && (
+                    <span className="truncate text-left">{leave.name}</span>
+                  )}
+                  <span className="truncate text-left">
+                    {leave.leaveSubject}
+                  </span>
+                  <span className="text-left">
+                    {new Date(leave.date).toLocaleDateString("sv-SE")}
+                  </span>
+                  <span className="text-left">{leave.leaveStatus}</span>
+                  <span className="text-left flex flex-nowrap items-center gap-1">
+                    {(currentUser?.role === "admin" ||
+                      leave.name === currentUser?.name) && (
+                      <EditButton
+                        handleUpdate={() => handleClickEditButton(leave)}
+                      />
+                    )}
+                    <ViewButton
+                      handleView={() => {
+                        setViewLeave(leave);
+                        handleToggleViewModal("VIEW");
+                      }}
+                    />
+
+                    {(currentUser?.role === "admin" ||
+                      leave.name === currentUser?.name) && (
+                      <DeleteButton
+                        handleDelete={() => {
+                          setSelectedLeave(leave);
+                          setIsOpenModal("DELETE");
+                        }}
+                      />
+                    )}
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-between mt-2">
+      {/* Pagination */}
+      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
         <ShowDataNumber
           start={startIndex + 1}
           end={Math.min(startIndex + selectedValue, filteredLeaves.length)}
           total={filteredLeaves.length}
         />
+
         <Pagination
+          pageNo={pageNo}
           handleIncrementPageButton={() =>
-            setPageNo((prev) => Math.min(prev + 1, totalPages))
+            setPageNo((prev) =>
+              Math.min(
+                prev + 1,
+                Math.ceil(filteredLeaves.length / selectedValue),
+              ),
+            )
           }
           handleDecrementPageButton={() =>
             setPageNo((prev) => Math.max(prev - 1, 1))
           }
-          pageNo={pageNo}
         />
       </div>
 
+      {/* Modals */}
       {isOpenModal === "ADDLEAVE" && (
         <AddLeave
           setModal={() => setIsOpenModal("")}

@@ -31,8 +31,7 @@ type Sale = {
   saleDate: string;
 };
 
-const formatDate = (date: string) =>
-  new Date(date).toLocaleDateString("sv-SE");
+const formatDate = (date: string) => new Date(date).toLocaleDateString("sv-SE");
 
 const pageSizes = [10, 25, 50, 100];
 
@@ -102,7 +101,7 @@ export const Sales = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       handleGetSales();
@@ -124,7 +123,7 @@ export const Sales = () => {
       .filter(
         (sale) =>
           sale.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          sale.customerName.toLowerCase().includes(searchTerm.toLowerCase())
+          sale.customerName.toLowerCase().includes(searchTerm.toLowerCase()),
       )
       .sort((a, b) => a.id - b.id);
   }, [allSales, searchTerm]);
@@ -135,15 +134,145 @@ export const Sales = () => {
 
   if (loader) return <Loader />;
 
+  // return (
+  //   <div className="w-full mx-2">
+  //     <TableTitle tileName="Sale" activeFile="Sales list" />
+
+  //     <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col">
+  //       <div className="flex items-center justify-between mx-2 py-2">
+  //         <span>
+  //           Total Sales :
+  //           <span className="text-2xl text-indigo-900 font-semibold">
+  //             [{filteredSales.length}]
+  //           </span>
+  //         </span>
+
+  //         <CustomButton
+  //           label="Add Sale"
+  //           handleToggle={() => handleToggleViewModal("ADD")}
+  //         />
+  //       </div>
+
+  //       <div className="flex items-center justify-between mx-2 py-2">
+  //         <div>
+  //           Show
+  //           <select
+  //             className="mx-2 p-1 border rounded"
+  //             value={limit}
+  //             onChange={(e) => {
+  //               setLimit(Number(e.target.value));
+  //               setPageNo(1);
+  //             }}
+  //           >
+  //             {pageSizes.map((num) => (
+  //               <option key={num} value={num}>
+  //                 {num}
+  //               </option>
+  //             ))}
+  //           </select>
+  //           entries
+  //         </div>
+
+  //         <TableInputField
+  //           searchTerm={searchTerm}
+  //           setSearchTerm={setSearchTerm}
+  //         />
+  //       </div>
+
+  //       <div className="flex-1 mx-2">
+  //         <div className="grid grid-cols-5 bg-indigo-900 text-white font-semibold text-sm p-3 sticky top-0">
+  //           <span>Sr#</span>
+  //           <span>Customer</span>
+  //           <span>Project</span>
+  //           <span>Date</span>
+  //           <span className="text-center">Actions</span>
+  //         </div>
+
+  //         {filteredSales
+  //           .slice((pageNo - 1) * limit, pageNo * limit)
+  //           .map((sale, index) => (
+  //             <div
+  //               key={sale.id}
+  //               className="grid grid-cols-5 text-sm border-b p-2 items-center hover:bg-gray-50"
+  //             >
+  //               <span>{(pageNo - 1) * limit + index + 1}</span>
+  //               <span>{sale.customerName}</span>
+  //               <span>{sale.projectName}</span>
+  //               <span>{formatDate(sale.saleDate)}</span>
+
+  //               <span className="flex justify-center gap-2">
+  //                 <EditButton handleUpdate={() => handleEdit(sale)} />
+  //                 <ViewButton handleView={() => handleView(sale)} />
+  //                 <DeleteButton
+  //                   handleDelete={() => handleDeleteClick(sale.id)}
+  //                 />
+  //               </span>
+  //             </div>
+  //           ))}
+  //       </div>
+  //     </div>
+
+  //     <div className="flex justify-between mt-2">
+  //       <ShowDataNumber
+  //         start={(pageNo - 1) * limit + 1}
+  //         end={Math.min(pageNo * limit, filteredSales.length)}
+  //         total={filteredSales.length}
+  //       />
+
+  //       <Pagination
+  //         pageNo={pageNo}
+  //         handleIncrementPageButton={handleIncrementPageButton}
+  //         handleDecrementPageButton={handleDecrementPageButton}
+  //       />
+  //     </div>
+
+  //     {isOpenModal === "ADD" && (
+  //       <AddSale
+  //         setModal={() => handleToggleViewModal("")}
+  //         handleGetsales={handleGetSales}
+  //       />
+  //     )}
+
+  //     {isOpenModal === "EDIT" && selectedSale && (
+  //       <EditSale
+  //         setModal={() => handleToggleViewModal("")}
+  //         seleteSale={selectedSale}
+  //         handleGetsales={handleGetSales}
+  //       />
+  //     )}
+
+  //     {isOpenModal === "VIEW" && selectedSale && (
+  //       <ViewSale
+  //         setIsOpenModal={() => handleToggleViewModal("")}
+  //         viewSale={{
+  //           projectName: selectedSale.projectName,
+  //           customerName: selectedSale.customerName,
+  //           saleDate: selectedSale.saleDate,
+  //         }}
+  //       />
+  //     )}
+
+  //     {isOpenModal === "DELETE" && (
+  //       <ConfirmationModal
+  //         isOpen={() => handleToggleViewModal("")}
+  //         onClose={() => handleToggleViewModal("DELETE")}
+  //         onConfirm={handleDeleteSale}
+  //         message="Are you sure you want to delete this sale?"
+  //       />
+  //     )}
+  //   </div>
+  // );
+
   return (
-    <div className="w-full mx-2">
+    <div className="w-full px-2 sm:px-4">
       <TableTitle tileName="Sale" activeFile="Sales list" />
 
-      <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col">
-        <div className="flex items-center justify-between mx-2 py-2">
-          <span>
+      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col overflow-hidden">
+        {/* Top Bar */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
+          <span className="text-sm sm:text-base">
             Total Sales :
-            <span className="text-2xl text-indigo-900 font-semibold">
+            <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
               [{filteredSales.length}]
             </span>
           </span>
@@ -154,24 +283,27 @@ export const Sales = () => {
           />
         </div>
 
-        <div className="flex items-center justify-between mx-2 py-2">
-          <div>
-            Show
-            <select
-              className="mx-2 p-1 border rounded"
-              value={limit}
-              onChange={(e) => {
-                setLimit(Number(e.target.value));
-                setPageNo(1);
-              }}
-            >
-              {pageSizes.map((num) => (
-                <option key={num} value={num}>
-                  {num}
-                </option>
-              ))}
-            </select>
-            entries
+        {/* Filter Row */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
+          <div className="text-sm">
+            <span>Show</span>
+            <span className="bg-gray-200 rounded mx-1 p-1">
+              <select
+                value={limit}
+                onChange={(e) => {
+                  setLimit(Number(e.target.value));
+                  setPageNo(1);
+                }}
+                className="bg-transparent outline-none"
+              >
+                {pageSizes.map((num) => (
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
+                ))}
+              </select>
+            </span>
+            <span>entries</span>
           </div>
 
           <TableInputField
@@ -180,42 +312,56 @@ export const Sales = () => {
           />
         </div>
 
-        <div className="flex-1 mx-2">
-          <div className="grid grid-cols-5 bg-indigo-900 text-white font-semibold text-sm p-3 sticky top-0">
-            <span>Sr#</span>
-            <span>Customer</span>
-            <span>Project</span>
-            <span>Date</span>
-            <span className="text-center">Actions</span>
-          </div>
+        {/* Table Wrapper */}
+        <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
+          <div className="min-w-[600px]">
+            {/* Table Header */}
+            <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1.5fr] bg-indigo-900 text-white items-center font-semibold text-sm sticky top-0 z-10 p-2">
+              <span>Sr#</span>
+              <span>Customer</span>
+              <span>Project</span>
+              <span>Date</span>
+              <span className="text-center">Actions</span>
+            </div>
 
-          {filteredSales
-            .slice((pageNo - 1) * limit, pageNo * limit)
-            .map((sale, index) => (
-              <div
-                key={sale.id}
-                className="grid grid-cols-5 text-sm border-b p-2 items-center hover:bg-gray-50"
-              >
-                <span>{(pageNo - 1) * limit + index + 1}</span>
-                <span>{sale.customerName}</span>
-                <span>{sale.projectName}</span>
-                <span>{formatDate(sale.saleDate)}</span>
-
-                <span className="flex justify-center gap-2">
-                  <EditButton handleUpdate={() => handleEdit(sale)} />
-                  <ViewButton handleView={() => handleView(sale)} />
-                  <DeleteButton
-                    handleDelete={() => handleDeleteClick(sale.id)}
-                  />
-                </span>
+            {/* Table Body */}
+            {filteredSales.slice((pageNo - 1) * limit, pageNo * limit)
+              .length === 0 ? (
+              <div className="text-gray-800 text-lg text-center py-4">
+                No records available at the moment!
               </div>
-            ))}
+            ) : (
+              filteredSales
+                .slice((pageNo - 1) * limit, pageNo * limit)
+                .map((sale, index) => (
+                  <div
+                    key={sale.id}
+                    className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1.5fr] border border-gray-300 items-center text-gray-800 text-sm p-2 hover:bg-gray-100 transition"
+                  >
+                    <span>{(pageNo - 1) * limit + index + 1}</span>
+                    <span className="truncate">{sale.customerName}</span>
+                    <span className="truncate">{sale.projectName}</span>
+                    <span>{formatDate(sale.saleDate)}</span>
+
+                    {/* Actions */}
+                    <span className="flex flex-wrap items-center justify-center gap-1">
+                      <EditButton handleUpdate={() => handleEdit(sale)} />
+                      <ViewButton handleView={() => handleView(sale)} />
+                      <DeleteButton
+                        handleDelete={() => handleDeleteClick(sale.id)}
+                      />
+                    </span>
+                  </div>
+                ))
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="flex justify-between mt-2">
+      {/* Pagination */}
+      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
         <ShowDataNumber
-          start={(pageNo - 1) * limit + 1}
+          start={filteredSales.length === 0 ? 0 : (pageNo - 1) * limit + 1}
           end={Math.min(pageNo * limit, filteredSales.length)}
           total={filteredSales.length}
         />
@@ -227,6 +373,7 @@ export const Sales = () => {
         />
       </div>
 
+      {/* Modals */}
       {isOpenModal === "ADD" && (
         <AddSale
           setModal={() => handleToggleViewModal("")}

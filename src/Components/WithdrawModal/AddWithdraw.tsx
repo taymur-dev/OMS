@@ -42,11 +42,11 @@ export const AddWithdraw = ({
   const [addWithdraw, setAddWithdraw] = useState<WithdrawState>(initialState);
 
   const [allUsers, setAllUsers] = useState<{ value: number; label: string }[]>(
-    []
+    [],
   );
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setAddWithdraw((prev) => ({ ...prev, [name]: value }));
@@ -62,7 +62,8 @@ export const AddWithdraw = ({
 
       const filteredUsers = res?.data?.users
         ?.filter(
-          (user: UserOption) => user.role === "user" && user.loginStatus === "Y"
+          (user: UserOption) =>
+            user.role === "user" && user.loginStatus === "Y",
         )
         .map((user: UserOption) => ({
           value: user.id,
@@ -89,7 +90,7 @@ export const AddWithdraw = ({
           headers: {
             Authorization: token,
           },
-        }
+        },
       );
 
       console.log(res.data);
@@ -107,7 +108,7 @@ export const AddWithdraw = ({
   }, [getAllUsers]);
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
       <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded-t-xl px-6">
@@ -118,7 +119,7 @@ export const AddWithdraw = ({
               Add Employee Withdraw
             </Title>
           </div>
-          <div className="mx-2 grid grid-cols-2 py-5  gap-3">
+          <div className="mx-2 grid grid-cols-2 py-5 sm:grid-cols-2  md:grid-cols-2 gap-3">
             <UserSelect
               labelName="Select Employee*"
               name="id"

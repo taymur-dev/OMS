@@ -73,7 +73,7 @@ export const Assets = () => {
   }, [dispatch]);
 
   const handleChangeShowData = (
-    event: React.ChangeEvent<HTMLSelectElement>
+    event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setSelectedValue(Number(event.target.value));
     setPageNo(1);
@@ -101,7 +101,7 @@ export const Assets = () => {
   if (loader) return <Loader />;
 
   const filteredAssets = assets.filter((asset) =>
-    asset.asset_name.toLowerCase().includes(searchTerm.toLowerCase())
+    asset.asset_name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const totalPages = Math.ceil(filteredAssets.length / selectedValue) || 1;
@@ -109,31 +109,182 @@ export const Assets = () => {
   const endIndex = startIndex + selectedValue;
   const paginatedAssets = filteredAssets.slice(startIndex, endIndex);
 
+  // return (
+  //   <div className="w-full mx-2">
+  //     <TableTitle tileName="Assets" activeFile="Assets list" />
+  //     <div
+  //       className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
+  //      overflow-hidden flex flex-col"
+  //     >
+  //       <div className="flex text-gray-800 items-center justify-between mx-2">
+  //         <span>
+  //           Total number of Assets :{" "}
+  //           <span className="text-2xl text-indigo-900 font-semibold font-sans">
+  //             [{assets.length}]
+  //           </span>
+  //         </span>
+  //         <CustomButton
+  //           label="Add Asset"
+  //           handleToggle={() => handleToggleViewModal("ADD")}
+  //         />
+  //       </div>
+
+  //       <div className="flex items-center justify-between text-gray-800 mx-2">
+  //         <div>
+  //           <span>Show</span>
+  //           <span className="bg-gray-200 rounded mx-1 p-1">
+  //             <select value={selectedValue} onChange={handleChangeShowData}>
+  //               {numbers.map((num, index) => (
+  //                 <option key={index} value={num}>
+  //                   {num}
+  //                 </option>
+  //               ))}
+  //             </select>
+  //           </span>
+  //           <span>entries</span>
+  //         </div>
+  //         <TableInputField
+  //           searchTerm={searchTerm}
+  //           setSearchTerm={setSearchTerm}
+  //         />
+  //       </div>
+
+  //       {/* Table */}
+  //       <div className="max-h-[28.4rem] overflow-y-auto mx-2">
+  //         <div
+  //           className="grid grid-cols-4 bg-indigo-900 text-white font-semibold border border-gray-600
+  //         text-sm sticky top-0 z-10 p-[10px]"
+  //         >
+  //           <span>Sr#</span>
+  //           <span>Asset</span>
+  //           <span>Asset Category</span>
+  //           <span className="text-center w-40">Actions</span>
+  //         </div>
+
+  //         {paginatedAssets.map((asset, index) => (
+  //           <div
+  //             key={asset.id}
+  //             className="grid grid-cols-4 border border-gray-600 text-gray-800 hover:bg-gray-100 transition
+  //             duration-200 text-sm items-center justify-center p-[7px]"
+  //           >
+  //             <span className="px-2">{startIndex + index + 1}</span>
+  //             <span>{asset.asset_name}</span>
+  //             <span>{asset.category_name}</span>
+  //             <span className="flex items-center gap-1">
+  //               <EditButton
+  //                 handleUpdate={() => {
+  //                   setSelectedAsset(asset);
+  //                   handleToggleViewModal("EDIT");
+  //                 }}
+  //               />
+  //               <ViewButton
+  //                 handleView={() => {
+  //                   setViewAsset({
+  //                     asset_name: asset.asset_name,
+  //                     category_name: asset.category_name,
+  //                     description: asset.description,
+  //                     date: asset.date,
+  //                   });
+  //                   handleToggleViewModal("VIEW");
+  //                 }}
+  //               />
+  //               <DeleteButton
+  //                 handleDelete={() => {
+  //                   setAssetToDelete(asset.id);
+  //                   handleToggleViewModal("DELETE");
+  //                 }}
+  //               />
+  //             </span>
+  //           </div>
+  //         ))}
+
+  //         {paginatedAssets.length === 0 && (
+  //           <div className="text-center py-5 text-gray-500">
+  //             No assets found.
+  //           </div>
+  //         )}
+  //       </div>
+  //     </div>
+
+  //     <div className="flex items-center justify-between mt-2">
+  //       <ShowDataNumber
+  //         start={startIndex + 1}
+  //         total={filteredAssets.length}
+  //         end={Math.min(endIndex, filteredAssets.length)}
+  //       />
+  //       <Pagination
+  //         handleIncrementPageButton={handleIncrementPageButton}
+  //         handleDecrementPageButton={handleDecrementPageButton}
+  //         pageNo={pageNo}
+  //       />
+  //     </div>
+
+  //     {isOpenModal === "ADD" && (
+  //       <AddAsset
+  //         setModal={() => handleToggleViewModal("")}
+  //         refreshAssets={fetchAssets}
+  //       />
+  //     )}
+  //     {isOpenModal === "EDIT" && selectedAsset && (
+  //       <UpdateAsset
+  //         setModal={() => handleToggleViewModal("")}
+  //         assetData={{
+  //           id: selectedAsset.id,
+  //           asset_name: selectedAsset.asset_name,
+  //           category_id: selectedAsset.category_id || "",
+  //           description: selectedAsset.description || "",
+  //           date: selectedAsset.date || "",
+  //         }}
+  //         refreshAssets={fetchAssets}
+  //       />
+  //     )}
+  //     {isOpenModal === "DELETE" && assetToDelete !== null && (
+  //       <ConfirmationModal
+  //         isOpen={() => handleToggleViewModal("")}
+  //         onClose={() => handleToggleViewModal("DELETE")}
+  //         onConfirm={() => handleDeleteAsset(assetToDelete)}
+  //         message="Are you sure you want to delete this Asset?"
+  //       />
+  //     )}
+
+  //     {isOpenModal === "VIEW" && (
+  //       <ViewAsset
+  //         viewAsset={viewAsset}
+  //         setIsOpenModal={() => handleToggleViewModal("")}
+  //       />
+  //     )}
+  //   </div>
+  // );
   return (
-    <div className="w-full mx-2">
+    <div className="w-full px-2 sm:px-4">
       <TableTitle tileName="Assets" activeFile="Assets list" />
-      <div
-        className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
-       overflow-hidden flex flex-col"
-      >
-        <div className="flex text-gray-800 items-center justify-between mx-2">
-          <span>
+
+      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
+        {/* Top Bar */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
+          <span className="text-sm sm:text-base">
             Total number of Assets :{" "}
-            <span className="text-2xl text-indigo-900 font-semibold font-sans">
+            <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
               [{assets.length}]
             </span>
           </span>
+
           <CustomButton
             label="Add Asset"
             handleToggle={() => handleToggleViewModal("ADD")}
           />
         </div>
 
-        <div className="flex items-center justify-between text-gray-800 mx-2">
-          <div>
+        {/* Filter Row */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
+          <div className="text-sm">
             <span>Show</span>
             <span className="bg-gray-200 rounded mx-1 p-1">
-              <select value={selectedValue} onChange={handleChangeShowData}>
+              <select
+                value={selectedValue}
+                onChange={handleChangeShowData}
+                className="bg-transparent outline-none"
+              >
                 {numbers.map((num, index) => (
                   <option key={index} value={num}>
                     {num}
@@ -143,82 +294,90 @@ export const Assets = () => {
             </span>
             <span>entries</span>
           </div>
+
           <TableInputField
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
           />
         </div>
 
-        {/* Table */}
-        <div className="max-h-[28.4rem] overflow-y-auto mx-2">
-          <div
-            className="grid grid-cols-4 bg-indigo-900 text-white font-semibold border border-gray-600 
-          text-sm sticky top-0 z-10 p-[10px]"
-          >
-            <span>Sr#</span>
-            <span>Asset</span>
-            <span>Asset Category</span>
-            <span className="text-center w-40">Actions</span>
-          </div>
-
-          {paginatedAssets.map((asset, index) => (
+        {/* Table Wrapper */}
+        <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
+          <div className="min-w-[600px]">
+            {/* Table Header */}
             <div
-              key={asset.id}
-              className="grid grid-cols-4 border border-gray-600 text-gray-800 hover:bg-gray-100 transition 
-              duration-200 text-sm items-center justify-center p-[7px]"
+              className="grid grid-cols-[0.5fr_1fr_1.5fr_1fr] 
+                       bg-indigo-900 text-white font-semibold items-center text-sm sticky top-0 z-10 p-2"
             >
-              <span className="px-2">{startIndex + index + 1}</span>
-              <span>{asset.asset_name}</span>
-              <span>{asset.category_name}</span>
-              <span className="flex items-center gap-1">
-                <EditButton
-                  handleUpdate={() => {
-                    setSelectedAsset(asset);
-                    handleToggleViewModal("EDIT");
-                  }}
-                />
-                <ViewButton
-                  handleView={() => {
-                    setViewAsset({
-                      asset_name: asset.asset_name,
-                      category_name: asset.category_name,
-                      description: asset.description,
-                      date: asset.date,
-                    });
-                    handleToggleViewModal("VIEW");
-                  }}
-                />
-                <DeleteButton
-                  handleDelete={() => {
-                    setAssetToDelete(asset.id);
-                    handleToggleViewModal("DELETE");
-                  }}
-                />
-              </span>
+              <span>Sr#</span>
+              <span>Asset</span>
+              <span>Asset Category</span>
+              <span className="text-center">Actions</span>
             </div>
-          ))}
 
-          {paginatedAssets.length === 0 && (
-            <div className="text-center py-5 text-gray-500">
-              No assets found.
-            </div>
-          )}
+            {/* Table Body */}
+            {paginatedAssets.length === 0 ? (
+              <div className="text-gray-800 text-lg text-center py-4">
+                No assets found.
+              </div>
+            ) : (
+              paginatedAssets.map((asset, index) => (
+                <div
+                  key={asset.id}
+                  className="grid grid-cols-[0.5fr_1fr_1.5fr_1fr] border items-center border-gray-300
+                   text-gray-800 text-sm p-2 hover:bg-gray-100 transition"
+                >
+                  <span>{startIndex + index + 1}</span>
+                  <span className="truncate">{asset.asset_name}</span>
+                  <span className="truncate">{asset.category_name}</span>
+                  {/* Actions */}
+                  <span className="flex flex-wrap items-center justify-center gap-1">
+                    <EditButton
+                      handleUpdate={() => {
+                        setSelectedAsset(asset);
+                        handleToggleViewModal("EDIT");
+                      }}
+                    />
+                    <ViewButton
+                      handleView={() => {
+                        setViewAsset({
+                          asset_name: asset.asset_name,
+                          category_name: asset.category_name,
+                          description: asset.description,
+                          date: asset.date,
+                        });
+                        handleToggleViewModal("VIEW");
+                      }}
+                    />
+                    <DeleteButton
+                      handleDelete={() => {
+                        setAssetToDelete(asset.id);
+                        handleToggleViewModal("DELETE");
+                      }}
+                    />
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-between mt-2">
+      {/* Pagination */}
+      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
         <ShowDataNumber
-          start={startIndex + 1}
-          total={filteredAssets.length}
+          start={paginatedAssets.length === 0 ? 0 : startIndex + 1}
           end={Math.min(endIndex, filteredAssets.length)}
+          total={filteredAssets.length}
         />
         <Pagination
-          handleIncrementPageButton={handleIncrementPageButton}
-          handleDecrementPageButton={handleDecrementPageButton}
           pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
         />
       </div>
 
+      {/* Modals */}
       {isOpenModal === "ADD" && (
         <AddAsset
           setModal={() => handleToggleViewModal("")}
@@ -246,7 +405,6 @@ export const Assets = () => {
           message="Are you sure you want to delete this Asset?"
         />
       )}
-
       {isOpenModal === "VIEW" && (
         <ViewAsset
           viewAsset={viewAsset}
