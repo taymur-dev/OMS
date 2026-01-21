@@ -169,7 +169,7 @@ export const EmployeeDashboard = () => {
   return (
     <div className="w-full">
       <div className="flex flex-col md:flex-row gap-4 text-gray-700 p-4">
-        <div className="bg-white rounded-xl shadow-md w-full h-120 border-2 border-indigo-900 hover:border-white overflow-auto">
+        <div className="bg-white rounded-xl shadow-md w-full h-120 border-2 border-indigo-900 hover:border-white">
           <div className="bg-indigo-900 text-white rounded-t-xl px-4 py-3 font-semibold text-lg">
             Todo's
           </div>

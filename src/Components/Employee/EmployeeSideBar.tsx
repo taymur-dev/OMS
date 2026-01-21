@@ -2,7 +2,7 @@ import { AccordionItem } from "../Accordion/AccordionItem";
 import { SideBarButton } from "../SideBarComponent/SideBarButton";
 import { BiArrowBack } from "react-icons/bi";
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FaMoneyCheck, FaUserSlash } from "react-icons/fa";
 import { PiFingerprintDuotone } from "react-icons/pi";
 import { GoProjectRoadmap } from "react-icons/go";
@@ -12,350 +12,224 @@ import { MdOutlineDashboard } from "react-icons/md";
 import { GiProgression } from "react-icons/gi";
 import { RiUserCommunityLine } from "react-icons/ri";
 import { CiCreditCard1 } from "react-icons/ci";
+
 type SideBarProps = {
   isOpen: boolean;
+  setIsOpen?: (open: boolean) => void;
 };
+
 type TActivButton =
   | "Dashboard"
-  | "Mark"
-  | "AssignedProjects"
-  | "Progress"
-  | "Todo"
-  | "Dynamic"
+  | "Attendance"
+  | "Projects"
+  | "Performance"
   | "Payroll"
+  | "Leave"
   | "Salary"
-  | "Apply Leave"
+  | "Dynamic"
   | "Reports";
-export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
+
+export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   const [activeBtns, setActiveBtns] = useState<TActivButton | "">("");
-
-  const navigate = useNavigate();
-
   const { pathname } = useLocation();
-
-  console.log(activeBtns);
 
   const toggleButtonActive = (activeBtn: TActivButton) => {
     setActiveBtns((prev) => (prev === activeBtn ? "" : activeBtn));
   };
 
   useEffect(() => {
-    if (!isOpen) setActiveBtns("");
     setActiveBtns("Dashboard");
-    navigate("/User/dashboard");
-  }, [isOpen]);
+  }, []);
+
+  const SubLink = ({ to, label }: { to: string; label: string }) => (
+    <Link
+      to={to}
+      onClick={() => window.innerWidth < 768 && setIsOpen?.(false)}
+      className={`my-button flex justify-between items-center w-full px-4 py-2 text-sm transition-colors rounded-md mb-1
+        ${pathname === to ? "bg-indigo-100 text-indigo-900 font-semibold" : "text-gray-600 hover:bg-gray-100"}
+      `}
+    >
+      <span>{label}</span>
+    </Link>
+  );
 
   return (
-    <div
-      className={`
-    ${isOpen ? "w-20" : "w-55"}
-    bg-white
-    transition-all duration-300 ease-in-out
-    flex flex-col items-center py-4
-    shadow-lg
-    sticky top-0 h-screen
-    overflow-y-hidden
-  `}
-    >
-      {!isOpen ? (
-        <Link
-          to={"/User/dashBoard"}
-          onClick={() => setActiveBtns("Dashboard")}
-          className={`flex items-center ${
-            isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b m-1  w-40 ${
-            activeBtns === "Dashboard" && "bg-indigo-900 text-white"
-          } `}
-        >
-          <MdOutlineDashboard size={20} />
-          <p className="text-xs">Dashboard</p>
-        </Link>
-      ) : (
-        <div
-          className={`flex items-center ${
-            isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  `}
-        >
-          <MdOutlineDashboard size={20} />
-        </div>
-      )}
-
-      {!isOpen ? (
-        <Link
-          to={"/users/markAttendance"}
-          onClick={() => setActiveBtns("Mark")}
-          className={`flex items-center ${
-            isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b m-1  w-40 ${
-            activeBtns === "Mark" && "bg-indigo-900 text-white"
-          } `}
-        >
-          <PiFingerprintDuotone size={20} />
-          <p className="text-xs">Mark Attendance</p>
-        </Link>
-      ) : (
-        <div
-          className={`flex items-center ${
-            isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  text-gray-900  `}
-        >
-          <PiFingerprintDuotone size={20} />
-        </div>
-      )}
-
-      {!isOpen ? (
-        <Link
-          to={"/users/todo"}
-          onClick={() => setActiveBtns("Todo")}
-          className={`flex items-center ${
-            isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b m-1  w-40 ${
-            activeBtns === "Todo" && "bg-indigo-900 text-white"
-          } `}
-        >
-          <LuListTodo size={20} />
-          <p className="text-xs">Todo's</p>
-        </Link>
-      ) : (
-        <div
-          className={`flex items-center ${
-            isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1`}
-        >
-          <LuListTodo size={20} />
-        </div>
-      )}
-
-      <SideBarButton
-        isOpen={isOpen}
-        icon={<CiCreditCard1 size={20} />}
-        title={"Payroll"}
-        arrowIcon={<BiArrowBack />}
-        handlerClick={() => toggleButtonActive("Payroll")}
-        activeBtns={activeBtns}
-        activeBtn="Payroll"
-      />
-      <div>
-        {activeBtns === "Payroll" && (
-          <AccordionItem isOpen={isOpen}>
-            <ul className="flex flex-col ">
-              <Link
-                className={`my-button ${
-                  pathname === "/user/overTime" && "bg-indigo-200"
-                } `}
-                to={"/user/overTime"}
-              >
-                Over Time
-              </Link>
-
-              <Link
-                className={`my-button ${
-                  pathname === "/user/advanceSalary" && "bg-indigo-200"
-                } `}
-                to={"/user/advanceSalary"}
-              >
-                Advance Salary
-              </Link>
-
-              <Link
-                className={`my-button ${
-                  pathname === "/user/applyLoan" && "bg-indigo-200"
-                } `}
-                to={"/user/applyLoan"}
-              >
-                Apply Loan
-              </Link>
-            </ul>
-          </AccordionItem>
-        )}
-      </div>
-
-      {!isOpen ? (
-        <Link
-          to={"/users/assignedprojects"}
-          onClick={() => setActiveBtns("AssignedProjects")}
-          className={`flex items-center ${
-            isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b m-1  w-40 ${
-            activeBtns === "AssignedProjects" && "bg-indigo-900 text-white"
-          } `}
-        >
-          <GoProjectRoadmap size={20} />
-          <p className="text-xs">Assigned Projects</p>
-        </Link>
-      ) : (
-        <div
-          className={`flex items-center ${
-            isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  text-gray-900  `}
-        >
-          <GoProjectRoadmap size={20} />
-        </div>
-      )}
-
-      {!isOpen ? (
-        <Link
-          to={"/users/leaveRequests"}
-          onClick={() => setActiveBtns("Apply Leave")}
-          className={`flex items-center ${
-            isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b m-1  w-40 ${
-            activeBtns === "Apply Leave" && "bg-indigo-900 text-white"
-          } `}
-        >
-          <FaUserSlash size={20} />
-          <p className="text-xs">Apply Leave</p>
-        </Link>
-      ) : (
-        <div
-          className={`flex items-center ${
-            isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  text-gray-900  `}
-        >
-          <FaUserSlash size={20} />
-        </div>
-      )}
-
-      {!isOpen ? (
-        <Link
-          to={"/user/salarydetail"}
-          onClick={() => setActiveBtns("Salary")}
-          className={`flex items-center ${
-            isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b m-1  w-40 ${
-            activeBtns === "Salary" && "bg-indigo-900 text-white"
-          } `}
-        >
-          <FaMoneyCheck size={20} />
-          <p className="text-xs">Salary</p>
-        </Link>
-      ) : (
-        <div
-          className={`flex items-center ${
-            isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1  text-gray-900  `}
-        >
-          <FaMoneyCheck size={20} />
-        </div>
-      )}
-
-      {!isOpen ? (
-        <Link
-          to={"/users/progress"}
-          onClick={() => setActiveBtns("Progress")}
-          className={`flex items-center ${
-            isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b m-1  w-40 ${
-            activeBtns === "Progress" && "bg-indigo-900 text-white"
-          } `}
-        >
-          <GiProgression size={20} />
-          <p className="text-xs">Progress</p>
-        </Link>
-      ) : (
-        <div
-          className={`flex items-center ${
-            isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer hover:bg-indigo-900 border-b  transition m-1`}
-        >
-          <GiProgression size={20} />
-        </div>
-      )}
-
-      <SideBarButton
-        isOpen={isOpen}
-        icon={<RiUserCommunityLine size={20} />}
-        title={"Dynamic"}
-        arrowIcon={<BiArrowBack />}
-        handlerClick={() => toggleButtonActive("Dynamic")}
-        activeBtns={activeBtns}
-        activeBtn="Dynamic"
-      />
-
-      <div>
-        {activeBtns === "Dynamic" && (
-          <AccordionItem isOpen={isOpen}>
-            <ul className="flex flex-col ">
-              <Link
-                className={`my-button ${
-                  pathname === "/user/promotion" && "bg-indigo-200"
-                } `}
-                to={"/user/promotion"}
-              >
-                Promotion Request
-              </Link>
-
-              <Link
-                className={`my-button ${
-                  pathname === "/user/resignation" && "bg-indigo-200"
-                } `}
-                to={"/user/resignation"}
-              >
-                Resignation Request
-              </Link>
-
-              <Link
-                className={`my-button ${
-                  pathname === "/user/rejoin" && "bg-indigo-200"
-                } `}
-                to={"/user/rejoin"}
-              >
-                Rejoin Request
-              </Link>
-            </ul>
-          </AccordionItem>
-        )}
-      </div>
-
-      <SideBarButton
-        isOpen={isOpen}
-        icon={<HiOutlineDocumentReport size={20} />}
-        title={"Reports"}
-        arrowIcon={<BiArrowBack />}
-        handlerClick={() => toggleButtonActive("Reports")}
-        activeBtns={activeBtns}
-        activeBtn="Reports"
-      />
+    <>
       <div
-        className={`${
-          activeBtns === "Reports" && "transition-all duration-300 ease-in-out"
-        }`}
+        className={`
+          fixed inset-y-0 left-0 z-50 bg-white shadow-2xl transition-all duration-300 ease-in-out
+    flex flex-col py-4 overflow-y-auto overflow-x-hidden
+    w-64 flex-shrink-0
+          ${isOpen ? "w-64 translate-x-0" : "w-0 -translate-x-full"}
+          md:relative md:translate-x-0 md:shadow-lg
+          ${isOpen ? "md:w-20" : "md:w-64"}
+        `}
       >
-        {activeBtns === "Reports" && (
-          <AccordionItem isOpen={isOpen}>
-            <ul
-              className={`flex flex-col list-disc  ${
-                activeBtns === "Reports"
-              } && "transition-all duration-300  ease-in-out"`}
-            >
-              <Link
-                className={`my-button ${
-                  pathname === "/progressReports" && "bg-indigo-200"
-                } `}
-                to={"/users/progressReports"}
-              >
-                Progress Report
-              </Link>
-              <Link
-                className={`my-button ${
-                  pathname === "/attendanceReports" && "bg-indigo-200"
-                } `}
-                to={"/users/attendanceReports"}
-              >
-                Attendance Report
-              </Link>
-              <Link
-                className={`my-button ${
-                  pathname === "/taskReports" && "bg-indigo-200"
-                } `}
-                to={"/users/taskReports"}
-              >
-                Task Report
-              </Link>
-            </ul>
-          </AccordionItem>
-        )}
+        <nav className="flex-1 px-3 space-y-1">
+          {/* Dashboard */}
+          <Link to="/User/dashboard" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<MdOutlineDashboard size={20} />}
+              title="Dashboard"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => {
+                toggleButtonActive("Dashboard");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
+              activeBtns={activeBtns}
+              activeBtn="Dashboard"
+            />
+          </Link>
+
+          {/* Attendance */}
+          <Link to="/users/markAttendance" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<PiFingerprintDuotone size={20} />}
+              title="Attendance"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => toggleButtonActive("Attendance")}
+              activeBtns={activeBtns}
+              activeBtn="Attendance"
+            />
+          </Link>
+
+          {/* Performance/Todo */}
+          <Link to="/users/todo" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<LuListTodo size={20} />}
+              title="Todo's"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => toggleButtonActive("Performance")}
+              activeBtns={activeBtns}
+              activeBtn="Performance"
+            />
+          </Link>
+
+          {/* Payroll Section */}
+          <SideBarButton
+            isOpen={isOpen}
+            icon={<CiCreditCard1 size={20} />}
+            title="Payroll"
+            arrowIcon={<BiArrowBack />}
+            handlerClick={() => toggleButtonActive("Payroll")}
+            activeBtns={activeBtns}
+            activeBtn="Payroll"
+          />
+          {activeBtns === "Payroll" && (
+            <AccordionItem isOpen={isOpen}>
+              <div className="flex flex-col border-gray">
+                <SubLink to="/user/overTime" label="Over Time" />
+                <SubLink to="/user/advanceSalary" label="Advance Salary" />
+                <SubLink to="/user/applyLoan" label="Apply Loan" />
+              </div>
+            </AccordionItem>
+          )}
+
+          {/* Projects */}
+          <Link to="/users/assignedprojects" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<GoProjectRoadmap size={20} />}
+              title="Assigned Projects"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => toggleButtonActive("Projects")}
+              activeBtns={activeBtns}
+              activeBtn="Projects"
+            />
+          </Link>
+
+          {/* Leave */}
+          <Link to="/users/leaveRequests" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<FaUserSlash size={20} />}
+              title="Apply Leave"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => toggleButtonActive("Leave")}
+              activeBtns={activeBtns}
+              activeBtn="Leave"
+            />
+          </Link>
+
+          {/* Salary */}
+          <Link to="/user/salarydetail" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<FaMoneyCheck size={20} />}
+              title="Salary"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => toggleButtonActive("Salary")}
+              activeBtns={activeBtns}
+              activeBtn="Salary"
+            />
+          </Link>
+
+          {/* Progress */}
+          <Link to="/users/progress" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<GiProgression size={20} />}
+              title="Progress"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => toggleButtonActive("Performance")}
+              activeBtns={activeBtns}
+              activeBtn="Performance"
+            />
+          </Link>
+
+          {/* Dynamic */}
+          <SideBarButton
+            isOpen={isOpen}
+            icon={<RiUserCommunityLine size={20} />}
+            title="Dynamic"
+            arrowIcon={<BiArrowBack />}
+            handlerClick={() => toggleButtonActive("Dynamic")}
+            activeBtns={activeBtns}
+            activeBtn="Dynamic"
+          />
+          {activeBtns === "Dynamic" && (
+            <AccordionItem isOpen={isOpen}>
+              <div className="flex flex-col border-gray">
+                <SubLink to="/user/promotion" label="Promotion Request" />
+                <SubLink to="/user/resignation" label="Resignation Request" />
+                <SubLink to="/user/rejoin" label="Rejoin Request" />
+              </div>
+            </AccordionItem>
+          )}
+
+          {/* Reports */}
+          <SideBarButton
+            isOpen={isOpen}
+            icon={<HiOutlineDocumentReport size={20} />}
+            title="Reports"
+            arrowIcon={<BiArrowBack />}
+            handlerClick={() => toggleButtonActive("Reports")}
+            activeBtns={activeBtns}
+            activeBtn="Reports"
+          />
+          {activeBtns === "Reports" && (
+            <AccordionItem isOpen={isOpen}>
+              <div className="flex flex-col border-gray">
+                <SubLink to="/users/progressReports" label="Progress Report" />
+                <SubLink to="/users/attendanceReports" label="Attendance Report" />
+                <SubLink to="/users/taskReports" label="Task Report" />
+              </div>
+            </AccordionItem>
+          )}
+        </nav>
       </div>
-    </div>
+
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm transition-opacity"
+          onClick={() => setIsOpen?.(false)}
+          aria-hidden="true"
+        />
+      )}
+    </>
   );
 };
