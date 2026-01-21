@@ -48,7 +48,7 @@ export const EmployeeSideBar = ({ isOpen }: SideBarProps) => {
   return (
     <div
       className={`
-    ${isOpen ? "w-16" : "w-52"}
+    ${isOpen ? "w-20" : "w-55"}
     bg-white
     transition-all duration-300 ease-in-out
     flex flex-col items-center py-4

@@ -96,13 +96,13 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
 
     <div
       className={`
-        bg-white overflow-y-auto overflow-x-hidden
-        transition-all duration-300 sm:text-sm ease-in-out
-        flex flex-col items-center py-2 shadow-lg
+    bg-white overflow-y-auto overflow-x-hidden
+    transition-all duration-300 ease-in-out
+    flex flex-col items-center py-2 shadow-lg
 
-        w-70
-        sm:${isOpen ? "w-20" : "w-52"}
-      `}
+    ${isOpen ? "w-20" : "w-55"}        /* Mobile */
+    sm:${isOpen ? "w-20" : "w-55"}    /* Desktop */
+  `}
     >
       {!isOpen ? (
         <Link
@@ -110,7 +110,7 @@ export const SideBar = ({ isOpen }: SideBarProps) => {
           onClick={() => setActiveBtns("Dashboard")}
           className={`flex items-center ${
             isOpen && "justify-between "
-          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b m-1  w-40 ${
+          } gap-2 p-2  rounded cursor-pointer text-gray-900  hover:bg-indigo-900 hover:text-white transition border-b ml-1  w-40 ${
             activeBtns === "Dashboard" && "bg-indigo-900 text-white"
           } `}
         >
