@@ -14,7 +14,7 @@ import { RiUserCommunityLine } from "react-icons/ri";
 import { CiCreditCard1 } from "react-icons/ci";
 
 type SideBarProps = {
-  isOpen: boolean;
+  isOpen: boolean; // Yeh state toggle button control karti hai
   setIsOpen?: (open: boolean) => void;
 };
 
@@ -22,7 +22,8 @@ type TActivButton =
   | "Dashboard"
   | "Attendance"
   | "Projects"
-  | "Performance"
+  | "Progress"
+  | "Todo"
   | "Payroll"
   | "Leave"
   | "Salary"
@@ -31,7 +32,29 @@ type TActivButton =
 
 export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   const [activeBtns, setActiveBtns] = useState<TActivButton | "">("");
+  const [isHoverable, setIsHoverable] = useState(false);
+
   const { pathname } = useLocation();
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsHoverable(true);
+    } else {
+      setIsHoverable(false);
+    }
+  }, [isOpen]);
+
+  const handleMouseEnter = () => {
+    if (window.innerWidth >= 768 && isOpen && isHoverable) {
+      setIsOpen?.(false);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (window.innerWidth >= 768 && !isOpen && isHoverable) {
+      setIsOpen?.(true);
+    }
+  };
 
   const toggleButtonActive = (activeBtn: TActivButton) => {
     setActiveBtns((prev) => (prev === activeBtn ? "" : activeBtn));
@@ -41,29 +64,54 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
     setActiveBtns("Dashboard");
   }, []);
 
-  const SubLink = ({ to, label }: { to: string; label: string }) => (
-    <Link
-      to={to}
-      onClick={() => window.innerWidth < 768 && setIsOpen?.(false)}
-      className={`my-button flex justify-between items-center w-full px-4 py-2 text-sm transition-colors rounded-md mb-1
-        ${pathname === to ? "bg-indigo-100 text-indigo-900 font-semibold" : "text-gray-600 hover:bg-gray-100"}
-      `}
-    >
-      <span>{label}</span>
-    </Link>
-  );
+  const SubLink = ({
+    to,
+    label,
+    badge,
+  }: {
+    to: string;
+    label: string;
+    badge?: number;
+  }) => {
+    const isActive = pathname === to;
+    return (
+      <Link
+        to={to}
+        onClick={() => window.innerWidth < 768 && setIsOpen?.(false)}
+        className={`flex justify-between items-center w-full px-4 py-2 mb-1 rounded-md text-sm font-bold transition-all duration-200 ${
+          isActive
+            ? "bg-white text-indigo-900"
+            : "bg-transparent text-black font-normal"
+        }`}
+      >
+        <span>{label}</span>
+        {badge !== undefined && badge > 0 && (
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-900 text-white">
+            {badge}
+          </span>
+        )}
+      </Link>
+    );
+  };
 
   return (
     <>
       <div
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         className={`
-          fixed inset-y-0 left-0 z-50 bg-white shadow-2xl transition-all duration-300 ease-in-out
+    fixed inset-y-0 left-0 z-50 bg-white shadow-2xl
+    transition-all duration-300 ease-in-out
     flex flex-col py-4 overflow-y-auto overflow-x-hidden
-    w-64 flex-shrink-0
-          ${isOpen ? "w-64 translate-x-0" : "w-0 -translate-x-full"}
-          md:relative md:translate-x-0 md:shadow-lg
-          ${isOpen ? "md:w-20" : "md:w-64"}
-        `}
+    flex-shrink-0
+
+    /* MOBILE */
+    ${isOpen ? "w-64 translate-x-0" : "w-0 -translate-x-full"}
+
+    /* DESKTOP */
+    md:relative md:translate-x-0 md:shadow-lg
+    ${isOpen ? "md:w-20" : "md:w-64"}
+  `}
       >
         <nav className="flex-1 px-3 space-y-1">
           {/* Dashboard */}
@@ -102,9 +150,9 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<LuListTodo size={20} />}
               title="Todo's"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => toggleButtonActive("Performance")}
+              handlerClick={() => toggleButtonActive("Todo")}
               activeBtns={activeBtns}
-              activeBtn="Performance"
+              activeBtn="Todo"
             />
           </Link>
 
@@ -120,7 +168,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "Payroll" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/user/overTime" label="Over Time" />
                 <SubLink to="/user/advanceSalary" label="Advance Salary" />
                 <SubLink to="/user/applyLoan" label="Apply Loan" />
@@ -174,13 +222,14 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<GiProgression size={20} />}
               title="Progress"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => toggleButtonActive("Performance")}
+              handlerClick={() => toggleButtonActive("Progress")}
               activeBtns={activeBtns}
-              activeBtn="Performance"
+              activeBtn="Progress"
             />
           </Link>
 
           {/* Dynamic */}
+
           <SideBarButton
             isOpen={isOpen}
             icon={<RiUserCommunityLine size={20} />}
@@ -192,7 +241,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "Dynamic" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/user/promotion" label="Promotion Request" />
                 <SubLink to="/user/resignation" label="Resignation Request" />
                 <SubLink to="/user/rejoin" label="Rejoin Request" />
@@ -212,9 +261,12 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "Reports" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/users/progressReports" label="Progress Report" />
-                <SubLink to="/users/attendanceReports" label="Attendance Report" />
+                <SubLink
+                  to="/users/attendanceReports"
+                  label="Attendance Report"
+                />
                 <SubLink to="/users/taskReports" label="Task Report" />
               </div>
             </AccordionItem>

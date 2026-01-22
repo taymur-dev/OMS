@@ -160,7 +160,7 @@ export const CustomerDetail = () => {
   const paginatedCustomers = filteredCustomers.slice(startIndex, endIndex);
 
   return (
-    <div className="w-full mx-2">
+    <div className="w-full">
       <TableTitle tileName="Customer" activeFile="Customers list" />
 
       <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">

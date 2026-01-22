@@ -1,9 +1,17 @@
 export const Footer = () => {
   return (
-    <footer className="w-full px-4 bg-white">
-      <div className="flex justify-center bg-white  md:justify-end">
+    <footer className="w-full p-2 bg-white">
+      <div className="flex justify-center bg-white md:justify-end">
         <h1 className="font-sans text-black font-semibold bg-white text-sm md:text-base">
-          Developed With ❤️ By: Technic Mentors
+          Developed With ❤️ By:{" "}
+          <a
+            href="https://technicmentors.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline font-extrabold text-indigo-700 cursor-pointer  hover:text-blue-600 transition-colors duration-300 ml-1"
+          >
+            Technic Mentors
+          </a>
         </h1>
       </div>
     </footer>

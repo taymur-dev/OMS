@@ -50,8 +50,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // Agar isOpen 'true' hai (aapki logic ke mutabiq true = collapsed/closed),
-    // iska matlab toggle button se close kiya gaya hai.
+    
     if (isOpen) {
       setIsHoverable(true);
     } else {
@@ -60,16 +59,14 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   }, [isOpen]);
 
   const handleMouseEnter = () => {
-    // Sirf tab chale jab toggle button se close kiya gaya ho (isHoverable: true)
     if (window.innerWidth >= 768 && isOpen && isHoverable) {
-      setIsOpen?.(false); // Sidebar open kar do
+      setIsOpen?.(false); 
     }
   };
 
   const handleMouseLeave = () => {
-    // Sirf tab chale jab toggle se close tha aur mouse ab sidebar se bahar gaya
     if (window.innerWidth >= 768 && !isOpen && isHoverable) {
-      setIsOpen?.(true); // Sidebar dubara close kar do
+      setIsOpen?.(true);
     }
   };
 
@@ -120,43 +117,84 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   //     )}
   //   </Link>
   // );
-  const SubLink = ({
-    to,
-    label,
-    badge,
-  }: {
-    to: string;
-    label: string;
-    badge?: number;
-  }) => {
-    const isActive = pathname === to;
+  // const SubLink = ({
+  //   to,
+  //   label,
+  //   badge,
+  // }: {
+  //   to: string;
+  //   label: string;
+  //   badge?: number;
+  // }) => {
+  //   const isActive = pathname === to;
 
-    return (
-      <Link
-        to={to}
-        onClick={() => window.innerWidth < 768 && setIsOpen?.(false)}
-        className={`
+  //   return (
+  //     <Link
+  //       to={to}
+  //       onClick={() => window.innerWidth < 768 && setIsOpen?.(false)}
+  //       className={`
+  //       flex justify-between items-center w-full
+  //       px-4 py-2 mb-1 rounded-md text-sm
+  //       font-bold
+  //       transition-all duration-200
+
+  //       bg-white text-indigo-900
+  //       hover:bg-i-50
+
+  //       ${isActive ? "ring-0 ring-white bg-white" : ""}
+  //     `}
+  //     >
+  //       <span>{label}</span>
+
+  //       {badge !== undefined && badge > 0 && (
+  //         <span className="bg-indigo-900 text-white text-[10px] px-2 py-0.5 rounded-full">
+  //           {badge}
+  //         </span>
+  //       )}
+  //     </Link>
+  //   );
+  // };
+
+  const SubLink = ({
+  to,
+  label,
+  badge,
+}: {
+  to: string;
+  label: string;
+  badge?: number;
+}) => {
+  const isActive = pathname === to;
+
+  return (
+    <Link
+      to={to}
+      onClick={() => window.innerWidth < 768 && setIsOpen?.(false)}
+      className={`
         flex justify-between items-center w-full
         px-4 py-2 mb-1 rounded-md text-sm
-        font-bold
-        transition-all duration-200
-
-        bg-white text-indigo-900
-        hover:bg-i-50
-
-        ${isActive ? "ring-0 ring-white bg-white" : ""}
+        font-bold transition-all duration-200
+        
+        /* Base styles / Inactive styles */
+        ${isActive 
+          ? "bg-white text-indigo-900 text-bold" // Active State
+          : "bg-transparent text-black font-normal" // Inactive State
+        }
       `}
-      >
-        <span>{label}</span>
+    >
+      <span>{label}</span>
 
-        {badge !== undefined && badge > 0 && (
-          <span className="bg-indigo-900 text-white text-[10px] px-2 py-0.5 rounded-full">
-            {badge}
-          </span>
-        )}
-      </Link>
-    );
-  };
+      {badge !== undefined && badge > 0 && (
+        <span className={`
+          text-[10px] px-2 py-0.5 rounded-full
+          ${isActive ? "bg-indigo-900 text-white" : "bg-indigo-900 text-white"}
+        `}>
+          {badge}
+        </span>
+      )}
+    </Link>
+  );
+};
 
   return (
     <>

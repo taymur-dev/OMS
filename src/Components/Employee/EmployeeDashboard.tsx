@@ -238,7 +238,7 @@ export const EmployeeDashboard = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="flex flex-wrap gap-4 m-4">
+      <div className="flex flex-wrap gap-4 m-3">
         {CARD_CONFIG.map((card) => (
           <div
             key={card.key}

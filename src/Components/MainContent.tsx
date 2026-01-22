@@ -9,6 +9,7 @@ import { navigationStart, navigationSuccess } from "../redux/NavigationSlice";
 import axios from "axios";
 import { BASE_URL } from "../Content/URL";
 import { OptionField } from "./InputFields/OptionField";
+import { InputField } from "./InputFields/InputField";
 import { Columns } from "./MenuCards/Colums";
 import Card from "./DetailCards/Card";
 
@@ -49,11 +50,18 @@ export const MainContent = () => {
 
   const [allUsers, setAllUsers] = useState<UserT[]>([]);
   const [allCategory, setAllCategory] = useState<CategoryT[] | null>(null);
-  const [formData, setFormData] = useState({ categoryName: "" });
   const [allAssignProjects, setAllAssignProjects] = useState<ProjectT[]>([]);
   const [allTodos, setAllTodos] = useState<TodoT[]>([]);
   const [totalExpenseAmount, setTotalExpenseAmount] = useState(0);
   const [expenseCategory, setExpenseCategory] = useState([]);
+
+  const currentDate = new Date().toLocaleDateString("sv-SE");
+
+  const [formData, setFormData] = useState({
+    categoryName: "",
+    fromDate: currentDate,
+    toDate: currentDate,
+  });
 
   const getAllUsers = useCallback(async () => {
     try {
@@ -131,9 +139,11 @@ export const MainContent = () => {
     }
   }, [token]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
+  ) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   useEffect(() => {
@@ -162,12 +172,77 @@ export const MainContent = () => {
   const activeTodos = allTodos.filter((todo) => todo.todoStatus === "Y");
 
   return (
-    <div className="w-full h-full overflow-y-auto p-4 space-y-6">
-      {/* Category Filter */}
-      <form className="flex flex-col sm:flex-row gap-4 w-full">
-        <div className="sm:w-1/3 ml-2">
+    <div className="w-full h-full overflow-y-auto p-4 md:p-6 space-y-5 bg-gray-50">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <Card
+          titleName="Users"
+          totalUser="Total Users"
+          totalNumber={activeUsers.length}
+          icon={<BiUser className="text-2xl" />}
+          style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+        />
+
+        <Card
+          titleName="Assigned Projects"
+          totalUser="Total Projects"
+          totalNumber={allAssignProjects.length}
+          icon={<FaProjectDiagram className="text-2xl" />}
+          style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+        />
+
+        <Card
+          titleName="Todo's"
+          totalUser="Active Todo's"
+          totalNumber={activeTodos.length}
+          icon={<LuListTodo className="text-2xl" />}
+          style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+        />
+
+        <Card
+          titleName="Expense Categories"
+          totalUser="Total Categories"
+          totalNumber={expenseCategory.length}
+          icon={<CiViewList className="text-2xl" />}
+          style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+        />
+
+        <Card
+          titleName="Total Expense"
+          totalNumber={totalExpenseAmount}
+          isCurrency
+          icon={<GiTakeMyMoney className="text-2xl" />}
+          style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+        />
+
+         <Card
+          titleName="Sales"
+          totalNumber={totalExpenseAmount}
+          isCurrency
+          icon={<GiTakeMyMoney className="text-2xl" />}
+          style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+        />
+
+         <Card
+          titleName="Total Customers"
+          totalNumber={totalExpenseAmount}
+          isCurrency
+          icon={<GiTakeMyMoney className="text-2xl" />}
+          style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+        />
+
+         <Card
+          titleName="Assets"
+          totalNumber={totalExpenseAmount}
+          isCurrency
+          icon={<GiTakeMyMoney className="text-2xl" />}
+          style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+        />
+      </div>
+
+      <form className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end w-full">
+        <div className="w-full min-w-0">
           <OptionField
-            labelName=""
+            labelName="Category"
             name="categoryName"
             handlerChange={handleChange}
             value={formData.categoryName}
@@ -179,65 +254,42 @@ export const MainContent = () => {
             inital="Select Category"
           />
         </div>
+
+        <div className="w-full min-w-0">
+          <InputField
+            type="date"
+            labelName="From Date"
+            name="fromDate"
+            value={formData.fromDate}
+            handlerChange={handleChange}
+          />
+        </div>
+
+        <div className="w-full min-w-0">
+          <InputField
+            type="date"
+            labelName="To Date"
+            name="toDate"
+            value={formData.toDate}
+            handlerChange={handleChange}
+          />
+        </div>
       </form>
 
-      {/* Projects Columns */}
-      <div className="flex flex-col lg:flex-row gap-4 px-2 lg:px-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-6">
         {columsData.map((column) => (
-          <Columns
-            key={column.id}
-            colum={column}
-            allProject={allAssignProjects.filter(
-              (project) =>
-                project.completionStatus === column.id &&
-                (!formData.categoryName ||
-                  project.projectCategory === formData.categoryName),
-            )}
-          />
+          <div key={column.id} className="min-h-[400px]">
+            <Columns
+              colum={column}
+              allProject={allAssignProjects.filter(
+                (project) =>
+                  project.completionStatus === column.id &&
+                  (!formData.categoryName ||
+                    project.projectCategory === formData.categoryName),
+              )}
+            />
+          </div>
         ))}
-      </div>
-
-      {/* Dashboard Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 px-2 sm:px-4 xl:px-6">
-        <Card
-          titleName="Users"
-          totalUser="Total Users"
-          totalNumber={activeUsers.length}
-          icon={<BiUser className="text-2xl sm:text-3xl" />}
-          style="bg-white"
-        />
-
-        <Card
-          titleName="Assigned Projects"
-          totalUser="Total Projects"
-          totalNumber={allAssignProjects.length}
-          icon={<FaProjectDiagram className="text-2xl sm:text-3xl" />}
-          style="bg-white"
-        />
-
-        <Card
-          titleName="Todo's"
-          totalUser="Active Todo's"
-          totalNumber={activeTodos.length}
-          icon={<LuListTodo className="text-2xl sm:text-3xl" />}
-          style="bg-white"
-        />
-
-        <Card
-          titleName="Expense Categories"
-          totalUser="Total Categories"
-          totalNumber={expenseCategory.length}
-          icon={<CiViewList className="text-2xl sm:text-3xl" />}
-          style="bg-white"
-        />
-
-        <Card
-          titleName="Total Expense"
-          totalNumber={totalExpenseAmount}
-          isCurrency
-          icon={<GiTakeMyMoney className="text-2xl sm:text-3xl" />}
-          style="bg-white"
-        />
       </div>
     </div>
   );
