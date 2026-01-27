@@ -77,22 +77,22 @@ export const AddConfigTime = ({
 
   return (
     <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border  border-indigo-900 ">
+      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-50">
+        <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-lg border  border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
-            <div className="bg-indigo-900 rounded-t-xl px-6">
+            <div className="bg-indigo-900 rounded-t-lg px-6">
               <Title
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
               >
-                Config Time
+                CONGIG TIME
               </Title>
             </div>
 
-            <div className="mx-2 grid grid-cols sm:grid-cols-2 md:grid-cols-2 py-2 gap-3  ">
+            <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3  ">
               
               <InputField
-                labelName="Configure Time*"
+                labelName="Configure Time *"
                 name="configureTime"
                 type="time"
                 value={addConfig.configureTime}
@@ -100,7 +100,7 @@ export const AddConfigTime = ({
               />
 
               <OptionField
-                labelName="Configure Type*"
+                labelName="Configure Type *"
                 name="configureType"
                 handlerChange={handlerChange}
                 optionData={optionData}

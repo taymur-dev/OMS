@@ -54,13 +54,13 @@ export const UpdateTodo = ({
   const [allUsers, setAllUsers] = useState<UserT[]>([]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
   ) => {
     const { name, value } = e.target;
     setTodo((prev) =>
       prev
         ? { ...prev, [name]: name === "employee_id" ? Number(value) : value }
-        : prev
+        : prev,
     );
   };
 
@@ -108,7 +108,7 @@ export const UpdateTodo = ({
           endDate: todo.endDate,
           deadline: todo.deadline,
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       onUpdate({ ...todo });
@@ -128,20 +128,20 @@ export const UpdateTodo = ({
   }));
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[30rem] bg-white mx-auto rounded-xl border border-indigo-900 ">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div className="w-[42rem] max-h-[30rem] bg-white mx-auto rounded-lg border border-indigo-900 ">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Edit Todo
+              EDIT TODO
             </Title>
           </div>
-          <div className="mx-2 flex flex-col  py-2 gap-3">
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2  py-2 gap-3">
             <UserSelect
-              labelName="Employees*"
+              labelName="Employees *"
               name="employee_id"
               value={todo?.employee_id?.toString() || ""}
               handlerChange={handlerChange}
@@ -149,41 +149,41 @@ export const UpdateTodo = ({
             />
 
             <InputField
-              labelName="Task*"
+              labelName="Task *"
               name="task"
               handlerChange={handlerChange}
               value={todo?.task}
             />
             <InputField
-              labelName="Note*"
+              labelName="Note *"
               name="note"
               handlerChange={handlerChange}
               value={todo?.note}
             />
+          </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-6">
-              <InputField
-                labelName="Start Date*"
-                type="date"
-                name="startDate"
-                handlerChange={handlerChange}
-                value={todo?.startDate}
-              />
-              <InputField
-                labelName="End Date*"
-                type="date"
-                name="endDate"
-                handlerChange={handlerChange}
-                value={todo?.endDate}
-              />
-              <InputField
-                labelName="Deadline*"
-                type="date"
-                name="deadline"
-                handlerChange={handlerChange}
-                value={todo?.deadline}
-              />
-            </div>
+          <div className="flex flex-wrap py-2 justify-center gap-6">
+            <InputField
+              labelName="Start Date *"
+              type="date"
+              name="startDate"
+              handlerChange={handlerChange}
+              value={todo?.startDate}
+            />
+            <InputField
+              labelName="End Date *"
+              type="date"
+              name="endDate"
+              handlerChange={handlerChange}
+              value={todo?.endDate}
+            />
+            <InputField
+              labelName="Deadline *"
+              type="date"
+              name="deadline"
+              handlerChange={handlerChange}
+              value={todo?.deadline}
+            />
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">

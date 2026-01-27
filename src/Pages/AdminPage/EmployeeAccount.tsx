@@ -19,6 +19,8 @@ import {
 } from "../../redux/NavigationSlice";
 
 import { BASE_URL } from "../../Content/URL";
+import { Footer } from "../../Components/Footer";
+
 
 const numbers = [10, 25, 50, 100];
 
@@ -119,226 +121,115 @@ export const EmployeeAccount = () => {
 
   if (loader) return <Loader />;
 
-  // return (
-  //   <div className="w-full mx-2">
-  //     <TableTitle
-  //       tileName="Employee Accounts List"
-  //       activeFile="Employee Accounts List"
-  //     />
-
-  //     <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
-  //     overflow-hidden flex flex-col">
-  //       <div className="flex text-gray-800 items-center justify-between mx-2">
-  //         <span>
-  //           Total Employees :{" "}
-  //           <span className="text-2xl text-indigo-900 font-semibold">
-  //             [{filteredEmployees.length}]
-  //           </span>
-  //         </span>
-
-  //         {currentUser?.role === "admin" && (
-  //           <CustomButton
-  //             label="Add Employee Account"
-  //             handleToggle={() => handleToggleModal("ADDACCOUNT")}
-  //           />
-  //         )}
-  //       </div>
-
-  //       <div className="flex items-center justify-between text-gray-800 mx-2 my-2">
-  //         <div>
-  //           <span>Show</span>
-  //           <span className="bg-gray-200 rounded mx-1 p-1">
-  //             <select
-  //               value={limit}
-  //               onChange={(e) => {
-  //                 setLimit(Number(e.target.value));
-  //                 setPageNo(1);
-  //               }}
-  //             >
-  //               {numbers.map((num) => (
-  //                 <option key={num} value={num}>
-  //                   {num}
-  //                 </option>
-  //               ))}
-  //             </select>
-  //           </span>
-  //           <span>entries</span>
-  //         </div>
-
-  //         <TableInputField
-  //           searchTerm={searchTerm}
-  //           setSearchTerm={setSearchTerm}
-  //         />
-  //       </div>
-
-  //       <div className=" max-h-[28.4rem] overflow-y-auto mx-2">
-  //         <div className="grid grid-cols-5 bg-indigo-900 text-white font-semibold border border-gray-600
-  //          text-sm sticky top-0 z-10 p-[10px]">
-  //           <span>Sr#</span>
-  //           <span>Name</span>
-  //           <span>Email</span>
-  //           <span>Contact</span>
-  //           <span className="text-center">Actions</span>
-  //         </div>
-
-  //         {paginatedEmployees.map((emp, idx) => (
-  //           <div
-  //             key={emp.id}
-  //             className="grid grid-cols-5 border border-gray-600 text-gray-800 hover:bg-gray-100 transition
-  //              text-sm items-center p-[7px]"
-  //           >
-  //             <span className="px-2">
-  //               {(pageNo - 1) * limit + idx + 1}
-  //             </span>
-  //             <span>{emp.name}</span>
-  //             <span>{emp.email}</span>
-  //             <span>{emp.contact}</span>
-  //             <span className="flex justify-center">
-  //               <ViewButton
-  //                 handleView={() => {
-  //                   setSelectedEmployee(emp);
-  //                   handleToggleModal("VIEW");
-  //                 }}
-  //               />
-  //             </span>
-  //           </div>
-  //         ))}
-  //       </div>
-  //     </div>
-
-  //     <div className="flex items-center justify-between my-2">
-  //       <ShowDataNumber
-  //         start={(pageNo - 1) * limit + 1}
-  //         end={Math.min(pageNo * limit, filteredEmployees.length)}
-  //         total={filteredEmployees.length}
-  //       />
-  //       <Pagination
-  //         handleIncrementPageButton={() =>
-  //           pageNo * limit < filteredEmployees.length &&
-  //           setPageNo((p) => p + 1)
-  //         }
-  //         handleDecrementPageButton={() =>
-  //           setPageNo((p) => (p > 1 ? p - 1 : 1))
-  //         }
-  //         pageNo={pageNo}
-  //       />
-  //     </div>
-
-  //     {isOpenModal === "ADDACCOUNT" && (
-  //       <AddEmployeeAccount
-  //         setModal={() => handleToggleModal("")}
-  //         refreshData={fetchEmployees}
-  //       />
-  //     )}
-
-  //     {isOpenModal === "VIEW" && selectedEmployee && (
-  //       <ViewEmployeeAccount
-  //         setModal={() => handleToggleModal("")}
-  //         employee={selectedEmployee}
-  //       />
-  //     )}
-  //   </div>
-  // );
-
-  return (
-    <div className="w-full px-2 sm:px-4">
+  
+ return (
+  <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
+      {/* 1 & 3) Table Title with Add Button as rightElement */}
       <TableTitle
         tileName="Employee Accounts List"
-        activeFile="Employee Accounts List"
-      />
-
-      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
-        {/* Top Bar */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
-          <span className="text-sm sm:text-base">
-            Total Employees :{" "}
-            <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
-              [{filteredEmployees.length}]
-            </span>
-          </span>
-
-          {currentUser?.role === "admin" && (
+        rightElement={
+          currentUser?.role === "admin" && (
             <CustomButton
-              label="Add Employee Account"
+              label="+ Add Employee Account"
               handleToggle={() => handleToggleModal("ADDACCOUNT")}
             />
-          )}
-        </div>
+          )
+        }
+      />
 
-        {/* Filter Row */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
-          <div className="text-sm">
-            <span>Show</span>
-            <span className="bg-gray-200 rounded mx-1 p-1">
-              <select
-                value={limit}
-                onChange={(e) => {
-                  setLimit(Number(e.target.value));
-                  setPageNo(1);
-                }}
-                className="bg-transparent outline-none"
-              >
-                {numbers.map((num) => (
-                  <option key={num} value={num}>
-                    {num}
-                  </option>
-                ))}
-              </select>
+      <hr className="border border-b border-gray-200" />
+
+      {/* Top Stats Bar & Filter Row aligned to UsersDetails style */}
+      <div className="p-2">
+        <div className="flex flex-col gap-2">
+          {/* Total Count Display */}
+          <div className="text-gray-800 text-sm">
+            Total Employees :{" "}
+            <span className="ml-1 text-xl text-indigo-900 font-semibold">
+              [{filteredEmployees.length}]
             </span>
-            <span>entries</span>
           </div>
 
-          <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-          />
-        </div>
-
-        {/* Table Wrapper */}
-        <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
-          <div className="min-w-[700px]">
-            {/* Table Header */}
-            <div className="grid grid-cols-5 items-center bg-indigo-900 text-white font-semibold text-sm sticky top-0 z-10 p-2">
-              <span>Sr#</span>
-              <span>Name</span>
-              <span>Email</span>
-              <span>Contact</span>
-              <span className="text-center">Actions</span>
+          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
+            {/* Left Side: Show entries */}
+            <div className="text-sm flex items-center">
+              <span>Show</span>
+              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
+                <select
+                  value={limit}
+                  onChange={(e) => {
+                    setLimit(Number(e.target.value));
+                    setPageNo(1);
+                  }}
+                  className="bg-transparent outline-none py-1 cursor-pointer"
+                >
+                  {numbers.map((num) => (
+                    <option key={num} value={num}>
+                      {num}
+                    </option>
+                  ))}
+                </select>
+              </span>
+              <span className="hidden xs:inline">entries</span>
             </div>
 
-            {/* Table Body */}
-            {paginatedEmployees.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-4">
-                No records available at the moment!
-              </div>
-            ) : (
-              paginatedEmployees.map((emp, idx) => (
-                <div
-                  key={emp.id}
-                  className="grid grid-cols-5 items-center border border-gray-300 text-gray-800
-                   text-sm p-2 hover:bg-gray-100 transition"
-                >
-                  <span>{(pageNo - 1) * limit + idx + 1}</span>
-                  <span className="truncate">{emp.name}</span>
-                  <span className="truncate">{emp.email}</span>
-                  <span>{emp.contact}</span>
-                  <span className="flex justify-center items-center gap-1">
-                    <ViewButton
-                      handleView={() => {
-                        setSelectedEmployee(emp);
-                        handleToggleModal("VIEW");
-                      }}
-                    />
-                  </span>
-                </div>
-              ))
-            )}
+            {/* Right Side: Search Input */}
+            <TableInputField
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+            />
           </div>
         </div>
       </div>
 
-      {/* Pagination */}
-      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
+      {/* --- MIDDLE SECTION (Scrollable Table) --- */}
+      <div className="overflow-auto px-2">
+        <div className="min-w-[700px]">
+          {/* Sticky Table Header */}
+          <div
+            className="grid grid-cols-5 bg-indigo-900 text-white items-center font-semibold
+             text-sm sticky top-0 z-10 p-2"
+          >
+            <span>Sr#</span>
+            <span>Name</span>
+            <span>Email</span>
+            <span>Contact</span>
+            <span className="text-center">Actions</span>
+          </div>
+
+          {/* Table Body */}
+          {paginatedEmployees.length === 0 ? (
+            <div className="text-gray-800 text-lg text-center py-10">
+              No records available at the moment!
+            </div>
+          ) : (
+            paginatedEmployees.map((emp, idx) => (
+              <div
+                key={emp.id}
+                className="grid grid-cols-5 border-b border-x border-gray-200 text-gray-800 items-center
+                 text-sm p-2 hover:bg-gray-50 transition"
+              >
+                <span>{(pageNo - 1) * limit + idx + 1}</span>
+                <span className="truncate">{emp.name}</span>
+                <span className="truncate">{emp.email}</span>
+                <span>{emp.contact}</span>
+                <span className="flex flex-nowrap justify-center gap-1">
+                  <ViewButton
+                    handleView={() => {
+                      setSelectedEmployee(emp);
+                      handleToggleModal("VIEW");
+                    }}
+                  />
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* 4) Pagination placed under the table */}
+      <div className="flex flex-row gap-2 items-center justify-between p-2">
         <ShowDataNumber
           start={paginatedEmployees.length === 0 ? 0 : (pageNo - 1) * limit + 1}
           end={Math.min(pageNo * limit, filteredEmployees.length)}
@@ -354,21 +245,27 @@ export const EmployeeAccount = () => {
           }
         />
       </div>
-
-      {/* Modals */}
-      {isOpenModal === "ADDACCOUNT" && (
-        <AddEmployeeAccount
-          setModal={() => handleToggleModal("")}
-          refreshData={fetchEmployees}
-        />
-      )}
-
-      {isOpenModal === "VIEW" && selectedEmployee && (
-        <ViewEmployeeAccount
-          setModal={() => handleToggleModal("")}
-          employee={selectedEmployee}
-        />
-      )}
     </div>
-  );
+
+    {/* --- MODALS SECTION --- */}
+    {isOpenModal === "ADDACCOUNT" && (
+      <AddEmployeeAccount
+        setModal={() => handleToggleModal("")}
+        refreshData={fetchEmployees}
+      />
+    )}
+
+    {isOpenModal === "VIEW" && selectedEmployee && (
+      <ViewEmployeeAccount
+        setModal={() => handleToggleModal("")}
+        employee={selectedEmployee}
+      />
+    )}
+
+    {/* --- FOOTER SECTION --- */}
+    <div className="border border-t-5 border-gray-200">
+      <Footer />
+    </div>
+  </div>
+);
 };

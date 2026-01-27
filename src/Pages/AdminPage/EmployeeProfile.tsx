@@ -1,78 +1,127 @@
-
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
-
-import profileImage from "../../assets/Avatar.png";
-
 import { useAppSelector } from "../../redux/Hooks";
+import {
+  Mail,
+  CreditCard,
+  Phone,
+  ShieldCheck,
+  User,
+  LucideIcon,
+} from "lucide-react";
+import DefaultAvatar from "../../assets/Avatar.png";
+
+interface DetailRowProps {
+  icon: LucideIcon;
+  label: string;
+  value: string | number;
+}
 
 export const EmployeeProfile = () => {
-
   const { currentUser } = useAppSelector((state) => state.officeState);
-  
+
+  const DetailRow = ({ icon: Icon, label, value }: DetailRowProps) => (
+    <div
+      className="flex flex-col py-4 sm:flex-row sm:items-center sm:justify-between border-b
+      border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors px-4 rounded-xl"
+    >
+      <div className="flex items-center gap-3 mb-1 sm:mb-0">
+        <div className="p-2 bg-indigo-50 rounded-lg">
+          <Icon className="w-4 h-4 text-indigo-600" />
+        </div>
+        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+          {label}
+        </span>
+      </div>
+      <p className="text-gray-900 font-semibold sm:text-right break-words max-w-md ml-11 sm:ml-0">
+        {value}
+      </p>
+    </div>
+  );
+
   return (
-    <div className="w-full mx-2">
-      <TableTitle tileName="Profile" activeFile="View Profile" />
-      <div className="h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white ">
-        <div className="flex text-gray-800 items-center justify-between  m-2">
-          <div className="w-full flex justify-center">
-            <div className="bg-white w-full max-w-3xl border border-indigo-900 rounded-lg p-6 shadow-lg mt-12">
-              {/* Title */}
-              {/* <Title setModal={setIsOpenModal}>User Details</Title> */}
+    <div className="flex flex-col w-full bg-[#f8f9fa]">
+      <div className="flex-grow w-full px-4 py-6 sm:px-6 lg:px-8">
+        <TableTitle tileName="Employee Profile" />
+        <hr className="border-b border-gray-200 mb-8" />
 
-              {/* Profile Section */}
-              <div className="flex items-center gap-6 bg-white p-6 shadow-md rounded-lg">
-                {/* Profile Picture */}
-                <img
-                  className="w-24 h-24 rounded-full border-4 border-indigo-900 bg-indigo-900 object-cover"
-                  src={profileImage}
-                  alt="Profile"
-                />
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-white rounded-3xl shadow-xl shadow-indigo-100/50 border border-gray-100 overflow-hidden">
+            {/* Banner Background */}
+            <div
+              className="h-32 bg-indigo-900 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))]
+              from-indigo-800 via-indigo-900 to-slate-900"
+            />
 
-                {/* User Info */}
-                <div className="flex flex-col">
-                  <h2 className="text-2xl font-semibold text-gray-800">
-                    {currentUser?.name ?? "Guest"}
+            <div className="px-8 pb-10">
+              {/* Header Section: Avatar & Name */}
+              <div className="relative flex flex-col items-center sm:items-end sm:flex-row gap-6 -mt-20 mb-5">
+                <div className="relative">
+                  <div
+                    className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-white shadow-2xl
+                    bg-indigo-900 flex items-center justify-center overflow-hidden bg-cover bg-center"
+                    style={{
+                      backgroundImage: !currentUser?.profileImage
+                        ? `url(${DefaultAvatar})`
+                        : "none",
+                    }}
+                  >
+                    {currentUser?.profileImage ? (
+                      <img
+                        className="w-full h-full object-cover"
+                        src={currentUser.profileImage}
+                        alt="Profile"
+                      />
+                    ) : (
+                      <div className="">
+                        <img
+                          className="w-full h-full object-cover opacity-90"
+                          src={DefaultAvatar}
+                          alt="Default"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <span className="absolute bottom-3 right-3 w-6 h-6 bg-green-500 border-4 border-white rounded-full shadow-sm"></span>
+                </div>
+
+                <div className="flex-1 text-center sm:text-left mb-2">
+                  <h2 className="text-3xl font-black text-slate-800 tracking-tight">
+                    {currentUser?.name ?? "Guest Employee"}
                   </h2>
-                  <h4 className="text-sm text-gray-500">
-                    {currentUser?.role ?? "Role"}
-                  </h4>
+                  <div
+                    className="inline-flex items-center gap-2 px-3 py-1 mt-2 bg-indigo-50 text-indigo-700
+                    rounded-full text-sm font-bold"
+                  >
+                    <ShieldCheck className="w-4 h-4" />
+                    {currentUser?.role ?? "Staff Member"}
+                  </div>
                 </div>
               </div>
 
-              {/* User Details List */}
-              <div className="mt-6 space-y-4">
-                <div className="flex justify-between border-b pb-2">
-                  <span className="text-lg font-semibold text-gray-800">
-                    Email:
-                  </span>
-                  <p className="text-gray-600">
-                    {currentUser?.email ?? "guest@gmail.com"}
-                  </p>
-                </div>
-                <div className="flex justify-between border-b pb-2">
-                  <span className="text-lg font-semibold text-gray-800">
-                    CNIC #:
-                  </span>
-                  <p className="text-gray-600">
-                    {currentUser?.cnic ?? "0000-0000000-0"}
-                  </p>
-                </div>
-                <div className="flex justify-between border-b pb-2">
-                  <span className="text-lg font-semibold text-gray-800">
-                    Contact No:
-                  </span>
-                  <p className="text-gray-600">
-                    {currentUser?.contact ?? "00000000000"}
-                  </p>
-                </div>
-                <div className="flex justify-between border-b pb-2">
-                  <span className="text-lg font-semibold text-gray-800">
-                    Address:
-                  </span>
-                  <p className="text-gray-600">
-                    {currentUser?.address ??
-                      "Jalhan tehsil nowshera virkan district gujranwala..."}
-                  </p>
+              {/* Information Grid */}
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 mb-4 px-2 flex items-center gap-2">
+                    <User className="w-4 h-4 text-indigo-500" />
+                    Personal Information
+                  </h3>
+                  <div className="bg-gray-50/50 rounded-2xl p-2 border border-gray-100">
+                    <DetailRow
+                      icon={Mail}
+                      label="Email Address"
+                      value={currentUser?.email ?? "Not provided"}
+                    />
+                    <DetailRow
+                      icon={CreditCard}
+                      label="CNIC Number"
+                      value={currentUser?.cnic ?? "00000-0000000-0"}
+                    />
+                    <DetailRow
+                      icon={Phone}
+                      label="Contact Number"
+                      value={currentUser?.contact ?? "Not provided"}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

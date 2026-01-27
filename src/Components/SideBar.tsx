@@ -2,7 +2,7 @@ import { AccordionItem } from "./Accordion/AccordionItem";
 import { SideBarButton } from "./SideBarComponent/SideBarButton";
 import { BiArrowBack } from "react-icons/bi";
 import { useCallback, useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom"; // Removed useNavigate
+import { Link, useLocation } from "react-router-dom"; 
 import { FaUser, FaUserFriends } from "react-icons/fa";
 import { PiFingerprintDuotone } from "react-icons/pi";
 import { GoProjectRoadmap } from "react-icons/go";
@@ -25,32 +25,37 @@ type SideBarProps = {
 };
 
 type TActivButton =
-  | "Dashboard"
-  | "People"
-  | "Attendance"
-  | "Employee"
-  | "Projects"
-  | "Performance"
-  | "Sale"
-  | "manageExpense"
-  | "Chat"
-  | "payroll"
-  | "Assets Management"
-  | "Recuritment"
-  | "Dynamic"
-  | "Accounts"
-  | "Reports"
-  | "configureTime";
+  | "Dashboard" | "People" | "Attendance" | "Employee" | "Projects"
+  | "Performance" | "Sale" | "manageExpense" | "Chat" | "payroll"
+  | "Assets Management" | "Recuritment" | "Dynamic" | "Accounts"
+  | "Reports" | "configureTime";
+
 export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   const [activeBtns, setActiveBtns] = useState<TActivButton | "">("");
   const [allTodos, setAllTodos] = useState([]);
   const [isHoverable, setIsHoverable] = useState(false);
+  const [isBlurred, setIsBlurred] = useState(false); // State for modal detection
+  
   const { currentUser } = useAppSelector((state) => state?.officeState);
   const token = currentUser?.token;
   const { pathname } = useLocation();
 
+  // Detect if any modal is open by observing the body tag
   useEffect(() => {
+    const checkModal = () => {
+      const hasModalClass = document.body.classList.contains("modal-open");
+      const isScrollLocked = document.body.style.overflow === "hidden";
+      // Logic: If body is locked or has modal class, blur the sidebar
+      setIsBlurred(hasModalClass || isScrollLocked);
+    };
+
+    const observer = new MutationObserver(checkModal);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class", "style"] });
     
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     if (isOpen) {
       setIsHoverable(true);
     } else {
@@ -93,108 +98,26 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
     getAllTodos();
   }, [getAllTodos]);
 
-  // const SubLink = ({
-  //   to,
-  //   label,
-  //   badge,
-  // }: {
-  //   to: string;
-  //   label: string;
-  //   badge?: number;
-  // }) => (
-  //   <Link
-  //     to={to}
-  //     onClick={() => window.innerWidth < 768 && setIsOpen?.(false)}
-  //     className={`my-button flex justify-between items-center w-full px-4 py-2 text-sm transition-colors rounded-md mb-1
-  //       ${pathname === to ? "bg-indigo-100 text-indigo-900 font-semibold" : "text-gray-600 hover:bg-gray-100"}
-  //     `}
-  //   >
-  //     <span>{label}</span>
-  //     {badge !== undefined && badge > 0 && (
-  //       <span className="bg-indigo-900  text-white  text-[10px] px-2 py-0.5 rounded-full">
-  //         {badge}
-  //       </span>
-  //     )}
-  //   </Link>
-  // );
-  // const SubLink = ({
-  //   to,
-  //   label,
-  //   badge,
-  // }: {
-  //   to: string;
-  //   label: string;
-  //   badge?: number;
-  // }) => {
-  //   const isActive = pathname === to;
-
-  //   return (
-  //     <Link
-  //       to={to}
-  //       onClick={() => window.innerWidth < 768 && setIsOpen?.(false)}
-  //       className={`
-  //       flex justify-between items-center w-full
-  //       px-4 py-2 mb-1 rounded-md text-sm
-  //       font-bold
-  //       transition-all duration-200
-
-  //       bg-white text-indigo-900
-  //       hover:bg-i-50
-
-  //       ${isActive ? "ring-0 ring-white bg-white" : ""}
-  //     `}
-  //     >
-  //       <span>{label}</span>
-
-  //       {badge !== undefined && badge > 0 && (
-  //         <span className="bg-indigo-900 text-white text-[10px] px-2 py-0.5 rounded-full">
-  //           {badge}
-  //         </span>
-  //       )}
-  //     </Link>
-  //   );
-  // };
-
-  const SubLink = ({
-  to,
-  label,
-  badge,
-}: {
-  to: string;
-  label: string;
-  badge?: number;
-}) => {
-  const isActive = pathname === to;
-
-  return (
-    <Link
-      to={to}
-      onClick={() => window.innerWidth < 768 && setIsOpen?.(false)}
-      className={`
-        flex justify-between items-center w-full
-        px-4 py-2 mb-1 rounded-md text-sm
-        font-bold transition-all duration-200
-        
-        /* Base styles / Inactive styles */
-        ${isActive 
-          ? "bg-white text-indigo-900 text-bold" // Active State
-          : "bg-transparent text-black font-normal" // Inactive State
-        }
-      `}
-    >
-      <span>{label}</span>
-
-      {badge !== undefined && badge > 0 && (
-        <span className={`
-          text-[10px] px-2 py-0.5 rounded-full
-          ${isActive ? "bg-indigo-900 text-white" : "bg-indigo-900 text-white"}
-        `}>
-          {badge}
-        </span>
-      )}
-    </Link>
-  );
-};
+  const SubLink = ({ to, label, badge }: { to: string; label: string; badge?: number; }) => {
+    const isActive = pathname === to;
+    return (
+      <Link
+        to={to}
+        onClick={() => window.innerWidth < 768 && setIsOpen?.(false)}
+        className={`
+          flex justify-between items-center w-full px-4 py-2 mb-1 rounded-md text-sm font-bold transition-all duration-200
+          ${isActive ? "bg-white text-indigo-900 text-bold" : "bg-transparent text-black font-normal"}
+        `}
+      >
+        <span>{label}</span>
+        {badge !== undefined && badge > 0 && (
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-900 text-white">
+            {badge}
+          </span>
+        )}
+      </Link>
+    );
+  };
 
   return (
     <>
@@ -202,14 +125,18 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         className={`
-          fixed inset-y-0 left-0 z-50 bg-white shadow-2xl transition-all duration-300 ease-in-out
-    flex flex-col py-4 overflow-y-auto overflow-x-hidden
-    w-64 flex-shrink-0
-          /* MOBILE: Closed = -100% translate, Open = 0 translate */
-          ${isOpen ? "w-64 translate-x-0" : "w-0 -translate-x-full"}
+          fixed inset-y-0 left-0 bg-white shadow-2xl transition-all duration-300 ease-in-out
+          flex flex-col py-4 overflow-y-auto overflow-x-hidden flex-shrink-0
+          z-50 md:z-30
           
-          /* DESKTOP: Always translate-0, width toggles */
-          md:relative md:translate-x-0 md:shadow-lg
+          /* Blur Logic */
+          ${isBlurred ? "blur-sm pointer-events-none scale-[0.99]" : "blur-0 pointer-events-auto"}
+
+          /* MOBILE Behavior */
+          ${isOpen ? "w-64 translate-x-0 visible" : "w-0 -translate-x-full invisible md:visible"}
+          
+          /* DESKTOP Behavior */
+          md:relative md:translate-x-0 md:shadow-lg md:visible
           ${isOpen ? "md:w-20" : "md:w-64"}
         `}
       >
@@ -241,7 +168,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "People" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col  border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/users" label="Users" />
                 <SubLink to="/customers" label="Customers" />
                 <SubLink to="/supplier" label="Suppliers" />
@@ -261,7 +188,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "Attendance" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/markAttendance" label="Mark Attendance" />
                 <SubLink to="/usersAttendance" label="User Attendance" />
                 <SubLink to="/leaveRequests" label="Leave Request" />
@@ -282,7 +209,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "Employee" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/employeeLifeline" label="Employee Lifeline" />
                 <SubLink to="/employeeWithdraw" label="Employee Withdraw" />
               </div>
@@ -301,7 +228,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "Projects" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/projectCatogries" label="Project Categories" />
                 <SubLink to="/projects" label="Projects List" />
                 <SubLink to="/assignprojects" label="Assign Project" />
@@ -321,7 +248,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "Performance" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col  border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/todo" label="Todo" badge={allTodos.length} />
                 <SubLink to="/progress" label="Progress" />
               </div>
@@ -340,7 +267,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "Sale" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/sales" label="Sales" />
                 <SubLink to="/quotations" label="Quotation" />
                 <SubLink to="/payments" label="Payment" />
@@ -360,7 +287,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "manageExpense" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/expensesCatogries" label="Expense Category" />
                 <SubLink to="/expenses" label="Expense" />
               </div>
@@ -379,7 +306,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "payroll" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/calendar" label="Calendar" />
                 <SubLink to="/salaryCycle" label="Salary Cycle" />
                 <SubLink to="/overTime" label="Over Time" />
@@ -402,7 +329,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "Assets Management" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/assetsCategory" label="Asset Category" />
                 <SubLink to="/assets" label="Assets" />
               </div>
@@ -421,7 +348,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "Recuritment" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/applicants" label="Applicants" />
                 <SubLink to="/job" label="Jobs" />
               </div>
@@ -440,7 +367,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "Dynamic" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/promotion" label="Promotion" />
                 <SubLink to="/resignation" label="Resignation" />
                 <SubLink to="/rejoin" label="Rejoin" />
@@ -460,7 +387,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "Accounts" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/employeeAccount" label="Employee Account" />
                 <SubLink to="/customerAccount" label="Customer Account" />
                 <SubLink to="/supplierAccount" label="Supplier Account" />
@@ -480,7 +407,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "Reports" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/salesReports" label="Sale Report" />
                 <SubLink to="/progressReports" label="Progress Report" />
                 <SubLink to="/attendanceReports" label="Attendance Report" />
@@ -503,7 +430,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           />
           {activeBtns === "configureTime" && (
             <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col  border-gray">
+              <div className="flex flex-col">
                 <SubLink to="/configTime" label="Config Time" />
               </div>
             </AccordionItem>
@@ -513,7 +440,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
 
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm transition-opacity md:hidden"
           onClick={() => setIsOpen?.(false)}
           aria-hidden="true"
         />

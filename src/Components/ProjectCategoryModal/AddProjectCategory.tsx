@@ -50,7 +50,7 @@ export const AddProjectCategory = ({
   };
   return (
     <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-10">
+      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-50">
         <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 rounded-t-xl px-6">
@@ -58,12 +58,12 @@ export const AddProjectCategory = ({
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
               >
-                Add Project Category
+                ADD PROJECT CATEGORY
               </Title>
             </div>
             <div className="mx-2   flex-wrap gap-3 py-5  ">
               <InputField
-                labelName="Category Name*"
+                labelName="Category Name *"
                 placeHolder="Enter the Project Category"
                 type="text"
                 name="categoryName"

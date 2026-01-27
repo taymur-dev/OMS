@@ -82,21 +82,21 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-50">
+      <div className="w-[42rem] bg-white mx-auto rounded-lg border border-indigo-900">
         <form onSubmit={handleSubmit}>
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded-t-lg px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Edit Job
+              EDIT JOB
             </Title>
           </div>
 
           <div className="mx-4 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
             <InputField
-              labelName="Job Title*"
+              labelName="Job Title *"
               placeHolder="Enter job title"
               type="text"
               name="job_title"
@@ -105,7 +105,7 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({
             />
 
             <TextareaField
-              labelName="Job Description*"
+              labelName="Job Description *"
               placeHolder="Enter job description"
               name="description"
               inputVal={formData.description}

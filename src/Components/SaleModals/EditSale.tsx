@@ -62,7 +62,7 @@ export const EditSale = ({
   }, [seleteSale]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
   ) => {
     e.preventDefault();
 
@@ -106,7 +106,7 @@ export const EditSale = ({
         updateSale,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       console.log(res.data);
       handleGetsales();
@@ -122,20 +122,20 @@ export const EditSale = ({
   }, [getAllCustomers, handleGetProjects]);
   return (
     <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-900 ">
+      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-50">
+        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-lg border  border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 rounded-t-xl px-6">
               <Title
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
               >
-                Edit Sale
+                EDIT SALE
               </Title>
             </div>
-            <div className="mx-2 py-2 flex-wrap gap-3  ">
+            <div className="mx-2 py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3  ">
               <OptionField
-                labelName="Customer*"
+                labelName="Customer *"
                 name="customerId"
                 value={updateSale?.customerId ?? ""}
                 handlerChange={handlerChange}
@@ -148,7 +148,7 @@ export const EditSale = ({
               />
 
               <OptionField
-                labelName="Project*"
+                labelName="Project *"
                 name="projectId"
                 value={updateSale?.projectId ?? ""}
                 handlerChange={handlerChange}
@@ -161,13 +161,13 @@ export const EditSale = ({
               />
 
               <div className="flex flex-col my-2">
-                <label className="text-sm font-medium mb-1">Date*</label>
+                <label className="text-xs font-semibold mb-1">Date *</label>
                 <input
                   type="date"
                   name="saleDate"
                   value={updateSale?.saleDate?.slice(0, 10) ?? ""}
                   onChange={handlerChange}
-                  className="border rounded p-1"
+                  className="border border-indigo-900 rounded p-1"
                 />
               </div>
             </div>

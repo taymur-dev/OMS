@@ -64,7 +64,7 @@ export const ProfileChangePassword = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl border border-indigo-900 overflow-hidden">
+      <div className="w-full max-w-lg bg-white rounded-lg shadow-xl border border-indigo-900 overflow-hidden">
         <form onSubmit={handlerSubmitted}>
           {/* Header */}
           <div className="bg-indigo-900 px-6">
@@ -80,7 +80,6 @@ export const ProfileChangePassword = ({
           <div className="px-6 py-6 flex flex-col gap-5">
             <InputField
               labelName="Old Password*"
-              placeHolder="Enter your old password"
               type="password"
               name="oldPassword"
               value={changePassword.oldPassword}
@@ -89,7 +88,6 @@ export const ProfileChangePassword = ({
 
             <InputField
               labelName="New Password*"
-              placeHolder="Enter your new password"
               type="password"
               name="newPassword"
               value={changePassword.newPassword}

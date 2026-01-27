@@ -21,6 +21,7 @@ import { ViewAttendance } from "../../Components/AttendanceComponent/ViewAttenda
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
+import { Footer } from "../../Components/Footer";
 
 import { BASE_URL } from "../../Content/URL";
 
@@ -140,59 +141,61 @@ export const UserAttendance = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="w-full px-2 sm:px-4">
-      <TableTitle tileName="Attendance" activeFile="Attendance list" />
+    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
+        {/* 1 & 3) Table Title with Add Attendance button */}
+        <TableTitle
+          tileName="User Attendance"
+          rightElement={
+            isAdmin && (
+              <CustomButton
+                label="+ Add Attendance"
+                handleToggle={() => setIsOpenModal("ADDATTENDANCE")}
+              />
+            )
+          }
+        />
 
-      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
-        {/* Top Bar */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
-          <span className="text-sm sm:text-base">
-            Total Attendance:
-            <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
-              [{filteredAttendance.length}]
-            </span>
-          </span>
+        <hr className="border border-b border-gray-200" />
 
-          {isAdmin && (
-            <CustomButton
-              label="Add Attendance"
-              handleToggle={() => setIsOpenModal("ADDATTENDANCE")}
+        {/* Filter and Search Section */}
+        <div className="p-2">
+          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
+            {/* Left Side: Show entries */}
+            <div className="text-sm flex items-center">
+              <span>Show</span>
+              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
+                <select
+                  value={selectedValue}
+                  onChange={(e) => setSelectedValue(+e.target.value)}
+                  className="bg-transparent outline-none py-1 cursor-pointer"
+                >
+                  {numbers.map((num) => (
+                    <option key={num} value={num}>
+                      {num}
+                    </option>
+                  ))}
+                </select>
+              </span>
+              <span className="hidden xs:inline">entries</span>
+            </div>
+
+            {/* Right Side: Search Input */}
+            <TableInputField
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
             />
-          )}
-        </div>
-
-        {/* Filter Row */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
-          <div className="text-sm flex items-center gap-1">
-            <span>Show</span>
-            <select
-              value={selectedValue}
-              onChange={(e) => setSelectedValue(+e.target.value)}
-              className="bg-gray-200 p-1 rounded"
-            >
-              {numbers.map((num) => (
-                <option key={num}>{num}</option>
-              ))}
-            </select>
-            <span>entries</span>
           </div>
-
-          <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-          />
         </div>
 
-        {/* Table Wrapper */}
-        <div className="mx-2 mt-2 overflow-x-auto overflow-y-auto flex-1 max-h-[28.4rem]">
-          <div className={`min-w-[700px] sm:min-w-[900px]`}>
-            {/* Table Header */}
+        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
+        <div className="overflow-auto px-2">
+          <div className="min-w-[900px]">
+            {/* Sticky Table Header */}
             <div
               className={`grid ${
-                isAdmin
-                  ? "grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr]"
-                  : "grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr]"
-              } bg-indigo-900 text-white font-semibold text-sm items-center sticky top-0 z-10 p-2`}
+                isAdmin ? "grid-cols-8" : "grid-cols-6"
+              } bg-indigo-900 text-white items-center font-semibold text-sm sticky top-0 z-10 p-2`}
             >
               <span>Sr#</span>
               {isAdmin && <span>User</span>}
@@ -206,7 +209,7 @@ export const UserAttendance = () => {
 
             {/* Table Body */}
             {paginatedAttendance.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-4">
+              <div className="text-gray-800 text-lg text-center py-10">
                 No records available at the moment!
               </div>
             ) : (
@@ -214,17 +217,25 @@ export const UserAttendance = () => {
                 <div
                   key={att.id}
                   className={`grid ${
-                    isAdmin
-                      ? "grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr]"
-                      : "grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr]"
-                  } border border-gray-300 text-gray-800 text-sm p-2 items-center hover:bg-gray-100 transition`}
+                    isAdmin ? "grid-cols-8" : "grid-cols-6"
+                  } border-b border-x border-gray-200 text-gray-800 items-center text-sm p-2 hover:bg-gray-50 transition`}
                 >
                   <span>{startIndex + index + 1}</span>
-                  {isAdmin && <span className="truncate">{att.name}</span>}
+                  {isAdmin && (
+                    <span className="truncate font-medium">{att.name}</span>
+                  )}
                   <span>{att.clockIn ?? "--"}</span>
                   <span>{att.clockOut ?? "--"}</span>
                   <span>{att.workingHours ?? "--"}</span>
-                  <span>{att.date.slice(0, 10)}</span>
+                  <span>
+                    {new Date(att.date)
+                      .toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
+                      .replace(/ /g, "-")}
+                  </span>
                   <span>{att.day ?? "--"}</span>
 
                   {isAdmin && (
@@ -249,25 +260,28 @@ export const UserAttendance = () => {
             )}
           </div>
         </div>
+
+        {/* --- BOTTOM SECTION (Pagination) --- */}
+        {/* Added p-4 and items-center to match the visual spacing in the screenshot */}
+        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between">
+          <ShowDataNumber
+            start={paginatedAttendance.length === 0 ? 0 : startIndex + 1}
+            end={Math.min(endIndex, filteredAttendance.length)}
+            total={filteredAttendance.length}
+          />
+          <Pagination
+            pageNo={pageNo}
+            handleDecrementPageButton={() =>
+              setPageNo((p) => Math.max(p - 1, 1))
+            }
+            handleIncrementPageButton={() =>
+              endIndex < filteredAttendance.length && setPageNo((p) => p + 1)
+            }
+          />
+        </div>
       </div>
 
-      {/* Pagination */}
-      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
-        <ShowDataNumber
-          start={paginatedAttendance.length === 0 ? 0 : startIndex + 1}
-          end={Math.min(endIndex, filteredAttendance.length)}
-          total={filteredAttendance.length}
-        />
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-          handleIncrementPageButton={() =>
-            endIndex < filteredAttendance.length && setPageNo((p) => p + 1)
-          }
-        />
-      </div>
-
-      {/* Modals */}
+      {/* --- MODALS SECTION --- */}
       {isOpenModal === "ADDATTENDANCE" && (
         <AddAttendance
           setModal={() => setIsOpenModal("")}
@@ -296,6 +310,11 @@ export const UserAttendance = () => {
           onConfirm={() => handleDeleteAttendance(recordToDelete)}
         />
       )}
+
+      {/* --- FOOTER SECTION --- */}
+      <div className="border border-t-5 border-gray-200">
+        <Footer />
+      </div>
     </div>
   );
 };

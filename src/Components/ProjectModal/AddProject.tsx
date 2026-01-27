@@ -89,7 +89,7 @@ export const AddProject = ({
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4  flex items-center justify-center z-50">
-      <div className="w-full max-w-3xl bg-white rounded-xl shadow-lg border border-indigo-900 overflow-hidden">
+      <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg border border-indigo-900 overflow-hidden">
         <form onSubmit={handlerSubmitted}>
           {/* Header */}
           <div className="bg-indigo-900 px-6 ">
@@ -97,14 +97,14 @@ export const AddProject = ({
               setModal={setModal}
               className="text-white text-xl font-semibold"
             >
-              Add Project
+              ADD PROJECT
             </Title>
           </div>
 
           {/* Body */}
-          <div className="px-6 py-5 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-4">
+          <div className="px-6 py-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
             <OptionField
-              labelName="Project Category*"
+              labelName="Project Category *"
               name="projectCategory"
               value={addProject.projectCategory}
               handlerChange={handlerChange}
@@ -117,7 +117,7 @@ export const AddProject = ({
             />
 
             <InputField
-              labelName="Project Name*"
+              labelName="Project Name *"
               placeHolder="Enter the Project Name"
               type="text"
               name="projectName"
@@ -126,7 +126,7 @@ export const AddProject = ({
             />
 
             <InputField
-              labelName="Start Date*"
+              labelName="Start Date *"
               placeHolder="Enter Start Date"
               type="date"
               name="startDate"
@@ -135,7 +135,7 @@ export const AddProject = ({
             />
 
             <InputField
-              labelName="End Date*"
+              labelName="End Date *"
               placeHolder="Enter End Date"
               type="date"
               name="endDate"
@@ -154,7 +154,7 @@ export const AddProject = ({
 
             {/* ✅ Completion Status Field */}
             <OptionField
-              labelName="Completion Status*"
+              labelName="Completion Status *"
               name="completionStatus"
               value={addProject.completionStatus}
               handlerChange={handlerChange}

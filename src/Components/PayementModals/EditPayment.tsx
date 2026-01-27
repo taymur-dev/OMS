@@ -112,15 +112,15 @@ export const EditPayment = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[80rem] bg-white mx-auto rounded-xl border border-indigo-900 overflow-y-auto">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div className="w-[42rem] max-h-[80rem] bg-white mx-auto rounded-lg border border-indigo-900 overflow-y-auto">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Edit Payment
+              EDIT PAYMENT
             </Title>
           </div>
 
@@ -147,7 +147,7 @@ export const EditPayment = ({
             </div>
           </div>
 
-          <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
             {!loadingCustomers && (
               <OptionField
                 labelName="Select Customer"

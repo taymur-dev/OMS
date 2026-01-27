@@ -30,6 +30,9 @@ const paymentMethods = [
   { id: 3, label: "Cash", value: "cash" },
 ];
 
+const currentDate = new Date().toLocaleDateString("en-CA");
+
+
 const initialState = {
   selectCustomer: "",
   customerName: "",
@@ -37,7 +40,7 @@ const initialState = {
   customerAddress: "",
   debit: "",
   credit: "",
-  paymentMethod: "",
+  paymentMethod: currentDate,
   paymentDate: "",
 };
 
@@ -129,21 +132,21 @@ export const AddCustomerAccount = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
-      <div className="w-[40rem] bg-white rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div className="w-[40rem] bg-white rounded-lg border border-indigo-900">
         <form onSubmit={handleSubmit}>
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded-t-lg px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Add Customer Account
+              ADD CUSTOMER ACCOUNT
             </Title>
           </div>
 
-          <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
             <UserSelect
-              labelName="Select Customer*"
+              labelName="Select Customer *"
               name="selectCustomer"
               value={form.selectCustomer}
               handlerChange={handlerChange}
@@ -151,30 +154,30 @@ export const AddCustomerAccount = ({
             />
 
             <InputField
-              labelName="Customer Name*"
+              labelName="Customer Name *"
               value={form.customerName}
               readOnly
             />
             <InputField
-              labelName="Customer Contact*"
+              labelName="Customer Contact *"
               value={form.customerContact}
               readOnly
             />
             <InputField
-              labelName="Customer Address*"
+              labelName="Customer Address *"
               value={form.customerAddress}
               readOnly
             />
 
             <InputField
-              labelName="Debit*"
+              labelName="Debit *"
               name="debit"
               type="number"
               value={form.debit}
               handlerChange={handlerChange}
             />
             <InputField
-              labelName="Credit*"
+              labelName="Credit *"
               name="credit"
               type="number"
               value={form.credit}
@@ -182,7 +185,7 @@ export const AddCustomerAccount = ({
             />
 
             <OptionField
-              labelName="Payment Method*"
+              labelName="Payment Method *"
               name="paymentMethod"
               value={form.paymentMethod}
               handlerChange={handlerChange}
@@ -191,7 +194,7 @@ export const AddCustomerAccount = ({
             />
 
             <InputField
-              labelName="Payment Date*"
+              labelName="Payment Date *"
               name="paymentDate"
               type="date"
               value={form.paymentDate}

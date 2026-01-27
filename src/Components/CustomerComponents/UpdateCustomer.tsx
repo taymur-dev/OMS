@@ -61,7 +61,7 @@ export const UpdateCustomer = ({
 
   const handlerSubmitted = async (
     e: React.FormEvent<HTMLFormElement>,
-    customerId: number | null
+    customerId: number | null,
   ) => {
     e.preventDefault();
 
@@ -97,7 +97,7 @@ export const UpdateCustomer = ({
         customerData,
         {
           headers: { Authorization: token || "" },
-        }
+        },
       );
       toast.success(res.data.message);
       setIsOpenModal();
@@ -111,7 +111,7 @@ export const UpdateCustomer = ({
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex px-4 items-center justify-center z-50">
-      <div className="w-[42rem] max-h-[29rem] bg-white rounded-xl border border-indigo-900 shadow-lg overflow-hidden">
+      <div className="w-[42rem] max-h-[50rem] bg-white rounded-lg border border-indigo-900 shadow-lg overflow-hidden">
         <form
           onSubmit={(e) => handlerSubmitted(e, customerData?.id ?? null)}
           className="flex flex-col h-full"
@@ -122,14 +122,14 @@ export const UpdateCustomer = ({
               setModal={setIsOpenModal}
               className="text-white text-lg font-semibold"
             >
-              Update Customer
+              EDIT CUSTOMER
             </Title>
           </div>
 
           {/* Body */}
-          <div className="overflow-y-auto p-4 grid grid-cols-2 sm-grid-cols-2 md-grid-cols-2 gap-4">
+          <div className="overflow-y-auto p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <InputField
-              labelName="Customer Name*"
+              labelName="Customer Name *"
               placeHolder="Enter the Customer Name"
               type="text"
               name="customerName"
@@ -137,7 +137,7 @@ export const UpdateCustomer = ({
               value={customerData?.customerName || ""}
             />
             <InputField
-              labelName="Customer Address*"
+              labelName="Customer Address *"
               placeHolder="Enter the Customer Address"
               type="text"
               name="customerAddress"
@@ -145,7 +145,7 @@ export const UpdateCustomer = ({
               value={customerData?.customerAddress || ""}
             />
             <InputField
-              labelName="Customer Contact*"
+              labelName="Customer Contact *"
               placeHolder="Enter the Contact Number"
               type="number"
               name="customerContact"
@@ -153,16 +153,16 @@ export const UpdateCustomer = ({
               value={customerData?.customerContact || ""}
             />
             <InputField
-              labelName="Company Name*"
+              labelName="Company Name *"
               placeHolder="Enter the Company Name"
               type="text"
               name="companyName"
               handlerChange={handlerChange}
               value={customerData?.companyName || ""}
             />
-            <div className="col-span-2">
+            <div className="col-span-1 sm:col-span-2">
               <InputField
-                labelName="Company Address*"
+                labelName="Company Address *"
                 placeHolder="Enter the Company Address"
                 type="text"
                 name="companyAddress"

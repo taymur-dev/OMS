@@ -1,17 +1,3 @@
-type UserType = {
-  id: number;
-  name: string;
-  email: string;
-  contact: string;
-  cnic: string;
-  address: string;
-  date: string;
-  password: string;
-  confirmPassword: string;
-  role: string;
-  loginStatus: string;
-};
-
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
@@ -35,8 +21,23 @@ import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
+import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
+
+type UserType = {
+  id: number;
+  name: string;
+  email: string;
+  contact: string;
+  cnic: string;
+  address: string;
+  date: string;
+  password: string;
+  confirmPassword: string;
+  role: string;
+  loginStatus: string;
+};
 
 export const UsersDetails = () => {
   const [catchId, setCatchId] = useState<number | null>(null);
@@ -146,59 +147,57 @@ export const UsersDetails = () => {
   };
 
   return (
-    <div className="w-full px-2 sm:px-4">
-      <TableTitle tileName="User" activeFile="User list" />
+    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
+        {/* 1 & 3) Table Title with Add User button as the rightElement */}
+        <TableTitle
+          tileName="User"
+          rightElement={
+            <CustomButton
+              handleToggle={() => setModalTypeTooPen("ADD")}
+              label="+ Add User"
+            />
+          }
+        />
 
-      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
-        {/* Top Bar */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
-          <span className="text-sm sm:text-base">
-            Total Number of Users :
-            <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
-              [{allUsers.filter((u) => u.loginStatus === "Y").length}]
-            </span>
-          </span>
+        <hr className="border border-b border-gray-200" />
 
-          <CustomButton
-            handleToggle={() => setModalTypeTooPen("ADD")}
-            label="Add User"
-          />
-        </div>
+        <div className="p-2">
+          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
+            {/* Left Side: Show entries */}
+            <div className="text-sm flex items-center">
+              <span>Show</span>
+              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
+                <select
+                  value={selectedValue}
+                  onChange={handleChangeShowData}
+                  className="bg-transparent outline-none py-1 cursor-pointer"
+                >
+                  {numbers.map((num, index) => (
+                    <option key={index} value={num}>
+                      {num}
+                    </option>
+                  ))}
+                </select>
+              </span>
+              <span className="hidden xs:inline">entries</span>
+            </div>
 
-        {/* Filter Row */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
-          <div className="text-sm">
-            <span>Show</span>
-            <span className="bg-gray-200 rounded mx-1 p-1">
-              <select
-                value={selectedValue}
-                onChange={handleChangeShowData}
-                className="bg-transparent outline-none"
-              >
-                {numbers.map((num, index) => (
-                  <option key={index} value={num}>
-                    {num}
-                  </option>
-                ))}
-              </select>
-            </span>
-            <span>entries</span>
+            {/* Right Side: Search Input */}
+            <TableInputField
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+            />
           </div>
-
-          <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-          />
         </div>
 
-        {/* Table Wrapper */}
-        <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
+        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
+        <div className="overflow-auto px-2">
           <div className="min-w-[900px]">
-            {/* Table Header */}
-            {/* Table Header */}
+            {/* Sticky Table Header */}
             <div
-              className="grid grid-cols-[0.5fr_1fr_1.5fr_1fr_1fr_1fr_1.5fr]
-  bg-indigo-900 text-white items-center font-semibold text-sm sticky top-0 z-10 p-2"
+              className="grid grid-cols-7 bg-indigo-900 text-white items-center font-semibold
+             text-sm sticky top-0 sm:z-10 p-2"
             >
               <span>Sr#</span>
               <span>Users</span>
@@ -211,16 +210,15 @@ export const UsersDetails = () => {
 
             {/* Table Body */}
             {paginatedUsers.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-4">
+              <div className="text-gray-800 text-lg text-center py-10">
                 No records available at the moment!
               </div>
             ) : (
               paginatedUsers.map((user, index) => (
                 <div
                   key={user.id}
-                  className="grid grid-cols-[0.5fr_1fr_1.5fr_1fr_1fr_1fr_1.5fr]
-      border border-gray-300 text-gray-800 text-sm pt-2 
-      hover:bg-gray-100 transition"
+                  className="grid grid-cols-7 border-b border-x border-gray-200 text-gray-800 items-center
+                   text-sm p-2 hover:bg-gray-50 transition"
                 >
                   <span>{startIndex + index + 1}</span>
                   <span className="truncate">{user.name}</span>
@@ -228,13 +226,15 @@ export const UsersDetails = () => {
                   <span>{user.contact}</span>
                   <span>{user.role}</span>
                   <span>
-                    {new Date(user.date).toLocaleDateString("sv-SE", {
-                      timeZone: "Asia/Karachi",
-                    })}
+                    {new Date(user.date)
+                      .toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
+                      .replace(/ /g, "-")}
                   </span>
-
-                  {/* Actions */}
-                  <span className="flex flex-wrap items-center justify-center gap-1">
+                  <span className="flex flex-nowrap justify-center gap-1">
                     <EditButton
                       handleUpdate={() => handleUpdateSingleUser(user)}
                     />
@@ -244,9 +244,9 @@ export const UsersDetails = () => {
                     />
                     <div
                       onClick={() => handleCatchId(user.id)}
-                      className="flex items-center p-1 px-2 rounded-xl border hover:bg-gray-100 cursor-pointer transition"
+                      className="p-1 px-1.5 rounded-xl bg-blue-50 hover:cursor-pointer active:scale-95 transition-all"
                     >
-                      <RiLockPasswordFill size={18} title="Password" />
+                      <RiLockPasswordFill size={15} title="Password" />
                     </div>
                   </span>
                 </div>
@@ -254,7 +254,23 @@ export const UsersDetails = () => {
             )}
           </div>
         </div>
+
+        {/* 4) Pagination placed under the table */}
+        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between">
+          <ShowDataNumber
+            start={totalNum === 0 ? 0 : startIndex + 1}
+            end={Math.min(endIndex, totalNum)}
+            total={totalNum}
+          />
+          <Pagination
+            pageNo={pageNo}
+            handleDecrementPageButton={handleDecrementPageButton}
+            handleIncrementPageButton={handleIncrementPageButton}
+          />
+        </div>
       </div>
+
+      {/* --- MODALS SECTION --- */}
       {(modalTypeTooPen === "ADD" || modalTypeTooPen === "UPDATE") && (
         <AddUser
           viewType={modalTypeTooPen}
@@ -308,18 +324,9 @@ export const UsersDetails = () => {
         />
       )}
 
-      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
-        <ShowDataNumber
-          start={totalNum === 0 ? 0 : startIndex + 1}
-          end={Math.min(endIndex, totalNum)}
-          total={totalNum}
-        />
-
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
-        />
+      {/* --- FOOTER SECTION --- */}
+      <div className="border border-t-5 border-gray-200">
+        <Footer />
       </div>
     </div>
   );

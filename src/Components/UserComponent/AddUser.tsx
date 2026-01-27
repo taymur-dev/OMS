@@ -76,7 +76,7 @@ export const AddUser = ({
   }, [initialValues]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name } = e.target;
     let value = e.target.value;
@@ -108,12 +108,12 @@ export const AddUser = ({
         value = `${digits.slice(0, 5)}-${digits.slice(5)}`;
       } else if (digits.length <= 13) {
         value = `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(
-          12
+          12,
         )}`;
       } else {
         value = `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(
           12,
-          13
+          13,
         )}`;
       }
     }
@@ -196,7 +196,7 @@ export const AddUser = ({
   };
 
   const handleUpdateUser = async (
-    id: string | number | undefined
+    id: string | number | undefined,
   ): Promise<void> => {
     if (!id) return;
 
@@ -244,8 +244,8 @@ export const AddUser = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[40rem] overflow-y-auto bg-white mx-auto rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-50">
+      <div className="w-[42rem] max-h-[40rem] overflow-y-auto bg-white mx-auto rounded-lg">
         <form onSubmit={handlerSubmitted}>
           {/* ===== Header ===== */}
           <div className="bg-indigo-900 rounded-t-xl px-4">
@@ -255,10 +255,9 @@ export const AddUser = ({
           </div>
 
           {/* ===== Body ===== */}
-          <div className="mx-4 my-4 grid grid-cols-2 gap-4">
+          <div className="mx-4 my-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <InputField
-              labelName="Name*"
-              placeHolder="Enter the Name"
+              labelName="Name *"
               type="text"
               name="name"
               handlerChange={handlerChange}
@@ -266,8 +265,7 @@ export const AddUser = ({
             />
 
             <InputField
-              labelName="Email*"
-              placeHolder="abc123@gmail.com"
+              labelName="Email *"
               type="email"
               name="email"
               handlerChange={handlerChange}
@@ -275,8 +273,7 @@ export const AddUser = ({
             />
 
             <InputField
-              labelName="Phone Number*"
-              placeHolder="Enter the Contact Number"
+              labelName="Phone Number *"
               type="number"
               name="contact"
               handlerChange={handlerChange}
@@ -284,8 +281,7 @@ export const AddUser = ({
             />
 
             <InputField
-              labelName="CNIC*"
-              placeHolder="12345-6789012-3"
+              labelName="CNIC *"
               type="text"
               name="cnic"
               handlerChange={handlerChange}
@@ -293,8 +289,7 @@ export const AddUser = ({
             />
 
             <InputField
-              labelName="Address*"
-              placeHolder="Enter the Address"
+              labelName="Address *"
               type="text"
               name="address"
               handlerChange={handlerChange}
@@ -302,8 +297,7 @@ export const AddUser = ({
             />
 
             <InputField
-              labelName="Joining Date*"
-              placeHolder="Enter the Date"
+              labelName="Joining Date *"
               type="date"
               name="date"
               handlerChange={handlerChange}
@@ -311,8 +305,7 @@ export const AddUser = ({
             />
 
             <InputField
-              labelName="Password*"
-              placeHolder="Enter the Password"
+              labelName="Password *"
               type="password"
               name="password"
               handlerChange={handlerChange}
@@ -320,8 +313,7 @@ export const AddUser = ({
             />
 
             <InputField
-              labelName="Confirm Password*"
-              placeHolder="Enter the Confirm Password"
+              labelName="Confirm Password *"
               type="password"
               name="confirmPassword"
               handlerChange={handlerChange}
@@ -329,10 +321,10 @@ export const AddUser = ({
             />
 
             {/* Full width row */}
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <OptionField
                 value={userData.role}
-                labelName="Role*"
+                labelName="Role *"
                 handlerChange={handlerChange}
                 name="role"
                 optionData={optionData}
@@ -347,11 +339,7 @@ export const AddUser = ({
             <AddButton
               loading={loading}
               label={
-                loading
-                  ? "Loading..."
-                  : viewType === "ADD"
-                  ? "Save"
-                  : "Update"
+                loading ? "Loading..." : viewType === "ADD" ? "Save" : "Update"
               }
             />
           </div>

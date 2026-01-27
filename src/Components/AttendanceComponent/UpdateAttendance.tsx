@@ -58,19 +58,19 @@ export const UpdateAttendance = ({
             ...updatedAttendance,
             attendanceStatus: updatedAttendance.attendanceStatus.toLowerCase(),
           }
-        : null
+        : null,
     );
 
   const [allUsers, setAllUsers] = useState<OptionType[]>([]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setAddUserAttendance((prev) =>
       prev
         ? { ...prev, [name]: name === "userId" ? Number(value) : value }
-        : prev
+        : prev,
     );
   };
 
@@ -83,7 +83,7 @@ export const UpdateAttendance = ({
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(
-        axiosError?.response?.data?.message || "Failed to fetch users"
+        axiosError?.response?.data?.message || "Failed to fetch users",
       );
     }
   }, [token]);
@@ -115,14 +115,14 @@ export const UpdateAttendance = ({
           clockOut,
           attendanceStatus: addUserAttendance.attendanceStatus,
         },
-        { headers: { Authorization: token } }
+        { headers: { Authorization: token } },
       );
       toast.success("Attendance updated successfully!");
       setModal();
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(
-        axiosError?.response?.data?.message || "Failed to update attendance."
+        axiosError?.response?.data?.message || "Failed to update attendance.",
       );
     }
   };
@@ -133,20 +133,20 @@ export const UpdateAttendance = ({
   }));
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50">
+      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-lg border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Update Attendance
+              EDIT ATTENDANCE
             </Title>
           </div>
-          <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-3">
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
             <UserSelect
-              labelName="Select User*"
+              labelName="Select User *"
               name="userId"
               value={addUserAttendance?.userId?.toString() ?? ""}
               handlerChange={handlerChange}
@@ -154,14 +154,14 @@ export const UpdateAttendance = ({
             />
 
             <InputField
-              labelName="Date*"
+              labelName="Date *"
               type="date"
               name="date"
               value={addUserAttendance?.date?.slice(0, 10) ?? ""}
               handlerChange={handlerChange}
             />
             <InputField
-              labelName="Clock In*"
+              labelName="Clock In *"
               type="time"
               name="clockIn"
               value={addUserAttendance?.clockIn ?? ""}
@@ -172,7 +172,7 @@ export const UpdateAttendance = ({
               }
             />
             <InputField
-              labelName="Clock Out*"
+              labelName="Clock Out *"
               type="time"
               name="clockOut"
               value={addUserAttendance?.clockOut ?? ""}
@@ -184,7 +184,7 @@ export const UpdateAttendance = ({
             />
 
             <OptionField
-              labelName="Attendance Status*"
+              labelName="Attendance Status *"
               name="attendanceStatus"
               value={addUserAttendance?.attendanceStatus ?? ""}
               handlerChange={handlerChange}
@@ -193,7 +193,7 @@ export const UpdateAttendance = ({
             />
           </div>
 
-          <div className="flex justify-end gap-3 px-4 py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end  gap-3 px-6 py-4 bg-indigo-900 rounded-b-xl">
             <CancelBtn setModal={setModal} />
             <AddButton label="Update" />
           </div>

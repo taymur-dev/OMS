@@ -19,6 +19,7 @@ import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
+import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
@@ -119,228 +120,104 @@ export const OverTime = () => {
 
   if (loader) return <Loader />;
 
-  // return (
-  //   <div className="w-full mx-2">
-  //     <TableTitle tileName="Over Time" activeFile="Overtime List" />
+  const getStatusBadge = (status: string) => {
+    const baseClasses =
+      "px-2 py-1 rounded-full text-xs font-semibold capitalize";
 
-  //     <div
-  //       className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
-  //      overflow-hidden flex flex-col"
-  //     >
-  //       <div className="flex items-center justify-between mx-2 text-gray-800">
-  //         <span>
-  //           Total Overtime Records:{" "}
-  //           <span className="text-2xl text-indigo-900 font-semibold">
-  //             {filteredOvertime.length}
-  //           </span>
-  //         </span>
-  //         <CustomButton
-  //           label="Add Time"
-  //           handleToggle={() => setIsOpenModal("ADD")}
-  //         />
-  //       </div>
-
-  //       <div className="flex items-center justify-between mx-2 text-gray-800">
-  //         <div>
-  //           <span>Show</span>
-  //           <span className="bg-gray-200 rounded mx-1 p-1">
-  //             <select
-  //               value={selectedValue}
-  //               onChange={(e) => {
-  //                 setSelectedValue(Number(e.target.value));
-  //                 setPageNo(1);
-  //               }}
-  //             >
-  //               {numbers.map((num) => (
-  //                 <option key={num} value={num}>
-  //                   {num}
-  //                 </option>
-  //               ))}
-  //             </select>
-  //           </span>
-  //           <span>entries</span>
-  //         </div>
-
-  //         <TableInputField
-  //           searchTerm={searchTerm}
-  //           setSearchTerm={setSearchTerm}
-  //         />
-  //       </div>
-
-  //       <div className="max-h-[28.6rem] overflow-y-auto mx-2">
-  //         <div
-  //           className="grid grid-cols-[0.3fr_1fr_1fr_1fr_1fr_1fr] bg-indigo-900 text-white font-semibold
-  //          border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
-  //         >
-  //           <span>Sr#</span>
-  //           {currentUser?.role === "admin" && <span>Employee Name</span>}
-  //           <span>Date</span>
-  //           <span>Over Time</span>
-  //           <span>Approval</span>
-  //           <span className="text-center">Actions</span>
-  //         </div>
-
-  //         {paginatedOvertime.map((ot, index) => (
-  //           <div
-  //             key={ot.id}
-  //             className="grid grid-cols-[0.3fr_1fr_1fr_1fr_1fr_1fr] border border-gray-600 text-gray-800
-  //              hover:bg-gray-100 transition text-sm items-center p-[7px]"
-  //           >
-  //             <span>{startIndex + index + 1}</span>
-  //             {currentUser?.role === "admin" && <span>{ot.name}</span>}
-  //             <span>{new Date(ot.date).toLocaleDateString("sv-SE")}</span>
-  //             <span>{ot.totalTime}</span>
-  //             <span>{ot.approvalStatus}</span>
-  //             <span className="flex justify-center gap-1">
-  //               {(currentUser?.role === "admin" ||
-  //                 ot.name === currentUser?.name) && (
-  //                 <EditButton
-  //                   handleUpdate={() => {
-  //                     setSelectedOvertime(ot);
-  //                     setIsOpenModal("UPDATE");
-  //                   }}
-  //                 />
-  //               )}
-  //               <ViewButton
-  //                 handleView={() => {
-  //                   setViewOvertime(ot);
-  //                   setIsOpenModal("VIEW");
-  //                 }}
-  //               />
-  //               {(currentUser?.role === "admin" ||
-  //                 ot.name === currentUser?.name) && (
-  //                 <DeleteButton
-  //                   handleDelete={() => {
-  //                     setSelectedOvertime(ot);
-  //                     setIsOpenModal("DELETE");
-  //                   }}
-  //                 />
-  //               )}
-  //             </span>
-  //           </div>
-  //         ))}
-
-  //         {paginatedOvertime.length === 0 && (
-  //           <div className="text-center py-4 text-gray-500">
-  //             No overtime records found
-  //           </div>
-  //         )}
-  //       </div>
-  //     </div>
-
-  //     <div className="flex items-center justify-between mt-2">
-  //       <ShowDataNumber
-  //         start={startIndex + 1}
-  //         end={Math.min(startIndex + selectedValue, filteredOvertime.length)}
-  //         total={filteredOvertime.length}
-  //       />
-  //       <Pagination
-  //         pageNo={pageNo}
-  //         handleIncrementPageButton={() =>
-  //           setPageNo((prev) => Math.min(prev + 1, totalPages))
-  //         }
-  //         handleDecrementPageButton={() =>
-  //           setPageNo((prev) => Math.max(prev - 1, 1))
-  //         }
-  //       />
-  //     </div>
-
-  //     {isOpenModal === "ADD" && (
-  //       <AddOverTime
-  //         setModal={() => setIsOpenModal("")}
-  //         refreshOvertime={handleGetOvertime}
-  //       />
-  //     )}
-
-  //     {isOpenModal === "UPDATE" && selectedOvertime && (
-  //       <UpdateOverTime
-  //         setModal={() => setIsOpenModal("")}
-  //         EditOvertime={{
-  //           id: selectedOvertime.id,
-  //           employeeId: 0,
-  //           time: selectedOvertime.totalTime,
-  //           date: selectedOvertime.date,
-  //           description: "",
-  //           status: selectedOvertime.approvalStatus,
-  //         }}
-  //         refreshOvertimes={handleGetOvertime}
-  //       />
-  //     )}
-
-  //     {isOpenModal === "VIEW" && viewOvertime && (
-  //       <ViewOverTimeModal
-  //         setModal={() => setIsOpenModal("")}
-  //         data={viewOvertime}
-  //       />
-  //     )}
-
-  //     {isOpenModal === "DELETE" && selectedOvertime && (
-  //       <ConfirmationModal
-  //         isOpen={() => setIsOpenModal("")}
-  //         onClose={() => setIsOpenModal("")}
-  //         onConfirm={handleDeleteOvertime}
-  //         message="Are you sure you want to delete this overtime record?"
-  //       />
-  //     )}
-  //   </div>
-  // );
+    switch (status.toLowerCase()) {
+      case "approved":
+      case "accepted":
+        return (
+          <span
+            className={`${baseClasses} bg-green-100 text-green-700 border border-green-200`}
+          >
+            {status}
+          </span>
+        );
+      case "pending":
+        return (
+          <span
+            className={`${baseClasses} bg-yellow-100 text-yellow-700 border border-yellow-200`}
+          >
+            {status}
+          </span>
+        );
+      case "rejected":
+      case "declined":
+        return (
+          <span
+            className={`${baseClasses} bg-red-100 text-red-700 border border-red-200`}
+          >
+            {status}
+          </span>
+        );
+      default:
+        return (
+          <span
+            className={`${baseClasses} bg-gray-100 text-gray-700 border border-gray-200`}
+          >
+            {status}
+          </span>
+        );
+    }
+  };
 
   return (
-    <div className="w-full px-2 sm:px-4">
-      <TableTitle tileName="Over Time" activeFile="Overtime List" />
+    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
+        {/* 1 & 3) Table Title with Add button as the rightElement */}
+        <TableTitle
+          tileName="Over Time"
+          rightElement={
+            <CustomButton
+              label="+ Add Time"
+              handleToggle={() => setIsOpenModal("ADD")}
+            />
+          }
+        />
 
-      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
-        {/* Top Bar */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
-          <span className="text-sm sm:text-base">
-            Total Overtime Records:{" "}
-            <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
-              {filteredOvertime.length}
-            </span>
-          </span>
+        <hr className="border border-b border-gray-200" />
 
-          <CustomButton
-            label="Add Time"
-            handleToggle={() => setIsOpenModal("ADD")}
-          />
-        </div>
+        <div className="p-2">
+          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
+            {/* Left Side: Show entries */}
+            <div className="text-sm flex items-center">
+              <span>Show</span>
+              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
+                <select
+                  value={selectedValue}
+                  onChange={(e) => {
+                    setSelectedValue(Number(e.target.value));
+                    setPageNo(1);
+                  }}
+                  className="bg-transparent outline-none py-1 cursor-pointer"
+                >
+                  {numbers.map((num) => (
+                    <option key={num} value={num}>
+                      {num}
+                    </option>
+                  ))}
+                </select>
+              </span>
+              <span className="hidden xs:inline">entries</span>
+            </div>
 
-        {/* Filter Row */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
-          <div className="text-sm">
-            <span>Show</span>
-            <span className="bg-gray-200 rounded mx-1 p-1">
-              <select
-                value={selectedValue}
-                onChange={(e) => {
-                  setSelectedValue(Number(e.target.value));
-                  setPageNo(1);
-                }}
-                className="bg-transparent outline-none"
-              >
-                {numbers.map((num) => (
-                  <option key={num} value={num}>
-                    {num}
-                  </option>
-                ))}
-              </select>
-            </span>
-            <span>entries</span>
+            {/* Right Side: Search Input */}
+            <TableInputField
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+            />
           </div>
-
-          <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-          />
         </div>
 
-        {/* Table Wrapper */}
-        <div className="overflow-x-auto mx-2 mt-2 max-h-[28.4rem]">
-          <div className="min-w-[700px]">
-            {/* Table Header */}
+        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
+        <div className="overflow-auto px-2">
+          <div className="min-w-[900px]">
+            {/* Sticky Table Header */}
             <div
-              className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr]  items-center
-            bg-indigo-900 text-white font-semibold text-sm sticky top-0 z-10 p-2"
+              className={`grid ${
+                currentUser?.role === "admin" ? "grid-cols-6" : "grid-cols-5"
+              } bg-indigo-900 text-white items-center font-semibold text-sm sticky top-0 z-10 p-2`}
             >
               <span>Sr#</span>
               {currentUser?.role === "admin" && <span>Employee Name</span>}
@@ -352,22 +229,36 @@ export const OverTime = () => {
 
             {/* Table Body */}
             {paginatedOvertime.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-4">
-                No overtime records found
+              <div className="text-gray-800 text-lg text-center py-10">
+                No records available at the moment!
               </div>
             ) : (
               paginatedOvertime.map((ot, index) => (
                 <div
                   key={ot.id}
-                  className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr] 
-                  border border-gray-300 items-center text-gray-800 text-sm p-2
-                  hover:bg-gray-100 transition items-center"
+                  className={`grid ${
+                    currentUser?.role === "admin"
+                      ? "grid-cols-6"
+                      : "grid-cols-5"
+                  } border-b border-x border-gray-200 text-gray-800 items-center text-sm p-2 hover:bg-gray-50 transition`}
                 >
                   <span>{startIndex + index + 1}</span>
-                  {currentUser?.role === "admin" && <span>{ot.name}</span>}
-                  <span>{new Date(ot.date).toLocaleDateString("sv-SE")}</span>
+                  {currentUser?.role === "admin" && (
+                    <span className="truncate">{ot.name}</span>
+                  )}
+                  <span>
+                    {new Date(ot.date)
+                      .toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
+                      .replace(/ /g, "-")}
+                  </span>
                   <span>{ot.totalTime}</span>
-                  <span>{ot.approvalStatus}</span>
+                  <span className="flex items-center">
+                    {getStatusBadge(ot.approvalStatus)}
+                  </span>
                   <span className="flex flex-nowrap justify-center gap-1">
                     {(currentUser?.role === "admin" ||
                       ot.name === currentUser?.name) && (
@@ -399,32 +290,32 @@ export const OverTime = () => {
             )}
           </div>
         </div>
+
+        {/* 4) Pagination placed under the table */}
+        <div className="flex flex-row items-center justify-between p-2">
+          <ShowDataNumber
+            start={paginatedOvertime.length === 0 ? 0 : startIndex + 1}
+            end={Math.min(startIndex + selectedValue, filteredOvertime.length)}
+            total={filteredOvertime.length}
+          />
+          <Pagination
+            pageNo={pageNo}
+            handleIncrementPageButton={() =>
+              setPageNo((prev) =>
+                Math.min(
+                  prev + 1,
+                  Math.ceil(filteredOvertime.length / selectedValue),
+                ),
+              )
+            }
+            handleDecrementPageButton={() =>
+              setPageNo((prev) => Math.max(prev - 1, 1))
+            }
+          />
+        </div>
       </div>
 
-      {/* Pagination */}
-      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
-        <ShowDataNumber
-          start={paginatedOvertime.length === 0 ? 0 : startIndex + 1}
-          end={Math.min(startIndex + selectedValue, filteredOvertime.length)}
-          total={filteredOvertime.length}
-        />
-        <Pagination
-          pageNo={pageNo}
-          handleIncrementPageButton={() =>
-            setPageNo((prev) =>
-              Math.min(
-                prev + 1,
-                Math.ceil(filteredOvertime.length / selectedValue),
-              ),
-            )
-          }
-          handleDecrementPageButton={() =>
-            setPageNo((prev) => Math.max(prev - 1, 1))
-          }
-        />
-      </div>
-
-      {/* Modals */}
+      {/* --- MODALS SECTION --- */}
       {isOpenModal === "ADD" && (
         <AddOverTime
           setModal={() => setIsOpenModal("")}
@@ -462,6 +353,11 @@ export const OverTime = () => {
           message="Are you sure you want to delete this overtime record?"
         />
       )}
+
+      {/* --- FOOTER SECTION --- */}
+      <div className="border border-t-5 border-gray-200">
+        <Footer />
+      </div>
     </div>
   );
 };

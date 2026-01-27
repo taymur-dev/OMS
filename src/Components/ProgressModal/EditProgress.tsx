@@ -59,11 +59,15 @@ export const EditProgress = ({
   );
 
   useEffect(() => {
-    if (progressData) {
+    if (progressData && progressData.date) {
+      const dateObj = new Date(progressData.date);
+
+      const formattedDate = dateObj.toLocaleDateString("en-CA");
+
       setUpdateProgress({
         employee_id: String(progressData.employee_id),
         project: progressData.projectName,
-        date: progressData.date?.split("T")[0],
+        date: formattedDate,
         note: progressData.note,
       });
     }
@@ -135,7 +139,7 @@ export const EditProgress = ({
           progressStatus: "Y",
         },
         {
-          headers: { Authorization: token },
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
 
@@ -150,19 +154,19 @@ export const EditProgress = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-lg border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Edit Progress
+              EDIT PROGRESS
             </Title>
           </div>
 
-          <div className="mx-2  py-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-3">
+          <div className="mx-2  py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3">
             {currentUser?.role === "admin" && (
               <UserSelect
                 labelName="Employees*"
@@ -187,7 +191,7 @@ export const EditProgress = ({
             />
 
             <InputField
-              labelName="End Date*"
+              labelName="Date*"
               name="date"
               type="date"
               handlerChange={handlerChange}

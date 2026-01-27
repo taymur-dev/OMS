@@ -75,7 +75,7 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setAddLeave((prev) => ({ ...prev, [name]: value }));
@@ -95,7 +95,7 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
         },
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       refreshLeaves();
@@ -119,22 +119,22 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
     }));
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur flex px-4 items-center justify-center z-10">
-      <div className="w-[42rem] bg-white rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur flex px-4 items-center justify-center z-50">
+      <div className="w-[42rem] bg-white rounded-lg border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Add Leave
+              ADD LEAVE
             </Title>
           </div>
 
-          <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2  py-2 space-y-2 gap-3">
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2  py-2 space-y-2 gap-3">
             {isAdmin && (
               <UserSelect
-                labelName="Employee*"
+                labelName="Employee *"
                 name="employee_id"
                 value={addLeave.employee_id}
                 handlerChange={handlerChange}
@@ -143,24 +143,24 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
             )}
 
             <InputField
-              labelName="Leave Subject*"
+              labelName="Leave Subject *"
               name="leaveSubject"
               value={addLeave.leaveSubject}
               handlerChange={handlerChange}
             />
 
-            <TextareaField
-              labelName="Leave Reason*"
-              name="leaveReason"
-              inputVal={addLeave.leaveReason}
-              handlerChange={handlerChange}
-            />
-
             <InputField
-              labelName="Date*"
+              labelName="Date *"
               type="date"
               name="date"
               value={addLeave.date}
+              handlerChange={handlerChange}
+            />
+
+            <TextareaField
+              labelName="Leave Reason *"
+              name="leaveReason"
+              inputVal={addLeave.leaveReason}
               handlerChange={handlerChange}
             />
           </div>

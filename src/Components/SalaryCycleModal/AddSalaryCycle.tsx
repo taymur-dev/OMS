@@ -74,26 +74,26 @@ export const AddSalaryCycle = ({
   const isActive = status.toLowerCase() === "active";
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-lg border border-indigo-900">
         <form onSubmit={handleSubmit}>
           {/* Header */}
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded-t-lg px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Add Salary Cycle
+              ADD SALERY CYCLE
             </Title>
           </div>
 
           {/* Body */}
           <div className="mx-2 py-4 gap-4 flex flex-col">
             {/* Year & Month */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-semibold text-gray-900">
-                  Year
+                  Year *
                 </label>
                 <select
                   className="border px-3 py-2 rounded-md text-sm"
@@ -110,7 +110,7 @@ export const AddSalaryCycle = ({
 
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-semibold text-gray-900">
-                  Month
+                  Month *
                 </label>
                 <select
                   className="border px-3 py-2 rounded-md text-sm"
@@ -129,7 +129,7 @@ export const AddSalaryCycle = ({
             {/* Status */}
             <div className="flex items-center justify-between border rounded-md px-4 py-2 bg-gray-50">
               <span className="text-sm font-medium text-gray-700">
-                Current Status
+                Current Status *
               </span>
               <span
                 className={`px-3 py-1 rounded-full text-xs font-semibold ${

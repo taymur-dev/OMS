@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { InputField } from "./InputFields/InputField";
 import { AddButton } from "./CustomButtons/AddButton";
+import { CancelBtn } from "./CustomButtons/CancelBtn";
 import { Title } from "./Title";
 import { BASE_URL } from "../Content/URL";
 import axios, { AxiosError } from "axios";
@@ -49,10 +50,10 @@ export const ComfirmPasswordModal = ({ catchId, setModal }: PasswordProps) => {
     }
   };
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-10 p-4 sm:p-6">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-50 p-4 sm:p-6">
       <div className="w-full max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-3xl bg-white border border-indigo-900 rounded shadow-lg">
         {/* Header */}
-        <div className="bg-indigo-900 rounded-t px-6 py-3">
+        <div className="bg-indigo-900 rounded-t px-6 py-0.8">
           <Title
             setModal={setModal}
             className="text-white text-lg font-semibold"
@@ -82,6 +83,8 @@ export const ComfirmPasswordModal = ({ catchId, setModal }: PasswordProps) => {
 
         {/* Footer */}
         <div className="flex justify-end gap-3 px-4 py-3 bg-indigo-900 border-t border-indigo-900 rounded-b">
+          <CancelBtn setModal={setModal} />
+
           <AddButton
             handleClick={() => handleChangePassword(catchId)}
             label="Save Password"

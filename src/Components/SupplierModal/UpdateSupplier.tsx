@@ -102,20 +102,20 @@ export const UpdateSupplier = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50">
+      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-lg border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded-t-xl px-6 ">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Update Customer
+              EDIT SUPPLIER
             </Title>
           </div>
-          <div className="mx-2 py-4 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-3">
+          <div className="mx-2 py-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3">
             <InputField
-              labelName="Supplier Name*"
+              labelName="Supplier Name *"
               placeHolder="Enter the Supplier Name"
               type="text"
               name="supplierName"
@@ -123,7 +123,7 @@ export const UpdateSupplier = ({
               value={updateSupplier.supplierName}
             />
             <InputField
-              labelName="Supplier Email*"
+              labelName="Supplier Email *"
               placeHolder="Enter the Supplier Email"
               type="email"
               name="supplierEmail"
@@ -131,7 +131,7 @@ export const UpdateSupplier = ({
               value={updateSupplier.supplierEmail}
             />
             <InputField
-              labelName="Supplier Contact*"
+              labelName="Supplier Contact *"
               placeHolder="Enter the Supplier Contact Number"
               type="text"
               name="supplierContact"
@@ -139,7 +139,7 @@ export const UpdateSupplier = ({
               value={updateSupplier.supplierContact}
             />
             <TextareaField
-              labelName="Supplier Address*"
+              labelName="Supplier Address *"
               placeHolder="Enter the Supplier Address"
               name="supplierAddress"
               handlerChange={handlerChange}

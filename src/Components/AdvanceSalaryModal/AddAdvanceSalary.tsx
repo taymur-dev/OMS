@@ -123,11 +123,11 @@ export const AddAdvanceSalary = ({ setModal, handleRefresh }: AddAdvanceSalaryPr
     }));
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50">
+      <div className="w-[42rem] bg-white rounded-lg border border-indigo-900">
         <form onSubmit={handleSubmit}>
 
-           <div className="bg-indigo-900 rounded-t-xl px-6">
+           <div className="bg-indigo-900 rounded-t-lg px-6">
               <Title
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
@@ -135,10 +135,10 @@ export const AddAdvanceSalary = ({ setModal, handleRefresh }: AddAdvanceSalaryPr
                 Add Advance Salary
               </Title>
             </div>
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 mx-2 gap-2 py-2 space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 mx-2 gap-2 py-2 space-y-2">
             {isAdmin && (
               <UserSelect
-                labelName="Employees*"
+                labelName="Employees *"
                 name="employee_id"
                 value={formData.employee_id}
                 handlerChange={handleChange}
@@ -148,7 +148,7 @@ export const AddAdvanceSalary = ({ setModal, handleRefresh }: AddAdvanceSalaryPr
 
             {!isAdmin && (
               <InputField
-                labelName="Employee*"
+                labelName="Employee *"
                 name="employee_id"
                 value={currentUser?.name || ""}
                 handlerChange={handleChange}
@@ -157,7 +157,7 @@ export const AddAdvanceSalary = ({ setModal, handleRefresh }: AddAdvanceSalaryPr
             )}
 
             <InputField
-              labelName="Date*"
+              labelName="Date *"
               type="date"
               name="date"
               value={formData.date}
@@ -165,7 +165,7 @@ export const AddAdvanceSalary = ({ setModal, handleRefresh }: AddAdvanceSalaryPr
             />
 
             <InputField
-              labelName="Amount*"
+              labelName="Amount *"
               type="number"
               name="amount"
               value={formData.amount}
@@ -173,7 +173,7 @@ export const AddAdvanceSalary = ({ setModal, handleRefresh }: AddAdvanceSalaryPr
             />
 
             <TextareaField
-              labelName="Description*"
+              labelName="Description *"
               name="description"
               inputVal={formData.description}
               handlerChange={handleChange}

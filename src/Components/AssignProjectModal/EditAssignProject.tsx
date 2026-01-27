@@ -5,6 +5,8 @@ import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 import { UserSelect } from "../InputFields/UserSelect";
+import { OptionField } from "../InputFields/OptionField";
+
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -178,29 +180,29 @@ export const EditAssignProject = ({
   }, [getAllUsers, getAllProjects]);
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded-lg border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Edit Assign Project
+              EDIT ASSIGNED PROJECT
             </Title>
           </div>
 
-          <div className="mx-2 flex-wrap gap-3 py-4">
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3 py-4">
             <UserSelect
-              labelName="Employees*"
+              labelName="Employees *"
               name="employee_id"
               value={formData.employee_id}
               handlerChange={handlerChange}
               optionData={allUsers}
             />
 
-            <UserSelect
-              labelName="Project*"
+            <OptionField
+              labelName="Project *"
               name="projectId"
               value={formData.projectId}
               handlerChange={handlerChange}
@@ -209,13 +211,13 @@ export const EditAssignProject = ({
 
             {/* 🔥 Date Input */}
             <div className="flex flex-col mb-3">
-              <label className="text-sm font-medium text-gray-700">Date*</label>
+              <label className="text-sm font-medium text-black">Date *</label>
               <input
                 type="date"
                 name="date"
                 value={formData.date}
                 onChange={handlerChange}
-                className="border border-gray-300 rounded px-2 py-1 mt-1"
+                className="border border-indigo-900 rounded px-2 py-1 mt-1"
               />
             </div>
           </div>

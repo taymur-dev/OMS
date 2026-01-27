@@ -15,6 +15,7 @@ import { Loader } from "../../Components/LoaderComponent/Loader";
 import { AddSupplier } from "../../Components/SupplierModal/AddSupplier";
 import { UpdateSupplier } from "../../Components/SupplierModal/UpdateSupplier";
 import { ViewSupplierModal } from "../../Components/SupplierModal/ViewSupplier";
+import { Footer } from "../../Components/Footer";
 
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
@@ -136,56 +137,59 @@ export const Suppliers = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="w-full px-2 sm:px-4">
-      <TableTitle tileName="Supplier" activeFile="Suppliers list" />
+    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
+        {/* 1 & 3) Table Title with Add Supplier button as the rightElement */}
+        <TableTitle
+          tileName="Supplier"
+          rightElement={
+            <CustomButton
+              handleToggle={() => handleToggleViewModal("ADD")}
+              label="+ Add Supplier"
+            />
+          }
+        />
 
-      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
-        {/* Top Bar */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
-          <span className="text-sm sm:text-base">
-            Total number of Suppliers:
-            <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
-              [{suppliers.length}]
-            </span>
-          </span>
+        <hr className="border border-b border-gray-200" />
 
-          <CustomButton
-            label="Add Supplier"
-            handleToggle={() => handleToggleViewModal("ADD")}
-          />
-        </div>
+        {/* Top Bar / Filter Row */}
+        <div className="p-2">
+          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
+            {/* Left Side: Show entries */}
+            <div className="text-sm flex items-center">
+              <span>Show</span>
+              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
+                <select
+                  value={selectedValue}
+                  onChange={handleChangeShowData}
+                  className="bg-transparent outline-none py-1 cursor-pointer"
+                >
+                  {numbers.map((num, index) => (
+                    <option key={index} value={num}>
+                      {num}
+                    </option>
+                  ))}
+                </select>
+              </span>
+              <span className="hidden xs:inline">entries</span>
+            </div>
 
-        {/* Filter Row */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
-          <div className="text-sm">
-            <span>Show</span>
-            <span className="bg-gray-200 rounded mx-1 p-1">
-              <select
-                value={selectedValue}
-                onChange={handleChangeShowData}
-                className="bg-transparent outline-none"
-              >
-                {numbers.map((num) => (
-                  <option key={num} value={num}>
-                    {num}
-                  </option>
-                ))}
-              </select>
-            </span>
-            <span>entries</span>
+            {/* Right Side: Search Input */}
+            <TableInputField
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+            />
           </div>
-
-          <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-          />
         </div>
 
-        {/* Table Wrapper */}
-        <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
+        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
+        <div className="overflow-auto px-2">
           <div className="min-w-[900px]">
-            {/* Table Header */}
-            <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] bg-indigo-900 text-white irems-center font-semibold text-sm sticky top-0 z-10 p-2">
+            {/* Sticky Table Header - Using grid-cols-6 to match the 6 columns below */}
+            <div
+              className="grid grid-cols-6 bg-indigo-900 text-white items-center font-semibold
+             text-sm sticky top-0 z-10 p-2"
+            >
               <span>Sr#</span>
               <span>Supplier Name</span>
               <span>Email</span>
@@ -196,14 +200,15 @@ export const Suppliers = () => {
 
             {/* Table Body */}
             {paginatedData.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-4">
-                No suppliers available at the moment!
+              <div className="text-gray-800 text-lg text-center py-10">
+                No records available at the moment!
               </div>
             ) : (
               paginatedData.map((item, index) => (
                 <div
                   key={item.supplierId}
-                  className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] border border-gray-300 items-center text-gray-800 text-sm p-2 hover:bg-gray-100 transition"
+                  className="grid grid-cols-6 border-b border-x border-gray-200 text-gray-800 items-center
+                 text-sm p-2 hover:bg-gray-50 transition"
                 >
                   <span>{index + 1 + (pageNo - 1) * selectedValue}</span>
                   <span className="truncate">{item.supplierName}</span>
@@ -211,7 +216,7 @@ export const Suppliers = () => {
                   <span>{item.supplierContact}</span>
                   <span className="truncate">{item.supplierAddress}</span>
 
-                  <span className="flex flex-wrap items-center justify-center gap-1">
+                  <span className="flex flex-nowrap justify-center gap-1">
                     <EditButton
                       handleUpdate={() => {
                         setSelectedSupplier(item);
@@ -236,34 +241,34 @@ export const Suppliers = () => {
             )}
           </div>
         </div>
+
+        {/* 4) Pagination placed under the table */}
+        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
+          <ShowDataNumber
+            start={
+              filteredSuppliers.length === 0
+                ? 0
+                : (pageNo - 1) * selectedValue + 1
+            }
+            end={Math.min(pageNo * selectedValue, filteredSuppliers.length)}
+            total={filteredSuppliers.length}
+          />
+          <Pagination
+            pageNo={pageNo}
+            handleDecrementPageButton={handleDecrementPageButton}
+            handleIncrementPageButton={handleIncrementPageButton}
+          />
+        </div>
       </div>
 
-      {/* Pagination */}
-      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
-        <ShowDataNumber
-          start={
-            filteredSuppliers.length === 0
-              ? 0
-              : (pageNo - 1) * selectedValue + 1
-          }
-          end={Math.min(pageNo * selectedValue, filteredSuppliers.length)}
-          total={filteredSuppliers.length}
-        />
-
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
-        />
-      </div>
-
-      {/* Modals */}
+      {/* --- MODALS SECTION --- */}
       {isOpenModal === "ADD" && (
         <AddSupplier
           setModal={() => handleToggleViewModal("")}
           handleGetAllSupplier={handleGetAllSupplier}
         />
       )}
+
       {isOpenModal === "EDIT" && selectedSupplier && (
         <UpdateSupplier
           setModal={() => handleToggleViewModal("")}
@@ -271,20 +276,27 @@ export const Suppliers = () => {
           refreshSuppliers={handleGetAllSupplier}
         />
       )}
+
       {isOpenModal === "VIEW" && (
         <ViewSupplierModal
           setModal={() => handleToggleViewModal("")}
           supplier={selectedSupplier}
         />
       )}
+
       {isOpenModal === "DELETE" && (
         <ConfirmationModal
           isOpen={() => handleToggleViewModal("")}
-          onClose={() => handleToggleViewModal("DELETE")}
+          onClose={() => handleToggleViewModal("")}
           onConfirm={handleDeleteSupplier}
           message="Are you sure you want to delete this Supplier?"
         />
       )}
+
+      {/* --- FOOTER SECTION --- */}
+      <div className="border border-t-5 border-gray-200">
+        <Footer />
+      </div>
     </div>
   );
 };

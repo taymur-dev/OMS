@@ -152,19 +152,19 @@ export const UpdateRejoining = ({
   }, [getAllUsers]);
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div className="w-[42rem] bg-white mx-auto rounded-lg border border-indigo-900">
         <form onSubmit={handlerSubmit}>
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded-t-lg px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Edit Employee Rejoining
+              EDIT REJOINING REQUEST
             </Title>
           </div>
 
-          <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
             {currentUser?.role === "admin" && (
               <UserSelect
                 labelName="Select Employee*"
@@ -180,7 +180,7 @@ export const UpdateRejoining = ({
             )}
 
             <InputField
-              labelName="Current Designation*"
+              labelName="Current Designation *"
               placeHolder="Enter the Current Designation"
               type="text"
               name="designation"
@@ -190,7 +190,7 @@ export const UpdateRejoining = ({
             />
 
             <InputField
-              labelName="Resignation Date*"
+              labelName="Resignation Date *"
               placeHolder="Enter the Resignation Date"
               type="date"
               name="resignation_date"
@@ -200,7 +200,7 @@ export const UpdateRejoining = ({
             />
 
             <InputField
-              labelName="Rejoin Date*"
+              labelName="Rejoin Date *"
               placeHolder="Enter the Rejoin Date"
               type="date"
               name="rejoin_date"
@@ -209,7 +209,7 @@ export const UpdateRejoining = ({
             />
 
             <TextareaField
-              labelName="Note*"
+              labelName="Note *"
               placeHolder="Write your rejoining description"
               handlerChange={handlerChange}
               name="note"
@@ -217,7 +217,7 @@ export const UpdateRejoining = ({
             />
 
             <OptionField
-              labelName="Approval Status*"
+              labelName="Approval Status"
               name="approval_status"
               handlerChange={handlerChange}
               value={updateData.approval_status}

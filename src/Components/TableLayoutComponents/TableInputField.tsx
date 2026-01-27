@@ -7,14 +7,13 @@ interface TableInputFieldProps {
 
 export const TableInputField: React.FC<TableInputFieldProps> = ({ searchTerm, setSearchTerm }) => {
   return (
-    <div className="mb-2">
-      <span className="text-gray-900 font-sans">Search: </span>
+    <div className="flex justify-end"> 
       <input
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search..."
-        className="border placeholder-gray-500 border-gray-800 mt-1 p-[0.20rem] outline-none rounded "
+        placeholder="Search records..."
+        className="border placeholder-gray-500 pl-3 pr-2 rounded-xl border-gray-400 mt-1 p-[0.25rem] outline-none text-sm w-40 sm:w-64 focus:border-indigo-900 transition-all"
       />
     </div>
   );

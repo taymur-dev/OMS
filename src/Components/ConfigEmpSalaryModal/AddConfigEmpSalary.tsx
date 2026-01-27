@@ -23,6 +23,8 @@ type ApiUser = {
   role: string;
 };
 
+const currentDate = new Date().toLocaleDateString("en-CA");
+
 type SalaryState = {
   employee_id: string;
   employee_name: string;
@@ -42,7 +44,7 @@ const initialState: SalaryState = {
   transport_allowance: "",
   medical_allowance: "",
   total_salary: "0",
-  config_date: "",
+  config_date: currentDate,
 };
 
 export const AddConfigEmpSalary = ({
@@ -57,7 +59,7 @@ export const AddConfigEmpSalary = ({
   const [allUsers, setAllUsers] = useState<SelectOption[]>([]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setAddConfigEmployee((prev) => ({ ...prev, [name]: value }));
@@ -87,7 +89,7 @@ export const AddConfigEmpSalary = ({
         `${BASE_URL}/api/admin/getUsers`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       const formattedUsers: SelectOption[] = res.data.users
@@ -130,21 +132,21 @@ export const AddConfigEmpSalary = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[39rem] bg-white mx-auto rounded-xl border border-indigo-900 overflow-y-auto">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div className="w-[42rem] max-h-[39rem] bg-white mx-auto rounded-lg border border-indigo-900 overflow-y-auto">
         <form onSubmit={handlerSubmitted}>
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded-t-lg px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Config Employee Salary
+              CONFIGURE EMPLOYEE SALARY
             </Title>
           </div>
 
-          <div className="mx-2 grid  grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
+          <div className="mx-2 grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
             <UserSelect
-              labelName="Employee Name*"
+              labelName="Employee Name *"
               name="employee_id"
               value={addConfigEmployee.employee_id}
               handlerChange={handlerChange}
@@ -152,7 +154,7 @@ export const AddConfigEmpSalary = ({
             />
 
             <InputField
-              labelName="Salary Amount*"
+              labelName="Salary Amount *"
               name="salary_amount"
               type="number"
               handlerChange={handlerChange}
@@ -160,7 +162,7 @@ export const AddConfigEmpSalary = ({
             />
 
             <InputField
-              labelName="House Rent*"
+              labelName="House Rent *"
               name="emp_of_mon_allowance"
               type="number"
               handlerChange={handlerChange}
@@ -168,7 +170,7 @@ export const AddConfigEmpSalary = ({
             />
 
             <InputField
-              labelName="Transport Allowance*"
+              labelName="Transport Allowance *"
               name="transport_allowance"
               type="number"
               handlerChange={handlerChange}
@@ -176,7 +178,7 @@ export const AddConfigEmpSalary = ({
             />
 
             <InputField
-              labelName="Medical Allowance*"
+              labelName="Medical Allowance *"
               name="medical_allowance"
               type="number"
               handlerChange={handlerChange}
@@ -184,7 +186,7 @@ export const AddConfigEmpSalary = ({
             />
 
             <InputField
-              labelName="Total Salary"
+              labelName="Total Salary *"
               name="total_salary"
               type="number"
               value={addConfigEmployee.total_salary}
@@ -193,7 +195,7 @@ export const AddConfigEmpSalary = ({
             />
 
             <InputField
-              labelName="Date*"
+              labelName="Date *"
               name="config_date"
               type="date"
               handlerChange={handlerChange}

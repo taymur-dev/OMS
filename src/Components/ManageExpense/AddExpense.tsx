@@ -19,8 +19,7 @@ type AddAttendanceProps = {
   setModal: () => void;
 };
 
-const currentDate = new Date().toLocaleDateString('sv-SE');
-
+const currentDate = new Date().toLocaleDateString("sv-SE");
 
 type CategoryT = { id: number; categoryName: string };
 
@@ -28,7 +27,6 @@ const initialState = {
   expenseName: "",
   expenseCategoryId: "",
   amount: "",
-  addedBy: "",
   date: currentDate,
 };
 export const AddExpense = ({ setModal }: AddAttendanceProps) => {
@@ -43,7 +41,7 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
   const token = currentUser?.token;
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
   ) => {
     e.preventDefault();
 
@@ -76,7 +74,7 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       console.log(res.data);
       setModal();
@@ -91,8 +89,8 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
   }, [getAllUsers]);
   return (
     <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-10">
-        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-xl border  border-indigo-900 ">
+      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-50">
+        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-lg border  border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 rounded-t-xl px-6">
               <Title
@@ -102,9 +100,9 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
                 Add Expense
               </Title>
             </div>
-            <div className="mx-2 grid grid-cols-2  sm:grid-cols-2 md:grid-cols-2 py-2 gap-3  ">
+            <div className="mx-2 grid grid-cols-1  sm:grid-cols-2 md:grid-cols-2 py-2 gap-3  ">
               <OptionField
-                labelName="Expense Category"
+                labelName="Expense Category *"
                 name="expenseCategoryId"
                 value={addExpense.expenseCategoryId}
                 handlerChange={handlerChange}
@@ -117,25 +115,18 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
               />
 
               <InputField
-                labelName="Expense Name*"
+                labelName="Expense Name *"
                 name="expenseName"
                 handlerChange={handlerChange}
                 value={addExpense.expenseName}
               />
 
               <InputField
-                labelName="Amount*"
+                labelName="Amount *"
                 name="amount"
                 type="number"
                 handlerChange={handlerChange}
                 value={addExpense.amount}
-              />
-
-              <InputField
-                labelName="Added By*"
-                name="addedBy"
-                handlerChange={handlerChange}
-                value={addExpense.addedBy}
               />
 
               <InputField

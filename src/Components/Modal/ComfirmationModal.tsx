@@ -24,7 +24,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     onConfirm();
   };
   return (
-    <div className="fixed inset-0 backdrop-blur-xs bg-opacity-50 flex justify-center items-center">
+    <div className="fixed inset-0 z-50 backdrop-blur-xs bg-opacity-50 flex justify-center items-center">
       <div className="bg-white rounded-lg shadow-lg p-4 border border-indigo-900 w-96">
         {/* Title */}
         <div className="flex justify-between items-center text-gray-900">

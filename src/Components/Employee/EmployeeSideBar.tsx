@@ -14,27 +14,33 @@ import { RiUserCommunityLine } from "react-icons/ri";
 import { CiCreditCard1 } from "react-icons/ci";
 
 type SideBarProps = {
-  isOpen: boolean; // Yeh state toggle button control karti hai
+  isOpen: boolean;
   setIsOpen?: (open: boolean) => void;
 };
 
 type TActivButton =
-  | "Dashboard"
-  | "Attendance"
-  | "Projects"
-  | "Progress"
-  | "Todo"
-  | "Payroll"
-  | "Leave"
-  | "Salary"
-  | "Dynamic"
-  | "Reports";
+  | "Dashboard" | "Attendance" | "Projects" | "Progress" | "Todo"
+  | "Payroll" | "Leave" | "Salary" | "Dynamic" | "Reports";
 
 export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   const [activeBtns, setActiveBtns] = useState<TActivButton | "">("");
   const [isHoverable, setIsHoverable] = useState(false);
+  const [isBlurred, setIsBlurred] = useState(false); // Modal detection state
 
   const { pathname } = useLocation();
+
+  // Detect Modal Open on body
+  useEffect(() => {
+    const checkModal = () => {
+      const hasModalClass = document.body.classList.contains("modal-open");
+      const isScrollLocked = document.body.style.overflow === "hidden";
+      setIsBlurred(hasModalClass || isScrollLocked);
+    };
+
+    const observer = new MutationObserver(checkModal);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class", "style"] });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -64,24 +70,14 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
     setActiveBtns("Dashboard");
   }, []);
 
-  const SubLink = ({
-    to,
-    label,
-    badge,
-  }: {
-    to: string;
-    label: string;
-    badge?: number;
-  }) => {
+  const SubLink = ({ to, label, badge }: { to: string; label: string; badge?: number; }) => {
     const isActive = pathname === to;
     return (
       <Link
         to={to}
         onClick={() => window.innerWidth < 768 && setIsOpen?.(false)}
         className={`flex justify-between items-center w-full px-4 py-2 mb-1 rounded-md text-sm font-bold transition-all duration-200 ${
-          isActive
-            ? "bg-white text-indigo-900"
-            : "bg-transparent text-black font-normal"
+          isActive ? "bg-white text-indigo-900" : "bg-transparent text-black font-normal"
         }`}
       >
         <span>{label}</span>
@@ -100,18 +96,20 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         className={`
-    fixed inset-y-0 left-0 z-50 bg-white shadow-2xl
-    transition-all duration-300 ease-in-out
-    flex flex-col py-4 overflow-y-auto overflow-x-hidden
-    flex-shrink-0
+          fixed inset-y-0 left-0 bg-white shadow-2xl transition-all duration-300 ease-in-out
+          flex flex-col py-4 overflow-y-auto overflow-x-hidden flex-shrink-0
+          z-50 md:z-30
+          
+          /* Blur Logic */
+          ${isBlurred ? "blur-sm pointer-events-none scale-[0.99]" : "blur-0 pointer-events-auto"}
 
-    /* MOBILE */
-    ${isOpen ? "w-64 translate-x-0" : "w-0 -translate-x-full"}
-
-    /* DESKTOP */
-    md:relative md:translate-x-0 md:shadow-lg
-    ${isOpen ? "md:w-20" : "md:w-64"}
-  `}
+          /* MOBILE */
+          ${isOpen ? "w-64 translate-x-0 visible" : "w-0 -translate-x-full invisible md:visible"}
+          
+          /* DESKTOP */
+          md:relative md:translate-x-0 md:shadow-lg md:visible
+          ${isOpen ? "md:w-20" : "md:w-64"}
+        `}
       >
         <nav className="flex-1 px-3 space-y-1">
           {/* Dashboard */}
@@ -229,7 +227,6 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           </Link>
 
           {/* Dynamic */}
-
           <SideBarButton
             isOpen={isOpen}
             icon={<RiUserCommunityLine size={20} />}
@@ -263,10 +260,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             <AccordionItem isOpen={isOpen}>
               <div className="flex flex-col">
                 <SubLink to="/users/progressReports" label="Progress Report" />
-                <SubLink
-                  to="/users/attendanceReports"
-                  label="Attendance Report"
-                />
+                <SubLink to="/users/attendanceReports" label="Attendance Report" />
                 <SubLink to="/users/taskReports" label="Task Report" />
               </div>
             </AccordionItem>
@@ -277,7 +271,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
       {/* Mobile Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm transition-opacity md:hidden"
           onClick={() => setIsOpen?.(false)}
           aria-hidden="true"
         />

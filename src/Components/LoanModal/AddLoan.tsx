@@ -160,10 +160,10 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
 
   /* ================= UI ================= */
   return (
-    <div className="fixed inset-0 bg-opacity-50 px-4  backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-opacity-50 px-4  backdrop-blur-xs flex items-center justify-center z-50">
+      <div className="w-[42rem] bg-white mx-auto rounded-lg border border-indigo-900">
         <form onSubmit={handleSubmit}>
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded-t-lg px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -172,11 +172,11 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
             </Title>
           </div>
 
-          <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
             {currentUser?.role === "admin" && (
               <div className="mb-4">
                 <UserSelect
-                  labelName="Employees*"
+                  labelName="Employees *"
                   name="employee_id"
                   value={addLoan.employee_id}
                   handlerChange={handleUserSelect}
@@ -190,7 +190,7 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
 
             {currentUser?.role === "user" && (
               <InputField
-                labelName="Employee*"
+                labelName="Employee *"
                 name="employee_id"
                 value={currentUser.name || ""}
                 handlerChange={handleInputChange}
@@ -208,7 +208,7 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
             />
 
             <InputField
-              labelName="Apply Date*"
+              labelName="Apply Date *"
               type="date"
               name="applyDate"
               value={addLoan.applyDate}
@@ -216,7 +216,7 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
             />
 
             <InputField
-              labelName="Loan Amount*"
+              labelName="Loan Amount *"
               type="number"
               name="loanAmount"
               value={addLoan.loanAmount}
@@ -224,7 +224,7 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
             />
 
             <InputField
-              labelName="Deduction*"
+              labelName="Deduction *"
               type="number"
               name="deduction"
               value={addLoan.deduction}

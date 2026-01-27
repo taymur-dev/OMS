@@ -18,6 +18,7 @@ import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
+import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
@@ -136,181 +137,88 @@ export const Loan = () => {
 
   if (loader) return <Loader />;
 
-  // return (
-  //   <div className="w-full mx-2">
-  //     <TableTitle tileName="Loan" activeFile="Loan list" />
-
-  //     <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col overflow-hidden">
-  //       <div className="flex items-center justify-between mx-2 my-2">
-  //         <span>
-  //           Total Loan Applications:{" "}
-  //           <span className="text-2xl text-indigo-900 font-semibold">
-  //             [{totalItems}]
-  //           </span>
-  //         </span>
-  //         <CustomButton
-  //           label="Add Loan"
-  //           handleToggle={() => setIsOpenModal("ADD")}
-  //         />
-  //       </div>
-
-  //       <div className="flex justify-between mx-2 mb-2">
-  //         <div className="flex items-center gap-2">
-  //           <span>Show</span>
-  //           <select
-  //             value={selectedValue}
-  //             onChange={(e) => setSelectedValue(Number(e.target.value))}
-  //             className="bg-gray-200 rounded px-2 py-1"
-  //           >
-  //             {numbers.map((num) => (
-  //               <option key={num} value={num}>
-  //                 {num}
-  //               </option>
-  //             ))}
-  //           </select>
-  //           <span>entries</span>
-  //         </div>
-
-  //         <TableInputField
-  //           searchTerm={searchTerm}
-  //           setSearchTerm={setSearchTerm}
-  //         />
-  //       </div>
-
-  //       <div className="flex-1 overflow-y-auto mx-2">
-  //         <div className="grid grid-cols-4 items-center bg-indigo-900 text-white font-semibold p-2 sticky top-0 z-10">
-  //           <span>Sr#</span>
-  //           <span>Employee</span>
-  //           <span>Contact</span>
-  //           <span className="text-center">Actions</span>
-  //         </div>
-
-  //         {paginatedLoans.map((item, index) => (
-  //           <div
-  //             key={item.id}
-  //             className="grid grid-cols-4 items-center p-2 border-b hover:bg-gray-100"
-  //           >
-  //             <span>{startIndex + index + 1}</span>
-  //             <span>{item.employee_name}</span>
-  //             <span>{item.contact}</span>
-  //             <span className="flex justify-center">
-  //               <ViewButton
-  //                 handleView={() => {
-  //                   setSelectedLoan(item);
-  //                   setIsOpenModal("VIEW");
-  //                 }}
-  //               />
-  //             </span>
-  //           </div>
-  //         ))}
-  //       </div>
-  //     </div>
-
-  //     <div className="flex items-center justify-between mt-2 px-2">
-  //       <ShowDataNumber
-  //         start={totalItems ? startIndex + 1 : 0}
-  //         end={endIndex}
-  //         total={totalItems}
-  //       />
-
-  //       <Pagination
-  //         pageNo={pageNo}
-  //         handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-  //         handleIncrementPageButton={() =>
-  //           pageNo < totalPages && setPageNo((p) => p + 1)
-  //         }
-  //       />
-  //     </div>
-
-  //     {isOpenModal === "VIEW" && selectedLoan && (
-  //       <ViewLoan
-  //         setIsOpenModal={() => setIsOpenModal("")}
-  //         viewLoan={selectedLoan}
-  //       />
-  //     )}
-  //     {isOpenModal === "ADD" && (
-  //       <AddLoan
-  //         setModal={() => setIsOpenModal("")}
-  //         handleRefresh={handleGetAllLoans}
-  //       />
-  //     )}
-  //   </div>
-  // );
-
   return (
-    <div className="w-full px-2 sm:px-4">
-      <TableTitle tileName="Loan" activeFile="Loan list" />
+    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
+        {/* 1 & 3) Table Title with Add Loan button */}
+        <TableTitle
+          tileName="Loan"
+          rightElement={
+            <CustomButton
+              handleToggle={() => setIsOpenModal("ADD")}
+              label="+ Add Loan"
+            />
+          }
+        />
 
-      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col overflow-hidden">
-        {/* Top Bar */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
-          <span className="text-sm sm:text-base">
-            Total Loan Applications :
-            <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
-              [{totalItems}]
-            </span>
-          </span>
+        <hr className="border border-b border-gray-200" />
 
-          <CustomButton
-            handleToggle={() => setIsOpenModal("ADD")}
-            label="Add Loan"
-          />
-        </div>
+        <div className="p-2">
+          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
+            {/* Left Side: Show entries */}
+            <div className="text-sm flex items-center">
+              <span>Show</span>
+              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
+                <select
+                  value={selectedValue}
+                  onChange={(e) => {
+                    setSelectedValue(Number(e.target.value));
+                    setPageNo(1);
+                  }}
+                  className="bg-transparent outline-none py-1 cursor-pointer"
+                >
+                  {numbers.map((num, index) => (
+                    <option key={index} value={num}>
+                      {num}
+                    </option>
+                  ))}
+                </select>
+              </span>
+              <span className="hidden xs:inline">entries</span>
+            </div>
 
-        {/* Filter Row */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
-          <div className="text-sm flex items-center gap-2">
-            <span>Show</span>
-            <select
-              value={selectedValue}
-              onChange={(e) => {
-                setSelectedValue(Number(e.target.value));
-                setPageNo(1);
-              }}
-              className="bg-gray-200 rounded px-2 py-1"
-            >
-              {numbers.map((num) => (
-                <option key={num} value={num}>
-                  {num}
-                </option>
-              ))}
-            </select>
-            <span>entries</span>
+            {/* Right Side: Search Input */}
+            <TableInputField
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+            />
           </div>
-
-          <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-          />
         </div>
 
-        {/* Table Wrapper */}
-        <div className="flex-1 overflow-auto mt-2 mx-2">
-          <div className="min-w-[600px]">
-            {/* Table Header */}
-            <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr] items-center sm:grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1.5fr] bg-indigo-900 text-white font-semibold text-sm sticky top-0 z-10 p-2">
+        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
+        <div className="overflow-auto px-2">
+          <div className="min-w-[900px]">
+            {/* Sticky Table Header - Adjusted to 7 columns to match UserDetails dimensions */}
+            <div
+              className="grid grid-cols-4 bg-indigo-900 text-white items-center font-semibold
+             text-sm sticky top-0 z-10 p-2"
+            >
               <span>Sr#</span>
               <span>Employee</span>
               <span>Contact</span>
+           
               <span className="text-center">Actions</span>
-              {/* Extra columns for larger screens */}
             </div>
 
             {/* Table Body */}
             {paginatedLoans.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-4">
+              <div className="text-gray-800 text-lg text-center py-10">
                 No records available at the moment!
               </div>
             ) : (
               paginatedLoans.map((item, index) => (
                 <div
                   key={item.id}
-                  className="grid grid-cols-[0.5fr_1fr_1fr_1fr] items-center sm:grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1.5fr] border border-gray-300 text-gray-800 text-sm p-2 hover:bg-gray-100 transition"
+                  className="grid grid-cols-4 border-b border-x border-gray-200 text-gray-800 items-center
+                 text-sm p-2 hover:bg-gray-50 transition"
                 >
                   <span>{startIndex + index + 1}</span>
-                  <span className="truncate">{item.employee_name}</span>
+                  <span className=" truncate">
+                    {item.employee_name}
+                  </span>
                   <span>{item.contact}</span>
-                  <span className="flex justify-center gap-1">
+
+                  <span className="flex flex-nowrap justify-center gap-1">
                     <ViewButton
                       handleView={() => {
                         setSelectedLoan(item);
@@ -323,38 +231,45 @@ export const Loan = () => {
             )}
           </div>
         </div>
+
+        {/* 4) Pagination placed under the table */}
+        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
+          <ShowDataNumber
+            start={totalItems === 0 ? 0 : startIndex + 1}
+            end={Math.min(endIndex, totalItems)}
+            total={totalItems}
+          />
+          <Pagination
+            pageNo={pageNo}
+            handleDecrementPageButton={() =>
+              setPageNo((p) => Math.max(p - 1, 1))
+            }
+            handleIncrementPageButton={() =>
+              pageNo < totalPages && setPageNo((p) => p + 1)
+            }
+          />
+        </div>
       </div>
 
-      {/* Pagination */}
-      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3 px-2">
-        <ShowDataNumber
-          start={totalItems === 0 ? 0 : startIndex + 1}
-          end={Math.min(endIndex, totalItems)}
-          total={totalItems}
-        />
-
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-          handleIncrementPageButton={() =>
-            pageNo < totalPages && setPageNo((p) => p + 1)
-          }
-        />
-      </div>
-
-      {/* Modals */}
-      {isOpenModal === "VIEW" && selectedLoan && (
-        <ViewLoan
-          setIsOpenModal={() => setIsOpenModal("")}
-          viewLoan={selectedLoan}
-        />
-      )}
+      {/* --- MODALS SECTION --- */}
       {isOpenModal === "ADD" && (
         <AddLoan
           setModal={() => setIsOpenModal("")}
           handleRefresh={handleGetAllLoans}
         />
       )}
+
+      {isOpenModal === "VIEW" && selectedLoan && (
+        <ViewLoan
+          setIsOpenModal={() => setIsOpenModal("")}
+          viewLoan={selectedLoan}
+        />
+      )}
+
+      {/* --- FOOTER SECTION --- */}
+      <div className="border border-t-5 border-gray-200">
+        <Footer />
+      </div>
     </div>
   );
 };

@@ -26,12 +26,14 @@ type Job = {
   job_title: string;
 };
 
+const currentDate = new Date().toLocaleDateString("en-CA");
+
 const initialState = {
   applicant_name: "",
   fatherName: "",
   email: "",
   applicant_contact: "",
-  applied_date: "",
+  applied_date: currentDate,
   job_id: "",
   interviewPhase: "",
   status: "pending",
@@ -49,7 +51,7 @@ export const AddApplicant = ({
   const [jobs, setJobs] = useState<Job[]>([]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setAddApplicant((prev) => ({ ...prev, [name]: value }));
@@ -72,7 +74,7 @@ export const AddApplicant = ({
       const res = await axios.post(
         `${BASE_URL}/api/admin/addapplicant`,
         payload,
-        { headers: { Authorization: token } }
+        { headers: { Authorization: token } },
       );
 
       toast.success(res.data.message);
@@ -101,20 +103,20 @@ export const AddApplicant = ({
 
   return (
     <div>
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm px-4  flex items-center justify-center z-10">
-        <div className="w-[42rem]   bg-white mx-auto rounded-xl border  border-indigo-900 ">
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm px-4  flex items-center justify-center z-50">
+        <div className="w-[42rem]   bg-white mx-auto rounded-lg border  border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
-            <div className="bg-indigo-900 rounded-t-xl px-6">
+            <div className="bg-indigo-900 rounded-t-lg px-6">
               <Title
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
               >
-                Add Applicant
+                ADD APPLICANT
               </Title>
             </div>
-            <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3  ">
+            <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3  ">
               <InputField
-                labelName="Applicant Name*"
+                labelName="Applicant Name *"
                 placeHolder="Enter the applicant name"
                 type="text"
                 name="applicant_name"
@@ -123,7 +125,7 @@ export const AddApplicant = ({
               />
 
               <InputField
-                labelName="Father Name*"
+                labelName="Father Name *"
                 placeHolder="Enter the  father name"
                 type="text"
                 name="fatherName"
@@ -132,7 +134,7 @@ export const AddApplicant = ({
               />
 
               <InputField
-                labelName="Email*"
+                labelName="Email *"
                 placeHolder="Enter the  email"
                 type="text"
                 name="email"
@@ -141,7 +143,7 @@ export const AddApplicant = ({
               />
 
               <InputField
-                labelName="Contact No*"
+                labelName="Contact No *"
                 placeHolder="Enter 11 digit contact number"
                 type="text"
                 name="applicant_contact"
@@ -158,7 +160,7 @@ export const AddApplicant = ({
               />
 
               <InputField
-                labelName="Applied Date*"
+                labelName="Applied Date *"
                 placeHolder="Enter the date"
                 type="date"
                 name="applied_date"
@@ -190,7 +192,7 @@ export const AddApplicant = ({
               </div>
 
               <InputField
-                labelName="Interview Phase*"
+                labelName="Interview Phase *"
                 placeHolder="Enter the interview phase"
                 type="text"
                 name="interviewPhase"

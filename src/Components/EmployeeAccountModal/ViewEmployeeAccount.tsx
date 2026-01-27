@@ -1,11 +1,10 @@
 import { useEffect, useCallback, useState } from "react";
 import axios from "axios";
-
 import { Title } from "../Title";
 import { Loader } from "../LoaderComponent/Loader";
-
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
+import { FaUser, FaEnvelope, FaPhoneAlt, FaHistory } from "react-icons/fa";
 
 type Props = {
   setModal: () => void;
@@ -36,15 +35,18 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "-";
-    return new Date(dateString).toLocaleDateString("sv-SE");
+    return new Date(dateString).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).replace(/ /g, '-');
   };
 
   const fetchEmployeeAccounts = useCallback(async () => {
-    if (!currentUser || !token) return; // 🔥 REQUIRED
+    if (!currentUser || !token) return;
     if (currentUser.role === "admin" && !employee?.id) return;
 
     setLoading(true);
-
     try {
       const endpoint = isAdmin
         ? `${BASE_URL}/api/admin/getEmployeeAccount/${employee.id}`
@@ -53,7 +55,6 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
       const res = await axios.get(endpoint, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       setAccounts(res.data.accounts || []);
     } catch (error) {
       console.error("Failed to fetch employee account details", error);
@@ -68,175 +69,134 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
 
   if (loading) return <Loader />;
 
-  // return (
-  //   <div className="fixed inset-0 bg-opacity-50 px-4  backdrop-blur-xs flex items-center justify-center z-10">
-  //     <div className="w-[56rem] bg-white rounded border border-indigo-900">
-  //       <div className="bg-indigo-900 rounded px-6">
-  //         <Title
-  //           setModal={setModal}
-  //           className="text-white text-lg font-semibold"
-  //         >
-  //           Employee Account Details
-  //         </Title>
-  //       </div>
-  //       {/* Employee Info */}
-  //       <div className="mx-4 text-sm text-gray-800 space-y-1">
-  //         <p>
-  //           <strong>Name:</strong> {employee.name}
-  //         </p>
-  //         <p>
-  //           <strong>Email:</strong> {employee.email}
-  //         </p>
-  //         <p>
-  //           <strong>Contact:</strong> {employee.contact}
-  //         </p>
-  //       </div>
-
-  //       {/* Account Entries */}
-  //       <div className="mx-2 my-3 max-h-[22rem] overflow-y-auto  overflow-x-hidden border">
-  //         <div className="grid grid-cols-9 bg-indigo-900 items-center text-white font-semibold text-sm p-2 sticky top-0 z-10">
-  //           <span>Sr#</span>
-  //           <span>Ref No</span>
-  //           <span>Debit</span>
-  //           <span>Credit</span>
-  //           <span>Prev Balance</span>
-  //           <span>Balance</span>
-  //           <span>Net Balance</span>
-  //           <span>Payment</span>
-  //           <span>Date</span>
-  //         </div>
-
-  //         {accounts.length === 0 && (
-  //           <p className="text-center text-gray-500 p-3">
-  //             No account records found
-  //           </p>
-  //         )}
-
-  //         {accounts.map((acc, idx) => {
-  //           const previousBalance =
-  //             idx === 0
-  //               ? 0
-  //               : accounts[idx - 1].debit - accounts[idx - 1].credit;
-
-  //           const balance = acc.debit - acc.credit;
-  //           const netBalance = previousBalance - balance;
-
-  //           return (
-  //             <div
-  //               key={acc.id}
-  //               className="grid grid-cols-9 text-sm border-t p-2"
-  //             >
-  //               <span>{idx + 1}</span>
-  //               <span>{acc.refNo || "-"}</span>
-  //               <span>{acc.debit || "-"}</span>
-  //               <span>{acc.credit || "-"}</span>
-  //               <span>{previousBalance}</span>
-  //               <span className="font-medium">{balance}</span>
-  //               <span
-  //                 className={
-  //                   netBalance < 0
-  //                     ? "text-red-600 font-medium"
-  //                     : "text-green-600 font-medium"
-  //                 }
-  //               >
-  //                 {netBalance}
-  //               </span>
-  //               <span>{acc.payment_method}</span>
-  //               <span>{formatDate(acc.payment_date)}</span>
-  //             </div>
-  //           );
-  //         })}
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
-
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-10">
-      <div className="w-full max-w-5xl bg-white rounded border border-indigo-900 overflow-hidden">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
+      <div className="w-full max-w-6xl bg-white rounded-lg overflow-hidden shadow-2xl border border-gray-300">
         {/* Header */}
-        <div className="bg-indigo-900 px-6 py-3">
-          <Title
-            setModal={setModal}
-            className="text-white text-lg font-semibold"
-          >
-            Employee Account Details
-          </Title>
+        <div className="bg-indigo-900 rounded px-4">
+          <div className="text-white">
+            <Title setModal={setModal}>EMPLOYEE ACCOUNT DETAILS</Title>
+          </div>
         </div>
 
-        {/* Employee Info */}
-        <div className="px-6 py-4 text-sm text-gray-800 space-y-1">
-          <p>
-            <strong>Name:</strong> {employee.name}
-          </p>
-          <p>
-            <strong>Email:</strong> {employee.email}
-          </p>
-          <p>
-            <strong>Contact:</strong> {employee.contact}
-          </p>
-        </div>
-
-        {/* Account Entries */}
-        <div className="px-4 pb-4">
-          <div className="overflow-x-auto max-h-[60vh]">
-            <div className="min-w-[900px]">
-              {/* Table Header */}
-              <div className="grid grid-cols-9 bg-indigo-900 text-white font-semibold text-sm p-2 sticky top-0 z-10">
-                <span>Sr#</span>
-                <span>Ref No</span>
-                <span>Debit</span>
-                <span>Credit</span>
-                <span>Prev Balance</span>
-                <span>Balance</span>
-                <span>Net Balance</span>
-                <span>Payment</span>
-                <span>Date</span>
+        <div className="p-4 space-y-6">
+          {/* Section 1: Employee Basic Info */}
+          <div className="border border-gray-200 rounded-md p-4 relative">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+              Employee Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-y-4 pt-2">
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaUser className="text-gray-400" /> Name
+                </label>
+                <p className="text-gray-800 font-medium">{employee.name}</p>
               </div>
-
-              {/* No Records */}
-              {accounts.length === 0 && (
-                <div className="text-gray-500 text-center p-3">
-                  No account records found
-                </div>
-              )}
-
-              {/* Table Body */}
-              {accounts.map((acc, idx) => {
-                const previousBalance =
-                  idx === 0
-                    ? 0
-                    : accounts[idx - 1].debit - accounts[idx - 1].credit;
-                const balance = acc.debit - acc.credit;
-                const netBalance = previousBalance - balance;
-
-                return (
-                  <div
-                    key={acc.id}
-                    className="grid grid-cols-9 text-sm border-t p-2"
-                  >
-                    <span>{idx + 1}</span>
-                    <span className="truncate">{acc.refNo || "-"}</span>
-                    <span>{acc.debit || "-"}</span>
-                    <span>{acc.credit || "-"}</span>
-                    <span>{previousBalance}</span>
-                    <span className="font-medium">{balance}</span>
-                    <span
-                      className={
-                        netBalance < 0
-                          ? "text-red-600 font-medium"
-                          : "text-green-600 font-medium"
-                      }
-                    >
-                      {netBalance}
-                    </span>
-                    <span className="truncate">{acc.payment_method}</span>
-                    <span>{formatDate(acc.payment_date)}</span>
-                  </div>
-                );
-              })}
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaEnvelope className="text-gray-400" /> Email
+                </label>
+                <p className="text-gray-800 font-medium">{employee.email}</p>
+              </div>
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaPhoneAlt className="text-gray-400" /> Contact
+                </label>
+                <p className="text-gray-800 font-medium">{employee.contact}</p>
+              </div>
             </div>
           </div>
+
+          {/* Section 2: Account History Table */}
+          <div className="border border-gray-200 rounded-md p-4 relative">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+              <span className="flex items-center gap-1">
+                <FaHistory /> Transaction History
+              </span>
+            </h3>
+
+            <div className="overflow-x-auto mt-2 max-h-[50vh]">
+              <table className="w-full text-left border-collapse min-w-[800px]">
+                <thead className="sticky top-0 z-50">
+                  <tr className="bg-indigo-900 text-white text-[11px] ">
+                    <th className="p-2  border-indigo-800">Sr#</th>
+                    <th className="p-2  border-indigo-800">Ref No</th>
+                    <th className="p-2  border-indigo-800">Debit</th>
+                    <th className="p-2  border-indigo-800">Credit</th>
+                    <th className="p-2  border-indigo-800">Balance</th>
+                    <th className="p-2  border-indigo-800">Net Balance</th>
+                    <th className="p-2  border-indigo-800">Method</th>
+                    <th className="p-2">Date</th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm">
+                  {accounts.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={8}
+                        className="text-center py-8 text-gray-400 italic"
+                      >
+                        No account records found
+                      </td>
+                    </tr>
+                  ) : (
+                    accounts.map((acc, idx) => {
+                      const previousBalance =
+                        idx === 0
+                          ? 0
+                          : accounts[idx - 1].debit - accounts[idx - 1].credit;
+                      const balance = acc.debit - acc.credit;
+                      const netBalance = previousBalance - balance;
+
+                      return (
+                        <tr
+                          key={acc.id}
+                          className="border-b hover:bg-gray-50 transition-colors"
+                        >
+                          <td className="p-2 text-gray-600 font-semibold">
+                            {idx + 1}
+                          </td>
+                          <td className="p-2 text-gray-800">
+                            {acc.refNo || "-"}
+                          </td>
+                          <td className="p-2 text-blue-600 font-medium">
+                            {acc.debit || 0}
+                          </td>
+                          <td className="p-2 text-orange-600 font-medium">
+                            {acc.credit || 0}
+                          </td>
+                          <td className="p-2 font-bold">{balance}</td>
+                          <td
+                            className={`p-2 font-bold ${netBalance < 0 ? "text-red-600" : "text-green-600"}`}
+                          >
+                            {netBalance}
+                          </td>
+                          <td className="p-2">
+                            <span className="py-0.5 text-[11px] font-bold text-gray-600">
+                              {acc.payment_method}
+                            </span>
+                          </td>
+                          <td className="p-2 text-gray-600">
+                            {formatDate(acc.payment_date)}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Section */}
+        <div className="bg-indigo-900 p-3 flex justify-end">
+          <button
+            onClick={setModal}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-1 px-8 rounded shadow-sm transition-colors"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>

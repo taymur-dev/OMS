@@ -32,6 +32,9 @@ const payment_method = [
   { id: 3, label: "Cash", value: "cash" },
 ];
 
+const currentDate = new Date().toLocaleDateString("en-CA");
+
+
 const initialState = {
   selectEmployee: "",
   employee_name: "",
@@ -40,7 +43,7 @@ const initialState = {
   debit: "",
   credit: "",
   payment_method: "",
-  payment_date: "",
+  payment_date: currentDate,
 };
 
 export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
@@ -134,21 +137,21 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 px-4  backdrop-blur-xs flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-opacity-50 px-4  backdrop-blur-xs flex items-center justify-center z-50">
+      <div className="w-[42rem] bg-white rounded-lg border border-indigo-900">
         <form onSubmit={handleSubmit}>
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded-t-lg px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Add Employee Account
+              ADD EMPLOYEE ACCOUNT
             </Title>
           </div>
 
-          <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
             <UserSelect
-              labelName="Select Employee*"
+              labelName="Select Employee *"
               name="selectEmployee"
               value={form.selectEmployee}
               handlerChange={handlerChange}
@@ -156,23 +159,23 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
             />
 
             <InputField
-              labelName="Employee Name*"
+              labelName="Employee Name *"
               value={form.employee_name}
               readOnly
             />
             <InputField
-              labelName="Employee Contact*"
+              labelName="Employee Contact *"
               value={form.employeeContact}
               readOnly
             />
             <InputField
-              labelName="Employee Email*"
+              labelName="Employee Email *"
               value={form.employeeEmail}
               readOnly
             />
 
             <InputField
-              labelName="Debit"
+              labelName="Debit *"
               name="debit"
               type="number"
               value={form.debit}
@@ -180,7 +183,7 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
             />
 
             <InputField
-              labelName="Credit"
+              labelName="Credit *"
               name="credit"
               type="number"
               value={form.credit}
@@ -188,7 +191,7 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
             />
 
             <OptionField
-              labelName="Payment Method*"
+              labelName="Payment Method *"
               name="payment_method"
               value={form.payment_method}
               handlerChange={handlerChange}
@@ -197,7 +200,7 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
             />
 
             <InputField
-              labelName="Payment Date*"
+              labelName="Payment Date *"
               name="payment_date"
               type="date"
               value={form.payment_date}

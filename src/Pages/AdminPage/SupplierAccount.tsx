@@ -18,6 +18,7 @@ import {
 
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
+import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
@@ -38,7 +39,7 @@ export const SupplierAccount = () => {
 
   const [isOpenModal, setIsOpenModal] = useState<SupplierAccountT>("");
   const [selectedSupplierId, setSelectedSupplierId] = useState<number | null>(
-    null
+    null,
   );
 
   const [pageNo, setPageNo] = useState(1);
@@ -47,7 +48,7 @@ export const SupplierAccount = () => {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
 
   const handleChangeShowData = (
-    event: React.ChangeEvent<HTMLSelectElement>
+    event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setSelectedValue(Number(event.target.value));
     setPageNo(1);
@@ -59,7 +60,7 @@ export const SupplierAccount = () => {
 
   const handleToggleViewModal = (
     type: SupplierAccountT,
-    supplierId?: number
+    supplierId?: number,
   ) => {
     setIsOpenModal((prev) => (prev === type ? "" : type));
     if (supplierId !== undefined) setSelectedSupplierId(supplierId);
@@ -99,244 +100,134 @@ export const SupplierAccount = () => {
 
   if (loader) return <Loader />;
 
-  // return (
-  //   <div className="w-full mx-2">
-  //     <TableTitle
-  //       tileName="Supplier Accounts"
-  //       activeFile="Supplier Accounts list"
-  //     />
-
-  //     <div
-  //       className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900
-  //       bg-white overflow-hidden flex flex-col"
-  //     >
-  //       <div className="flex text-gray-800 items-center justify-between mx-2">
-  //         <span>
-  //           Total number of Supplier Accounts:{" "}
-  //           <span className="text-2xl text-indigo-900 font-semibold font-sans">
-  //             {suppliers.length}
-  //           </span>
-  //         </span>
-
-  //         <CustomButton
-  //           label="Add Account"
-  //           handleToggle={() => handleToggleViewModal("ADD")}
-  //         />
-  //       </div>
-
-  //       <div className="flex items-center justify-between text-gray-800 mx-2">
-  //         <div>
-  //           <span>Show</span>
-  //           <span className="bg-gray-200 rounded mx-1 p-1">
-  //             <select value={selectedValue} onChange={handleChangeShowData}>
-  //               {numbers.map((num) => (
-  //                 <option key={num} value={num}>
-  //                   {num}
-  //                 </option>
-  //               ))}
-  //             </select>
-  //           </span>
-  //           <span>entries</span>
-  //         </div>
-
-  //         <TableInputField
-  //           searchTerm={searchTerm}
-  //           setSearchTerm={setSearchTerm}
-  //         />
-  //       </div>
-
-  //       <div className="max-h-[28.4rem] overflow-y-auto mx-2">
-  //         <div
-  //           className="grid grid-cols-5 bg-indigo-900 text-white font-semibold
-  //           border border-gray-600 text-sm sticky top-0 z-10 p-[10px]"
-  //         >
-  //           <span>Sr#</span>
-  //           <span>Supplier</span>
-  //           <span>Contact#</span>
-  //           <span>Address</span>
-  //           <span className="text-center">Actions</span>
-  //         </div>
-
-  //         {suppliers.length === 0 ? (
-  //           <div className="text-center text-gray-500 p-4 col-span-5">
-  //             No supplier accounts found
-  //           </div>
-  //         ) : (
-  //           suppliers.map((supplier, index) => (
-  //             <div
-  //               key={supplier.supplierId}
-  //               className="grid grid-cols-5 border border-gray-600 text-gray-800
-  //               hover:bg-gray-100 transition duration-200 text-sm items-center p-[7px]"
-  //             >
-  //               <span>{index + 1}</span>
-  //               <span>{supplier.supplierName}</span>
-  //               <span>{supplier.supplierContact}</span>
-  //               <span>{supplier.supplierAddress}</span>
-
-  //               <span className="flex justify-center">
-  //                 <ViewButton
-  //                   handleView={() =>
-  //                     handleToggleViewModal("VIEW", supplier.supplierId)
-  //                   }
-  //                 />
-  //               </span>
-  //             </div>
-  //           ))
-  //         )}
-  //       </div>
-  //     </div>
-
-  //     <div className="flex items-center justify-between mt-2">
-  //       <ShowDataNumber
-  //         start={suppliers.length === 0 ? 0 : 1}
-  //         end={suppliers.length}
-  //         total={suppliers.length}
-  //       />
-
-  //       <Pagination
-  //         handleIncrementPageButton={handleIncrementPageButton}
-  //         handleDecrementPageButton={handleDecrementPageButton}
-  //         pageNo={pageNo}
-  //       />
-  //     </div>
-
-  //     {isOpenModal === "ADD" && (
-  //       <AddSupplierAccount
-  //         setModal={() => handleToggleViewModal("")}
-  //         refreshData={fetchSupplierAccounts}
-  //       />
-  //     )}
-
-  //     {isOpenModal === "VIEW" && selectedSupplierId && (
-  //       <ViewSupplierAcc
-  //         setModal={() => handleToggleViewModal("")}
-  //         supplierId={selectedSupplierId}
-  //       />
-  //     )}
-  //   </div>
-  // );
-
   return (
-  <div className="w-full px-2 sm:px-4">
-    <TableTitle
-      tileName="Supplier Accounts"
-      activeFile="Supplier Accounts list"
-    />
-
-    <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
-      {/* Top Bar */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
-        <span className="text-sm sm:text-base">
-          Total Number of Supplier Accounts:
-          <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
-            {suppliers.length}
-          </span>
-        </span>
-
-        <CustomButton
-          handleToggle={() => handleToggleViewModal("ADD")}
-          label="Add Account"
+    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
+        {/* 1 & 3) Table Title with Add Button */}
+        <TableTitle
+          tileName="Supplier Accounts"
+          rightElement={
+            <CustomButton
+              handleToggle={() => handleToggleViewModal("ADD")}
+              label="+ Add Account"
+            />
+          }
         />
-      </div>
 
-      {/* Filter Row */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
-        <div className="text-sm">
-          <span>Show</span>
-          <span className="bg-gray-200 rounded mx-1 p-1">
-            <select
-              value={selectedValue}
-              onChange={handleChangeShowData}
-              className="bg-transparent outline-none"
-            >
-              {numbers.map((num, index) => (
-                <option key={index} value={num}>
-                  {num}
-                </option>
-              ))}
-            </select>
-          </span>
-          <span>entries</span>
-        </div>
+        <hr className="border border-b border-gray-200" />
 
-        <TableInputField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      </div>
-
-      {/* Table Wrapper */}
-      <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
-        <div className="min-w-[700px]">
-          {/* Table Header */}
-          <div className="grid grid-cols-[0.5fr_1.5fr_1fr_1.5fr_1fr] bg-indigo-900 items-center text-white font-semibold text-sm sticky top-0 z-10 p-2">
-            <span>Sr#</span>
-            <span>Supplier</span>
-            <span>Contact#</span>
-            <span>Address</span>
-            <span className="text-center">Actions</span>
-          </div>
-
-          {/* Table Body */}
-          {suppliers.length === 0 ? (
-            <div className="text-gray-800 text-center py-4">
-              No supplier accounts found
-            </div>
-          ) : (
-            suppliers
-              .slice((pageNo - 1) * selectedValue, pageNo * selectedValue)
-              .map((supplier, index) => (
-                <div
-                  key={supplier.supplierId}
-                  className="grid grid-cols-[0.5fr_1.5fr_1fr_1.5fr_1fr] border items-center border-gray-300 text-gray-800 text-sm p-2 hover:bg-gray-100 transition"
+        <div className="p-2">
+          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
+            {/* Left Side: Show entries */}
+            <div className="text-sm flex items-center">
+              <span>Show</span>
+              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
+                <select
+                  value={selectedValue}
+                  onChange={handleChangeShowData}
+                  className="bg-transparent outline-none py-1 cursor-pointer"
                 >
-                  <span>{(pageNo - 1) * selectedValue + index + 1}</span>
-                  <span className="truncate">{supplier.supplierName}</span>
-                  <span>{supplier.supplierContact}</span>
-                  <span className="truncate">{supplier.supplierAddress}</span>
+                  {numbers.map((num, index) => (
+                    <option key={index} value={num}>
+                      {num}
+                    </option>
+                  ))}
+                </select>
+              </span>
+              <span className="hidden xs:inline">entries</span>
+            </div>
 
-                  <span className="flex flex-wrap items-center justify-center gap-1">
-                    <ViewButton
-                      handleView={() =>
-                        handleToggleViewModal("VIEW", supplier.supplierId)
-                      }
-                    />
-                  </span>
-                </div>
-              ))
-          )}
+            {/* Right Side: Search Input */}
+            <TableInputField
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+            />
+          </div>
+        </div>
+
+        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
+        <div className="overflow-auto px-2">
+          <div className="min-w-[900px]">
+            {/* Sticky Table Header - Using grid-cols-5 to match your data fields */}
+            <div
+              className="grid grid-cols-5 bg-indigo-900 text-white items-center font-semibold
+             text-sm sticky top-0 z-10 p-2"
+            >
+              <span>Sr#</span>
+              <span>Supplier</span>
+              <span>Contact#</span>
+              <span>Address</span>
+              <span className="text-center">Actions</span>
+            </div>
+
+            {/* Table Body */}
+            {suppliers.length === 0 ? (
+              <div className="text-gray-800 text-lg text-center py-10">
+                No records available at the moment!
+              </div>
+            ) : (
+              suppliers
+                .slice((pageNo - 1) * selectedValue, pageNo * selectedValue)
+                .map((supplier, index) => (
+                  <div
+                    key={supplier.supplierId}
+                    className="grid grid-cols-5 border-b border-x border-gray-200 text-gray-800 items-center
+                   text-sm p-2 hover:bg-gray-50 transition"
+                  >
+                    <span>{(pageNo - 1) * selectedValue + index + 1}</span>
+                    <span className="truncate">{supplier.supplierName}</span>
+                    <span>{supplier.supplierContact}</span>
+                    <span className="truncate">{supplier.supplierAddress}</span>
+                    <span className="flex flex-nowrap justify-center gap-1">
+                      <ViewButton
+                        handleView={() =>
+                          handleToggleViewModal("VIEW", supplier.supplierId)
+                        }
+                      />
+                      {/* Placeholder for Edit/Delete if you add them later to match User UI */}
+                    </span>
+                  </div>
+                ))
+            )}
+          </div>
+        </div>
+
+        {/* 4) Pagination placed under the table */}
+        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
+          <ShowDataNumber
+            start={
+              suppliers.length === 0 ? 0 : (pageNo - 1) * selectedValue + 1
+            }
+            end={Math.min(pageNo * selectedValue, suppliers.length)}
+            total={suppliers.length}
+          />
+          <Pagination
+            pageNo={pageNo}
+            handleDecrementPageButton={handleDecrementPageButton}
+            handleIncrementPageButton={handleIncrementPageButton}
+          />
         </div>
       </div>
+
+      {/* --- MODALS SECTION --- */}
+      {isOpenModal === "ADD" && (
+        <AddSupplierAccount
+          setModal={() => handleToggleViewModal("")}
+          refreshData={fetchSupplierAccounts}
+        />
+      )}
+
+      {isOpenModal === "VIEW" && selectedSupplierId && (
+        <ViewSupplierAcc
+          setModal={() => handleToggleViewModal("")}
+          supplierId={selectedSupplierId}
+        />
+      )}
+
+      {/* --- FOOTER SECTION --- */}
+      <div className="border border-t-5 border-gray-200">
+        <Footer />
+      </div>
     </div>
-
-    {/* Pagination */}
-    <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
-      <ShowDataNumber
-        start={suppliers.length === 0 ? 0 : (pageNo - 1) * selectedValue + 1}
-        end={Math.min(pageNo * selectedValue, suppliers.length)}
-        total={suppliers.length}
-      />
-
-      <Pagination
-        pageNo={pageNo}
-        handleDecrementPageButton={handleDecrementPageButton}
-        handleIncrementPageButton={handleIncrementPageButton}
-      />
-    </div>
-
-    {/* Modals */}
-    {isOpenModal === "ADD" && (
-      <AddSupplierAccount
-        setModal={() => handleToggleViewModal("")}
-        refreshData={fetchSupplierAccounts}
-      />
-    )}
-
-    {isOpenModal === "VIEW" && selectedSupplierId && (
-      <ViewSupplierAcc
-        setModal={() => handleToggleViewModal("")}
-        supplierId={selectedSupplierId}
-      />
-    )}
-  </div>
-);
-
-
+  );
 };

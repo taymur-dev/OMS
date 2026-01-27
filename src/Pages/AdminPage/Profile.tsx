@@ -1,131 +1,142 @@
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
-import profileImage from "../../assets/Avatar.png";
 import { useAppSelector } from "../../redux/Hooks";
+import {
+  Mail,
+  CreditCard,
+  Phone,
+  ShieldCheck,
+  LucideIcon,
+  User,
+} from "lucide-react";
+// 1. Import your local asset
+import DefaultAvatar from "../../assets/Avatar.png";
+import { Footer } from "../../Components/Footer"; // Import Footer
+
+interface DetailRowProps {
+  icon: LucideIcon;
+  label: string;
+  value: string | number;
+}
 
 export const Profile = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-  // return (
-  //   <div className="w-full mx-2">
-  //     <TableTitle tileName="Profile" activeFile="View Profile" />
-  //     <div className="h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white ">
-  //       <div className="flex text-gray-800 items-center justify-between  m-2">
-  //         <div className="w-full flex justify-center">
-  //           <div className="bg-white w-full max-w-3xl border border-indigo-900 rounded-lg p-6 shadow-lg mt-12">
-  //             <div className="flex items-center gap-6 bg-indigo-900 p-6 shadow-md rounded-lg">
-  //               <img
-  //                 className="w-24 h-24 rounded-full border-4 border-indigo-900 bg-indigo-900 object-cover"
-  //                 src={profileImage}
-  //                 alt="Profile"
-  //               />
 
-  //               <div className="flex flex-col">
-  //                 <h2 className="text-2xl font-semibold text-white">
-  //                   {currentUser?.name ?? "Guest"}
-  //                 </h2>
-  //                 <h4 className="text-sm text-white">
-  //                   {currentUser?.role ?? "Role"}
-  //                 </h4>
-  //               </div>
-  //             </div>
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
-  //             <div className="mt-6 space-y-4">
-  //               <div className="flex justify-between border-b pb-2">
-  //                 <span className="text-lg font-semibold text-gray-800">
-  //                   Email:
-  //                 </span>
-  //                 <p className="text-gray-600">
-  //                   {currentUser?.email ?? "guest@gmail.com"}
-  //                 </p>
-  //               </div>
-  //               <div className="flex justify-between border-b pb-2">
-  //                 <span className="text-lg font-semibold text-gray-800">
-  //                   CNIC #:
-  //                 </span>
-  //                 <p className="text-gray-600">
-  //                   {currentUser?.cnic ?? "0000-0000000-0"}
-  //                 </p>
-  //               </div>
-  //               <div className="flex justify-between border-b pb-2">
-  //                 <span className="text-lg font-semibold text-gray-800">
-  //                   Contact No:
-  //                 </span>
-  //                 <p className="text-gray-600">
-  //                   {currentUser?.contact ?? "00000000000"}
-  //                 </p>
-  //               </div>
-  //               {/* <div className="flex justify-between border-b pb-2">
-  //                 <span className="text-lg font-semibold text-gray-800">
-  //                   Address:
-  //                 </span>
-  //                 <p className="text-gray-600">
-  //                   {currentUser?.address ??
-  //                     "Jalhan tehsil nowshera virkan district gujranwala..."}
-  //                 </p>
-  //               </div> */}
-  //             </div>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
+  const DetailRow = ({ icon: Icon, label, value }: DetailRowProps) => (
+    <div className="flex flex-col py-4 sm:flex-row sm:items-center sm:justify-between border-b
+     border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors px-2 rounded-lg">
+      <div className="flex items-center gap-3 mb-1 sm:mb-0">
+        <div className="p-2 bg-indigo-50 rounded-lg">
+          <Icon className="w-4 h-4 text-indigo-600" />
+        </div>
+        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+          {label}
+        </span>
+      </div>
+      <p className="text-gray-900 font-semibold sm:text-right break-all ml-11 sm:ml-0">
+        {value}
+      </p>
+    </div>
+  );
 
   return (
-    <div className="w-full px-2 sm:px-4 md:px-6 lg:px-8">
-      <TableTitle tileName="Profile" activeFile="View Profile" />
-      <div className="h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white">
-        <div className="flex flex-col items-center justify-center m-2">
-          <div className="bg-white w-full max-w-md sm:max-w-lg md:max-w-3xl border border-indigo-900 rounded-lg p-4 sm:p-6 md:p-8 shadow-lg mt-8">
-            {/* Profile Header */}
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 bg-indigo-900 p-4 sm:p-6 rounded-lg shadow-md">
-              <img
-                className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-4 border-indigo-900 object-cover"
-                src={profileImage}
-                alt="Profile"
-              />
-              <div className="flex flex-col text-center sm:text-left">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white">
-                  {currentUser?.name ?? "Guest"}
-                </h2>
-                <h4 className="text-sm sm:text-base text-white mt-1">
-                  {currentUser?.role ?? "Role"}
-                </h4>
-              </div>
-            </div>
+    /* flex flex-col min-h-screen ensures the content pushes the footer down */
+    <div className="flex flex-col min-h-screen bg-[#f8f9fa]">
+      <div className="flex-grow w-full px-4 py-6 sm:px-6 lg:px-8">
+        <TableTitle tileName="User Profile" />
+        <hr className="border border-b border-gray-200" />
 
-            {/* Profile Details */}
-            <div className="mt-6 space-y-4">
-              <div className="flex flex-col sm:flex-row justify-between border-b pb-2">
-                <span className="text-lg font-semibold text-gray-800">
-                  Email:
-                </span>
-                <p className="text-gray-600 break-all sm:text-right">
-                  {currentUser?.email ?? "guest@gmail.com"}
-                </p>
+        <div className="max-w-3xl mx-auto mt-10">
+          <div className="bg-white rounded-3xl shadow-xl shadow-indigo-100/50 border border-gray-100 overflow-hidden">
+            <div
+              className="h-32 bg-indigo-900 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))]
+              from-indigo-800 via-indigo-900 to-slate-900"
+            />
+
+            <div className="px-8 pb-10">
+              <div className="relative flex flex-col items-center sm:items-end sm:flex-row gap-6 -mt-16 mb-10">
+                <div className="relative group">
+                  <div
+                    className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-2 border-white
+                   shadow-2xl
+      bg-indigo-900  flex items-center justify-center overflow-hidden"
+                  >
+                    {currentUser?.profileImage ? (
+                      <img
+                        className="w-full h-full object-cover"
+                        src={currentUser.profileImage}
+                        alt="Profile"
+                      />
+                    ) : DefaultAvatar ? (
+                      <img
+                        className="w-full h-full object-cover"
+                        src={DefaultAvatar}
+                        alt="Default Avatar"
+                      />
+                    ) : (
+                      <span className="text-white text-4xl sm:text-5xl font-bold tracking-tighter">
+                        {currentUser?.name ? (
+                          getInitials(currentUser.name)
+                        ) : (
+                          <User size={48} />
+                        )}
+                      </span>
+                    )}
+                  </div>
+
+                  <span className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 border-4 border-white rounded-full shadow-sm"></span>
+                </div>
+
+                <div className="flex-1 text-center sm:text-left mb-2">
+                  <h2 className="text-3xl font-black text-slate-800 tracking-tight">
+                    {currentUser?.name ?? "Guest User"}
+                  </h2>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 mt-2 bg-indigo-50 text-indigo-700
+                   rounded-full text-sm font-bold">
+                    <    ShieldCheck className="w-4 h-4" />
+                    {currentUser?.role ?? "Standard User"}
+                  </div>
+                </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row justify-between border-b pb-2">
-                <span className="text-lg font-semibold text-gray-800">
-                  CNIC #:
-                </span>
-                <p className="text-gray-600 sm:text-right">
-                  {currentUser?.cnic ?? "0000-0000000-0"}
-                </p>
+              <div className="space-y-1">
+                <h3 className="text-sm font-bold text-gray-900 mb-4 px-2">
+                  Account Details
+                </h3>
+                <div className="bg-gray-50/50 rounded-2xl p-2">
+                  <DetailRow
+                    icon={Mail}
+                    label="Email Address"
+                    value={currentUser?.email ?? "Not provided"}
+                  />
+                  <DetailRow
+                    icon={CreditCard}
+                    label="CNIC Number"
+                    value={currentUser?.cnic ?? "00000-0000000-0"}
+                  />
+                  <DetailRow
+                    icon={Phone}
+                    label="Contact"
+                    value={currentUser?.contact ?? "None"}
+                  />
+                </div>
               </div>
-
-              <div className="flex flex-col sm:flex-row justify-between border-b pb-2">
-                <span className="text-lg font-semibold text-gray-800">
-                  Contact No:
-                </span>
-                <p className="text-gray-600 sm:text-right">
-                  {currentUser?.contact ?? "00000000000"}
-                </p>
-              </div>
-
-              
             </div>
           </div>
         </div>
+      </div>
+
+      {/* --- FOOTER SECTION --- */}
+      <div className="mt-auto border-t border-gray-200 bg-white">
+        <Footer />
       </div>
     </div>
   );

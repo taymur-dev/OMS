@@ -19,7 +19,7 @@ const Card = ({
   return (
     <div
       className={`
-        h-full min-h-[110px]
+        h-full min-h-[100px]
         rounded-2xl
         border-1 hover:border-white border-indigo-900 
         bg-white

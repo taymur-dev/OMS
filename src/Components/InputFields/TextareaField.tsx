@@ -18,11 +18,11 @@ export const TextareaField = ({
   return (
     <div>
       <div className="flex flex-col">
-        <label className="text-gray-900 text-xs font-semibold">
+        <label className="text-black text-xs font-semibold">
           {labelName}
         </label>
         <textarea
-          className="rounded bg-white text-gray-800 border-1 border-indigo-900   rounded-lg"
+          className="rounded bg-white text-gray-800 border-1 border-indigo-900 px-2   rounded-lg"
           placeholder={placeHolder}
           onChange={handlerChange}
           name={name}

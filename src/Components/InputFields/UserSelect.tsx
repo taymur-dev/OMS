@@ -24,8 +24,8 @@ export const UserSelect = ({
   disabled,
 }: OptionFieldProps) => {
   return (
-    <div className="flex flex-col mt-3">
-      <label className="text-gray-900 text-xs font-semibold">{labelName}</label>
+    <div className="flex flex-col">
+      <label className="text-black text-xs font-semibold">{labelName}</label>
       <select
         value={value}
         onChange={handlerChange}

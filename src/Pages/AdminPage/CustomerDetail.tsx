@@ -36,6 +36,7 @@ import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
@@ -160,57 +161,58 @@ export const CustomerDetail = () => {
   const paginatedCustomers = filteredCustomers.slice(startIndex, endIndex);
 
   return (
-    <div className="w-full">
-      <TableTitle tileName="Customer" activeFile="Customers list" />
+    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
+        {/* 1 & 3) Table Title with Add Customer button as the rightElement */}
+        <TableTitle
+          tileName="Customer"
+          rightElement={
+            <CustomButton
+              handleToggle={() => handleToggleModal("ADD")}
+              label="+ Add Customer"
+            />
+          }
+        />
 
-      <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mx-2 text-gray-800 gap-2 sm:gap-0 py-2">
-          <span className="text-sm sm:text-base">
-            Total Number of Customers:{" "}
-            <span className="text-2xl text-indigo-900 font-semibold font-sans">
-              [{allCustomers.length}]
-            </span>
-          </span>
+        <hr className="border border-b border-gray-200" />
 
-          <CustomButton
-            label="Add Customer"
-            handleToggle={() => handleToggleModal("ADD")}
-          />
-        </div>
+        <div className="p-2">
+          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
+            {/* Left Side: Show entries */}
+            <div className="text-sm flex items-center">
+              <span>Show</span>
+              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
+                <select
+                  value={selectedValue}
+                  onChange={handleChangeShowData}
+                  className="bg-transparent outline-none py-1 cursor-pointer"
+                >
+                  {numbers.map((num, index) => (
+                    <option key={index} value={num}>
+                      {num}
+                    </option>
+                  ))}
+                </select>
+              </span>
+              <span className="hidden xs:inline">entries</span>
+            </div>
 
-        {/* Controls */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-gray-800 mx-2 gap-2 sm:gap-0 py-2">
-          <div className="flex items-center gap-1 text-sm sm:text-base">
-            <span>Show</span>
-            <select
-              value={selectedValue}
-              onChange={handleChangeShowData}
-              className="bg-gray-200 rounded p-1"
-            >
-              {numbers.map((num, index) => (
-                <option key={index} value={num}>
-                  {num}
-                </option>
-              ))}
-            </select>
-            <span>entries</span>
+            {/* Right Side: Search Input */}
+            <TableInputField
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+            />
           </div>
-
-          <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-          />
         </div>
 
-        {/* Table */}
-        {/* Table */}
-        <div className="flex-1 overflow-x-auto overflow-y-auto mx-2 max-h-[28.4rem]">
-          <div className="min-w-[700px]">
-            {" "}
-            {/* ensures table scrolls on small screens */}
-            {/* Header */}
-            <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1fr] bg-indigo-900 text-white font-semibold border border-gray-600 text-sm sticky top-0 z-10 p-2">
+        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
+        <div className="overflow-auto px-2">
+          <div className="min-w-[900px]">
+            {/* Sticky Table Header - Grid 7 aligned with UserDetails */}
+            <div
+              className="grid grid-cols-7 bg-indigo-900 text-white items-center font-semibold
+             text-sm sticky top-0 z-10 p-2"
+            >
               <span>Sr#</span>
               <span>Customer</span>
               <span>Customer Address</span>
@@ -219,23 +221,26 @@ export const CustomerDetail = () => {
               <span>Company Address</span>
               <span className="text-center">Actions</span>
             </div>
+
+            {/* Table Body */}
             {paginatedCustomers.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-2">
+              <div className="text-gray-800 text-lg text-center py-10">
                 No records available at the moment!
               </div>
             ) : (
               paginatedCustomers.map((customer, index) => (
                 <div
                   key={customer.id}
-                  className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1fr_1fr] border border-gray-600 items-center text-gray-800 hover:bg-gray-100 transition duration-200 text-sm p-[7px]"
+                  className="grid grid-cols-7 border-b border-x border-gray-200 text-gray-800 items-center
+                 text-sm p-2 hover:bg-gray-50 transition"
                 >
                   <span>{startIndex + index + 1}</span>
-                  <span>{customer.customerName}</span>
-                  <span>{customer.customerAddress}</span>
+                  <span className="truncate">{customer.customerName}</span>
+                  <span className="truncate">{customer.customerAddress}</span>
                   <span>{customer.customerContact}</span>
-                  <span>{customer.companyName}</span>
-                  <span>{customer.companyAddress}</span>
-                  <span className="flex items-center justify-center gap-1">
+                  <span className="truncate">{customer.companyName}</span>
+                  <span className="truncate">{customer.companyAddress}</span>
+                  <span className="flex flex-nowrap justify-center gap-1">
                     <EditButton
                       handleUpdate={() => handleUpdateCustomer(customer)}
                     />
@@ -249,29 +254,34 @@ export const CustomerDetail = () => {
             )}
           </div>
         </div>
+
+        {/* 4) Pagination placed under the table */}
+        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between">
+          <ShowDataNumber
+            start={totalNum === 0 ? 0 : startIndex + 1}
+            end={Math.min(endIndex, totalNum)}
+            total={totalNum}
+          />
+          <Pagination
+            pageNo={pageNo}
+            handleDecrementPageButton={() =>
+              setPageNo((prev) => (prev > 1 ? prev - 1 : 1))
+            }
+            handleIncrementPageButton={() =>
+              setPageNo((prev) => (endIndex < totalNum ? prev + 1 : prev))
+            }
+          />
+        </div>
       </div>
 
-      {/* Modals */}
+      {/* --- MODALS SECTION --- */}
       {isOpenModal === "ADD" && (
         <AddCustomer
           setIsOpenModal={() => setIsOpenModal("")}
           handleGetAllCustomers={handleGetAllCustomers}
         />
       )}
-      {isOpenModal === "VIEW" && (
-        <CustomerViewModal
-          setIsOpenModal={() => setIsOpenModal("")}
-          customerDetail={customerDetail}
-        />
-      )}
-      {isOpenModal === "DELETE" && (
-        <ConfirmationModal
-          isOpen={() => setIsOpenModal("DELETE")}
-          onClose={() => setIsOpenModal("")}
-          onConfirm={() => handleDeleteCustomer(catchId)}
-          message="Are you sure you want to delete this Customer?"
-        />
-      )}
+
       {isOpenModal === "UPDATE" && (
         <UpdateCustomer
           setIsOpenModal={() => setIsOpenModal("")}
@@ -280,23 +290,25 @@ export const CustomerDetail = () => {
         />
       )}
 
-      {/* Pagination */}
-      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
-        <ShowDataNumber
-          start={totalNum === 0 ? 0 : startIndex + 1}
-          end={Math.min(endIndex, totalNum)}
-          total={totalNum}
+      {isOpenModal === "VIEW" && (
+        <CustomerViewModal
+          setIsOpenModal={() => setIsOpenModal("")}
+          customerDetail={customerDetail}
         />
+      )}
 
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={() =>
-            setPageNo((prev) => (prev > 1 ? prev - 1 : 1))
-          }
-          handleIncrementPageButton={() =>
-            setPageNo((prev) => (endIndex < totalNum ? prev + 1 : prev))
-          }
+      {isOpenModal === "DELETE" && (
+        <ConfirmationModal
+          isOpen={() => setIsOpenModal("DELETE")}
+          onClose={() => setIsOpenModal("")}
+          onConfirm={() => handleDeleteCustomer(catchId)}
+          message="Are you sure you want to delete this Customer?"
         />
+      )}
+
+      {/* --- FOOTER SECTION --- */}
+      <div className="border border-t-5 border-gray-200">
+        <Footer />
       </div>
     </div>
   );

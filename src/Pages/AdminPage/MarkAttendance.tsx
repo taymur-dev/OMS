@@ -15,6 +15,7 @@ import {
 import axios, { AxiosError } from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { toast } from "react-toastify";
+import { Footer } from "../../Components/Footer";
 
 type AttendanceT = {
   clockIn: string | null;
@@ -22,6 +23,34 @@ type AttendanceT = {
   workingHours: string;
   date: string;
   attendanceStatus?: string;
+};
+
+// 1. Move helper component outside and ensure it returns JSX
+const StatusBadge = ({ status }: { status: string }) => {
+  const getStatusStyles = (status: string) => {
+    switch (status) {
+      case "In Office":
+        return "bg-green-100 text-green-700 border-green-200";
+      case "Late":
+        return "bg-orange-100 text-orange-700 border-orange-200";
+      case "Half Leave":
+        return "bg-yellow-100 text-yellow-700 border-yellow-200";
+      case "Absent":
+        return "bg-red-100 text-red-700 border-red-200";
+      case "Holiday 🎉":
+        return "bg-purple-100 text-purple-700 border-purple-200";
+      default:
+        return "bg-gray-100 text-gray-700 border-gray-200";
+    }
+  };
+
+  return (
+    <span
+      className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusStyles(status)}`}
+    >
+      {status}
+    </span>
+  );
 };
 
 export const MarkAttendance = () => {
@@ -47,33 +76,25 @@ export const MarkAttendance = () => {
     attendanceStatus?: string,
   ) => {
     if (attendanceStatus === "Holiday") return "Holiday 🎉";
-
     const now = new Date();
     if (!clockIn) {
       if (now.getHours() >= ABSENT_HOUR) return "Absent";
       return "Not Marked";
     }
-
     const [clockInHour, clockInMinute] = clockIn.split(":").map(Number);
     const clockInDate = new Date();
     clockInDate.setHours(clockInHour, clockInMinute, 0, 0);
-
     const officeStartDate = new Date();
     officeStartDate.setHours(OFFICE_START_HOUR, 0, 0, 0);
-
     let status = clockInDate > officeStartDate ? "Late" : "In Office";
-
     if (clockOut) {
       const [clockOutHour, clockOutMinute] = clockOut.split(":").map(Number);
       const clockOutDate = new Date();
       clockOutDate.setHours(clockOutHour, clockOutMinute, 0, 0);
-
       const officeEndDate = new Date();
       officeEndDate.setHours(OFFICE_END_HOUR, 0, 0, 0);
-
       if (clockOutDate < officeEndDate) status = "Half Leave";
     }
-
     return status;
   };
 
@@ -82,7 +103,9 @@ export const MarkAttendance = () => {
       try {
         const res = await axios.get(
           `${BASE_URL}/api/admin/getAttendance/${id}`,
-          { headers: { Authorization: `Bearer ${token}` } },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
         );
         setAttendanceTime(res.data);
       } catch (error) {
@@ -99,7 +122,6 @@ export const MarkAttendance = () => {
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
-
       toast.success(res.data.message);
       getAttendance(id);
     } catch (error) {
@@ -136,93 +158,116 @@ export const MarkAttendance = () => {
 
   const isHoliday = attendanceTime?.attendanceStatus === "Holiday";
 
-  return (
-    <div className="w-full max-w-7xl mx-auto p-4 sm:p-6">
-      <TableTitle tileName="Attendance" activeFile="Attendance Page" />
+  // Calculate current status string once for the JSX below
+  const currentStatus = getAttendanceStatus(
+    attendanceTime?.clockIn || null,
+    attendanceTime?.clockOut || null,
+    attendanceTime?.attendanceStatus,
+  );
 
-      <div className="bg-white shadow-lg border-t-4 border-indigo-900 rounded-lg p-4 sm:p-6">
-        {/* Top Info */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 gap-4 sm:gap-0">
-          <div className="flex items-center space-x-3">
-            <FaUserShield className="text-green-500 text-3xl" />
-            <span className="text-xl sm:text-2xl font-semibold">
-              {currentUser?.name}
-            </span>
-          </div>
-          <div className="flex items-center space-x-3">
-            <FaClock className="text-gray-700 text-3xl" />
-            <span className="font-bold text-lg sm:text-2xl">{showTime}</span>
+  return (
+    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray-100 overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
+        <TableTitle tileName="Attendance" />
+        <hr className="border border-b border-gray-200" />
+
+        <div className="p-4">
+          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
+            <div className="flex items-center space-x-3">
+              <FaUserShield className="text-green-500 text-2xl" />
+              <span className="text-lg font-semibold text-gray-800">
+                {currentUser?.name}
+              </span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <FaClock className="text-gray-700 text-xl" />
+              <span className="font-bold text-lg text-indigo-900">
+                {showTime}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Attendance Status */}
-        <div className="mt-6 p-4 sm:p-5 bg-gray-50 rounded-lg text-center">
-          {isHoliday ? (
-            <span className="text-green-600 text-lg sm:text-xl font-semibold">
-              🎉 Today is a Holiday
-            </span>
-          ) : !attendanceTime?.clockOut ? (
-            <div className="flex flex-col sm:flex-row items-center justify-center sm:space-x-2 text-base sm:text-lg font-semibold gap-2 sm:gap-0">
-              {attendanceTime?.clockIn ? (
-                <>
-                  <FaCheckCircle className="text-green-500 text-xl sm:text-2xl" />
-                  <span>
-                    Clocked in at {attendanceTime.clockIn} (
-                    {getAttendanceStatus(
-                      attendanceTime.clockIn,
-                      attendanceTime.clockOut,
-                      attendanceTime.attendanceStatus,
-                    )}
-                    )
-                  </span>
-                </>
-              ) : (
-                <>
-                  <FaExclamationTriangle className="text-yellow-500 text-xl sm:text-2xl" />
-                  <span>
-                    Please mark attendance ({getAttendanceStatus(null, null)})
-                  </span>
-                </>
-              )}
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <div className="min-w-[500px] grid grid-cols-5 gap-4 text-gray-700 bg-gray-100 p-4 rounded-lg text-sm sm:text-base">
-                <span>Clock In</span>
-                <span>Clock Out</span>
-                <span>Working Hours</span>
-                <span>Date</span>
-                <span>Status</span>
-
-                <span>{attendanceTime.clockIn}</span>
-                <span>{attendanceTime.clockOut}</span>
-                <span>{attendanceTime.workingHours}</span>
-                <span>{attendanceTime.date}</span>
-                <span>
-                  {getAttendanceStatus(
-                    attendanceTime.clockIn,
-                    attendanceTime.clockOut,
-                    attendanceTime.attendanceStatus,
-                  )}
+        <div className="overflow-auto px-4 flex-grow">
+          <div className="bg-gray-50 rounded-lg border border-gray-200 p-6 text-center">
+            {isHoliday ? (
+              <div className="py-10 flex flex-col items-center gap-4">
+                <StatusBadge status="Holiday 🎉" />
+                <span className="text-green-600 text-xl font-semibold">
+                  Today is a Holiday
                 </span>
               </div>
+            ) : !attendanceTime?.clockOut ? (
+              <div className="flex flex-col items-center justify-center space-y-4 py-10 text-lg font-semibold">
+                {attendanceTime?.clockIn ? (
+                  <>
+                    <FaCheckCircle className="text-green-500 text-4xl" />
+                    <span className="text-gray-800">
+                      Clocked in at {attendanceTime.clockIn}
+                    </span>
+                    <StatusBadge status={currentStatus} />
+                  </>
+                ) : (
+                  <>
+                    <FaExclamationTriangle className="text-yellow-500 text-4xl" />
+                    <span className="text-gray-600">
+                      Please mark attendance
+                    </span>
+                    <StatusBadge status={currentStatus} />
+                  </>
+                )}
+              </div>
+            ) : (
+              <div className="overflow-x-auto my-4">
+                <div className="min-w-[600px]">
+                  <div className="grid grid-cols-5 bg-indigo-900 text-white items-center font-semibold text-sm p-2 rounded-t-md">
+                    <span>Clock In</span>
+                    <span>Clock Out</span>
+                    <span>Working Hours</span>
+                    <span>Date</span>
+                    <span>Status</span>
+                  </div>
+                  <div className="grid grid-cols-5 border-b border-x border-gray-200 text-gray-800 items-center text-sm p-3 bg-white">
+                    <span>{attendanceTime.clockIn}</span>
+                    <span>{attendanceTime.clockOut}</span>
+                    <span>{attendanceTime.workingHours}</span>
+                    <span>
+                      {new Date(attendanceTime.date)
+                        .toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })
+                        .replace(/ /g, "-")}
+                    </span>
+                    <div className="flex justify-center">
+                      <StatusBadge status={currentStatus} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="mt-8 max-w-md mx-auto">
+              <button
+                disabled={isHoliday}
+                className={`w-full px-6 py-3 rounded-lg text-lg font-semibold transition-all active:scale-95
+              ${
+                isHoliday
+                  ? "bg-gray-300 cursor-not-allowed text-gray-500"
+                  : "bg-indigo-900 hover:bg-indigo-800 text-white shadow-md"
+              }`}
+                onClick={() => handleMarkAttendance(userId)}
+              >
+                {attendanceTime?.clockIn ? "🔴 Clock Out" : "🟢 Clock In"}
+              </button>
             </div>
-          )}
+          </div>
         </div>
 
-        {/* Action Button */}
-        <button
-          disabled={isHoliday}
-          className={`mt-6 w-full px-6 py-3 rounded-lg text-lg font-semibold 
-          ${
-            isHoliday
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-indigo-900 hover:bg-indigo-800 text-white"
-          }`}
-          onClick={() => handleMarkAttendance(userId)}
-        >
-          {attendanceTime?.clockIn ? "🔴 Clock Out" : "🟢 Clock In"}
-        </button>
+        <div className="mt-auto border-t border-gray-200">
+          <Footer />
+        </div>
       </div>
     </div>
   );

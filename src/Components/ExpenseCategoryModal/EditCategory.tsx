@@ -53,21 +53,21 @@ export const EditCategory = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div className="w-[42rem] bg-white rounded-lg border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Edit Expense Category
+              EDIT EXPENSE CATEGORY
             </Title>
           </div>
 
           <div className="mx-2 py-4">
             <InputField
-              labelName="Expense Category*"
+              labelName="Expense Category *"
               name="expenseCategory"
               value={updateCategory.expenseCategory}
               handlerChange={handlerChange}

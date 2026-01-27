@@ -44,7 +44,7 @@ export const UpdateProject = ({
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setUpdateProject({ ...updateProject, [name]: value } as AllProjectT);
@@ -73,7 +73,7 @@ export const UpdateProject = ({
       const res = await axios.put(
         `${BASE_URL}/api/admin/updateProject/${updateProject.id}`,
         updateProject,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       if (res.status === 200) {
@@ -88,7 +88,7 @@ export const UpdateProject = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm px-4  flex items-center justify-center z-50">
-      <div className="w-full max-w-3xl bg-white rounded-xl shadow-xl border border-indigo-900 overflow-hidden">
+      <div className="w-full max-w-3xl bg-white rounded-lg shadow-xl border border-indigo-900 overflow-hidden">
         <form onSubmit={handlerSubmitted}>
           {/* Header */}
           <div className="bg-indigo-900 px-6">
@@ -96,14 +96,14 @@ export const UpdateProject = ({
               setModal={setModal}
               className="text-white text-xl font-semibold"
             >
-              Edit Project
+              EDIT PROJECT
             </Title>
           </div>
 
           {/* Form Body */}
-          <div className="p-6 grid grid-cols-2 md:grid-cols-2 sm:grid-cols-2 gap-6">
+          <div className="p-6 grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-6">
             <OptionField
-              labelName="Project Category*"
+              labelName="Project Category *"
               name="projectCategory"
               value={updateProject?.projectCategory ?? ""}
               handlerChange={handlerChange}
@@ -116,7 +116,7 @@ export const UpdateProject = ({
             />
 
             <InputField
-              labelName="Project Name*"
+              labelName="Project Name *"
               placeHolder="Enter the Project Name"
               type="text"
               name="projectName"
@@ -125,7 +125,7 @@ export const UpdateProject = ({
             />
 
             <InputField
-              labelName="Start Date*"
+              labelName="Start Date *"
               placeHolder="Select Start Date"
               type="date"
               name="startDate"
@@ -134,7 +134,7 @@ export const UpdateProject = ({
             />
 
             <InputField
-              labelName="End Date*"
+              labelName="End Date *"
               placeHolder="Select End Date"
               type="date"
               name="endDate"
@@ -151,7 +151,7 @@ export const UpdateProject = ({
             />
 
             <OptionField
-              labelName="Completion Status*"
+              labelName="Completion Status *"
               name="completionStatus"
               value={updateProject?.completionStatus ?? "New"}
               handlerChange={handlerChange}

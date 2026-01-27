@@ -23,7 +23,7 @@ export const InputField = ({
   return (
     <div>
       <div className="flex flex-col">
-        <label className="text-gray-900 text-xs font-semibold">
+        <label className="text-black text-xs font-semibold">
           {labelName}
         </label>
         <input

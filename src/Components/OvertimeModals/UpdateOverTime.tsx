@@ -116,7 +116,7 @@ export const UpdateOverTime = ({
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -140,7 +140,7 @@ export const UpdateOverTime = ({
         payload,
         {
           headers: { Authorization: `Bearer ${currentUser?.token}` },
-        }
+        },
       );
 
       toast.success("Overtime updated successfully!");
@@ -156,7 +156,7 @@ export const UpdateOverTime = ({
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex px-4  items-center justify-center z-50">
-      <div className="w-[42rem] max-h-[85vh] bg-white rounded-xl border border-indigo-300 shadow-xl overflow-hidden">
+      <div className="w-[42rem] max-h-[85vh] bg-white rounded-lg border border-indigo-300 shadow-xl overflow-hidden">
         {currentUser?.role !== "admin" ? (
           <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
             <p className="text-red-600 font-semibold text-lg">
@@ -173,19 +173,20 @@ export const UpdateOverTime = ({
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col">
             {/* Header */}
-            <div className="bg-indigo-900 rounded-t-xl px-6">
+            <div className="bg-indigo-900 rounded-t-lg px-6">
               <Title
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
               >
-                Update OverTime
+                EDIT OVERTIME
               </Title>
             </div>
 
             {/* Body */}
-            <div className="px-6 py-5 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-x-5 gap-y-4 overflow-y-auto">
+            {/* Body */}
+            <div className="mx-2 p-6 grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
               <UserSelect
-                labelName="Employee*"
+                labelName="Employee *"
                 name="employeeId"
                 value={formData.employeeId}
                 handlerChange={handleChange}
@@ -193,7 +194,7 @@ export const UpdateOverTime = ({
               />
 
               <InputField
-                labelName="Date*"
+                labelName="Date *"
                 type="date"
                 name="date"
                 value={formData.date}
@@ -201,7 +202,7 @@ export const UpdateOverTime = ({
               />
 
               <InputField
-                labelName="Overtime Hours*"
+                labelName="Overtime Hours *"
                 name="time"
                 value={formData.time}
                 handlerChange={handleChange}
@@ -216,10 +217,10 @@ export const UpdateOverTime = ({
                 inital="Pending"
               />
 
-              {/* Full width textarea */}
-              <div className="col-span-2">
+              {/* Responsive Full width textarea */}
+              <div className="md:col-span-2">
                 <TextareaField
-                  labelName="Description*"
+                  labelName="Description *"
                   name="description"
                   inputVal={formData.description}
                   handlerChange={handleChange}

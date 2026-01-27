@@ -131,23 +131,23 @@ export const AddOverTime = ({
     }));
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50">
+      <div className="w-[42rem] bg-white rounded-lg border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
 
-           <div className="bg-indigo-900 rounded-t-xl px-6">
+           <div className="bg-indigo-900 rounded-t-lg px-6">
               <Title
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
               >
-                Add OverTime
+                ADD OVERTIME
               </Title>
             </div>
 
-          <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-5 space-y-2">
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-5 space-y-2">
             {isAdmin && (
               <UserSelect
-                labelName="Employee*"
+                labelName="Employee *"
                 name="employee_id"
                 value={addOvertime.employee_id}
                 handlerChange={handlerChange}
@@ -156,7 +156,7 @@ export const AddOverTime = ({
             )}
 
             <InputField
-              labelName="Date*"
+              labelName="Date *"
               type="date"
               name="date"
               value={addOvertime.date}
@@ -164,14 +164,14 @@ export const AddOverTime = ({
             />
 
             <InputField
-              labelName="Overtime (HH:MM:SS)*"
+              labelName="Overtime (HH:MM:SS) *"
               name="time"
               value={addOvertime.time}
               handlerChange={handlerChange}
             />
 
             <TextareaField
-              labelName="Description*"
+              labelName="Description *"
               name="description"
               inputVal={addOvertime.description}
               handlerChange={handlerChange}

@@ -174,22 +174,22 @@ export const AddPromotion = ({
     : [];
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50">
+      <div className="w-[42rem] bg-white rounded-lg border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded-t-lg px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Add Employee Promotion
+              ADD PROMOTION REQUEST
             </Title>
           </div>
 
-          <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
             {isAdmin && (
               <UserSelect
-                labelName="Select Employee*"
+                labelName="Select Employee *"
                 name="id"
                 handlerChange={handlerChange}
                 optionData={userOptions}
@@ -198,7 +198,7 @@ export const AddPromotion = ({
             )}
 
             <InputField
-              labelName="Current Designation*"
+              labelName="Current Designation *"
               placeHolder="Current Designation"
               type="text"
               name="current_designation"
@@ -208,7 +208,7 @@ export const AddPromotion = ({
             />
 
             <InputField
-              labelName="Requested Designation*"
+              labelName="Requested Designation *"
               placeHolder="Enter requested designation"
               type="text"
               name="requested_designation"
@@ -217,7 +217,7 @@ export const AddPromotion = ({
             />
 
             <InputField
-              labelName="Date*"
+              labelName="Date *"
               placeHolder="Select Date"
               type="date"
               name="date"
@@ -226,7 +226,7 @@ export const AddPromotion = ({
             />
 
             <TextareaField
-              labelName="Note*"
+              labelName="Note *"
               placeHolder="Write promotion reason"
               handlerChange={handlerChange}
               name="note"

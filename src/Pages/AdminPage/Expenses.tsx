@@ -19,6 +19,8 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
+import { Footer } from "../../Components/Footer";
+
 
 type EXPENSET = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
@@ -105,302 +107,136 @@ export const Expenses = () => {
 
   if (loader) return <Loader />;
 
-  // return (
-  //   <div className="w-full mx-2">
-  //     <TableTitle tileName="Expenses" activeFile="Expenses list" />
+ 
+return (
+  <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
+      {/* 1 & 3) Table Title with Add Expense button as the rightElement */}
+      <TableTitle
+        tileName="Manage Expenses"
+        rightElement={
+          <CustomButton
+            handleToggle={() => handleToggleViewModal("ADD")}
+            label="+ Add Expense"
+          />
+        }
+      />
 
-  //     <div
-  //       className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white
-  // overflow-hidden flex flex-col"
-  //     >
-  //       <div className="flex items-center justify-between mx-2 py-2">
-  //         <span>
-  //           Total number of Expense:{" "}
-  //           <span className="text-2xl text-indigo-900 font-semibold">
-  //             {totalRecords}
-  //           </span>
-  //         </span>
+      <hr className="border border-b border-gray-200" />
 
-  //         <CustomButton
-  //           label="Add Expense"
-  //           handleToggle={() => handleToggleViewModal("ADD")}
-  //         />
-  //       </div>
+      <div className="p-2">
+        <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
+          {/* Left Side: Show entries */}
+          <div className="text-sm flex items-center">
+            <span>Show</span>
+            <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
+              <select
+                value={limit}
+                onChange={(e) => {
+                  setLimit(Number(e.target.value));
+                  setPageNo(1);
+                }}
+                className="bg-transparent outline-none py-1 cursor-pointer"
+              >
+                {pageSizes.map((num) => (
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
+                ))}
+              </select>
+            </span>
+            <span className="hidden xs:inline">entries</span>
+          </div>
 
-  //       <div className="flex items-center justify-between mx-2 py-2">
-  //         <div>
-  //           Show{" "}
-  //           <select
-  //             className="mx-2 p-1 border rounded"
-  //             value={limit}
-  //             onChange={(e) => {
-  //               setLimit(Number(e.target.value));
-  //               setPageNo(1);
-  //             }}
-  //           >
-  //             {pageSizes.map((num) => (
-  //               <option key={num} value={num}>
-  //                 {num}
-  //               </option>
-  //             ))}
-  //           </select>
-  //           entries
-  //         </div>
-
-  //         <TableInputField
-  //           searchTerm={searchTerm}
-  //           setSearchTerm={setSearchTerm}
-  //         />
-  //       </div>
-
-  //       <div className="flex-1 mx-2">
-  //         <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] bg-indigo-900 text-white font-semibold p-2 sticky top-0">
-  //           <span>Sr#</span>
-  //           <span>Expense Name</span>
-  //           <span>Category</span>
-  //           <span>Amount</span>
-  //           <span>Added By</span>
-  //           <span className="text-center">Actions</span>
-  //         </div>
-
-  //         {filteredExpenses.map((expense, index) => (
-  //           <div
-  //             key={expense.id}
-  //             className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] border p-2 hover:bg-gray-100 text-sm"
-  //           >
-  //             <span>{(pageNo - 1) * limit + index + 1}</span>
-  //             <span>{expense.expenseName}</span>
-  //             <span>{expense.categoryName}</span>
-  //             <span>{expense.amount}</span>
-  //             <span>{expense.addedBy}</span>
-
-  //             <span className="flex gap-1 justify-center">
-  //               <EditButton
-  //                 handleUpdate={() => {
-  //                   setEditExpense(expense);
-  //                   handleToggleViewModal("EDIT");
-  //                 }}
-  //               />
-  //               <ViewButton
-  //                 handleView={() => {
-  //                   setViewExpense(expense);
-  //                   handleToggleViewModal("VIEW");
-  //                 }}
-  //               />
-  //               <DeleteButton
-  //                 handleDelete={() => {
-  //                   setViewExpense(expense);
-  //                   handleToggleViewModal("DELETE");
-  //                 }}
-  //               />
-  //             </span>
-  //           </div>
-  //         ))}
-
-  //         {filteredExpenses.length > 0 && (
-  //           <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] border-t-2 bg-gray-100 font-semibold p-2 text-sm">
-  //             <span></span>
-  //             <span></span>
-  //             <span className="text-right">Total Expense:</span>
-  //             <span className="text-blue-500">
-  //               {totalExpenseAmount.toLocaleString()}
-  //             </span>
-  //             <span></span>
-  //             <span></span>
-  //           </div>
-  //         )}
-  //       </div>
-  //     </div>
-
-  //     <div className="flex items-center justify-between mt-3">
-  //       <ShowDataNumber
-  //         start={(pageNo - 1) * limit + 1}
-  //         end={Math.min(pageNo * limit, totalRecords)}
-  //         total={totalRecords}
-  //       />
-
-  //       <Pagination
-  //         pageNo={pageNo}
-  //         handleIncrementPageButton={handleIncrementPageButton}
-  //         handleDecrementPageButton={handleDecrementPageButton}
-  //       />
-  //     </div>
-
-  //     {isOpenModal === "ADD" && (
-  //       <AddExpense
-  //         setModal={() => {
-  //           handleToggleViewModal("");
-  //           getAllExpenses();
-  //         }}
-  //       />
-  //     )}
-
-  //     {isOpenModal === "EDIT" && (
-  //       <EditExpense
-  //         setModal={() => setIsOpenModal("")}
-  //         editExpense={editExpense}
-  //       />
-  //     )}
-
-  //     {isOpenModal === "VIEW" && (
-  //       <ViewExpense
-  //         viewExpense={viewExpense}
-  //         setIsOpenModal={() => handleToggleViewModal("")}
-  //       />
-  //     )}
-
-  //     {isOpenModal === "DELETE" && (
-  //       <ConfirmationModal
-  //         isOpen={() => {}}
-  //         onClose={() => handleToggleViewModal("")}
-  //         onConfirm={async () => {
-  //           if (!viewExpense) return;
-  //           await axios.delete(
-  //             `${BASE_URL}/api/admin/deleteExpense/${viewExpense.id}`,
-  //             { headers: { Authorization: `Bearer ${token}` } }
-  //           );
-  //           handleToggleViewModal("");
-  //           getAllExpenses();
-  //         }}
-  //       />
-  //     )}
-  //   </div>
-  // );
-
-   return (
-  <div className="w-full px-2 sm:px-4">
-    <TableTitle tileName="Expenses" activeFile="Expenses list" />
-
-    <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
-      {/* Top Bar */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
-        <span className="text-sm sm:text-base">
-          Total Number of Expenses:
-          <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
-            [{totalRecords}]
-          </span>
-        </span>
-
-        <CustomButton
-          handleToggle={() => handleToggleViewModal("ADD")}
-          label="Add Expense"
-        />
-      </div>
-
-      {/* Filter Row */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
-        <div className="text-sm">
-          <span>Show</span>
-          <span className="bg-gray-200 rounded mx-1 p-1">
-            <select
-              value={limit}
-              onChange={(e) => {
-                setLimit(Number(e.target.value));
-                setPageNo(1);
-              }}
-              className="bg-transparent outline-none"
-            >
-              {pageSizes.map((num) => (
-                <option key={num} value={num}>
-                  {num}
-                </option>
-              ))}
-            </select>
-          </span>
-          <span>entries</span>
+          {/* Right Side: Search Input */}
+          <TableInputField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </div>
-
-        <TableInputField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       </div>
 
-      {/* Table Wrapper */}
-      <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
+      {/* --- MIDDLE SECTION (Scrollable Table) --- */}
+      <div className="overflow-auto px-2">
         <div className="min-w-[900px]">
-          {/* Table Header */}
-          <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] items-center bg-indigo-900 text-white font-semibold text-sm sticky top-0 z-10 p-2">
+          {/* Sticky Table Header */}
+          <div
+            className="grid grid-cols-5 bg-indigo-900 text-white items-center font-semibold
+             text-sm sticky top-0 z-10 p-2"
+          >
             <span>Sr#</span>
             <span>Expense Name</span>
             <span>Category</span>
             <span>Amount</span>
-            <span>Added By</span>
             <span className="text-center">Actions</span>
           </div>
 
           {/* Table Body */}
           {filteredExpenses.length === 0 ? (
-            <div className="text-gray-800 text-lg text-center py-4">
+            <div className="text-gray-800 text-lg text-center py-10">
               No records available at the moment!
             </div>
           ) : (
-            filteredExpenses.map((expense, index) => (
-              <div
-                key={expense.id}
-                className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] border items-center border-gray-300 text-gray-800 text-sm p-2 hover:bg-gray-100 transition"
-              >
-                <span>{(pageNo - 1) * limit + index + 1}</span>
-                <span className="truncate">{expense.expenseName}</span>
-                <span className="truncate">{expense.categoryName}</span>
-                <span>{expense.amount}</span>
-                <span>{expense.addedBy}</span>
-
-                {/* Actions */}
-                <span className="flex flex-wrap items-center justify-center gap-1">
-                  <EditButton
-                    handleUpdate={() => {
-                      setEditExpense(expense);
-                      handleToggleViewModal("EDIT");
-                    }}
-                  />
-                  <ViewButton
-                    handleView={() => {
-                      setViewExpense(expense);
-                      handleToggleViewModal("VIEW");
-                    }}
-                  />
-                  <DeleteButton
-                    handleDelete={() => {
-                      setViewExpense(expense);
-                      handleToggleViewModal("DELETE");
-                    }}
-                  />
-                </span>
+            <>
+              {filteredExpenses.map((expense, index) => (
+                <div
+                  key={expense.id}
+                  className="grid grid-cols-5 border-b border-x border-gray-200 text-gray-800 items-center
+                   text-sm p-2 hover:bg-gray-50 transition"
+                >
+                  <span>{(pageNo - 1) * limit + index + 1}</span>
+                  <span className="truncate">{expense.expenseName}</span>
+                  <span className="truncate">{expense.categoryName}</span>
+                  <span className="font-medium">{expense.amount.toLocaleString()}</span>
+                  <span className="flex flex-nowrap justify-center gap-1">
+                    <EditButton
+                      handleUpdate={() => {
+                        setEditExpense(expense);
+                        handleToggleViewModal("EDIT");
+                      }}
+                    />
+                    <ViewButton
+                      handleView={() => {
+                        setViewExpense(expense);
+                        handleToggleViewModal("VIEW");
+                      }}
+                    />
+                    <DeleteButton
+                      handleDelete={() => {
+                        setViewExpense(expense);
+                        handleToggleViewModal("DELETE");
+                      }}
+                    />
+                  </span>
+                </div>
+              ))}
+              
+              {/* Total Row aligned to grid */}
+              <div className="grid grid-cols-7 border-b border-x border-gray-200 bg-indigo-50 font-bold text-indigo-900 items-center text-sm p-2">
+                <span></span>
+                <span></span>
+                <span className="text-right pr-2">Total:</span>
+                <span>{totalExpenseAmount.toLocaleString()}</span>
+                <span className="col-span-3"></span>
               </div>
-            ))
-          )}
-
-          {/* Total Row */}
-          {filteredExpenses.length > 0 && (
-            <div className="grid grid-cols-[0.5fr_1fr_1fr_1fr_1fr_1.5fr] border-t-2 bg-gray-100 font-semibold p-2 text-sm">
-              <span></span>
-              <span></span>
-              <span className="text-right">Total Expense:</span>
-              <span className="text-blue-500">
-                {totalExpenseAmount.toLocaleString()}
-              </span>
-              <span></span>
-              <span></span>
-            </div>
+            </>
           )}
         </div>
       </div>
+
+      {/* 4) Pagination placed under the table */}
+      <div className="p-2 flex flex-row items-center justify-between">
+        <ShowDataNumber
+          start={totalRecords === 0 ? 0 : (pageNo - 1) * limit + 1}
+          end={Math.min(pageNo * limit, totalRecords)}
+          total={totalRecords}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
+      </div>
     </div>
 
-    {/* Pagination */}
-    <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
-      <ShowDataNumber
-        start={totalRecords === 0 ? 0 : (pageNo - 1) * limit + 1}
-        end={Math.min(pageNo * limit, totalRecords)}
-        total={totalRecords}
-      />
-
-      <Pagination
-        pageNo={pageNo}
-        handleDecrementPageButton={handleDecrementPageButton}
-        handleIncrementPageButton={handleIncrementPageButton}
-      />
-    </div>
-
-    {/* Modals */}
+    {/* --- MODALS SECTION --- */}
     {isOpenModal === "ADD" && (
       <AddExpense
         setModal={() => {
@@ -411,7 +247,10 @@ export const Expenses = () => {
     )}
 
     {isOpenModal === "EDIT" && (
-      <EditExpense setModal={() => setIsOpenModal("")} editExpense={editExpense} />
+      <EditExpense 
+        setModal={() => handleToggleViewModal("")} 
+        editExpense={editExpense} 
+      />
     )}
 
     {isOpenModal === "VIEW" && (
@@ -436,7 +275,11 @@ export const Expenses = () => {
         }}
       />
     )}
+
+    {/* --- FOOTER SECTION --- */}
+    <div className="border border-t-5 border-gray-200">
+      <Footer />
+    </div>
   </div>
 );
-
 };

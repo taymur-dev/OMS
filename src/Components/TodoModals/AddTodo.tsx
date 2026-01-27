@@ -78,7 +78,7 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
   }, [getAllUsers]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setAddTodo((prev) => ({ ...prev, [name]: value }));
@@ -125,22 +125,22 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
     }));
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center px-4  justify-center z-10">
-      <div className="w-[42rem] max-h-[28rem] bg-white rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center px-4  justify-center z-50">
+      <div className="w-[42rem] max-h-[28rem] bg-white rounded-lg border border-indigo-900">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Add Todo
+              ADD TODO
             </Title>
           </div>
 
-          <div className="mx-2 flex flex-col  py-2 gap-3">
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2  py-2 gap-3">
             {isAdmin && (
               <UserSelect
-                labelName="Employees*"
+                labelName="Employees *"
                 name="employee_id"
                 value={addTodo.employee_id}
                 handlerChange={handleChange}
@@ -149,42 +149,42 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
             )}
 
             <InputField
-              labelName="Task*"
+              labelName="Task *"
               name="task"
               value={addTodo.task}
               handlerChange={handleChange}
             />
 
             <InputField
-              labelName="Note*"
+              labelName="Note *"
               name="note"
               value={addTodo.note}
               handlerChange={handleChange}
             />
+          </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-4 lg:ml-20">
-              <InputField
-                labelName="Start Date*"
-                name="startDate"
-                type="date"
-                value={addTodo.startDate}
-                handlerChange={handleChange}
-              />
-              <InputField
-                labelName="End Date*"
-                name="endDate"
-                type="date"
-                value={addTodo.endDate}
-                handlerChange={handleChange}
-              />
-              <InputField
-                labelName="Deadline*"
-                name="deadline"
-                type="date"
-                value={addTodo.deadline}
-                handlerChange={handleChange}
-              />
-            </div>
+          <div className="flex flex-wrap justify-center gap-4 py-2 ">
+            <InputField
+              labelName="Start Date *"
+              name="startDate"
+              type="date"
+              value={addTodo.startDate}
+              handlerChange={handleChange}
+            />
+            <InputField
+              labelName="End Date *"
+              name="endDate"
+              type="date"
+              value={addTodo.endDate}
+              handlerChange={handleChange}
+            />
+            <InputField
+              labelName="Deadline *"
+              name="deadline"
+              type="date"
+              value={addTodo.deadline}
+              handlerChange={handleChange}
+            />
           </div>
 
           <div className="flex justify-end gap-3 px-4 py-3 rounded-b-xl bg-indigo-900  border-t border-indigo-900">

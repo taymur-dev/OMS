@@ -125,21 +125,21 @@ export const UpdatePromotion = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50">
+      <div className="w-[42rem] bg-white rounded-lg border border-indigo-900">
         <form onSubmit={handleSubmit}>
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded-t-lg px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Edit Employee Promotion
+              EDIT PROMOTION REQUEST
             </Title>
           </div>
 
-          <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
             <InputField
-              labelName="Current Designation*"
+              labelName="Current Designation *"
               name="current_designation"
               value={promotion.current_designation}
               handlerChange={handleChange}
@@ -148,7 +148,7 @@ export const UpdatePromotion = ({
             />
 
             <InputField
-              labelName="Requested Designation*"
+              labelName="Requested Designation *"
               name="requested_designation"
               value={promotion.requested_designation}
               handlerChange={handleChange}
@@ -157,7 +157,7 @@ export const UpdatePromotion = ({
             />
 
             <InputField
-              labelName="Date*"
+              labelName="Date *"
               name="date"
               type="date"
               value={promotion.date}
@@ -165,7 +165,7 @@ export const UpdatePromotion = ({
             />
 
             <TextareaField
-              labelName="Note*"
+              labelName="Note *"
               name="note"
               inputVal={promotion.note}
               handlerChange={handleChange}

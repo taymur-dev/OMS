@@ -1,4 +1,11 @@
 import { Title } from "../Title";
+import {
+  FaBox,
+  FaTag,
+  FaFileAlt,
+  FaCalendarAlt,
+  FaCheckCircle,
+} from "react-icons/fa";
 
 export type AssetDetailT = {
   asset_name: string;
@@ -13,66 +20,103 @@ type ViewAssetProps = {
 };
 
 export const ViewAsset = ({ setIsOpenModal, viewAsset }: ViewAssetProps) => {
+  if (!viewAsset) return null;
+
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
-      <div className="w-full flex justify-center">
-        <div className="bg-white w-full max-w-3xl border border-indigo-900 rounded-lg p-6 shadow-lg">
-          {/* Title */}
-          <div className="bg-indigo-900 rounded">
-            <Title
-              setModal={setIsOpenModal}
-              className="text-white text-lg font-semibold"
-            >
-              Asset Details
-            </Title>
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
+      <div className="w-full max-w-4xl bg-white rounded-lg overflow-hidden shadow-2xl border border-gray-300">
+        {/* Header Section */}
+        <div className="bg-indigo-900 rounded px-4">
+          <div className="text-white">
+            <Title setModal={setIsOpenModal}>VIEW ASSET</Title>
           </div>
+        </div>
 
-          {/* Asset Details */}
-          <div className="mt-6 space-y-4">
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">
-                Category Name:
-              </span>
-              <p className="text-gray-600">{viewAsset?.category_name || "-"}</p>
-            </div>
-
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">
-                Asset Name:
-              </span>
-              <p className="text-gray-600">{viewAsset?.asset_name || "-"}</p>
-            </div>
-
-            {viewAsset?.description && (
-              <div className="flex justify-between border-b pb-2">
-                <span className="text-lg font-semibold text-gray-800">
-                  Description:
-                </span>
-                <p className="text-gray-600 text-right max-w-[60%]">
-                  {viewAsset.description}
+        <div className="p-4 space-y-4">
+          {/* Section 1: Core Information */}
+          <div className="border border-gray-200 rounded-md p-4 relative">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+              Core Information
+            </h3>
+            <div className="grid grid-cols-2 gap-y-4 pt-2">
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaBox className="text-gray-400" /> Asset Name
+                </label>
+                <p className="text-gray-800 font-medium">
+                  {viewAsset.asset_name}
                 </p>
               </div>
-            )}
-
-            {viewAsset?.date && (
-              <div className="flex justify-between border-b pb-2">
-                <span className="text-lg font-semibold text-gray-800">
-                  Date:
-                </span>
-                <p className="text-gray-600">{viewAsset.date.slice(0, 10)}</p>
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaTag className="text-gray-400" /> Category
+                </label>
+                <p className="text-gray-800 font-medium">
+                  {viewAsset.category_name}
+                </p>
               </div>
-            )}
-
-            {/* Optional Status (matches Project UI feel) */}
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">
-                Status:
-              </span>
-              <span className="px-3 py-1 text-sm rounded-full bg-green-100 text-green-700 font-medium">
-                Active
-              </span>
             </div>
           </div>
+
+          {/* Section 2: Timeline & Status */}
+          <div className="border border-gray-200 rounded-md p-4 relative">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+              Status & Timeline
+            </h3>
+            <div className="grid grid-cols-2 gap-y-4 pt-2">
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaCalendarAlt className="text-gray-400" /> Date Added
+                </label>
+                <p className="text-gray-800 font-medium">
+                  {viewAsset.date
+                    ? new Date(viewAsset.date)
+                        .toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })
+                        .replace(/ /g, "-")
+                    : "N/A"}
+                </p>
+              </div>
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaCheckCircle className="text-gray-400" /> Current Status
+                </label>
+                <div className="mt-1">
+                  <span className="px-3 py-0.5 text-xs rounded-full bg-green-100 text-green-700 font-bold uppercase">
+                    Active
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 3: Additional Details */}
+          <div className="border border-gray-200 rounded-md p-4 relative">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+              Additional Details
+            </h3>
+            <div className="pt-2">
+              <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                <FaFileAlt className="text-gray-400" /> Description
+              </label>
+              <p className="text-gray-800 font-medium mt-1 leading-relaxed">
+                {viewAsset.description || "No description provided."}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Section */}
+        <div className="bg-indigo-900 p-3 flex justify-end">
+          <button
+            onClick={setIsOpenModal}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-1 px-8 rounded shadow-sm transition-colors"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>

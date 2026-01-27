@@ -21,11 +21,14 @@ interface Category {
   category_name: string;
 }
 
+const currentDate = new Date().toLocaleDateString("en-CA");
+
+
 const initialState = {
   asset_name: "",
   category_id: "",
   description: "",
-  date: "",
+  date: currentDate,
 };
 
 export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
@@ -111,20 +114,20 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
 
   return (
     <div>
-      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
-        <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-900">
+      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+        <div className="w-[42rem] bg-white mx-auto rounded-lg border border-indigo-900">
           <form onSubmit={handlerSubmitted}>
-            <div className="bg-indigo-900 rounded-t-xl px-6">
+            <div className="bg-indigo-900 rounded-t-lg px-6">
               <Title
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
               >
-                Add Asset
+                ADD ASSET
               </Title>
             </div>
-            <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
+            <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
               <OptionField
-                labelName="Asset Category"
+                labelName="Asset Category *"
                 name="category_id"
                 value={addAsset.category_id}
                 handlerChange={handlerChange}
@@ -133,7 +136,7 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
               />
 
               <InputField
-                labelName="Asset Name*"
+                labelName="Asset Name *"
                 placeHolder="Enter the asset name"
                 type="text"
                 name="asset_name"
@@ -142,7 +145,7 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
               />
 
               <InputField
-                labelName="Created Date*"
+                labelName="Created Date *"
                 placeHolder="Enter the created date"
                 type="date"
                 name="date"
@@ -151,7 +154,7 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
               />
 
               <TextareaField
-                labelName="Description*"
+                labelName="Description *"
                 placeHolder="Write the asset description"
                 name="description"
                 inputVal={addAsset.description}

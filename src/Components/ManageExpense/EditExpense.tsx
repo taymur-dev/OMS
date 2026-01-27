@@ -16,7 +16,6 @@ type ExpenseT = {
   expenseName: string;
   expenseCategoryId: number;
   categoryName: string;
-  addedBy: string;
   date: string;
   amount: number | string;
 };
@@ -34,7 +33,7 @@ export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
   const [categories, setCategories] = useState<ExpenseCategoryT[] | null>(null);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
   ) => {
     const { name, value } = e.target;
     setExpense((prev) => prev && { ...prev, [name]: value });
@@ -62,10 +61,9 @@ export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
           expenseName: expense.expenseName,
           expenseCategoryId: expense.expenseCategoryId,
           amount: expense.amount,
-          addedBy: expense.addedBy,
           date: expense.date,
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       toast.success("Expense updated successfully!");
       setModal();
@@ -80,21 +78,20 @@ export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
   }, [getAllCategories]);
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[90rem] bg-white mx-auto rounded-xl border border-indigo-900 overflow-auto">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div className="w-[42rem] max-h-[90rem] bg-white mx-auto rounded-lg border border-indigo-900 overflow-auto">
         <form onSubmit={handleSubmit}>
-
-           <div className="bg-indigo-900 rounded-t-xl px-6">
-              <Title
-                setModal={setModal}
-                className="text-white text-lg font-semibold"
-              >
-                Edit Expense
-              </Title>
-            </div>
-          <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
+          <div className="bg-indigo-900 rounded-t-lg px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              EDIT EXPENSE
+            </Title>
+          </div>
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
             <OptionField
-              labelName="Expense Category*"
+              labelName="Expense Category *"
               name="expenseCategoryId"
               value={
                 expense?.expenseCategoryId
@@ -111,14 +108,14 @@ export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
             />
 
             <InputField
-              labelName="Expense Name*"
+              labelName="Expense Name *"
               name="expenseName"
               handlerChange={handlerChange}
               value={expense?.expenseName ?? ""}
             />
 
             <InputField
-              labelName="Amount*"
+              labelName="Amount *"
               name="amount"
               type="number"
               handlerChange={handlerChange}
@@ -126,14 +123,7 @@ export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
             />
 
             <InputField
-              labelName="Added By*"
-              name="addedBy"
-              handlerChange={handlerChange}
-              value={expense?.addedBy ?? ""}
-            />
-
-            <InputField
-              labelName="Date*"
+              labelName="Date *"
               name="date"
               type="date"
               handlerChange={handlerChange}
@@ -141,10 +131,10 @@ export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
             />
           </div>
 
-           <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
-              <CancelBtn setModal={setModal} />
-              <AddButton label="Update" />
-            </div>
+          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Update" />
+          </div>
         </form>
       </div>
     </div>

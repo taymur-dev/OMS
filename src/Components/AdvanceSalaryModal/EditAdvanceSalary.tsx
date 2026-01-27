@@ -119,10 +119,10 @@ export const EditAdvanceSalary = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs items-center flex items-center justify-center z-10">
-      <div className="w-[36rem] max-h-[28rem] bg-white mx-auto rounded-xl border border-indigo-900 overflow-y-auto">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs items-center flex items-center justify-center z-50">
+      <div className="w-[36rem] max-h-[28rem] bg-white mx-auto rounded-lg border border-indigo-900 overflow-y-auto">
         <form onSubmit={handleSubmit}>
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded-t-lg px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -134,7 +134,7 @@ export const EditAdvanceSalary = ({
           <div className="mx-4 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3 mt-2">
             {currentUser?.role === "admin" && (
               <UserSelect
-                labelName="Employee*"
+                labelName="Employee *"
                 name="employee_id"
                 value={updateAdvance.employee_id}
                 handlerChange={handleChange}
@@ -147,7 +147,7 @@ export const EditAdvanceSalary = ({
             )}
 
             <InputField
-              labelName="Date*"
+              labelName="Date *"
               name="date"
               type="date"
               value={updateAdvance.date}
@@ -155,7 +155,7 @@ export const EditAdvanceSalary = ({
             />
 
             <InputField
-              labelName="Amount*"
+              labelName="Amount *"
               name="amount"
               type="number"
               value={updateAdvance.amount}
@@ -163,14 +163,14 @@ export const EditAdvanceSalary = ({
             />
 
             <InputField
-              labelName="Description"
+              labelName="Description *"
               name="description"
               value={updateAdvance.description}
               handlerChange={handleChange}
             />
 
             <OptionField
-              labelName="Approval*"
+              labelName="Approval *"
               name="approvalStatus"
               value={updateAdvance.approvalStatus}
               handlerChange={handleChange}

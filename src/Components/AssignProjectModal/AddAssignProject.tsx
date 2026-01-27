@@ -18,8 +18,6 @@ type UserOption = {
   role: string;
 };
 
-
-
 type ProjectT = {
   id: number;
   projectName: string;
@@ -29,6 +27,8 @@ type ProjectT = {
   endDate: string;
 };
 
+const currentDate = new Date().toLocaleDateString("en-CA");
+
 type AddAttendanceProps = {
   setModal: () => void;
   handleGetAllAssignProjects: () => void;
@@ -37,7 +37,7 @@ type AddAttendanceProps = {
 const initialState = {
   userId: "",
   projectId: "",
-  date: new Date().toLocaleDateString('sv-SE'),
+  date: currentDate,
 };
 
 export const AddAssignProject = ({
@@ -52,7 +52,7 @@ export const AddAssignProject = ({
   const [allProjects, setAllProjects] = useState<ProjectT[] | null>(null);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
   ) => {
     const { name, value } = e.target;
     setAddProject({ ...addProject, [name]: value });
@@ -66,7 +66,8 @@ export const AddAssignProject = ({
 
       const filteredUsers = res?.data?.users
         .filter(
-          (user: UserOption) => user.role === "user" && user.loginStatus === "Y"
+          (user: UserOption) =>
+            user.role === "user" && user.loginStatus === "Y",
         )
         .map((user: UserOption) => ({
           value: user.id,
@@ -117,21 +118,21 @@ export const AddAssignProject = ({
   }, [getAllProjects, getAllUsers]);
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
-      <div className="w-[42rem] max-h-[30rem] bg-white mx-auto rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div className="w-[42rem] max-h-[30rem] bg-white mx-auto rounded-lg border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Assign Project
+              ASSIGN PROJECT
             </Title>
           </div>
 
-          <div className="mx-2 grid grid-cols-1  gap-3 py-5">
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2  gap-3 py-5">
             <UserSelect
-              labelName="Employees*"
+              labelName="Employees *"
               name="userId"
               value={addProject.userId}
               handlerChange={handlerChange}
@@ -139,7 +140,7 @@ export const AddAssignProject = ({
             />
 
             <OptionField
-              labelName="Project*"
+              labelName="Project *"
               name="projectId"
               handlerChange={handlerChange}
               value={addProject.projectId}
@@ -152,13 +153,13 @@ export const AddAssignProject = ({
             />
 
             <div className="flex flex-col">
-              <label className="text-sm font-medium mb-1">Date*</label>
+              <label className="text-sm font-medium text-black  ">Date *</label>
               <input
                 type="date"
                 name="date"
                 value={addProject.date}
                 onChange={handlerChange}
-                className="border rounded p-1"
+                className="border border-indigo-900 rounded p-1"
               />
             </div>
           </div>

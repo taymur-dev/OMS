@@ -1,5 +1,11 @@
 import { Title } from "../Title";
-import profilePicture from "../../assets/vector.png";
+import {
+  FaIndustry,
+  FaMapMarkerAlt,
+  FaEnvelope,
+  FaPhone,
+  FaIdBadge,
+} from "react-icons/fa";
 
 export interface SupplierViewT {
   supplierId: number;
@@ -18,51 +24,92 @@ export const ViewSupplierModal = ({ setModal, supplier }: ModalTProps) => {
   if (!supplier) return null;
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-10">
-      <div className="w-full flex justify-center">
-        <div className="bg-white w-full max-w-3xl border border-indigo-900 rounded p-6 shadow-lg">
-           <div className="bg-indigo-900 rounded px-4">
-            <div className="text-white">
-              <Title setModal={setModal}>Supplier Details</Title>
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
+      <div className="w-full max-w-4xl bg-white rounded-lg overflow-hidden shadow-2xl border border-gray-300">
+        {/* Header */}
+        <div className="bg-indigo-900 rounded px-4">
+          <div className="text-white">
+            <Title setModal={setModal}>VIEW SUPPLIER</Title>
+          </div>
+        </div>
+
+        <div className="p-4 space-y-4">
+          {/* Section 1: Business Identity */}
+          <div className="border border-gray-200 rounded-md p-4 relative">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+              Business Identity
+            </h3>
+            <div className="grid grid-cols-2 gap-y-4 pt-2">
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaIndustry className="text-gray-400" /> Supplier Name
+                </label>
+                <p className="text-gray-800 font-medium">
+                  {supplier.supplierName}
+                </p>
+              </div>
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaIdBadge className="text-gray-400" /> Supplier ID
+                </label>
+                <p className="text-gray-800 font-medium">
+                  #{supplier.supplierId}
+                </p>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-6 bg-white p-6 shadow-md rounded-lg">
-            <img
-              className="w-24 h-24 rounded-full border-4 border-indigo-900 object-cover"
-              src={profilePicture}
-              alt="Profile"
-            />
 
-            <div className="flex flex-col">
-              <h2 className="text-2xl font-semibold text-gray-800">
-                {supplier.supplierName}
-              </h2>
-              <h4 className="text-sm text-gray-500">Supplier</h4>
+          {/* Section 2: Contact Information */}
+          <div className="border border-gray-200 rounded-md p-4 relative">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+              Contact Information
+            </h3>
+            <div className="grid grid-cols-2 gap-y-4 pt-2">
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaEnvelope className="text-gray-400" /> Email Address
+                </label>
+                <p className="text-gray-800 font-medium">
+                  {supplier.supplierEmail}
+                </p>
+              </div>
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaPhone className="text-gray-400" /> Contact Number
+                </label>
+                <p className="text-gray-800 font-medium">
+                  {supplier.supplierContact}
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="mt-6 space-y-4">
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">
-                Email:
-              </span>
-              <p className="text-gray-600">{supplier.supplierEmail}</p>
-            </div>
-
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">
-                Contact:
-              </span>
-              <p className="text-gray-600">{supplier.supplierContact}</p>
-            </div>
-
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">
-                Address:
-              </span>
-              <p className="text-gray-600">{supplier.supplierAddress}</p>
+          {/* Section 3: Physical Location */}
+          <div className="border border-gray-200 rounded-md p-4 relative">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+              Physical Location
+            </h3>
+            <div className="grid grid-cols-1 gap-y-4 pt-2">
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaMapMarkerAlt className="text-gray-400" /> Business Address
+                </label>
+                <p className="text-gray-800 font-medium">
+                  {supplier.supplierAddress || "No address provided"}
+                </p>
+              </div>
             </div>
           </div>
+        </div>
+
+        {/* Footer Section */}
+        <div className="bg-indigo-900 p-3 flex justify-end">
+          <button
+            onClick={setModal}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-1 px-8 rounded shadow-sm transition-colors"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>

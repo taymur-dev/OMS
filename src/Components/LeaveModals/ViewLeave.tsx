@@ -1,4 +1,6 @@
 import { Title } from "../Title";
+import { FaUser, FaCalendarAlt, FaInfoCircle, FaFileAlt } from "react-icons/fa";
+import { HiOutlineDocumentText } from "react-icons/hi";
 
 type ViewLeaveProps = {
   setIsOpenModal: () => void;
@@ -16,59 +18,106 @@ type ViewLeaveProps = {
 export const ViewLeave = ({ setIsOpenModal, data }: ViewLeaveProps) => {
   if (!data) return null;
 
+  // Logic for status color badge
+  const statusColor =
+    data.leaveStatus.toLowerCase() === "approved"
+      ? "text-green-600"
+      : data.leaveStatus.toLowerCase() === "pending"
+        ? "text-yellow-600"
+        : "text-red-600";
+
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-10">
-      <div className="w-full flex justify-center">
-        <div className="bg-white w-full max-w-3xl border border-indigo-900 rounded p-6 shadow-lg">
-          <div className="bg-indigo-900 rounded px-6">
-            <Title
-              setModal={setIsOpenModal}
-              className="text-white text-lg font-semibold"
-            >
-              Leave Details
-            </Title>
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
+      <div className="w-full max-w-4xl bg-white rounded-lg overflow-hidden shadow-2xl border border-gray-300">
+        {/* Header */}
+        <div className="bg-indigo-900 rounded px-4">
+          <div className="text-white">
+            <Title setModal={setIsOpenModal}>LEAVE DETAILS</Title>
           </div>
-          {/* Profile Section */}
-          <div className="flex items-center gap-6 bg-white p-6 shadow-md rounded-lg">
-            <div className="flex flex-col">
-              <h2 className="text-2xl font-semibold text-gray-800">
-                {data.name}
-              </h2>
+        </div>
+
+        <div className="p-4 space-y-4">
+          {/* Section 1: Employee Information */}
+          <div className="border border-gray-200 rounded-md p-4 relative">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+              Request Information
+            </h3>
+            <div className="grid grid-cols-2 gap-y-4 pt-2">
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaUser className="text-gray-400" /> Employee Name
+                </label>
+                <p className="text-gray-800 font-medium">{data.name}</p>
+              </div>
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaCalendarAlt className="text-gray-400" /> Applied Date
+                </label>
+                <p className="text-gray-800 font-medium">
+                  {new Date(data.date)
+                    .toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })
+                    .replace(/ /g, "-")}
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* User Details */}
-          <div className="mt-6 space-y-4">
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">Date:</span>
-              <p className="text-gray-600">{data.date}</p>
-            </div>
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">
-                Leave Subject:
-              </span>
-              <p className="text-gray-600">{data.leaveSubject}</p>
-            </div>
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-lg font-semibold text-gray-800">
-                Status:
-              </span>
-              <p className="text-red-500 font-semibold bg-red-200 p-1 rounded">
-                {data.leaveStatus}
-              </p>
+          {/* Section 2: Leave Summary */}
+          <div className="border border-gray-200 rounded-md p-4 relative">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+              Subject & Status
+            </h3>
+            <div className="grid grid-cols-2 gap-y-4 pt-2">
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaFileAlt className="text-gray-400" /> Subject
+                </label>
+                <p className="text-gray-800 font-medium">{data.leaveSubject}</p>
+              </div>
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaInfoCircle className="text-gray-400" /> Status
+                </label>
+                <p
+                  className={`font-bold uppercase text-xs mt-1 ${statusColor}`}
+                >
+                  {data.leaveStatus}
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="border-b my-4">
-            <span className="text-lg font-semibold text-gray-800 block my-2">
-              Reason:
-            </span>
-            <div className="bg-gray-100 p-3 rounded-md max-h-36 overflow-y-auto">
-              <p className="text-gray-600 whitespace-pre-line">
-                {data.leaveReason}
-              </p>
+          {/* Section 3: Reason (Full Width) */}
+          <div className="border border-gray-200 rounded-md p-4 relative">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+              Reason / Remarks
+            </h3>
+            <div className="pt-2">
+              <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase mb-1">
+                <HiOutlineDocumentText className="text-gray-400 text-sm" />{" "}
+                Detailed Reason
+              </label>
+              <div className="bg-gray-50 p-3 rounded border border-gray-100 min-h-[80px] max-h-40 overflow-y-auto">
+                <p className="text-gray-700 text-sm whitespace-pre-line leading-relaxed">
+                  {data.leaveReason || "No reason provided."}
+                </p>
+              </div>
             </div>
           </div>
+        </div>
+
+        {/* Footer Section */}
+        <div className="bg-indigo-900 p-3 flex justify-end">
+          <button
+            onClick={setIsOpenModal}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-1 px-8 rounded shadow-sm transition-colors"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>

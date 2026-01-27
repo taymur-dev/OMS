@@ -21,6 +21,8 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
+import { Footer } from "../../Components/Footer";
+
 
 const numbers = [10, 25, 50, 100];
 
@@ -73,7 +75,7 @@ export const AssignProjects = () => {
       });
 
       setAllAssignProjects(
-        Array.isArray(res.data) ? res.data.sort((a, b) => a.id - b.id) : []
+        Array.isArray(res.data) ? res.data.sort((a, b) => a.id - b.id) : [],
       );
     } catch (error) {
       console.error("Failed to fetch assign projects:", error);
@@ -83,7 +85,7 @@ export const AssignProjects = () => {
 
   const handleUpdateAssignProject = (updatedProject: ALLASSIGNPROJECTT) => {
     setAllAssignProjects((prev) =>
-      prev.map((p) => (p.id === updatedProject.id ? updatedProject : p))
+      prev.map((p) => (p.id === updatedProject.id ? updatedProject : p)),
     );
   };
 
@@ -114,220 +116,75 @@ export const AssignProjects = () => {
   const filteredProjects = allAssignProjects.filter(
     (p) =>
       p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.projectName.toLowerCase().includes(searchTerm.toLowerCase())
+      p.projectName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const paginatedProjects = filteredProjects.slice(
     (pageNo - 1) * entriesPerPage,
-    pageNo * entriesPerPage
+    pageNo * entriesPerPage,
   );
 
   if (loader) return <Loader />;
 
-  // return (
-  //   <div className="w-full mx-2">
-  //     <TableTitle tileName="Assign Project" activeFile="Assign Project list" />
-
-  //     <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col overflow-hidden">
-  //       <div className="flex items-center justify-between mx-2">
-  //         <span>
-  //           Total Assign Projects:{" "}
-  //           <span className="text-2xl text-indigo-900 font-semibold">
-  //             [{filteredProjects.length}]
-  //           </span>
-  //         </span>
-
-  //         {isAdmin && (
-  //           <CustomButton
-  //             label="Add Assign Project"
-  //             handleToggle={() => setIsOpenModal("ADDPROJECT")}
-  //           />
-  //         )}
-  //       </div>
-
-  //       <div className="flex justify-between mx-2">
-  //         <div className="flex items-center gap-2">
-  //           <span>Show</span>
-  //           <select
-  //             value={entriesPerPage}
-  //             onChange={(e) => {
-  //               setEntriesPerPage(Number(e.target.value));
-  //               setPageNo(1);
-  //             }}
-  //             className="bg-gray-200 rounded px-2 py-1"
-  //           >
-  //             {numbers.map((num) => (
-  //               <option key={num}>{num}</option>
-  //             ))}
-  //           </select>
-  //           <span>entries</span>
-  //         </div>
-
-  //         <TableInputField
-  //           searchTerm={searchTerm}
-  //           setSearchTerm={(term) => {
-  //             setSearchTerm(term);
-  //             setPageNo(1);
-  //           }}
-  //         />
-  //       </div>
-
-  //       <div className="flex-1 mx-2">
-  //         <div className="grid grid-cols-5 bg-indigo-900 text-white font-semibold p-2 sticky top-0">
-  //           <span>Sr#</span>
-  //           <span>User</span>
-  //           <span>Project</span>
-  //           <span>Date</span>
-  //           <span className="text-center">Actions</span>
-  //         </div>
-
-  //         {paginatedProjects.map((item, index) => (
-  //           <div
-  //             key={item.id}
-  //             className="grid grid-cols-5 p-2 border hover:bg-gray-100"
-  //           >
-  //             <span>{(pageNo - 1) * entriesPerPage + index + 1}</span>
-  //             <span>{item.name}</span>
-  //             <span>{item.projectName}</span>
-  //             <span>{new Date(item.date).toLocaleDateString('sv-SE')}</span>
-  //             <span className="flex justify-center gap-1">
-  //               {isAdmin && (
-  //                 <EditButton
-  //                   handleUpdate={() => {
-  //                     setEditData(item);
-  //                     setIsOpenModal("EDITPROJECT");
-  //                   }}
-  //                 />
-  //               )}
-
-  //               <ViewButton
-  //                 handleView={() => {
-  //                   setEditData(item);
-  //                   setIsOpenModal("VIEWPROJECT");
-  //                 }}
-  //               />
-
-  //               {isAdmin && (
-  //                 <DeleteButton
-  //                   handleDelete={() => {
-  //                     setEditData(item);
-  //                     setIsOpenModal("DELETEPROJECT");
-  //                   }}
-  //                 />
-  //               )}
-  //             </span>
-  //           </div>
-  //         ))}
-  //       </div>
-  //     </div>
-
-  //     <div className="flex justify-between mt-2">
-  //       <ShowDataNumber
-  //         start={(pageNo - 1) * entriesPerPage + 1}
-  //         end={Math.min(pageNo * entriesPerPage, filteredProjects.length)}
-  //         total={filteredProjects.length}
-  //       />
-
-  //       <Pagination
-  //         pageNo={pageNo}
-  //         handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-  //         handleIncrementPageButton={() =>
-  //           pageNo * entriesPerPage < filteredProjects.length &&
-  //           setPageNo((p) => p + 1)
-  //         }
-  //       />
-  //     </div>
-
-  //     {isOpenModal === "ADDPROJECT" && (
-  //       <AddAssignProject
-  //         setModal={() => setIsOpenModal("")}
-  //         handleGetAllAssignProjects={handleGetAllAssignProjects}
-  //       />
-  //     )}
-
-  //     {isOpenModal === "EDITPROJECT" && editData && (
-  //       <EditAssignProject
-  //         setModal={() => setIsOpenModal("")}
-  //         editData={editData}
-  //         onUpdate={(updatedProject) => {
-  //           handleUpdateAssignProject({
-  //             ...editData,
-  //             ...updatedProject,
-  //           });
-  //           setIsOpenModal("");
-  //         }}
-  //       />
-  //     )}
-
-  //     {isOpenModal === "VIEWPROJECT" && editData && (
-  //       <ViewAssignProject
-  //         setIsOpenModal={() => setIsOpenModal("")}
-  //         viewProject={editData}
-  //       />
-  //     )}
-
-  //     {isOpenModal === "DELETEPROJECT" && editData && (
-  //       <ConfirmationModal
-  //         isOpen={() => {}}
-  //         onClose={() => setIsOpenModal("")}
-  //         onConfirm={() => handleDeleteAssignProject(editData.id)}
-  //       />
-  //     )}
-  //   </div>
-  // );
-
+  
   return (
-  <div className="w-full px-2 sm:px-4">
-    <TableTitle tileName="Assign Project" activeFile="Assign Project list" />
+  <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
+      {/* 1 & 3) Table Title with Add Project button as the rightElement */}
+      <TableTitle
+        tileName="Assign Project"
+        rightElement={
+          isAdmin && (
+            <CustomButton
+              handleToggle={() => setIsOpenModal("ADDPROJECT")}
+              label="+ Assign Project"
+            />
+          )
+        }
+      />
 
-    <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white flex flex-col overflow-hidden">
-      {/* Top Bar */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
-        <span className="text-sm sm:text-base">
-          Total Assign Projects :
-          <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
-            [{filteredProjects.length}]
-          </span>
-        </span>
+      <hr className="border border-b border-gray-200" />
 
-        {isAdmin && (
-          <CustomButton
-            handleToggle={() => setIsOpenModal("ADDPROJECT")}
-            label="Add Assign Project"
+      <div className="p-2">
+        <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
+          {/* Left Side: Show entries */}
+          <div className="text-sm flex items-center">
+            <span>Show</span>
+            <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
+              <select
+                value={entriesPerPage}
+                onChange={(e) => {
+                  setEntriesPerPage(Number(e.target.value));
+                  setPageNo(1);
+                }}
+                className="bg-transparent outline-none py-1 cursor-pointer"
+              >
+                {numbers.map((num, index) => (
+                  <option key={index} value={num}>
+                    {num}
+                  </option>
+                ))}
+              </select>
+            </span>
+            <span className="hidden xs:inline">entries</span>
+          </div>
+
+          {/* Right Side: Search Input */}
+          <TableInputField
+            searchTerm={searchTerm}
+            setSearchTerm={(term) => setSearchTerm(term)}
           />
-        )}
-      </div>
-
-      {/* Filter Row */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
-        <div className="text-sm flex items-center gap-2">
-          <span>Show</span>
-          <select
-            value={entriesPerPage}
-            onChange={(e) => {
-              setEntriesPerPage(Number(e.target.value));
-              setPageNo(1);
-            }}
-            className="bg-gray-200 rounded px-2 py-1"
-          >
-            {numbers.map((num) => (
-              <option key={num}>{num}</option>
-            ))}
-          </select>
-          <span>entries</span>
         </div>
-
-        <TableInputField
-          searchTerm={searchTerm}
-          setSearchTerm={(term) => setSearchTerm(term)}
-        />
       </div>
 
-      {/* Table Wrapper */}
-      <div className="mx-2 mt-2 overflow-x-auto flex-1 max-h-[28.4rem]">
-        <div className="min-w-[700px]">
-          {/* Table Header */}
-          <div className="grid grid-cols-[0.5fr_1fr_1.5fr_1fr_1fr] items-center bg-indigo-900 text-white font-semibold text-sm sticky top-0 z-10 p-2">
+      {/* --- MIDDLE SECTION (Scrollable Table) --- */}
+      <div className="overflow-auto px-2">
+        <div className="min-w-[900px]">
+          {/* Sticky Table Header */}
+          <div
+            className="grid grid-cols-5 bg-indigo-900 text-white items-center font-semibold
+             text-sm sticky top-0 z-10 p-2"
+          >
             <span>Sr#</span>
             <span>User</span>
             <span>Project</span>
@@ -337,22 +194,29 @@ export const AssignProjects = () => {
 
           {/* Table Body */}
           {paginatedProjects.length === 0 ? (
-            <div className="text-gray-800 text-lg text-center py-4">
+            <div className="text-gray-800 text-lg text-center py-10">
               No records available at the moment!
             </div>
           ) : (
             paginatedProjects.map((item, index) => (
               <div
                 key={item.id}
-                className="grid grid-cols-[0.5fr_1fr_1.5fr_1fr_1fr] items-center border border-gray-300 text-gray-800 text-sm p-2 hover:bg-gray-100 transition"
+                className="grid grid-cols-5 border-b border-x border-gray-200 text-gray-800 items-center
+                 text-sm p-2 hover:bg-gray-50 transition"
               >
                 <span>{(pageNo - 1) * entriesPerPage + index + 1}</span>
                 <span className="truncate">{item.name}</span>
                 <span className="truncate">{item.projectName}</span>
-                <span>{new Date(item.date).toLocaleDateString("sv-SE")}</span>
+                <span>{new Date(item.date)
+                    .toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })
+                    .replace(/ /g, "-")}</span>
 
                 {/* Actions */}
-                <span className="flex flex-wrap items-center justify-center gap-1">
+                <span className="flex flex-nowrap justify-center gap-1">
                   {isAdmin && (
                     <EditButton
                       handleUpdate={() => {
@@ -361,14 +225,12 @@ export const AssignProjects = () => {
                       }}
                     />
                   )}
-
                   <ViewButton
                     handleView={() => {
                       setEditData(item);
                       setIsOpenModal("VIEWPROJECT");
                     }}
                   />
-
                   {isAdmin && (
                     <DeleteButton
                       handleDelete={() => {
@@ -383,27 +245,30 @@ export const AssignProjects = () => {
           )}
         </div>
       </div>
+
+      {/* 4) Pagination placed under the table */}
+      <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
+        <ShowDataNumber
+          start={paginatedProjects.length === 0 ? 0 : (pageNo - 1) * entriesPerPage + 1}
+          end={Math.min(pageNo * entriesPerPage, filteredProjects.length)}
+          total={filteredProjects.length}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+          handleIncrementPageButton={() =>
+            pageNo * entriesPerPage < filteredProjects.length && setPageNo((p) => p + 1)
+          }
+        />
+      </div>
+
+      {/* --- FOOTER SECTION --- */}
+      <div className="border border-t border-gray-200 mt-auto">
+        <Footer />
+      </div>
     </div>
 
-    {/* Pagination Section */}
-    <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
-      <ShowDataNumber
-        start={paginatedProjects.length === 0 ? 0 : (pageNo - 1) * entriesPerPage + 1}
-        end={Math.min(pageNo * entriesPerPage, filteredProjects.length)}
-        total={filteredProjects.length}
-      />
-
-      <Pagination
-        pageNo={pageNo}
-        handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-        handleIncrementPageButton={() =>
-          pageNo * entriesPerPage < filteredProjects.length &&
-          setPageNo((p) => p + 1)
-        }
-      />
-    </div>
-
-    {/* Modals */}
+    {/* --- MODALS SECTION --- */}
     {isOpenModal === "ADDPROJECT" && (
       <AddAssignProject
         setModal={() => setIsOpenModal("")}
@@ -438,6 +303,4 @@ export const AssignProjects = () => {
     )}
   </div>
 );
-
-  
 };

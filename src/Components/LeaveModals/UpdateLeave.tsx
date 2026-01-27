@@ -72,7 +72,7 @@ export const UpdateLeave = ({
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setUpdateLeave((prev) => ({ ...prev, [name]: value }));
@@ -94,7 +94,7 @@ export const UpdateLeave = ({
 
       await axios.put(
         `${BASE_URL}/api/admin/updateLeave/${EditLeave.id}`,
-        payload
+        payload,
       );
       toast.success("Leave updated successfully!");
       await refreshLeaves();
@@ -109,7 +109,7 @@ export const UpdateLeave = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center px-4 justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-3xl bg-white rounded-xl border border-indigo-900 overflow-auto shadow-lg">
+      <div className="w-full max-w-3xl bg-white rounded-lg border border-indigo-900 overflow-auto shadow-lg">
         <form onSubmit={handleSubmit} className="flex flex-col">
           {/* Header */}
           <div className="bg-indigo-900 rounded-t-xl px-6">
@@ -117,12 +117,12 @@ export const UpdateLeave = ({
               setModal={setModal}
               className="text-white text-xl font-semibold"
             >
-              Update Leave
+              EDIT LEAVE
             </Title>
           </div>
 
           {/* Form Body */}
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-4 px-6 py-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 px-6 py-2">
             <InputField
               labelName="Subject Leave*"
               placeHolder="Enter the Leave Subject"
@@ -140,14 +140,6 @@ export const UpdateLeave = ({
               handlerChange={handleChange}
             />
 
-            <TextareaField
-              labelName="Leave Reason*"
-              placeHolder="Enter the Leave Reason"
-              name="leaveReason"
-              inputVal={updateLeave.leaveReason}
-              handlerChange={handleChange}
-            />
-
             {/* Only show status dropdown for admins */}
             {currentUser?.role === "admin" && (
               <OptionField
@@ -159,6 +151,14 @@ export const UpdateLeave = ({
                 inital="Pending"
               />
             )}
+
+            <TextareaField
+              labelName="Leave Reason*"
+              placeHolder="Enter the Leave Reason"
+              name="leaveReason"
+              inputVal={updateLeave.leaveReason}
+              handlerChange={handleChange}
+            />
           </div>
 
           {/* Footer */}
@@ -174,4 +174,3 @@ export const UpdateLeave = ({
     </div>
   );
 };
-

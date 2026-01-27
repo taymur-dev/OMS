@@ -18,6 +18,8 @@ import axios, { AxiosError } from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { ViewReasonWithDraw } from "../../Components/WithdrawModal/ViewReasonWithDraw";
 import { toast } from "react-toastify";
+import { Footer } from "../../Components/Footer";
+
 
 const numbers = [10, 25, 50, 100];
 
@@ -125,245 +127,123 @@ export const EmployeeWithdraw = () => {
 
   if (loader) return <Loader />;
 
-  // return (
-  //   <div className="w-full mx-2">
-  //     <TableTitle
-  //       tileName="Employee Withdraw"
-  //       activeFile="Employees Withdraw list"
-  //     />
+  
 
-  //     <div className="max-h-[74.5vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
-  //       <div className="flex text-gray-800 items-center justify-between mx-2">
-  //         <span>
-  //           Total number of Employees Withdraw:{" "}
-  //           <span className="text-2xl text-indigo-900 font-semibold font-sans">
-  //             [{filteredEmployees.length}]
-  //           </span>
-  //         </span>
-  //         <CustomButton
-  //           label="Add Withdraw"
-  //           handleToggle={() => handleToggleViewModal("ADDWITHDRAW")}
-  //         />
-  //       </div>
+return (
+  <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
+      {/* 1) Table Title Section */}
+      <TableTitle
+        tileName="Employee Withdraw"
+        rightElement={
+          <CustomButton
+            handleToggle={() => handleToggleViewModal("ADDWITHDRAW")}
+            label="+ Add Withdraw"
+          />
+        }
+      />
 
-  //       <div className="flex items-center justify-between text-gray-800 mx-2">
-  //         <div>
-  //           <span>Show</span>
-  //           <span className="bg-gray-200 rounded mx-1 p-1">
-  //             <select
-  //               value={itemsPerPage}
-  //               onChange={(e) => setItemsPerPage(Number(e.target.value))}
-  //             >
-  //               {numbers.map((num, index) => (
-  //                 <option key={index}>{num}</option>
-  //               ))}
-  //             </select>
-  //           </span>
-  //           <span>entries</span>
-  //         </div>
-  //         <TableInputField
-  //           searchTerm={searchTerm}
-  //           setSearchTerm={setSearchTerm}
-  //         />
-  //       </div>
+      <hr className="border border-b border-gray-200" />
 
-  //       <div className="max-h-[28.4rem] overflow-y-auto mx-2">
-  //         <div
-  //           className="grid grid-cols-[0.5fr_1fr_1fr_1fr] bg-indigo-900 text-white font-semibold
-  //          border border-indigo-900 text-sm sticky top-0 z-10 p-[10px]"
-  //         >
-  //           <span>Sr#</span>
-  //           <span>Employee Name</span>
-  //           <span>Status</span>
-  //           <span className="text-center w-28">Actions</span>
-  //         </div>
+      {/* 2) Filter and Search Section */}
+      <div className="p-2">
+        <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
+          {/* Left Side: Show entries */}
+          <div className="text-sm flex items-center">
+            <span>Show</span>
+            <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
+              <select
+                value={itemsPerPage}
+                onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                className="bg-transparent outline-none py-1 cursor-pointer"
+              >
+                {numbers.map((num, index) => (
+                  <option key={index} value={num}>
+                    {num}
+                  </option>
+                ))}
+              </select>
+            </span>
+            <span className="hidden xs:inline">entries</span>
+          </div>
 
-  //         {paginatedEmployees.map((withdraw, index) => (
-  //           <div
-  //             className="grid grid-cols-[0.5fr_1fr_1fr_1fr] border border-indigo-900 text-gray-800
-  //               hover:bg-gray-100 transition duration-200 text-sm items-center justify-center p-[4px]"
-  //             key={withdraw.withdrawalId}
-  //           >
-  //             <span className="px-2">
-  //               {(pageNo - 1) * itemsPerPage + index + 1}
-  //             </span>
-  //             <span>{withdraw.name}</span>
-  //             <span className="withdraw-button">
-  //               <IoIosClose size={20} title="Withdraw" />
-  //               Withdraw
-  //             </span>
-  //             <div className="flex gap-2">
-  //               <span
-  //                 onClick={() => handleClickReason(withdraw)}
-  //                 className="reason-button"
-  //               >
-  //                 <TbFileCertificate size={20} title="Reason" />
-  //                 Reason
-  //               </span>
-  //               <span
-  //                 className="active-button"
-  //                 onClick={() => handleReactiveEmployee(withdraw.employeeId)}
-  //               >
-  //                 <BsCheck2 size={20} title="Active" />
-  //                 Active
-  //               </span>
-  //             </div>
-  //           </div>
-  //         ))}
-  //       </div>
-  //     </div>
-
-  //     <div className="flex items-center justify-between">
-  //       <ShowDataNumber
-  //         start={
-  //           paginatedEmployees.length === 0
-  //             ? 0
-  //             : (pageNo - 1) * itemsPerPage + 1
-  //         }
-  //         end={Math.min(pageNo * itemsPerPage, filteredEmployees.length)}
-  //         total={filteredEmployees.length}
-  //       />
-  //       <Pagination
-  //         pageNo={pageNo}
-  //         handleDecrementPageButton={handleDecrementPageButton}
-  //         handleIncrementPageButton={handleIncrementPageButton}
-  //       />
-  //     </div>
-
-  //     {isOpenModal === "ADDWITHDRAW" && (
-  //       <AddWithdraw
-  //         setModal={() => setIsOpenModal("")}
-  //         handlegetwithDrawEmployeess={handlegetwithDrawEmployeess}
-  //       />
-  //     )}
-
-  //     {isOpenModal === "REASONWITHDRAW" && (
-  //       <ViewReasonWithDraw
-  //         setIsOpenModal={() => handleToggleViewModal("")}
-  //         viewReason={viewReason}
-  //       />
-  //     )}
-  //   </div>
-  // );
-
-  return (
-  <div className="w-full px-2 sm:px-4">
-    <TableTitle
-      tileName="Employee Withdraw"
-      activeFile="Employees Withdraw list"
-    />
-
-    <div className="max-h-[70vh] h-full shadow-lg border-t-2 rounded border-indigo-900 bg-white overflow-hidden flex flex-col">
-      {/* Top Bar */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 py-2 text-gray-800">
-        <span className="text-sm sm:text-base">
-          Total number of Employees Withdraw:
-          <span className="ml-1 text-xl sm:text-2xl text-indigo-900 font-semibold">
-            [{filteredEmployees.length}]
-          </span>
-        </span>
-
-        <CustomButton
-          handleToggle={() => handleToggleViewModal("ADDWITHDRAW")}
-          label="Add Withdraw"
-        />
-      </div>
-
-      {/* Filter Row */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between px-2 text-gray-800">
-        <div className="text-sm">
-          <span>Show</span>
-          <span className="bg-gray-200 rounded mx-1 p-1">
-            <select
-              value={itemsPerPage}
-              onChange={(e) => setItemsPerPage(Number(e.target.value))}
-              className="bg-transparent outline-none"
-            >
-              {numbers.map((num, index) => (
-                <option key={index} value={num}>
-                  {num}
-                </option>
-              ))}
-            </select>
-          </span>
-          <span>entries</span>
+          {/* Right Side: Search Input */}
+          <TableInputField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </div>
-
-        <TableInputField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       </div>
 
-      {/* Table Wrapper */}
-      <div className="mx-2 mt-2 overflow-x-auto max-h-[28.4rem]">
-        <div className="min-w-[700px]">
-          {/* Table Header */}
+      {/* --- MIDDLE SECTION (Scrollable Table) --- */}
+      <div className="overflow-auto px-2">
+        <div className="min-w-[900px]">
+          {/* Sticky Table Header */}
           <div
-            className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr] sm:grid-cols-[0.5fr_1.5fr_1fr_1fr_2fr]
-              bg-indigo-900 text-white font-semibold text-sm sticky top-0 z-10 p-2"
+            className="grid grid-cols-4 bg-indigo-900 text-white items-center font-semibold
+             text-sm sticky top-0 z-10 p-2"
           >
             <span>Sr#</span>
             <span>Employee Name</span>
             <span>Status</span>
-            <span className="text-center w-28">Actions</span>
+            <span className="text-center">Actions</span>
           </div>
 
           {/* Table Body */}
           {paginatedEmployees.length === 0 ? (
-            <div className="text-gray-800 text-lg text-center py-4">
+            <div className="text-gray-800 text-lg text-center py-10">
               No records available at the moment!
             </div>
           ) : (
             paginatedEmployees.map((withdraw, index) => (
               <div
                 key={withdraw.withdrawalId}
-                className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr] sm:grid-cols-[0.5fr_1.5fr_1fr_1fr_2fr]
-                  border border-gray-300 text-gray-800 text-sm p-2
-                  hover:bg-gray-100 transition items-center justify-center"
+                className="grid grid-cols-4 border-b border-x border-gray-200 text-gray-800 items-center
+                 text-sm p-2 hover:bg-gray-50 transition"
               >
                 <span>{(pageNo - 1) * itemsPerPage + index + 1}</span>
                 <span className="truncate">{withdraw.name}</span>
-                <span className="withdraw-button flex items-center gap-1">
-                  <IoIosClose size={20} title="Withdraw" />
+                <span className="flex items-center gap-1 text-red-600">
+                  <IoIosClose size={20} />
                   Withdraw
                 </span>
-                <div className="flex flex-wrap gap-1 justify-center">
-                  <span
+                <span className="flex flex-nowrap justify-center gap-2">
+                  <button
                     onClick={() => handleClickReason(withdraw)}
-                    className="reason-button flex items-center gap-1"
+                    className="flex items-center gap-1 p-1 px-2 rounded-xl bg-blue-50 hover:cursor-pointer active:scale-95 transition-all text-blue-700"
+                    title="Reason"
                   >
-                    <TbFileCertificate size={20} title="Reason" />
-                    Reason
-                  </span>
-                  <span
-                    className="active-button flex items-center gap-1"
+                    <TbFileCertificate size={18} />
+                    <span className="text-xs">Reason</span>
+                  </button>
+                  <button
                     onClick={() => handleReactiveEmployee(withdraw.employeeId)}
+                    className="flex items-center gap-1 p-1 px-2 rounded-xl bg-green-50 hover:cursor-pointer active:scale-95 transition-all text-green-700"
+                    title="Active"
                   >
-                    <BsCheck2 size={20} title="Active" />
-                    Active
-                  </span>
-                </div>
+                    <BsCheck2 size={18} />
+                    <span className="text-xs">Active</span>
+                  </button>
+                </span>
               </div>
             ))
           )}
         </div>
       </div>
+
+      {/* 4) Pagination Footer Section */}
+      <div className="flex flex-row gap-2 items-center justify-between p-2">
+        <ShowDataNumber
+          start={paginatedEmployees.length === 0 ? 0 : (pageNo - 1) * itemsPerPage + 1}
+          end={Math.min(pageNo * itemsPerPage, filteredEmployees.length)}
+          total={filteredEmployees.length}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
+      </div>
     </div>
 
-    {/* Pagination */}
-    <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-3">
-      <ShowDataNumber
-        start={paginatedEmployees.length === 0 ? 0 : (pageNo - 1) * itemsPerPage + 1}
-        end={Math.min(pageNo * itemsPerPage, filteredEmployees.length)}
-        total={filteredEmployees.length}
-      />
-
-      <Pagination
-        pageNo={pageNo}
-        handleDecrementPageButton={handleDecrementPageButton}
-        handleIncrementPageButton={handleIncrementPageButton}
-      />
-    </div>
-
-    {/* Modals */}
+    {/* --- MODALS SECTION --- */}
     {isOpenModal === "ADDWITHDRAW" && (
       <AddWithdraw
         setModal={() => setIsOpenModal("")}
@@ -377,6 +257,11 @@ export const EmployeeWithdraw = () => {
         viewReason={viewReason}
       />
     )}
+
+    {/* --- FOOTER SECTION --- */}
+    <div className="border border-t-5 border-gray-200">
+      <Footer />
+    </div>
   </div>
 );
 

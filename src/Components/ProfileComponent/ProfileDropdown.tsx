@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { FiUser, FiLock, FiLogOut } from "react-icons/fi";
+import { FiUser, FiLock, FiLogOut, FiChevronRight } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import { logOut, resetStore } from "../../redux/UserSlice";
@@ -15,11 +15,10 @@ const ProfileDropdown = ({
   setIsOpenModal: (value: string) => void;
 }) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-
-  const isAdmin = currentUser?.role;
+  const isAdmin = currentUser?.role === "admin";
 
   const [viewPasswordModal, setViewPasswordModal] = useState<PASSWORDT | null>(
-    null
+    null,
   );
   const dispatch = useAppDispatch();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -33,55 +32,87 @@ const ProfileDropdown = ({
         setIsOpenModal("");
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setIsOpenModal]);
 
-  const handleClose = () => {
-    setIsOpenModal("");
-  };
   const handleLogoutUser = () => {
     setIsOpenModal("");
     dispatch(logOut());
     dispatch(resetStore());
   };
 
+  if (!isOpenModal) return null;
+
   return (
-    isOpenModal && (
-      <div ref={dropdownRef} className="relative z-20">
-        <ul className="absolute right-0 mt-2 w-52 rounded-lg bg-white shadow-lg border border-indigo-900">
-          <li className="border-b border-indigo-900">
-            <Link
-              to={isAdmin === "admin" ? "/profile" : "/user/profile"}
-              onClick={handleClose}
-              className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-gray-800"
-            >
-              <FiUser className="text-gray-800" /> Profile
-            </Link>
-          </li>
-          <li className="border-b border-indigo-900">
+    <div className="relative z-50">
+      <div
+        ref={dropdownRef}
+        className="absolute right-0 mt-5 w-64 origin-top-right overflow-hidden rounded-xl border-1 
+        border-indigo-900 hover:border-white bg-white shadow-2xl  focus:outline-none"
+      >
+        {/* User Header Section */}
+        <div className="bg-gray-50/50 px-4 py-4 border-b border-gray-100">
+          <p className="text-sm font-medium text-gray-900 truncate">
+            {currentUser?.name || "User Name"}
             <span
-              onClick={() => setViewPasswordModal("VIEW")}
-              className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-gray-800"
+              className="inline-flex mt-2 ml-1 items-center rounded-full bg-indigo-50 px-2 py-0.5 text-xs
+           font-medium text-indigo-700 capitalize"
             >
-              <FiLock className="text-gray-800" /> Change Password
+              {currentUser?.role || "Member"}
             </span>
-          </li>
-          <li>
-            <div
-              onClick={handleLogoutUser}
-              className="flex items-center gap-3 px-4 py-2 hover:bg-red-100 text-red-600 font-semibold"
-            >
-              <FiLogOut className="text-red-500" /> Log Out
+          </p>
+
+          <p className="text-xs text-gray-500 truncate mt-0.5">
+            {currentUser?.email || "user@example.com"}
+          </p>
+        </div>
+
+        {/* Navigation Links */}
+        <div className="py-1">
+          <Link
+            to={isAdmin ? "/profile" : "/user/profile"}
+            onClick={() => setIsOpenModal("")}
+            className="group flex items-center justify-between px-4 py-2.5 text-sm text-gray-700 
+            hover:bg-indigo-50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <FiUser className="text-gray-400 group-hover:text-indigo-600" />
+              <span>Your Profile</span>
             </div>
-          </li>
-        </ul>
-        {viewPasswordModal && (
-          <ProfileChangePassword setModal={() => setIsOpenModal("")} />
-        )}
+            <FiChevronRight className="text-gray-300 group-hover:text-indigo-400" />
+          </Link>
+
+          <button
+            onClick={() => setViewPasswordModal("VIEW")}
+            className="group flex w-full items-center justify-between px-4 py-2.5 text-sm text-gray-700
+             hover:bg-indigo-50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <FiLock className="text-gray-400 group-hover:text-indigo-600" />
+              <span>Change Password</span>
+            </div>
+            <FiChevronRight className="text-gray-300 group-hover:text-indigo-400" />
+          </button>
+        </div>
+
+        {/* Footer / Logout Section */}
+        <div className="border-t border-gray-100 bg-gray-50/30 py-1">
+          <button
+            onClick={handleLogoutUser}
+            className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600
+             hover:bg-red-50 transition-colors"
+          >
+            <FiLogOut className="text-red-500" />
+            Sign out
+          </button>
+        </div>
       </div>
-    )
+
+      {viewPasswordModal && (
+        <ProfileChangePassword setModal={() => setViewPasswordModal(null)} />
+      )}
+    </div>
   );
 };
 

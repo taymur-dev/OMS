@@ -104,20 +104,20 @@ export const UpdateApplicant = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
-      <div className="w-[42rem] bg-white mx-auto rounded-xl border border-indigo-900">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div className="w-[42rem] bg-white mx-auto rounded-lg border border-indigo-900">
         <form onSubmit={handlerSubmit}>
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded-t-lg px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              Edit Applicant
+              EDIT APPLICANT
             </Title>
           </div>
-          <div className="mx-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
             <InputField
-              labelName="Applicant Name*"
+              labelName="Applicant Name *"
               placeHolder="Enter the applicant name"
               type="text"
               name="applicant_name"
@@ -126,7 +126,7 @@ export const UpdateApplicant = ({
             />
 
             <InputField
-              labelName="Applicant Contact*"
+              labelName="Applicant Contact *"
               placeHolder="Enter contact number"
               type="text"
               name="applicant_contact"
@@ -135,7 +135,7 @@ export const UpdateApplicant = ({
             />
 
             <InputField
-              labelName="Job Title*"
+              labelName="Job Title *"
               placeHolder="Enter the job title"
               type="text"
               name="job"
@@ -144,7 +144,7 @@ export const UpdateApplicant = ({
             />
 
             <InputField
-              labelName="Applied Date*"
+              labelName="Applied Date *"
               placeHolder="Enter the date"
               type="date"
               name="applied_date"
@@ -153,7 +153,7 @@ export const UpdateApplicant = ({
             />
 
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold">Applicant Status*</label>
+              <label className="text-xs font-semibold">Applicant Status *</label>
               <select
                 name="applicant_status"
                 value={updateApplicant.applicant_status}

@@ -112,7 +112,7 @@ export const AddCalendarSession = ({
         theme="colored"
       />
 
-      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-10">
+      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
         <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-xl border border-indigo-900">
           <form onSubmit={handlerSubmitted}>
 
@@ -121,13 +121,13 @@ export const AddCalendarSession = ({
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
               >
-                Add Calendar
+                ADD CALENDAR SESSION
               </Title>
             </div>
 
-            <div className="mx-2 flex-wrap py-2 gap-3 flex flex-col justify-center">
+            <div className="mx-2 flex-wrap py-2  flex flex-col justify-center">
               <label className="block text-gray-900 text-xs font-semibold">
-                Starting Month*
+                Starting Month *
               </label>
 
               <DatePicker
