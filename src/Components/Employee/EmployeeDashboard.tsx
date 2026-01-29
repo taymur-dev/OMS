@@ -6,9 +6,10 @@ import { BiUser } from "react-icons/bi";
 import { CiViewList } from "react-icons/ci";
 import { FcLeave } from "react-icons/fc";
 import { SlNote } from "react-icons/sl";
+import { useNavigate } from "react-router-dom";
+import { Footer } from "../../Components/Footer";
 
 import Card from "../DetailCards/Card";
-import { Loader } from "../LoaderComponent/Loader";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
   navigationStart,
@@ -16,7 +17,6 @@ import {
 } from "../../redux/NavigationSlice";
 import { BASE_URL } from "../../Content/URL";
 
-// --- Types & Interfaces ---
 type DashboardDataT = {
   workingDays: number;
   presents: number;
@@ -37,50 +37,63 @@ interface Project {
   date: string;
 }
 
-// --- Configuration ---
-const CARD_CONFIG = [
+interface CardConfigItem {
+  key: string;
+  titleName: string;
+  icon?: React.ReactNode;
+  style: string;
+  path?: string;
+}
+
+const CARD_CONFIG: CardConfigItem[] = [
   {
     key: "workingDays",
     titleName: "Working Days",
     icon: <FaComputer />,
     style: "bg-indigo-900",
+    path: "/users/attendanceReports",
   },
   {
     key: "holidays",
     titleName: "Holidays",
     icon: <FcLeave />,
     style: "bg-red-500",
+    path: "/users/attendanceReports",
   },
   {
     key: "presents",
     titleName: "Presents",
     icon: <BiUser />,
     style: "bg-blue-500",
+    path: "/users/attendanceReports",
   },
   {
     key: "absents",
     titleName: "Absent / Leave",
     icon: <FaUserAltSlash />,
     style: "bg-orange-400",
+    path: "/users/leaveRequests",
   },
   {
     key: "totalTodos",
     titleName: "Total Todo",
     icon: <CiViewList />,
     style: "bg-fuchsia-500",
+    path: "/users/todo",
   },
   {
     key: "totalProgress",
     titleName: "Progress",
     icon: <SlNote />,
     style: "bg-cyan-600",
+    path: "/users/progress",
   },
 ];
 
 export const EmployeeDashboard = () => {
   const dispatch = useAppDispatch();
   const { currentUser } = useAppSelector((state) => state.officeState);
-  const { loader } = useAppSelector((state) => state.NavigateState);
+  const navigate = useNavigate();
 
   const token = currentUser?.token;
   const userId = currentUser?.userId;
@@ -98,14 +111,12 @@ export const EmployeeDashboard = () => {
   const [loadingTodos, setLoadingTodos] = useState(false);
   const [loadingProjects, setLoadingProjects] = useState(false);
 
-  // Set Title & Navigation
   useEffect(() => {
     document.title = "(OMS) EMPLOYEE DASHBOARD";
     dispatch(navigationStart());
     setTimeout(() => dispatch(navigationSuccess("EMPLOYEE DASHBOARD")), 800);
   }, [dispatch]);
 
-  // Fetch Dashboard Summary
   useEffect(() => {
     if (!token) return;
     const fetchDashboardData = async () => {
@@ -121,7 +132,6 @@ export const EmployeeDashboard = () => {
     fetchDashboardData();
   }, [token]);
 
-  // Fetch Todos
   useEffect(() => {
     if (!token || !userId) return;
     const fetchTodos = async () => {
@@ -141,7 +151,6 @@ export const EmployeeDashboard = () => {
     fetchTodos();
   }, [token, userId]);
 
-  // Fetch Projects
   useEffect(() => {
     if (!token || !userId) return;
     const fetchProjects = async () => {
@@ -163,63 +172,61 @@ export const EmployeeDashboard = () => {
     fetchProjects();
   }, [token, userId]);
 
-  if (loader) return <Loader />;
-
   return (
-    <div className="p-4 md:p-6 bg-gray-50 w-full space-y-6">
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        {CARD_CONFIG.map((card) => (
-          <div
-            key={card.key}
-            className="transition-all hover:scale-105 duration-200"
-          >
-            <Card
-              titleName={card.titleName}
-              totalUser=""
-              totalNumber={dashboardData[card.key as keyof DashboardDataT]}
-              icon={card.icon}
-              style={`${card.style} shadow-md rounded-xl text-white`}
-            />
-          </div>
-        ))}
-      </div>
+    <div className="flex flex-col min-h-screen bg-gray-50 w-full overflow-y-auto">
+      <div className="flex-grow p-4 md:p-6 space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          {CARD_CONFIG.map((card) => (
+            <div
+              key={card.key}
+              onClick={() => {
+                if (card.path) {
+                  navigate(card.path);
+                }
+              }}
+              className={`transition-all duration-200 ${card.path ? "hover:scale-105 cursor-pointer" : ""}`}
+            >
+              <Card
+                titleName={card.titleName}
+                totalUser=""
+                totalNumber={dashboardData[card.key as keyof DashboardDataT]}
+                icon={card.icon}
+                style={`${card.style} shadow-md rounded-xl text-white`}
+              />
+            </div>
+          ))}
+        </div>
 
-      {/* Main Content Areas */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Todo List Card */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="bg-indigo-900 px-5 py-4 flex justify-between items-center">
-            <h3 className="text-white font-bold flex items-center gap-2 text-lg">
-              <CiViewList className="text-xl" /> Todo List
-            </h3>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead className="bg-gray-100 text-gray-600 text-xs  font-semibold">
-                <tr>
-                  <th className="px-6 py-3">Task</th>
-                  <th className="px-6 py-3 text-right">Deadline</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {loadingTodos ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-indigo-900 px-5 py-4 flex justify-between items-center">
+              <h3 className="text-white font-bold flex items-center gap-2 text-lg">
+                <CiViewList className="text-xl" /> Todo List
+              </h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead className="bg-gray-100 text-gray-600 text-xs font-semibold">
                   <tr>
-                    <td colSpan={2} className="p-8 text-center text-gray-400">
-                      Loading tasks...
-                    </td>
+                    <th className="px-6 py-3">Task</th>
+                    <th className="px-6 py-3 text-right">Deadline</th>
                   </tr>
-                ) : todos.length === 0 ? (
-                  <tr>
-                    <td colSpan={2} className="p-8 text-center text-gray-400">
-                      No pending tasks
-                    </td>
-                  </tr>
-                ) : (
-                  todos
-                    .slice()
-                    .reverse()
-                    .map((todo, i) => (
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {loadingTodos ? (
+                    <tr>
+                      <td colSpan={2} className="p-8 text-center text-gray-400">
+                        Loading tasks...
+                      </td>
+                    </tr>
+                  ) : todos.length === 0 ? (
+                    <tr>
+                      <td colSpan={2} className="p-8 text-center text-gray-400">
+                        No pending tasks
+                      </td>
+                    </tr>
+                  ) : (
+                    todos.map((todo, i) => (
                       <tr
                         key={i}
                         className="hover:bg-indigo-50 transition-colors"
@@ -238,45 +245,42 @@ export const EmployeeDashboard = () => {
                         </td>
                       </tr>
                     ))
-                )}
-              </tbody>
-            </table>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
 
-        {/* Projects List Card */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="bg-indigo-900 px-5 py-4 flex justify-between items-center">
-            <h3 className="text-white font-bold flex items-center gap-2 text-lg">
-              <FaTasks className="text-lg" /> Assigned Projects
-            </h3>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead className="bg-gray-100 text-gray-600 text-xs  font-semibold">
-                <tr>
-                  <th className="px-6 py-3">Project Name</th>
-                  <th className="px-6 py-3 text-right">Assigned Date</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {loadingProjects ? (
+          {/* Projects List Card */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-indigo-900 px-5 py-4 flex justify-between items-center">
+              <h3 className="text-white font-bold flex items-center gap-2 text-lg">
+                <FaTasks className="text-lg" /> Assigned Projects
+              </h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead className="bg-gray-100 text-gray-600 text-xs font-semibold">
                   <tr>
-                    <td colSpan={2} className="p-8 text-center text-gray-400">
-                      Loading projects...
-                    </td>
+                    <th className="px-6 py-3">Project Name</th>
+                    <th className="px-6 py-3 text-right">Assigned Date</th>
                   </tr>
-                ) : projects.length === 0 ? (
-                  <tr>
-                    <td colSpan={2} className="p-8 text-center text-gray-400">
-                      No assigned projects
-                    </td>
-                  </tr>
-                ) : (
-                  projects
-                    .slice()
-                    .reverse()
-                    .map((project) => (
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {loadingProjects ? (
+                    <tr>
+                      <td colSpan={2} className="p-8 text-center text-gray-400">
+                        Loading projects...
+                      </td>
+                    </tr>
+                  ) : projects.length === 0 ? (
+                    <tr>
+                      <td colSpan={2} className="p-8 text-center text-gray-400">
+                        No assigned projects
+                      </td>
+                    </tr>
+                  ) : (
+                    projects.map((project) => (
                       <tr
                         key={project.id}
                         className="hover:bg-indigo-50 transition-colors"
@@ -295,12 +299,15 @@ export const EmployeeDashboard = () => {
                         </td>
                       </tr>
                     ))
-                )}
-              </tbody>
-            </table>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };

@@ -179,7 +179,7 @@ export const UpdatePromotion = ({
                 value={promotion.approvalStatus}
                 handlerChange={handleChange}
                 optionData={ApprovalOptions}
-                inital="Pending"
+                // inital="Pending"
               />
             )}
           </div>

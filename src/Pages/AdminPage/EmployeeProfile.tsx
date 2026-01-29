@@ -9,6 +9,8 @@ import {
   LucideIcon,
 } from "lucide-react";
 import DefaultAvatar from "../../assets/Avatar.png";
+import { Footer } from "../../Components/Footer";
+
 
 interface DetailRowProps {
   icon: LucideIcon;
@@ -39,7 +41,8 @@ export const EmployeeProfile = () => {
   );
 
   return (
-    <div className="flex flex-col w-full bg-[#f8f9fa]">
+    // min-h-screen ensures the flex-col takes up the full height to push footer down
+    <div className="flex flex-col w-full min-h-screen bg-[#f8f9fa]">
       <div className="flex-grow w-full px-4 py-6 sm:px-6 lg:px-8">
         <TableTitle tileName="Employee Profile" />
         <hr className="border-b border-gray-200 mb-8" />
@@ -72,13 +75,11 @@ export const EmployeeProfile = () => {
                         alt="Profile"
                       />
                     ) : (
-                      <div className="">
-                        <img
-                          className="w-full h-full object-cover opacity-90"
-                          src={DefaultAvatar}
-                          alt="Default"
-                        />
-                      </div>
+                      <img
+                        className="w-full h-full object-cover opacity-90"
+                        src={DefaultAvatar}
+                        alt="Default"
+                      />
                     )}
                   </div>
                   <span className="absolute bottom-3 right-3 w-6 h-6 bg-green-500 border-4 border-white rounded-full shadow-sm"></span>
@@ -128,6 +129,9 @@ export const EmployeeProfile = () => {
           </div>
         </div>
       </div>
+      
+      {/* Footer added here */}
+      <Footer />
     </div>
   );
 };

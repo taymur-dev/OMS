@@ -45,6 +45,8 @@ export const Rejoin = () => {
 
   const token = currentUser?.token;
 
+  const isAdmin = currentUser?.role === "admin";
+
   const [rejoinList, setRejoinList] = useState<REJOIN_T[]>([]);
   const [isOpenModal, setIsOpenModal] = useState<MODAL_T>("");
 
@@ -196,11 +198,13 @@ export const Rejoin = () => {
           <div className="min-w-[900px]">
             {/* Sticky Table Header - Using grid-cols-7 to match dimensions */}
             <div
-              className="grid grid-cols-7 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
+              className={`grid ${
+                isAdmin ? "grid-cols-7" : "grid-cols-6"
+              } bg-indigo-900 text-white items-center font-semibold
+             text-sm sticky top-0 z-10 p-2`}
             >
               <span>Sr#</span>
-              <span>Employee</span>
+              {isAdmin && <span>Employee Name</span>}
               <span>Designation</span>
               <span>Resignation</span>
               <span>Rejoin Date</span>
@@ -217,11 +221,15 @@ export const Rejoin = () => {
               paginatedData.map((item, index) => (
                 <div
                   key={item.id}
-                  className="grid grid-cols-7 border-b border-x border-gray-200 text-gray-800 items-center
-                 text-sm p-2 hover:bg-gray-50 transition"
+                  className={`grid ${
+                    isAdmin ? "grid-cols-7" : "grid-cols-6"
+                  } border-b border-x border-gray-200 text-gray-800 items-center
+                 text-sm p-2 hover:bg-gray-50 transition`}
                 >
                   <span>{startIndex + index + 1}</span>
-                  <span className="truncate">{item.employee_name}</span>
+                  {isAdmin && (
+                    <span className="truncate">{item.employee_name}</span>
+                  )}
                   <span className="truncate">{item.designation}</span>
                   <span>{formatDate(item.resignation_date)}</span>
                   <span>{formatDate(item.rejoinRequest_date)}</span>

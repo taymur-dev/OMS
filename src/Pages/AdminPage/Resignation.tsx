@@ -45,6 +45,8 @@ export const Resignation = () => {
 
   const token = currentUser?.token;
 
+  const isAdmin = currentUser?.role === "admin";
+
   const [isOpenModal, setIsOpenModal] = useState<ResignationT>("");
   const [allResignations, setAllResignations] = useState<ResignationDataT[]>(
     [],
@@ -227,11 +229,13 @@ export const Resignation = () => {
           <div className="min-w-[900px]">
             {/* Sticky Table Header */}
             <div
-              className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr_1fr_1.5fr] bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
+              className={`grid ${
+                isAdmin ? "grid-cols-6" : "grid-cols-5"
+              } bg-indigo-900 text-white items-center font-semibold
+             text-sm sticky top-0 z-10 p-2`}
             >
               <span>Sr#</span>
-              <span>Employee Name</span>
+              {isAdmin && <span>Employee Name</span>}
               <span>Designation</span>
               <span>Resignation Date</span>
               <span>Approval</span>
@@ -247,11 +251,15 @@ export const Resignation = () => {
               paginatedResignations.map((res, index) => (
                 <div
                   key={res.id}
-                  className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr_1fr_1.5fr] border-b border-x border-gray-200 text-gray-800 items-center
-                 text-sm p-2 hover:bg-gray-50 transition"
+                  className={`grid ${
+                    isAdmin ? "grid-cols-6" : "grid-cols-5"
+                  } border-b border-x border-gray-200
+                     text-gray-800 items-center text-sm p-2 hover:bg-gray-50 transition`}
                 >
                   <span>{startIndex + index + 1}</span>
-                  <span className="truncate">{res.employee_name}</span>
+                   {isAdmin && (
+                    <span className="truncate">{res.employee_name}</span>
+                  )}
                   <span className="truncate">{res.designation}</span>
                   <span>
                     {new Date(res.resignation_date)

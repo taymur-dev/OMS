@@ -1,22 +1,13 @@
-import TodoCard from "../Components/UserDashboardCard/TodoCard";
-import AssignProject from "../Components/UserDashboardCard/AssignProjectCard";
-import Card from "../Components/DetailCards/Card";
-import { FaComputer } from "react-icons/fa6";
+import { EmployeeDashboard } from "../Components/Employee/EmployeeDashboard";
+import { Footer } from "../Components/Footer";
 
 export const UserDashboard = () => {
   return (
-    <div className="flex items-center  w-full h-full">
-      <TodoCard />
-      <AssignProject />
-      <div>
-        <Card
-          titleName="workings Days"
-          totalNumber={10}
-          totalUser={"10"}
-          icon={<FaComputer />}
-          style="bg-cyan-600 "
-        />
-      </div>
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <main className="flex-1">
+        <EmployeeDashboard />
+      </main>
+      <Footer /> 
     </div>
   );
 };

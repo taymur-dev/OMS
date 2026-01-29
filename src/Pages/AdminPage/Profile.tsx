@@ -48,10 +48,9 @@ export const Profile = () => {
   );
 
   return (
-    /* flex flex-col min-h-screen ensures the content pushes the footer down */
     <div className="flex flex-col min-h-screen bg-[#f8f9fa]">
       <div className="flex-grow w-full px-4 py-6 sm:px-6 lg:px-8">
-        <TableTitle tileName="User Profile" />
+        <TableTitle tileName="Profile" />
         <hr className="border border-b border-gray-200" />
 
         <div className="max-w-3xl mx-auto mt-10">

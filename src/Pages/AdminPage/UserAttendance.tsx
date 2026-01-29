@@ -36,7 +36,7 @@ export type AttendanceT = {
   clockOut: string;
   date: string;
   day: string;
-  leaveApprovalStatus: string | null;
+  leaveStatus: string | null;
   leaveReason: string | null;
   name: string;
   role: string;

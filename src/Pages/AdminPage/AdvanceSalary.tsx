@@ -43,6 +43,7 @@ export const AdvanceSalary = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const dispatch = useAppDispatch();
   const token = currentUser?.token;
+  const isAdmin = currentUser?.role === "admin";
 
   const [allAdvance, setAllAdvance] = useState<AdvanceSalaryType[]>([]);
   const [isOpenModal, setIsOpenModal] = useState<AdvanceSalaryT>("");
@@ -213,11 +214,13 @@ export const AdvanceSalary = () => {
           <div className="min-w-[900px]">
             {/* Sticky Table Header */}
             <div
-              className="grid grid-cols-6 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
+              className={`grid ${
+                isAdmin ? "grid-cols-6" : "grid-cols-5"
+              } bg-indigo-900 text-white items-center font-semibold
+             text-sm sticky top-0 z-10 p-2`}
             >
               <span>Sr#</span>
-              <span>Employee Name</span>
+              {isAdmin && <span>Employee Name</span>}
               <span>Date</span>
               <span>Amount</span>
               <span>Approval</span>
@@ -233,11 +236,15 @@ export const AdvanceSalary = () => {
               paginatedAdvance.map((item, index) => (
                 <div
                   key={item.id}
-                  className="grid grid-cols-6 border-b border-x border-gray-200 text-gray-800 items-center
-                 text-sm p-2 hover:bg-gray-50 transition"
+                  className={`grid ${
+                    isAdmin ? "grid-cols-6" : "grid-cols-5"
+                  } border-b border-x border-gray-200 text-gray-800 items-center
+                 text-sm p-2 hover:bg-gray-50 transition`}
                 >
                   <span>{startIndex + index + 1}</span>
-                  <span className="truncate">{item.employee_name}</span>
+                  {isAdmin && (
+                    <span className="truncate">{item.employee_name}</span>
+                  )}
                   <span>
                     {new Date(item.date)
                       .toLocaleDateString("en-GB", {

@@ -46,6 +46,8 @@ export const Promotion = () => {
   const dispatch = useAppDispatch();
   const token = currentUser?.token;
 
+  const isAdmin = currentUser?.role === "admin";
+
   const [allPromotions, setAllPromotions] = useState<ALLPROMOTION[]>([]);
   const [isOpenModal, setIsOpenModal] = useState<PromotionT>("");
   const [selectedPromotion, setSelectedPromotion] =
@@ -136,27 +138,28 @@ export const Promotion = () => {
 
   if (loader) return <Loader />;
 
-const getStatusBadge = (status: string) => {
-  const s = status?.toUpperCase(); // Matching your OptionField values
+  const getStatusBadge = (status: string) => {
+    const s = status?.toUpperCase(); // Matching your OptionField values
 
-  // Define base and specific styles
-  const baseClasses = "px-2.5 py-1 rounded-full text-xs font-semibold uppercase border shadow-sm";
-  
-  const styles: Record<string, string> = {
-    ACCEPTED: "bg-green-100 text-green-700 border-green-200",
-    REJECTED: "bg-red-100 text-red-700 border-red-200",
-    PENDING: "bg-yellow-100 text-yellow-700 border-yellow-200",
-    DEFAULT: "bg-gray-100 text-gray-700 border-gray-200",
+    // Define base and specific styles
+    const baseClasses =
+      "px-2.5 py-1 rounded-full text-xs font-semibold uppercase border shadow-sm";
+
+    const styles: Record<string, string> = {
+      ACCEPTED: "bg-green-100 text-green-700 border-green-200",
+      REJECTED: "bg-red-100 text-red-700 border-red-200",
+      PENDING: "bg-yellow-100 text-yellow-700 border-yellow-200",
+      DEFAULT: "bg-gray-100 text-gray-700 border-gray-200",
+    };
+
+    const selectedStyle = styles[s] || styles.DEFAULT;
+
+    return (
+      <span className={`${baseClasses} ${selectedStyle}`}>
+        {status || "PENDING"}
+      </span>
+    );
   };
-
-  const selectedStyle = styles[s] || styles.DEFAULT;
-
-  return (
-    <span className={`${baseClasses} ${selectedStyle}`}>
-      {status || "PENDING"}
-    </span>
-  );
-};
 
   return (
     <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
@@ -211,11 +214,13 @@ const getStatusBadge = (status: string) => {
           <div className="min-w-[900px]">
             {/* Sticky Table Header */}
             <div
-              className="grid grid-cols-6 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
+              className={`grid ${
+                isAdmin ? "grid-cols-6" : "grid-cols-5"
+              } bg-indigo-900 text-white items-center font-semibold
+             text-sm sticky top-0 z-10 p-2`}
             >
               <span>Sr#</span>
-              <span>Employee Name</span>
+              {isAdmin && <span>Employee Name</span>}
               <span>Current Designation</span>
               <span>Requested Designation</span>
               <span>Approval</span>
@@ -231,11 +236,15 @@ const getStatusBadge = (status: string) => {
               paginatedPromotions.map((promotion, index) => (
                 <div
                   key={promotion.id}
-                  className="grid grid-cols-6 border-b border-x border-gray-200 text-gray-800 items-center
-                 text-sm p-2 hover:bg-gray-50 transition"
+                  className={`grid ${
+                    isAdmin ? "grid-cols-6" : "grid-cols-5"
+                  } border-b border-x border-gray-200 text-gray-800 items-center
+                 text-sm p-2 hover:bg-gray-50 transition`}
                 >
                   <span>{startIndex + index + 1}</span>
-                  <span className="truncate">{promotion.employee_name}</span>
+                  {isAdmin && (
+                    <span className="truncate">{promotion.employee_name}</span>
+                  )}
                   <span className="truncate">
                     {promotion.current_designation}
                   </span>

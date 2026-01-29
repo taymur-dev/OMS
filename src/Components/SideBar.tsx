@@ -2,7 +2,7 @@ import { AccordionItem } from "./Accordion/AccordionItem";
 import { SideBarButton } from "./SideBarComponent/SideBarButton";
 import { BiArrowBack } from "react-icons/bi";
 import { useCallback, useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom"; 
+import { Link, useLocation } from "react-router-dom";
 import { FaUser, FaUserFriends } from "react-icons/fa";
 import { PiFingerprintDuotone } from "react-icons/pi";
 import { GoProjectRoadmap } from "react-icons/go";
@@ -25,17 +25,29 @@ type SideBarProps = {
 };
 
 type TActivButton =
-  | "Dashboard" | "People" | "Attendance" | "Employee" | "Projects"
-  | "Performance" | "Sale" | "manageExpense" | "Chat" | "payroll"
-  | "Assets Management" | "Recuritment" | "Dynamic" | "Accounts"
-  | "Reports" | "configureTime";
+  | "Dashboard"
+  | "People"
+  | "Attendance"
+  | "Employee"
+  | "Projects"
+  | "Performance"
+  | "Sale"
+  | "manageExpense"
+  | "Chat"
+  | "payroll"
+  | "Assets Management"
+  | "Recuritment"
+  | "Dynamic"
+  | "Accounts"
+  | "Reports"
+  | "Configuration";
 
 export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   const [activeBtns, setActiveBtns] = useState<TActivButton | "">("");
   const [allTodos, setAllTodos] = useState([]);
   const [isHoverable, setIsHoverable] = useState(false);
   const [isBlurred, setIsBlurred] = useState(false); // State for modal detection
-  
+
   const { currentUser } = useAppSelector((state) => state?.officeState);
   const token = currentUser?.token;
   const { pathname } = useLocation();
@@ -50,8 +62,11 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
     };
 
     const observer = new MutationObserver(checkModal);
-    observer.observe(document.body, { attributes: true, attributeFilter: ["class", "style"] });
-    
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ["class", "style"],
+    });
+
     return () => observer.disconnect();
   }, []);
 
@@ -65,7 +80,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
 
   const handleMouseEnter = () => {
     if (window.innerWidth >= 768 && isOpen && isHoverable) {
-      setIsOpen?.(false); 
+      setIsOpen?.(false);
     }
   };
 
@@ -98,7 +113,15 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
     getAllTodos();
   }, [getAllTodos]);
 
-  const SubLink = ({ to, label, badge }: { to: string; label: string; badge?: number; }) => {
+  const SubLink = ({
+    to,
+    label,
+    badge,
+  }: {
+    to: string;
+    label: string;
+    badge?: number;
+  }) => {
     const isActive = pathname === to;
     return (
       <Link
@@ -192,7 +215,6 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
                 <SubLink to="/markAttendance" label="Mark Attendance" />
                 <SubLink to="/usersAttendance" label="User Attendance" />
                 <SubLink to="/leaveRequests" label="Leave Request" />
-                <SubLink to="/holidays" label="Configure Holidays" />
               </div>
             </AccordionItem>
           )}
@@ -422,16 +444,17 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           <SideBarButton
             isOpen={isOpen}
             icon={<AiOutlineFieldTime size={20} />}
-            title="Configure Time"
+            title="Configuration"
             arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("configureTime")}
+            handlerClick={() => toggleButtonActive("Configuration")}
             activeBtns={activeBtns}
-            activeBtn="configureTime"
+            activeBtn="Configuration"
           />
-          {activeBtns === "configureTime" && (
+          {activeBtns === "Configuration" && (
             <AccordionItem isOpen={isOpen}>
               <div className="flex flex-col">
-                <SubLink to="/configTime" label="Config Time" />
+                <SubLink to="/attendanceRules" label="Attendance Rules" />
+                <SubLink to="/holidays" label="Configure Holidays" />
               </div>
             </AccordionItem>
           )}

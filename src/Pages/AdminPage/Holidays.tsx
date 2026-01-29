@@ -33,8 +33,9 @@ type THOLIDAYMODAL = "EDIT" | "DELETE" | "ADDHOLIDAY" | "VIEW" | "";
 
 interface HOLIDAYSTATET {
   id: number;
-  date: string;
   holiday: string;
+  fromDate: string; 
+  toDate: string;   
 }
 
 export const Holidays = () => {
@@ -97,7 +98,8 @@ export const Holidays = () => {
   const handleViewHoliday = (holiday: HOLIDAYSTATET) => {
     setViewHoliday({
       holiday: holiday.holiday,
-      date: holiday.date,
+      fromDate: holiday.fromDate,
+      toDate: holiday.toDate,
     });
     handleToggleViewModal("VIEW");
   };
@@ -130,6 +132,16 @@ export const Holidays = () => {
     [filteredHolidays, pageNo, selectedValue],
   );
 
+  const formatDate = (date: string) => {
+    return new Date(date)
+      .toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })
+      .replace(/ /g, "-");
+  };
+
   useEffect(() => {
     document.title = "(OMS) HOLIDAYS";
     handleGetAllHolidays();
@@ -142,7 +154,6 @@ export const Holidays = () => {
   return (
     <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add Holiday button as the rightElement */}
         <TableTitle
           tileName="Configure Holidays"
           rightElement={
@@ -157,7 +168,6 @@ export const Holidays = () => {
 
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            {/* Left Side: Show entries */}
             <div className="text-sm flex items-center">
               <span>Show</span>
               <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
@@ -176,7 +186,6 @@ export const Holidays = () => {
               <span className="hidden xs:inline">entries</span>
             </div>
 
-            {/* Right Side: Search Input */}
             <TableInputField
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
@@ -184,21 +193,19 @@ export const Holidays = () => {
           </div>
         </div>
 
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
         <div className="overflow-auto px-2">
-          <div className="min-w-[600px]">
-            {/* Sticky Table Header */}
+          <div className="min-w-[700px]">
             <div
-              className="grid grid-cols-4 bg-indigo-900 text-white items-center font-semibold
+              className="grid grid-cols-5 bg-indigo-900 text-white items-center font-semibold
              text-sm sticky top-0 z-10 p-2"
             >
               <span>Sr#</span>
               <span>Holiday</span>
-              <span>Date</span>
+              <span>From Date</span>
+              <span>To Date</span>
               <span className="text-center">Actions</span>
             </div>
 
-            {/* Table Body */}
             {paginatedHolidays.length === 0 ? (
               <div className="text-gray-800 text-lg text-center py-10">
                 No records available at the moment!
@@ -207,20 +214,13 @@ export const Holidays = () => {
               paginatedHolidays.map((holi, index) => (
                 <div
                   key={holi.id}
-                  className="grid grid-cols-4 border-b border-x border-gray-200 text-gray-800 items-center
+                  className="grid grid-cols-5 border-b border-x border-gray-200 text-gray-800 items-center
                  text-sm p-2 hover:bg-gray-50 transition"
                 >
                   <span>{(pageNo - 1) * selectedValue + index + 1}</span>
                   <span className="truncate">{holi.holiday}</span>
-                  <span>
-                    {new Date(holi.date)
-                      .toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })
-                      .replace(/ /g, "-")}
-                  </span>
+                  <span>{formatDate(holi.fromDate)}</span>
+                  <span>{formatDate(holi.toDate)}</span>
                   <span className="flex flex-nowrap justify-center gap-1">
                     <EditButton
                       handleUpdate={() => handleUpdateHoliday(holi)}
@@ -236,7 +236,6 @@ export const Holidays = () => {
           </div>
         </div>
 
-        {/* 4) Pagination placed under the table */}
         <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
           <ShowDataNumber
             start={
@@ -255,7 +254,6 @@ export const Holidays = () => {
         </div>
       </div>
 
-      {/* --- MODALS SECTION --- */}
       {isOpenModal === "ADDHOLIDAY" && (
         <AddHoliday
           handleGetAllHodidays={handleGetAllHolidays}
@@ -287,7 +285,6 @@ export const Holidays = () => {
         />
       )}
 
-      {/* --- FOOTER SECTION --- */}
       <div className="border border-t-5 border-gray-200">
         <Footer />
       </div>

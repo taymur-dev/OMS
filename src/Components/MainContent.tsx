@@ -17,6 +17,7 @@ import { InputField } from "./InputFields/InputField";
 import { Columns } from "./MenuCards/Colums";
 import Card from "./DetailCards/Card";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 type CategoryT = { id: number; categoryName: string };
 type UserT = {
@@ -85,6 +86,7 @@ export const MainContent = () => {
   const [allSales, setAllSales] = useState<SaleT[]>([]);
   const [allCustomers, setAllCustomers] = useState<AllcustomerT[]>([]);
   const [allAssets, setAllAssets] = useState<AssetType[]>([]);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     categoryName: "",
@@ -304,69 +306,85 @@ export const MainContent = () => {
   return (
     <div className="w-full h-full overflow-y-auto p-4 md:p-6 space-y-5 bg-gray-50">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <Card
-          titleName="Users"
-          totalUser="Total Users"
-          totalNumber={activeUsers.length}
-          icon={<BiUser className="text-2xl" />}
-          style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
-        />
+        <div onClick={() => navigate("/users")} className="cursor-pointer">
+          <Card
+            titleName="Users"
+            totalUser="Total Users"
+            totalNumber={activeUsers.length}
+            icon={<BiUser className="text-2xl" />}
+            style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+          />
+        </div>
 
-        <Card
-          titleName="Projects"
-          totalUser="Total Projects"
-          totalNumber={allAssignProjects.length}
-          icon={<FaProjectDiagram className="text-2xl" />}
-          style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
-        />
+        <div onClick={() => navigate("/projects")} className="cursor-pointer">
+          <Card
+            titleName="Projects"
+            totalUser="Total Projects"
+            totalNumber={allAssignProjects.length}
+            icon={<FaProjectDiagram className="text-2xl" />}
+            style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+          />
+        </div>
 
-        <Card
-          titleName="Todo's"
-          totalUser="Active Todo's"
-          totalNumber={activeTodos.length}
-          icon={<LuListTodo className="text-2xl" />}
-          style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
-        />
+        <div onClick={() => navigate("/todo")} className="cursor-pointer">
+          <Card
+            titleName="Todo's"
+            totalUser="Active Todo's"
+            totalNumber={activeTodos.length}
+            icon={<LuListTodo className="text-2xl" />}
+            style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+          />
+        </div>
 
-        <Card
-          titleName="Expense Categories"
-          totalUser="Total Categories"
-          totalNumber={expenseCategory.length}
-          icon={<CiViewList className="text-2xl" />}
-          style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
-        />
+        <div onClick={() => navigate("/expensesCatogries")} className="cursor-pointer">
+          <Card
+            titleName="Expense Categories"
+            totalUser="Total Categories"
+            totalNumber={expenseCategory.length}
+            icon={<CiViewList className="text-2xl" />}
+            style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+          />
+        </div>
 
-        <Card
-          titleName="Total Expense"
-          totalNumber={totalExpenseAmount}
-          isCurrency
-          icon={<GiTakeMyMoney className="text-2xl" />}
-          style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
-        />
+        <div onClick={() => navigate("/expenses")} className="cursor-pointer">
+          <Card
+            titleName="Total Expense"
+            totalNumber={totalExpenseAmount}
+            isCurrency
+            icon={<GiTakeMyMoney className="text-2xl" />}
+            style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+          />
+        </div>
 
-        <Card
-          titleName="Sales"
-          totalUser="Total Sales Count"
-          totalNumber={allSales.length}
-          icon={<MdOutlineSell className="text-2xl" />}
-          style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
-        />
+        <div onClick={() => navigate("/sales")} className="cursor-pointer">
+          <Card
+            titleName="Sales"
+            totalUser="Total Sales Count"
+            totalNumber={allSales.length}
+            icon={<MdOutlineSell className="text-2xl" />}
+            style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+          />
+        </div>
 
-        <Card
-          titleName="Total Customers"
-          totalUser="Registered Customers"
-          totalNumber={allCustomers.length}
-          icon={<BiGroup className="text-2xl" />}
-          style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
-        />
+        <div onClick={() => navigate("/customers")} className="cursor-pointer">
+          <Card
+            titleName="Total Customers"
+            totalUser="Registered Customers"
+            totalNumber={allCustomers.length}
+            icon={<BiGroup className="text-2xl" />}
+            style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+          />
+        </div>
 
-        <Card
-          titleName="Assets"
-          totalUser="Total Assets"
-          totalNumber={allAssets.length}
-          icon={<BsBoxes className="text-2xl" />}
-          style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
-        />
+        <div onClick={() => navigate("/assets")} className="cursor-pointer">
+          <Card
+            titleName="Assets"
+            totalUser="Total Assets"
+            totalNumber={allAssets.length}
+            icon={<BsBoxes className="text-2xl" />}
+            style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+          />
+        </div>
       </div>
 
       <form className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end w-full">

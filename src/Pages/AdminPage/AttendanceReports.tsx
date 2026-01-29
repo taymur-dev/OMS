@@ -191,150 +191,157 @@ export const AttendanceReports = () => {
 
   if (loader) return <Loader />;
 
- return (
-  <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-    <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-      <TableTitle tileName="Attendance Report" />
+  return (
+    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
+        <TableTitle tileName="Attendance Report" />
 
-      <hr className="border border-b border-gray-200" />
+        <hr className="border border-b border-gray-200" />
 
-      {/* --- FILTER SECTION --- */}
-      <div className="p-2 bg-white">
-        <div className="flex flex-wrap items-end gap-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow min-w-[300px]">
-            <InputField
-              labelName="From"
-              type="date"
-              value={reportData.startDate}
-              handlerChange={handleChange}
-              name="startDate"
-            />
-            <InputField
-              labelName="To"
-              type="date"
-              value={reportData.endDate}
-              handlerChange={handleChange}
-              name="endDate"
-            />
-
-            {isAdmin ? (
-              <OptionField
-                labelName="User"
-                name="userId"
-                value={reportData.userId}
-                optionData={users.map((u) => ({
-                  id: u.id,
-                  label: u.name,
-                  value: u.id,
-                }))}
-                inital="Select User"
+        {/* --- FILTER SECTION --- */}
+        <div className="p-2 bg-white">
+          <div className="flex flex-wrap items-end gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow min-w-[300px]">
+              <InputField
+                labelName="From"
+                type="date"
+                value={reportData.startDate}
                 handlerChange={handleChange}
+                name="startDate"
               />
-            ) : (
-              /* Keeps the grid alignment even if not admin */
-              <div className="hidden sm:block"></div>
-            )}
-          </div>
+              <InputField
+                labelName="To"
+                type="date"
+                value={reportData.endDate}
+                handlerChange={handleChange}
+                name="endDate"
+              />
 
-          {/* Buttons Container: Wraps and goes full width on smaller screens */}
-          <div className="flex gap-2 flex-grow lg:flex-grow-0 min-w-full lg:min-w-fit">
-            <button
-              onClick={handleSearchClick}
-              className="bg-indigo-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center 
+              {isAdmin ? (
+                <OptionField
+                  labelName="User"
+                  name="userId"
+                  value={reportData.userId}
+                  optionData={users.map((u) => ({
+                    id: u.id,
+                    label: u.name,
+                    value: u.id,
+                  }))}
+                  inital="Select User"
+                  handlerChange={handleChange}
+                />
+              ) : (
+                /* Keeps the grid alignment even if not admin */
+                <div className="hidden sm:block"></div>
+              )}
+            </div>
+
+            {/* Buttons Container: Wraps and goes full width on smaller screens */}
+            <div className="flex gap-2 flex-grow lg:flex-grow-0 min-w-full lg:min-w-fit">
+              <button
+                onClick={handleSearchClick}
+                className="bg-indigo-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center 
               justify-center whitespace-nowrap hover:bg-indigo-800 transition"
-            >
-              <FontAwesomeIcon icon={faSearch} className="mr-2" />
-              Search
-            </button>
+              >
+                <FontAwesomeIcon icon={faSearch} className="mr-2" />
+                Search
+              </button>
 
-            <button
-              onClick={printDiv}
-              className="bg-blue-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center 
+              <button
+                onClick={printDiv}
+                className="bg-blue-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center 
               justify-center whitespace-nowrap hover:bg-blue-800 transition"
-            >
-              <FontAwesomeIcon icon={faPrint} className="mr-2" />
-              Print
-            </button>
+              >
+                <FontAwesomeIcon icon={faPrint} className="mr-2" />
+                Print
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* --- SUB-HEADER SECTION (Search & Info) --- */}
-      <div className="p-2">
-        <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-          <div className="text-sm font-bold text-gray-600">
-            From: <span className="text-black">{appliedFilters.startDate}</span>{" "}
-            To: <span className="text-black">{appliedFilters.endDate}</span>
+        {/* --- SUB-HEADER SECTION (Search & Info) --- */}
+        <div className="p-2">
+          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
+            <div className="text-sm font-bold text-gray-600">
+              From:{" "}
+              <span className="text-black">{appliedFilters.startDate}</span> To:{" "}
+              <span className="text-black">{appliedFilters.endDate}</span>
+            </div>
+
+            <TableInputField
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+            />
           </div>
+        </div>
 
-          <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
+        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
+        <div className="overflow-auto px-2">
+          <div id="attendanceDiv" className="min-w-[800px]">
+            {/* Sticky Table Header */}
+            <div
+              className={`grid ${
+                isAdmin ? "grid-cols-7" : "grid-cols-6"
+              } bg-indigo-900 text-white items-center font-semibold text-sm sticky top-0 z-10 p-2`}
+            >
+              <span>Sr#</span>
+              <span>Date</span>
+              {isAdmin && <span>User</span>}
+              <span>Clock In</span>
+              <span>Clock Out</span>
+              <span>Hours</span>
+              <span>Day</span>
+            </div>
+
+            {/* Table Body */}
+            {filteredAttendance.length === 0 ? (
+              <div className="text-gray-800 text-lg text-center py-10 border-x border-b border-gray-200">
+                No records available at the moment!
+              </div>
+            ) : (
+              paginatedData.map((item, index) => (
+                <div
+                  key={item.id}
+                  className={`grid ${
+                    isAdmin ? "grid-cols-7" : "grid-cols-6"
+                  } border-b border-x border-gray-200 text-gray-800 items-center text-sm p-2 hover:bg-gray-50 transition`}
+                >
+                  <span>{startIndex + index + 1}</span>
+                  <span>{item.date}</span>
+                  {isAdmin && <span className="truncate">{item.name}</span>}
+                  <span>{item.clockIn ?? "--"}</span>
+                  <span>{item.clockOut ?? "--"}</span>
+                  <span>{item.workingHours ?? "--"}</span>
+                  <span>{item.day ?? "--"}</span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* --- PAGINATION SECTION --- */}
+        <div className="flex flex-row items-center justify-between p-2">
+          <ShowDataNumber
+            start={filteredAttendance.length === 0 ? 0 : startIndex + 1}
+            end={Math.min(startIndex + itemsPerPage, filteredAttendance.length)}
+            total={filteredAttendance.length}
+          />
+          <Pagination
+            pageNo={pageNo}
+            handleDecrementPageButton={() =>
+              setPageNo((p) => Math.max(p - 1, 1))
+            }
+            handleIncrementPageButton={() =>
+              startIndex + itemsPerPage < filteredAttendance.length &&
+              setPageNo((p) => p + 1)
+            }
           />
         </div>
       </div>
 
-      {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-      <div className="overflow-auto px-2">
-        <div id="attendanceDiv" className="min-w-[800px]">
-          {/* Sticky Table Header */}
-          <div className="grid grid-cols-7 bg-indigo-900 text-white items-center font-semibold text-sm sticky top-0 z-10 p-2">
-            <span>Sr#</span>
-            <span>Date</span>
-            <span>User</span>
-            <span>Clock In</span>
-            <span>Clock Out</span>
-            <span>Hours</span>
-            <span>Day</span>
-          </div>
-
-          {/* Table Body */}
-          {filteredAttendance.length === 0 ? (
-            <div className="text-gray-800 text-lg text-center py-10 border-x border-b border-gray-200">
-              No records available at the moment!
-            </div>
-          ) : (
-            paginatedData.map((item, index) => (
-              <div
-                key={item.id}
-                className="grid grid-cols-7 border-b border-x border-gray-200 text-gray-800 items-center text-sm p-2 hover:bg-gray-50 transition"
-              >
-                <span>{startIndex + index + 1}</span>
-                <span>{item.date}</span>
-                <span className="truncate">{item.name}</span>
-                <span>{item.clockIn ?? "--"}</span>
-                <span>{item.clockOut ?? "--"}</span>
-                <span>{item.workingHours ?? "--"}</span>
-                <span>{item.day ?? "--"}</span>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-
-      {/* --- PAGINATION SECTION --- */}
-      <div className="flex flex-row items-center justify-between p-2">
-        <ShowDataNumber
-          start={filteredAttendance.length === 0 ? 0 : startIndex + 1}
-          end={Math.min(startIndex + itemsPerPage, filteredAttendance.length)}
-          total={filteredAttendance.length}
-        />
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={() =>
-            setPageNo((p) => Math.max(p - 1, 1))
-          }
-          handleIncrementPageButton={() =>
-            startIndex + itemsPerPage < filteredAttendance.length &&
-            setPageNo((p) => p + 1)
-          }
-        />
+      <div className="border border-t-5 border-gray-200">
+        <Footer />
       </div>
     </div>
-
-    <div className="border border-t-5 border-gray-200">
-      <Footer />
-    </div>
-  </div>
-);
+  );
 };

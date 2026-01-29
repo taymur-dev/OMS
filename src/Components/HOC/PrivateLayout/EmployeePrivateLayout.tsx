@@ -1,10 +1,9 @@
 import { useState } from "react";
+import { Outlet } from "react-router-dom"; // Outlet import karein
 import { Header } from "../../Header";
-import { Footer } from "../../Footer";
 import { EmployeeSideBar } from "../../Employee/EmployeeSideBar";
 
-export interface IPrivateLayout extends React.ComponentPropsWithoutRef<"div"> {}
-export const EmployeePrivateLayout = ({ children }: IPrivateLayout) => {
+export const EmployeePrivateLayout = () => {
   const [isOpen, setIsopen] = useState(false);
 
   const toggleSideBar = () => {
@@ -12,14 +11,18 @@ export const EmployeePrivateLayout = ({ children }: IPrivateLayout) => {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-y-auto">
+    <div className="flex flex-col h-screen overflow-hidden">
       <Header isOpen={isOpen} toggleSideBar={toggleSideBar} />
-      <div className="flex flex-col h-[calc(100%-3.5rem)] overflow-y-auto">
-        <div className="flex flex-grow overflow-y-auto">
-          <EmployeeSideBar isOpen={isOpen} />
-          {children}
-        </div>
-        <Footer />
+
+      <div className="flex flex-1 overflow-hidden">
+        <EmployeeSideBar isOpen={isOpen} />
+
+        <main className="flex-1 flex flex-col overflow-y-auto bg-gray-50">
+          <div className="">
+            {/* Employee routes yahan render honge */}
+            <Outlet />
+          </div>
+        </main>
       </div>
     </div>
   );

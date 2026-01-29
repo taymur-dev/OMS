@@ -2,6 +2,8 @@ import axios, { AxiosError } from "axios";
 import { InputField } from "../Components/InputFields/InputField";
 import technic from "../assets/technic.png";
 import Logo from "../assets/Logo.png";
+import successSound from "../assets/success.mp3";
+import errorSound from "../assets/error.mp3";
 
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../Content/URL";
@@ -76,16 +78,23 @@ export const Login = () => {
     try {
       const res = await axios.post(`${BASE_URL}/api/login`, formData);
       const { token } = res.data;
+      playSound(successSound);
       setAuthToken(token);
       dispatch(authSuccess(res.data));
       toast.success(res.data.message);
     } catch (error) {
+      playSound(errorSound);
       const axiosError = error as AxiosError<{ message: string }>;
       dispatch(authFailure(axiosError.response?.data?.message ?? ""));
       toast.error(axiosError.response?.data?.message ?? "");
     }
     setLoading(false);
     setFormData(initialState);
+  };
+
+  const playSound = (audioFile: string) => {
+    const audio = new Audio(audioFile);
+    audio.play().catch((err) => console.error("Audio play failed:", err));
   };
 
   return (

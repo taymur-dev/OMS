@@ -15,10 +15,10 @@ type AddAttendanceProps = {
 
 const currentDate = new Date().toLocaleDateString("sv-SE");
 
-
 const initialState = {
-  date: currentDate,
   holiday: "",
+  fromDate: currentDate,
+  toDate: currentDate,
 };
 
 export const AddHoliday = ({
@@ -26,76 +26,90 @@ export const AddHoliday = ({
   handleGetAllHodidays,
 }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-
   const token = currentUser?.token;
 
   const [holiday, setHoliday] = useState(initialState);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    e.preventDefault();
     const { name, value } = e.target;
     setHoliday({ ...holiday, [name]: value });
   };
 
   const handlerSubmitted = async (e: React.FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     try {
       const res = await axios.post(
         `${BASE_URL}/api/admin/configHolidays`,
         holiday,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
-      console.log("add", res.data);
 
-      toast.success(res.data.message);
+      toast.success(res.data.message || "Holiday added successfully!");
       setModal();
       handleGetAllHodidays();
       setHoliday(initialState);
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) {
+        const serverMessage = error.response?.data?.message;
+        toast.error(serverMessage || "Failed to add holiday");
+        console.error("Axios Error:", serverMessage);
+      } else {
+        toast.error("An unexpected error occurred");
+        console.error("Unexpected Error:", error);
+      }
     }
   };
 
   return (
     <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
-        <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-lg border  border-indigo-900 ">
+      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50">
+        <div className="w-[42rem] max-h-[35rem] bg-white mx-auto rounded-lg border border-indigo-900 overflow-hidden">
           <form onSubmit={handlerSubmitted}>
-            <div className="bg-indigo-900 rounded-t-xl px-6">
-            <Title
-              setModal={setModal}
-              className="text-white text-lg font-semibold"
-            >
-              ADD HOLIDAY
-            </Title>
-          </div>
-            <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2  py-6 gap-3  ">
+            <div className="bg-indigo-900 px-6">
+              <Title
+                setModal={setModal}
+                className="text-white text-lg font-semibold"
+              >
+                ADD HOLIDAY
+              </Title>
+            </div>
+
+            <div className="mx-4 grid grid-cols-1 gap-4 py-6">
               <InputField
-                labelName="Holiday *"
-                placeHolder="Enter the holiday notification"
+                labelName="Holiday Name *"
+                placeHolder="e.g. Eid Holidays"
                 type="text"
                 name="holiday"
                 value={holiday.holiday}
                 handlerChange={handlerChange}
               />
 
-              <InputField
-                labelName="Date *"
-                placeHolder="Enter the Company Name"
-                type="Date"
-                name="date"
-                value={holiday.date}
-                handlerChange={handlerChange}
-              />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <InputField
+                  labelName="From Date *"
+                  type="date"
+                  name="fromDate"
+                  value={holiday.fromDate}
+                  handlerChange={handlerChange}
+                />
+
+                <InputField
+                  labelName="To Date *"
+                  type="date"
+                  name="toDate"
+                  value={holiday.toDate}
+                  handlerChange={handlerChange}
+                />
+              </div>
             </div>
 
-           <div className="flex justify-end gap-3 px-4  rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
-            <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
-          </div>
+            <div className="flex justify-end gap-3 px-4 py-3 bg-indigo-900 border-t border-indigo-900">
+              <CancelBtn setModal={setModal} />
+              <AddButton label="Save" />
+            </div>
           </form>
         </div>
       </div>

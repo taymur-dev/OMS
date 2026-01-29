@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import { InputField } from "../InputFields/InputField";
 import { Title } from "../Title";
 import { OptionField } from "../InputFields/OptionField";
@@ -64,7 +64,11 @@ export const AddUser = ({
   const [loading, setLoading] = useState(false);
   const { currentUser } = useAppSelector((state) => state?.officeState);
   const token = currentUser?.token;
+
   const [userData, setUserData] = useState<IAddUserValues>(initialState);
+
+  // Image Upload States
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (initialValues) {
@@ -76,52 +80,36 @@ export const AddUser = ({
   }, [initialValues]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name } = e.target;
     let value = e.target.value;
 
     if (name === "name") {
-      value = value.replace(/[^a-zA-Z\s]/g, "");
-
-      value = value.replace(/^\s+/, "");
-
+      value = value.replace(/[^a-zA-Z\s]/g, "").replace(/^\s+/, "");
       value = value
         .split(" ")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
     }
 
-    if (name === "email") {
-      value = value.toLowerCase();
-    }
+    if (name === "email") value = value.toLowerCase();
 
-    if (name === "contact") {
-      value = value.replace(/\D/g, "").slice(0, 11);
-    }
+    if (name === "contact") value = value.replace(/\D/g, "").slice(0, 11);
 
     if (name === "cnic") {
       const digits = value.replace(/\D/g, "");
-      if (digits.length <= 5) {
-        value = digits;
-      } else if (digits.length <= 12) {
+      if (digits.length <= 5) value = digits;
+      else if (digits.length <= 12)
         value = `${digits.slice(0, 5)}-${digits.slice(5)}`;
-      } else if (digits.length <= 13) {
-        value = `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(
-          12,
-        )}`;
-      } else {
-        value = `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(
-          12,
-          13,
-        )}`;
-      }
+      else
+        value = `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(12, 13)}`;
     }
 
     setUserData({ ...userData, [name]: value });
   };
 
-  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handlerSubmitted = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (viewType === "ADD") {
       await handleAddUser();
@@ -130,11 +118,33 @@ export const AddUser = ({
     }
   };
 
+  const prepareFormData = () => {
+    const data = new FormData();
+    Object.entries(userData).forEach(([key, value]) => {
+      if (value !== undefined && key !== "confirmPassword") {
+        data.append(key, value.toString());
+      }
+    });
+
+    if (selectedFile) {
+      data.append("image", selectedFile); // Ensure backend looks for "image"
+    }
+    return data;
+  };
+
   const handleAddUser = async (): Promise<void> => {
     const { name, email, password, confirmPassword, cnic, contact, role } =
       userData;
 
-    if (!name || !email || !password || !confirmPassword || !cnic || !role) {
+    if (
+      !name ||
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !contact ||
+      !cnic ||
+      !role
+    ) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -144,51 +154,26 @@ export const AddUser = ({
       return;
     }
 
-    if (password.length < 5) {
-      toast.error("Password must be at least 5 characters");
-      return;
-    }
-
-    if (!email.endsWith("@gmail.com")) {
-      toast.error("Email must end with @gmail.com");
-      return;
-    }
-
-    if (!/^\d{11}$/.test(contact)) {
-      toast.error("Contact must be exactly 11 digits");
-      return;
-    }
-
-    if (!/^\d{5}-\d{7}-\d{1}$/.test(cnic)) {
-      toast.error("CNIC must be 13 digits in format 12345-6789012-3");
-      return;
-    }
-
-    const data = new FormData();
-    data.append("name", name);
-    data.append("email", email);
-    data.append("contact", contact);
-    data.append("cnic", cnic);
-    data.append("address", userData.address ?? "");
-    data.append("date", userData.date ?? "");
-    data.append("role", role);
-    data.append("password", password);
+    const data = prepareFormData();
 
     setLoading(true);
     try {
-      const res = await axios.post(`${BASE_URL}/api/admin/addUser`, data, {
-        headers: { Authorization: token },
+      await axios.post(`${BASE_URL}/api/admin/addUser`, data, {
+        headers: {
+          Authorization: token,
+          "Content-Type": "multipart/form-data",
+        },
       });
-      console.log(res.data);
       toast.success("User added successfully");
       setUserData(initialState);
+      setSelectedFile(null);
       handlerGetUsers();
       onSuccesAction();
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.message || "Error adding user");
       } else {
-        toast.error("Unexpected error occurred");
+        toast.error("An unexpected error occurred");
       }
     } finally {
       setLoading(false);
@@ -199,35 +184,15 @@ export const AddUser = ({
     id: string | number | undefined,
   ): Promise<void> => {
     if (!id) return;
-
-    const { name, email, password, confirmPassword, cnic, contact, role } =
-      userData;
-
-    if (!name || !email || !cnic || !role) {
-      toast.error("Please fill all required fields");
-      return;
-    }
-
-    if (password && password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
-    const data = new FormData();
-    data.append("name", name);
-    data.append("email", email);
-    data.append("contact", contact ?? "");
-    data.append("cnic", cnic);
-    data.append("address", userData.address ?? "");
-    data.append("date", userData.date ?? "");
-    data.append("role", role);
-
-    if (password) data.append("password", password);
+    const data = prepareFormData();
 
     setLoading(true);
     try {
       await axios.put(`${BASE_URL}/api/admin/updateUser/${id}`, data, {
-        headers: { Authorization: token },
+        headers: {
+          Authorization: token,
+          "Content-Type": "multipart/form-data",
+        },
       });
       toast.success("User updated successfully");
       handlerGetUsers();
@@ -236,7 +201,7 @@ export const AddUser = ({
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.message || "Error updating user");
       } else {
-        toast.error("Unexpected error occurred");
+        toast.error("An unexpected error occurred");
       }
     } finally {
       setLoading(false);
@@ -245,10 +210,10 @@ export const AddUser = ({
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-50">
-      <div className="w-[42rem] max-h-[40rem] overflow-y-auto bg-white mx-auto rounded-lg">
+      <div className="w-[42rem] max-h-[90vh] overflow-y-auto bg-white mx-auto rounded-lg shadow-xl">
         <form onSubmit={handlerSubmitted}>
           {/* ===== Header ===== */}
-          <div className="bg-indigo-900 rounded-t-xl px-4">
+          <div className=" bg-indigo-900 rounded-t-xl px-4">
             <div className="text-white">
               <Title setModal={setModal}>{viewType} USER</Title>
             </div>
@@ -256,6 +221,8 @@ export const AddUser = ({
 
           {/* ===== Body ===== */}
           <div className="mx-4 my-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Image Upload Section */}
+
             <InputField
               labelName="Name *"
               type="text"
@@ -263,7 +230,6 @@ export const AddUser = ({
               handlerChange={handlerChange}
               value={userData.name}
             />
-
             <InputField
               labelName="Email *"
               type="email"
@@ -271,7 +237,6 @@ export const AddUser = ({
               handlerChange={handlerChange}
               value={userData.email}
             />
-
             <InputField
               labelName="Phone Number *"
               type="number"
@@ -279,7 +244,6 @@ export const AddUser = ({
               handlerChange={handlerChange}
               value={userData.contact}
             />
-
             <InputField
               labelName="CNIC *"
               type="text"
@@ -287,7 +251,6 @@ export const AddUser = ({
               handlerChange={handlerChange}
               value={userData.cnic}
             />
-
             <InputField
               labelName="Address *"
               type="text"
@@ -295,7 +258,6 @@ export const AddUser = ({
               handlerChange={handlerChange}
               value={userData.address}
             />
-
             <InputField
               labelName="Joining Date *"
               type="date"
@@ -311,7 +273,6 @@ export const AddUser = ({
               handlerChange={handlerChange}
               value={userData.password}
             />
-
             <InputField
               labelName="Confirm Password *"
               type="password"
@@ -320,7 +281,6 @@ export const AddUser = ({
               value={userData.confirmPassword}
             />
 
-            {/* Full width row */}
             <div className="sm:col-span-2">
               <OptionField
                 value={userData.role}
@@ -334,7 +294,7 @@ export const AddUser = ({
           </div>
 
           {/* ===== Footer ===== */}
-          <div className="bg-indigo-900 rounded-b-xl py-3 flex justify-end gap-3 px-4">
+          <div className="bg-indigo-900 rounded-b-xl py-3 flex justify-end gap-3 px-4 sticky bottom-0">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

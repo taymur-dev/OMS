@@ -30,3 +30,5 @@ body {
 .active-button {
   @apply flex items-center bg-green-100 text-green-700 max-w-28 h-7 px-2 pr-3 mt-1.5 rounded cursor-pointer text-xs hover:opacity-95;
 }
+
+

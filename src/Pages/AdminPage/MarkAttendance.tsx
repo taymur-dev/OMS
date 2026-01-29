@@ -6,6 +6,11 @@ import {
   FaUserShield,
   FaCheckCircle,
   FaExclamationTriangle,
+  FaSignInAlt,
+  FaSignOutAlt,
+  FaHourglassHalf,
+  FaCalendarAlt,
+  FaInfoCircle,
 } from "react-icons/fa";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import {
@@ -25,16 +30,18 @@ type AttendanceT = {
   attendanceStatus?: string;
 };
 
-// 1. Move helper component outside and ensure it returns JSX
 const StatusBadge = ({ status }: { status: string }) => {
   const getStatusStyles = (status: string) => {
     switch (status) {
       case "In Office":
+      case "Present":
         return "bg-green-100 text-green-700 border-green-200";
       case "Late":
         return "bg-orange-100 text-orange-700 border-orange-200";
       case "Half Leave":
         return "bg-yellow-100 text-yellow-700 border-yellow-200";
+      case "Short Leave":
+        return "bg-pink-100 text-pink-700 border-pink-200";
       case "Absent":
         return "bg-red-100 text-red-700 border-red-200";
       case "Holiday 🎉":
@@ -67,35 +74,32 @@ export const MarkAttendance = () => {
   );
 
   const OFFICE_START_HOUR = 9;
-  const OFFICE_END_HOUR = 18;
   const ABSENT_HOUR = 12;
 
   const getAttendanceStatus = (
     clockIn: string | null,
-    clockOut: string | null,
+    _clockOut: string | null,
     attendanceStatus?: string,
   ) => {
-    if (attendanceStatus === "Holiday") return "Holiday 🎉";
+    if (attendanceStatus && attendanceStatus !== "Present") {
+      if (attendanceStatus === "Holiday") return "Holiday 🎉";
+      return attendanceStatus;
+    }
+
     const now = new Date();
+
     if (!clockIn) {
       if (now.getHours() >= ABSENT_HOUR) return "Absent";
       return "Not Marked";
     }
+
     const [clockInHour, clockInMinute] = clockIn.split(":").map(Number);
     const clockInDate = new Date();
     clockInDate.setHours(clockInHour, clockInMinute, 0, 0);
     const officeStartDate = new Date();
     officeStartDate.setHours(OFFICE_START_HOUR, 0, 0, 0);
-    let status = clockInDate > officeStartDate ? "Late" : "In Office";
-    if (clockOut) {
-      const [clockOutHour, clockOutMinute] = clockOut.split(":").map(Number);
-      const clockOutDate = new Date();
-      clockOutDate.setHours(clockOutHour, clockOutMinute, 0, 0);
-      const officeEndDate = new Date();
-      officeEndDate.setHours(OFFICE_END_HOUR, 0, 0, 0);
-      if (clockOutDate < officeEndDate) status = "Half Leave";
-    }
-    return status;
+
+    return clockInDate > officeStartDate ? "Late" : "In Office";
   };
 
   const getAttendance = useCallback(
@@ -158,7 +162,6 @@ export const MarkAttendance = () => {
 
   const isHoliday = attendanceTime?.attendanceStatus === "Holiday";
 
-  // Calculate current status string once for the JSX below
   const currentStatus = getAttendanceStatus(
     attendanceTime?.clockIn || null,
     attendanceTime?.clockOut || null,
@@ -221,11 +224,22 @@ export const MarkAttendance = () => {
               <div className="overflow-x-auto my-4">
                 <div className="min-w-[600px]">
                   <div className="grid grid-cols-5 bg-indigo-900 text-white items-center font-semibold text-sm p-2 rounded-t-md">
-                    <span>Clock In</span>
-                    <span>Clock Out</span>
-                    <span>Working Hours</span>
-                    <span>Date</span>
-                    <span>Status</span>
+                    <span className="flex items-center justify-center gap-2">
+                      <FaSignInAlt className="text-blue-300" /> Clock In
+                    </span>
+                    <span className="flex items-center justify-center gap-2">
+                      <FaSignOutAlt className="text-orange-300" /> Clock Out
+                    </span>
+                    <span className="flex items-center justify-center gap-2">
+                      <FaHourglassHalf className="text-green-300" /> Working
+                      Hours
+                    </span>
+                    <span className="flex items-center justify-center gap-2">
+                      <FaCalendarAlt className="text-purple-300" /> Date
+                    </span>
+                    <span className="flex items-center gap-2 justify-center">
+                      <FaInfoCircle className="text-indigo-200" /> Status
+                    </span>
                   </div>
                   <div className="grid grid-cols-5 border-b border-x border-gray-200 text-gray-800 items-center text-sm p-3 bg-white">
                     <span>{attendanceTime.clockIn}</span>
@@ -259,7 +273,9 @@ export const MarkAttendance = () => {
               }`}
                 onClick={() => handleMarkAttendance(userId)}
               >
-                {attendanceTime?.clockIn ? "🔴 Clock Out" : "🟢 Clock In"}
+                {attendanceTime?.clockIn && !attendanceTime?.clockOut
+                  ? "🔴 Clock Out"
+                  : "🟢 Clock In"}
               </button>
             </div>
           </div>

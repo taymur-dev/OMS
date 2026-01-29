@@ -10,8 +10,9 @@ import { toast } from "react-toastify";
 
 export type HolidayType = {
   id: number;
-  date: string;
   holiday: string;
+  fromDate: string;
+  toDate: string;
 };
 
 type UpdateHolidayProps = {
@@ -30,13 +31,14 @@ export const UpdateHoliday = ({
 
   const formatDateForInput = (date: string) => {
     if (!date) return "";
-    return new Date(date).toLocaleDateString("sv-SE");
+    return new Date(date).toLocaleDateString("en-CA"); 
   };
 
   const [holidayData, setHolidayData] = useState<HolidayType>({
     id: 0,
-    date: "",
     holiday: "",
+    fromDate: "",
+    toDate: "",
   });
 
   useEffect(() => {
@@ -44,7 +46,8 @@ export const UpdateHoliday = ({
       setHolidayData({
         id: editHoliday.id,
         holiday: editHoliday.holiday,
-        date: formatDateForInput(editHoliday.date),
+        fromDate: formatDateForInput(editHoliday.fromDate),
+        toDate: formatDateForInput(editHoliday.toDate),
       });
     }
   }, [editHoliday]);
@@ -70,14 +73,15 @@ export const UpdateHoliday = ({
         `${BASE_URL}/api/admin/updateHoliday/${holidayData.id}`,
         {
           holiday: holidayData.holiday,
-          date: holidayData.date,
+          fromDate: holidayData.fromDate,
+          toDate: holidayData.toDate,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      toast.success(res.data.message);
+      toast.success(res.data.message || "Updated successfully");
       setModal();
       handleGetAllHodidays();
     } catch (error) {
@@ -87,8 +91,8 @@ export const UpdateHoliday = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
-      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded-lg border border-indigo-900">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50">
+      <div className="w-[42rem] bg-white mx-auto rounded-lg border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded-t-xl px-6">
             <Title
@@ -98,9 +102,11 @@ export const UpdateHoliday = ({
               EDIT HOLIDAY
             </Title>
           </div>
-          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-5 gap-3">
+          
+          <div className="mx-4 grid grid-cols-1 gap-4 py-6">
+            {/* Full width Title Field */}
             <InputField
-              labelName="Holiday*"
+              labelName="Holiday Name*"
               placeHolder="Enter holiday title"
               type="text"
               name="holiday"
@@ -108,19 +114,29 @@ export const UpdateHoliday = ({
               handlerChange={handlerChange}
             />
 
-            <InputField
-              labelName="Date*"
-              placeHolder="Select date"
-              type="date"
-              name="date"
-              value={holidayData.date}
-              handlerChange={handlerChange}
-            />
+            {/* Two columns for Dates */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <InputField
+                labelName="From Date*"
+                type="date"
+                name="fromDate"
+                value={holidayData.fromDate}
+                handlerChange={handlerChange}
+              />
+
+              <InputField
+                labelName="To Date*"
+                type="date"
+                name="toDate"
+                value={holidayData.toDate}
+                handlerChange={handlerChange}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" />
+            <AddButton label="Update Holiday" />
           </div>
         </form>
       </div>

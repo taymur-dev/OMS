@@ -51,6 +51,8 @@ export const EmployeeSalaryDetail = () => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
 
+  
+
   useEffect(() => {
     document.title = "(OMS) LOAN";
     dispatch(navigationStart());
