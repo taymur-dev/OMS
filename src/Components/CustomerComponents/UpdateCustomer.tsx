@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { InputField } from "../InputFields/InputField";
+import { TextareaField } from "../InputFields/TextareaField";
+
 import { Title } from "../Title";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
@@ -32,10 +34,13 @@ export const UpdateCustomer = ({
   const { currentUser } = useAppSelector((state) => state?.officeState);
   const token = currentUser?.token;
 
-  const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const { name } = e.target;
-    let value = e.target.value;
+  // Change the type of 'e' to accept both Input and TextArea
+  const handlerChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    // e.preventDefault(); // Note: preventDefault is usually not needed for onChange
+    const { name, value } = e.target;
+    let updatedValue = value;
 
     if (
       name === "customerName" ||
@@ -43,14 +48,22 @@ export const UpdateCustomer = ({
       name === "companyName" ||
       name === "companyAddress"
     ) {
-      value = value.replace(/\b\w/g, (char) => char.toUpperCase());
+      updatedValue = updatedValue.replace(/\b\w/g, (char) =>
+        char.toUpperCase(),
+      );
     }
 
     if (name === "customerContact") {
-      value = value.replace(/\D/g, "").slice(0, 11);
+      updatedValue = updatedValue.replace(/\D/g, "").slice(0, 11);
     }
 
-    setCustomerData({ ...customerData, [name]: value } as CustomerT);
+    setCustomerData(
+      (prev) =>
+        ({
+          ...prev,
+          [name]: updatedValue,
+        }) as CustomerT,
+    );
   };
 
   useEffect(() => {
@@ -111,13 +124,13 @@ export const UpdateCustomer = ({
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex px-4 items-center justify-center z-50">
-      <div className="w-[42rem] max-h-[50rem] bg-white rounded-lg border border-indigo-900 shadow-lg overflow-hidden">
+      <div className="w-[42rem] max-h-[50rem] bg-white rounded border border-indigo-900 shadow-lg overflow-hidden">
         <form
           onSubmit={(e) => handlerSubmitted(e, customerData?.id ?? null)}
           className="flex flex-col h-full"
         >
           {/* Header */}
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setIsOpenModal}
               className="text-white text-lg font-semibold"
@@ -136,14 +149,7 @@ export const UpdateCustomer = ({
               handlerChange={handlerChange}
               value={customerData?.customerName || ""}
             />
-            <InputField
-              labelName="Customer Address *"
-              placeHolder="Enter the Customer Address"
-              type="text"
-              name="customerAddress"
-              handlerChange={handlerChange}
-              value={customerData?.customerAddress || ""}
-            />
+
             <InputField
               labelName="Customer Contact *"
               placeHolder="Enter the Contact Number"
@@ -160,14 +166,20 @@ export const UpdateCustomer = ({
               handlerChange={handlerChange}
               value={customerData?.companyName || ""}
             />
+
+            <TextareaField
+              labelName="Customer Address *"
+              name="customerAddress"
+              handlerChange={handlerChange}
+              inputVal={customerData?.customerAddress || ""}
+            />
+            
             <div className="col-span-1 sm:col-span-2">
-              <InputField
+              <TextareaField
                 labelName="Company Address *"
-                placeHolder="Enter the Company Address"
-                type="text"
                 name="companyAddress"
                 handlerChange={handlerChange}
-                value={customerData?.companyAddress || ""}
+                inputVal={customerData?.companyAddress || ""}
               />
             </div>
           </div>

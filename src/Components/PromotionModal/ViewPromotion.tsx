@@ -79,9 +79,9 @@ export const ViewPromotion = ({
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md px-4 flex items-center justify-center z-50">
-      <div className="w-full max-w-2xl bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
+      <div className="w-full max-w-2xl bg-white rounded overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
         {/* Header */}
-        <div className="bg-indigo-900 rounded-t-lg px-6">
+        <div className="bg-indigo-900 rounded px-6">
           <Title
             setModal={setModal}
             className="text-white text-lg font-semibold"
@@ -212,7 +212,7 @@ export const ViewPromotion = ({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
+        <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
           <CancelBtn setModal={setModal} />
           <AddButton label="Update" />
         </div>

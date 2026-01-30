@@ -12,6 +12,8 @@ import { BASE_URL } from "../../Content/URL";
 
 import { useAppSelector } from "../../redux/Hooks";
 import { OptionField } from "../InputFields/OptionField";
+import { InputField } from "../InputFields/InputField";
+
 
 type ADDSALET = {
   id: number;
@@ -123,9 +125,9 @@ export const EditSale = ({
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-50">
-        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-lg border  border-indigo-900 ">
+        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded border  border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
-            <div className="bg-indigo-900 rounded-t-xl px-6">
+            <div className="bg-indigo-900 rounded px-6">
               <Title
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
@@ -162,17 +164,17 @@ export const EditSale = ({
 
               <div className="flex flex-col my-2">
                 <label className="text-xs font-semibold mb-1">Date *</label>
-                <input
+                <InputField
                   type="date"
                   name="saleDate"
                   value={updateSale?.saleDate?.slice(0, 10) ?? ""}
-                  onChange={handlerChange}
+                  handlerChange={handlerChange}
                   className="border border-indigo-900 rounded p-1"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
+            <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
               <AddButton label="Update" />
             </div>

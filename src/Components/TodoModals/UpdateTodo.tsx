@@ -4,6 +4,9 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 import { UserSelect } from "../InputFields/UserSelect";
 import { InputField } from "../InputFields/InputField";
+import { OptionField } from "../InputFields/OptionField";
+import { TextareaField } from "../InputFields/TextareaField";
+
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -16,6 +19,7 @@ export type TodoType = {
   task: string;
   startDate: string;
   endDate: string;
+  completionStatus: string;
   note: string;
   deadline: string;
 };
@@ -42,6 +46,12 @@ type UpdateTodoProps = {
   onUpdate: (updatedTodo: TodoType) => void;
 };
 
+const StatusOptions: { id: number; label: string; value: string }[] = [
+  { id: 1, label: "Completed", value: "Completed" },
+  { id: 2, label: "Defer", value: "Defer" },
+  { id: 2, label: "Pending", value: "Pending" },
+];
+
 export const UpdateTodo = ({
   setModal,
   seleteTodo,
@@ -49,20 +59,21 @@ export const UpdateTodo = ({
 }: UpdateTodoProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
+  const isAdmin = currentUser?.role === "admin";
 
   const [todo, setTodo] = useState<TodoType | null>(seleteTodo);
   const [allUsers, setAllUsers] = useState<UserT[]>([]);
 
-  const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
-  ) => {
-    const { name, value } = e.target;
-    setTodo((prev) =>
-      prev
-        ? { ...prev, [name]: name === "employee_id" ? Number(value) : value }
-        : prev,
-    );
-  };
+const handlerChange = (
+  e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>,
+) => {
+  const { name, value } = e.target;
+  setTodo((prev) =>
+    prev
+      ? { ...prev, [name]: name === "employee_id" ? Number(value) : value }
+      : prev,
+  );
+};
 
   const getAllUsers = useCallback(async () => {
     if (!token) return;
@@ -107,6 +118,7 @@ export const UpdateTodo = ({
           startDate: todo.startDate,
           endDate: todo.endDate,
           deadline: todo.deadline,
+          completionStatus: todo.completionStatus,
         },
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -129,9 +141,9 @@ export const UpdateTodo = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
-      <div className="w-[42rem] max-h-[30rem] bg-white mx-auto rounded-lg border border-indigo-900 ">
+      <div className="w-[42rem] max-h-[30rem] bg-white mx-auto rounded border border-indigo-900 ">
         <form onSubmit={handleSubmit}>
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -140,13 +152,15 @@ export const UpdateTodo = ({
             </Title>
           </div>
           <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2  py-2 gap-3">
-            <UserSelect
-              labelName="Employees *"
-              name="employee_id"
-              value={todo?.employee_id?.toString() || ""}
-              handlerChange={handlerChange}
-              optionData={userOptions}
-            />
+            {isAdmin && (
+              <UserSelect
+                labelName="Employees *"
+                name="employee_id"
+                value={todo?.employee_id?.toString() || ""}
+                handlerChange={handlerChange}
+                optionData={userOptions}
+              />
+            )}
 
             <InputField
               labelName="Task *"
@@ -154,15 +168,7 @@ export const UpdateTodo = ({
               handlerChange={handlerChange}
               value={todo?.task}
             />
-            <InputField
-              labelName="Note *"
-              name="note"
-              handlerChange={handlerChange}
-              value={todo?.note}
-            />
-          </div>
 
-          <div className="flex flex-wrap py-2 justify-center gap-6">
             <InputField
               labelName="Start Date *"
               type="date"
@@ -184,9 +190,25 @@ export const UpdateTodo = ({
               handlerChange={handlerChange}
               value={todo?.deadline}
             />
+
+            <OptionField
+              labelName="Completion Status"
+              name="completionStatus"
+              value={todo?.completionStatus || ""}
+              handlerChange={handlerChange}
+              optionData={StatusOptions}
+              inital="Select Completion Status"
+            />
+
+            <TextareaField
+              labelName="Note *"
+              name="note"
+              inputVal={todo?.note || ""}
+              handlerChange={handlerChange}
+            />
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
             <AddButton label="Update" />
           </div>

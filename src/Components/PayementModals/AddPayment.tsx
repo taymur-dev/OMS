@@ -13,6 +13,8 @@ import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../InputFields/InputField";
 import { OptionField } from "../InputFields/OptionField";
+import { TextareaField } from "../InputFields/TextareaField";
+
 import { toast } from "react-toastify";
 
 type AddAttendanceProps = {
@@ -50,7 +52,7 @@ export const AddPayment = ({
   const token = currentUser?.token;
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     e.preventDefault();
 
@@ -99,9 +101,9 @@ export const AddPayment = ({
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-50">
-        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded-lg border  border-indigo-900 ">
+        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded border  border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
-            <div className="bg-indigo-900 rounded-t-xl px-6">
+            <div className="bg-indigo-900 rounded px-6">
               <Title
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
@@ -149,12 +151,7 @@ export const AddPayment = ({
                 inital="Please Select Customer"
               />
 
-              <InputField
-                labelName="Description*"
-                name="description"
-                handlerChange={handlerChange}
-                value={addProgress.description}
-              />
+             
 
               <InputField
                 labelName="Amount*"
@@ -170,9 +167,16 @@ export const AddPayment = ({
                 handlerChange={handlerChange}
                 value={addProgress.date}
               />
+
+               <TextareaField
+                labelName="Description*"
+                name="description"
+                handlerChange={handlerChange}
+                inputVal={addProgress.description}
+              />
             </div>
 
-            <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
+            <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
               <AddButton label="Save" />
             </div>

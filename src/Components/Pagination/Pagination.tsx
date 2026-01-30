@@ -15,9 +15,8 @@ export const Pagination = ({
   handleDecrementPageButton,
   pageNo,
 }: PaginationT) => {
-  // Reduced height from h-8/h-10 to h-7/h-9 and kept py-0
-  const slimBtnClass = "join-item btn bg-white rounded-xl text-indigo-900 border-indigo-900 hover:bg-indigo-50 min-h-0 h-7 md:h-9 px-3 py-0";
-  const activeBtnClass = "join-item btn bg-indigo-900 rounded-xl text-white border-white whitespace-nowrap cursor-default min-h-0 h-7 md:h-9 px-4 py-0";
+  const slimBtnClass = "join-item btn bg-white rounded-xl text-indigo-900 border-indigo-900 hover:bg-indigo-50 min-h-0 h-7 md:h-9 px-2 py-0";
+  const activeBtnClass = "join-item btn bg-indigo-900 rounded-xl text-white border-white whitespace-nowrap cursor-default min-h-0 h-7 md:h-9 px-2 py-0";
 
   return (
     <div>

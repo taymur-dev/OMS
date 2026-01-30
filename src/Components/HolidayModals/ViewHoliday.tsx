@@ -30,7 +30,7 @@ export const ViewHoliday = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
-      <div className="w-full max-w-2xl bg-white rounded-lg overflow-hidden shadow-2xl border border-gray-300">
+      <div className="w-full max-w-2xl bg-white rounded overflow-hidden shadow-2xl border border-gray-300">
         <div className="bg-indigo-900 rounded px-4">
           <div className="text-white">
             <Title setModal={setIsOpenModal}>HOLIDAY DETAILS</Title>

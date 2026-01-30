@@ -46,18 +46,16 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   const [activeBtns, setActiveBtns] = useState<TActivButton | "">("");
   const [allTodos, setAllTodos] = useState([]);
   const [isHoverable, setIsHoverable] = useState(false);
-  const [isBlurred, setIsBlurred] = useState(false); // State for modal detection
+  const [isBlurred, setIsBlurred] = useState(false); 
 
   const { currentUser } = useAppSelector((state) => state?.officeState);
   const token = currentUser?.token;
   const { pathname } = useLocation();
 
-  // Detect if any modal is open by observing the body tag
   useEffect(() => {
     const checkModal = () => {
       const hasModalClass = document.body.classList.contains("modal-open");
       const isScrollLocked = document.body.style.overflow === "hidden";
-      // Logic: If body is locked or has modal class, blur the sidebar
       setIsBlurred(hasModalClass || isScrollLocked);
     };
 

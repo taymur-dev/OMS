@@ -4,10 +4,12 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 import { UserSelect } from "../InputFields/UserSelect";
 import { InputField } from "../InputFields/InputField";
+
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 import { toast } from "react-toastify";
+import { TextareaField } from "../InputFields/TextareaField";
 
 type AddTodoProps = {
   setModal: () => void;
@@ -78,7 +80,9 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
   }, [getAllUsers]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value } = e.target;
     setAddTodo((prev) => ({ ...prev, [name]: value }));
@@ -126,9 +130,9 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center px-4  justify-center z-50">
-      <div className="w-[42rem] max-h-[28rem] bg-white rounded-lg border border-indigo-900">
+      <div className="w-[42rem] max-h-[28rem] bg-white rounded border border-indigo-900">
         <form onSubmit={handleSubmit}>
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -156,15 +160,6 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
             />
 
             <InputField
-              labelName="Note *"
-              name="note"
-              value={addTodo.note}
-              handlerChange={handleChange}
-            />
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-4 py-2 ">
-            <InputField
               labelName="Start Date *"
               name="startDate"
               type="date"
@@ -185,9 +180,16 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
               value={addTodo.deadline}
               handlerChange={handleChange}
             />
+
+            <TextareaField
+              labelName="Note *"
+              name="note"
+              inputVal={addTodo.note}
+              handlerChange={handleChange}
+            />
           </div>
 
-          <div className="flex justify-end gap-3 px-4 py-3 rounded-b-xl bg-indigo-900  border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-4 py-3 rounded bg-indigo-900  border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
             <AddButton label="Save" />
           </div>

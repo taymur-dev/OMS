@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { InputField } from "../InputFields/InputField";
+import { TextareaField } from "../InputFields/TextareaField";
+
 import { Title } from "../Title";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
@@ -31,7 +33,9 @@ export const AddCustomer = ({
 
   const token = currentUser?.token;
 
-  const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlerChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     let newValue = value;
 
@@ -105,10 +109,10 @@ export const AddCustomer = ({
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-50">
-      <div className="w-full max-w-3xl max-h-[90vh] bg-white rounded-lg border border-indigo-900 shadow-lg overflow-y-auto">
+      <div className="w-full max-w-3xl max-h-[90vh] bg-white rounded border border-indigo-900 shadow-lg overflow-y-auto">
         <form onSubmit={handlerSubmitted} className="flex flex-col">
           {/* Header */}
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setIsOpenModal}
               className="text-white text-lg font-semibold"
@@ -127,14 +131,7 @@ export const AddCustomer = ({
               handlerChange={handlerChange}
               value={customerData.customerName}
             />
-            <InputField
-              labelName="Customer Address *"
-              placeHolder="Enter the Customer Address"
-              type="text"
-              name="customerAddress"
-              handlerChange={handlerChange}
-              value={customerData.customerAddress}
-            />
+
             <InputField
               labelName="Customer Contact *"
               placeHolder="Enter Contact Number"
@@ -151,20 +148,28 @@ export const AddCustomer = ({
               handlerChange={handlerChange}
               value={customerData.companyName}
             />
+
+            <TextareaField
+              labelName="Customer Address *"
+              placeHolder="Enter the Customer Address"
+              name="customerAddress"
+              handlerChange={handlerChange}
+              inputVal={customerData.customerAddress}
+            />
+
             <div className="md:col-span-2">
-              <InputField
+              <TextareaField
                 labelName="Company Address *"
                 placeHolder="Enter Company Address"
-                type="text"
                 name="companyAddress"
                 handlerChange={handlerChange}
-                value={customerData.companyAddress}
+                inputVal={customerData.companyAddress}
               />
             </div>
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end items-center gap-3 px-6 py-4 bg-indigo-900 rounded-b-xl">
+          <div className="flex justify-end items-center gap-3 px-6 py-4 bg-indigo-900 rounded">
             <CancelBtn setModal={setIsOpenModal} />
             <AddButton
               label={loading ? "Saving..." : "Save"}

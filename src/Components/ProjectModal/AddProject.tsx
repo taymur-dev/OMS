@@ -89,7 +89,7 @@ export const AddProject = ({
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4  flex items-center justify-center z-50">
-      <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg border border-indigo-900 overflow-hidden">
+      <div className="w-full max-w-3xl bg-white rounded shadow-lg border border-indigo-900 overflow-hidden">
         <form onSubmit={handlerSubmitted}>
           {/* Header */}
           <div className="bg-indigo-900 px-6 ">
@@ -168,7 +168,7 @@ export const AddProject = ({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 px-6 py-4 bg-indigo-900 border-t border-indigo-900 rounded-b-xl">
+          <div className="flex justify-end gap-3 px-6 py-4 bg-indigo-900 border-t border-indigo-900 rounded">
             <CancelBtn setModal={setModal} />
             <AddButton label="Save" />
           </div>

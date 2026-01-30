@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { FaTasks, FaUserAltSlash } from "react-icons/fa";
+import { FaTasks, FaUserAltSlash, FaArrowRight } from "react-icons/fa"; 
 import { FaComputer } from "react-icons/fa6";
 import { BiUser } from "react-icons/bi";
 import { CiViewList } from "react-icons/ci";
-import { FcLeave } from "react-icons/fc";
+import { FaCalendarTimes } from "react-icons/fa";
 import { SlNote } from "react-icons/sl";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "../../Components/Footer";
@@ -56,7 +56,7 @@ const CARD_CONFIG: CardConfigItem[] = [
   {
     key: "holidays",
     titleName: "Holidays",
-    icon: <FcLeave />,
+    icon: <FaCalendarTimes />,
     style: "bg-red-500",
     path: "/users/attendanceReports",
   },
@@ -198,13 +198,14 @@ export const EmployeeDashboard = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          {/* Todo List Card */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
             <div className="bg-indigo-900 px-5 py-4 flex justify-between items-center">
               <h3 className="text-white font-bold flex items-center gap-2 text-lg">
                 <CiViewList className="text-xl" /> Todo List
               </h3>
             </div>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto flex-grow">
               <table className="w-full text-left border-collapse">
                 <thead className="bg-gray-100 text-gray-600 text-xs font-semibold">
                   <tr>
@@ -226,7 +227,8 @@ export const EmployeeDashboard = () => {
                       </td>
                     </tr>
                   ) : (
-                    todos.map((todo, i) => (
+                    // Show only first 5 items to keep dashboard clean
+                    todos.slice(0, 5).map((todo, i) => (
                       <tr
                         key={i}
                         className="hover:bg-indigo-50 transition-colors"
@@ -249,16 +251,26 @@ export const EmployeeDashboard = () => {
                 </tbody>
               </table>
             </div>
+            {/* View More Button for Todo */}
+            <div className="p-3 border-t border-gray-100 bg-gray-50 text-center">
+              <button 
+                onClick={() => navigate("/users/todo")}
+                className="text-indigo-700 text-sm font-semibold flex items-center justify-center gap-2
+                 hover:text-indigo-900 transition-colors w-full"
+              >
+                View More Info <FaArrowRight className="text-xs" />
+              </button>
+            </div>
           </div>
 
           {/* Projects List Card */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
             <div className="bg-indigo-900 px-5 py-4 flex justify-between items-center">
               <h3 className="text-white font-bold flex items-center gap-2 text-lg">
                 <FaTasks className="text-lg" /> Assigned Projects
               </h3>
             </div>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto flex-grow">
               <table className="w-full text-left border-collapse">
                 <thead className="bg-gray-100 text-gray-600 text-xs font-semibold">
                   <tr>
@@ -280,7 +292,8 @@ export const EmployeeDashboard = () => {
                       </td>
                     </tr>
                   ) : (
-                    projects.map((project) => (
+                    // Show only first 5 items
+                    projects.slice(0, 5).map((project) => (
                       <tr
                         key={project.id}
                         className="hover:bg-indigo-50 transition-colors"
@@ -302,6 +315,16 @@ export const EmployeeDashboard = () => {
                   )}
                 </tbody>
               </table>
+            </div>
+            {/* View More Button for Projects */}
+            <div className="p-3 border-t border-gray-100 bg-gray-50 text-center">
+              <button 
+                onClick={() => navigate("/users/progress")} // Adjust path if needed
+                className="text-indigo-700 text-sm font-semibold flex items-center justify-center gap-2
+                 hover:text-indigo-900 transition-colors w-full"
+              >
+                View More Info <FaArrowRight className="text-xs" />
+              </button>
             </div>
           </div>
         </div>

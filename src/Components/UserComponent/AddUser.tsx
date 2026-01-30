@@ -210,10 +210,10 @@ export const AddUser = ({
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-50">
-      <div className="w-[42rem] max-h-[90vh] overflow-y-auto bg-white mx-auto rounded-lg shadow-xl">
+      <div className="w-[42rem] max-h-[90vh] overflow-y-auto bg-white mx-auto rounded shadow-xl">
         <form onSubmit={handlerSubmitted}>
           {/* ===== Header ===== */}
-          <div className=" bg-indigo-900 rounded-t-xl px-4">
+          <div className=" bg-indigo-900 rounded px-4">
             <div className="text-white">
               <Title setModal={setModal}>{viewType} USER</Title>
             </div>
@@ -294,7 +294,7 @@ export const AddUser = ({
           </div>
 
           {/* ===== Footer ===== */}
-          <div className="bg-indigo-900 rounded-b-xl py-3 flex justify-end gap-3 px-4 sticky bottom-0">
+          <div className="bg-indigo-900 rounded py-3 flex justify-end gap-3 px-4 sticky bottom-0">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

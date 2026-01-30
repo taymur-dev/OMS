@@ -12,7 +12,7 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 
-const currentDate = new Date().toLocaleDateString('sv-SE');
+const currentDate = new Date().toLocaleDateString("sv-SE");
 
 type PromotionType = {
   id: number;
@@ -37,7 +37,7 @@ type PromotionFormType = {
   approvalStatus: string;
 };
 
-const ApprovalOptions = [
+const ApprovalOptions: { id: number; value: string; label: string }[] = [
   { id: 1, label: "Accepted", value: "ACCEPTED" },
   { id: 2, label: "Rejected", value: "REJECTED" },
 ];
@@ -74,7 +74,7 @@ export const UpdatePromotion = ({
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setPromotion((prev) => ({ ...prev, [name]: value }));
@@ -110,7 +110,7 @@ export const UpdatePromotion = ({
           date,
           approvalStatus,
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       toast.success("Promotion updated successfully");
@@ -119,16 +119,16 @@ export const UpdatePromotion = ({
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(
-        axiosError.response?.data.message || "Failed to update promotion"
+        axiosError.response?.data.message || "Failed to update promotion",
       );
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50">
-      <div className="w-[42rem] bg-white rounded-lg border border-indigo-900">
+      <div className="w-[42rem] bg-white rounded border border-indigo-900">
         <form onSubmit={handleSubmit}>
-          <div className="bg-indigo-900 rounded-t-lg px-6">
+          <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -179,12 +179,12 @@ export const UpdatePromotion = ({
                 value={promotion.approvalStatus}
                 handlerChange={handleChange}
                 optionData={ApprovalOptions}
-                // inital="Pending"
+                inital="Select Status"
               />
             )}
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
             <AddButton label="Update" />
           </div>

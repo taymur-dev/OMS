@@ -73,7 +73,7 @@ export const UpdateResignation = ({
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setUpdateResignation((prev) => ({ ...prev, [name]: value }));
@@ -99,7 +99,7 @@ export const UpdateResignation = ({
           resignation_date,
           approval_status,
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       toast.success(res.data.message || "Resignation updated successfully");
@@ -117,16 +117,16 @@ export const UpdateResignation = ({
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
       toast.error(
-        axiosError.response?.data?.message || "Failed to update resignation"
+        axiosError.response?.data?.message || "Failed to update resignation",
       );
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50">
-      <div className="w-[42rem] bg-white rounded-lg border border-indigo-900">
+      <div className="w-[42rem] bg-white rounded border border-indigo-900">
         <form onSubmit={handleSubmit}>
-          <div className="bg-indigo-900 rounded-t-lg px-6">
+          <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -170,19 +170,24 @@ export const UpdateResignation = ({
               placeHolder="Write resignation note"
             />
 
-            <select
-              name="approval_status"
-              value={updateResignation.approval_status}
-              onChange={handleChange}
-              className="border border-gray-400 rounded p-1 w-full"
-            >
-              <option value="PENDING">PENDING</option>
-              <option value="ACCEPTED">ACCEPTED</option>
-              <option value="REJECTED">REJECTED</option>
-            </select>
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">
+                Approval Status*
+              </label>
+              <select
+                name="approval_status"
+                value={updateResignation.approval_status}
+                onChange={handleChange}
+                className="border border-black rounded-lg py-2 w-full focus:outline-indigo-600"
+              >
+                <option value="PENDING">PENDING</option>
+                <option value="ACCEPTED">ACCEPTED</option>
+                <option value="REJECTED">REJECTED</option>
+              </select>
+            </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
             <AddButton label="Update" />
           </div>

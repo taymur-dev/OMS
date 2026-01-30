@@ -120,9 +120,9 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur flex px-4 items-center justify-center z-50">
-      <div className="w-[42rem] bg-white rounded-lg border border-indigo-900">
+      <div className="w-[42rem] bg-white rounded border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -165,7 +165,7 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
             />
           </div>
 
-          <div className="flex justify-end gap-3 rounded-b-xl px-4 py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 rounded px-4 py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
             <AddButton label="Save" />
           </div>

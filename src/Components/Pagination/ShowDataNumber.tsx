@@ -10,8 +10,7 @@ export const ShowDataNumber: React.FC<ShowDataNumberProps> = ({
   total = 7,
 }) => {
   return (
-    // text-xs (extra small) mobile ke liye aur text-sm desktop ke liye
-    <div className="text-xs sm:text-sm text-gray-800 ml-2">
+    <div className="text-xs sm:text-sm text-gray-800 ml-1">
       Showing {start} to {end} of {total} entries
     </div>
   );

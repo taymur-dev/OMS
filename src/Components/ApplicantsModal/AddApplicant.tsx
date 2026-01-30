@@ -104,9 +104,9 @@ export const AddApplicant = ({
   return (
     <div>
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm px-4  flex items-center justify-center z-50">
-        <div className="w-[42rem]   bg-white mx-auto rounded-lg border  border-indigo-900 ">
+        <div className="w-[42rem]   bg-white mx-auto rounded border  border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
-            <div className="bg-indigo-900 rounded-t-lg px-6">
+            <div className="bg-indigo-900 rounded px-6">
               <Title
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
@@ -169,7 +169,7 @@ export const AddApplicant = ({
               />
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold">Job Title*</label>
+                <label className="text-xs font-semibold">Job Title *</label>
 
                 <select
                   name="job_id"
@@ -201,7 +201,7 @@ export const AddApplicant = ({
               />
             </div>
 
-            <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
+            <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
               <AddButton label="Save" />
             </div>

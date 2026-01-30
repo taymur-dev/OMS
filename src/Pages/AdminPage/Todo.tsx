@@ -182,16 +182,17 @@ export const Todo = () => {
           <div className="min-w-[900px]">
             {/* Sticky Table Header */}
             <div
-              className="grid grid-cols-7 bg-indigo-900 text-white items-center font-semibold
+              className="grid grid-cols-8 bg-indigo-900 text-white items-center font-semibold
              text-sm sticky top-0 z-10 p-2"
             >
               <span>Sr#</span>
               {/* Logic maintained: showing Employee only if admin, but keeping grid alignment */}
-              <span>{currentUser?.role === "admin" ? "Employee" : ""}</span>
+              <span>{currentUser?.role === "admin" ? "user" : ""}</span>
               <span>Tasks</span>
               <span>Start Date</span>
               <span>End Date</span>
               <span>Deadline</span>
+              <span>Completion Status</span>
               <span className="text-center">Actions</span>
             </div>
 
@@ -233,7 +234,7 @@ export const Todo = () => {
                 return (
                   <div
                     key={todo.id}
-                    className="grid grid-cols-7 border-b border-x border-gray-200 text-gray-800 items-center
+                    className="grid grid-cols-8 border-b border-x border-gray-200 text-gray-800 items-center
                      text-sm p-2 hover:bg-gray-50 transition"
                   >
                     <span>{(pageNo - 1) * rowsPerPage + index + 1}</span>
@@ -246,6 +247,19 @@ export const Todo = () => {
                     <span>{startDate}</span>
                     <span>{endDate}</span>
                     <span>{deadline}</span>
+                    <span>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          todo.completionStatus === "Completed"
+                            ? "bg-green-100 text-green-700"
+                            : todo.completionStatus === "Defer"
+                              ? "bg-blue-700 text-white"
+                              : "bg-red-700 text-white"
+                        }`}
+                      >
+                        {todo.completionStatus || "Pending"}
+                      </span>
+                    </span>
                     <span className="flex flex-nowrap justify-center gap-1">
                       <EditButton
                         handleUpdate={() => handleClickEditButton(todo)}

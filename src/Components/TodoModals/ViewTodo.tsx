@@ -7,6 +7,7 @@ import {
   FaCalendarAlt,
   FaHourglassEnd,
   FaClock,
+  FaClipboardList,
 } from "react-icons/fa";
 
 type ViewTodoProps = {
@@ -29,7 +30,7 @@ export const ViewTodo = ({ setIsOpenModal, viewTodo }: ViewTodoProps) => {
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
-      <div className="w-full max-w-4xl bg-white rounded-lg overflow-hidden shadow-2xl border border-gray-300">
+      <div className="w-full max-w-4xl bg-white rounded overflow-hidden shadow-2xl border border-gray-300">
         {/* Header Section */}
         <div className="bg-indigo-900 rounded px-4">
           <div className="text-white">
@@ -46,10 +47,11 @@ export const ViewTodo = ({ setIsOpenModal, viewTodo }: ViewTodoProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> Assigned To
+                  <FaUser className="text-gray-400" /> Employee ID
                 </label>
+
                 <p className="text-gray-800 font-medium">
-                  {viewTodo.employeeName || "Unassigned"}
+                  {viewTodo.employee_id || "Unassigned"}
                 </p>
               </div>
               <div>
@@ -104,6 +106,16 @@ export const ViewTodo = ({ setIsOpenModal, viewTodo }: ViewTodoProps) => {
                 </label>
                 <p className="text-red-600 font-bold">
                   {formatDate(viewTodo.deadline)}
+                </p>
+              </div>
+
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaClipboardList className="text-gray-400" /> Completion
+                  Status
+                </label>
+                <p className="text-red-600 font-bold">
+                  {viewTodo.completionStatus}
                 </p>
               </div>
             </div>

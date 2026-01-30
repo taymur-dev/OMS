@@ -25,11 +25,10 @@ type TActivButton =
 export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   const [activeBtns, setActiveBtns] = useState<TActivButton | "">("");
   const [isHoverable, setIsHoverable] = useState(false);
-  const [isBlurred, setIsBlurred] = useState(false); // Modal detection state
+  const [isBlurred, setIsBlurred] = useState(false); 
 
   const { pathname } = useLocation();
 
-  // Detect Modal Open on body
   useEffect(() => {
     const checkModal = () => {
       const hasModalClass = document.body.classList.contains("modal-open");
@@ -100,19 +99,15 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           flex flex-col py-4 overflow-y-auto overflow-x-hidden flex-shrink-0
           z-50 md:z-30
           
-          /* Blur Logic */
           ${isBlurred ? "blur-sm pointer-events-none scale-[0.99]" : "blur-0 pointer-events-auto"}
 
-          /* MOBILE */
           ${isOpen ? "w-64 translate-x-0 visible" : "w-0 -translate-x-full invisible md:visible"}
           
-          /* DESKTOP */
           md:relative md:translate-x-0 md:shadow-lg md:visible
           ${isOpen ? "md:w-20" : "md:w-64"}
         `}
       >
         <nav className="flex-1 px-3 space-y-1">
-          {/* Dashboard */}
           <Link to="/User/dashboard" className="block">
             <SideBarButton
               isOpen={isOpen}
@@ -128,7 +123,6 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             />
           </Link>
 
-          {/* Attendance */}
           <Link to="/users/markAttendance" className="block">
             <SideBarButton
               isOpen={isOpen}
@@ -141,7 +135,6 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             />
           </Link>
 
-          {/* Performance/Todo */}
           <Link to="/users/todo" className="block">
             <SideBarButton
               isOpen={isOpen}
@@ -154,7 +147,6 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             />
           </Link>
 
-          {/* Payroll Section */}
           <SideBarButton
             isOpen={isOpen}
             icon={<CiCreditCard1 size={20} />}
@@ -174,7 +166,6 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             </AccordionItem>
           )}
 
-          {/* Projects */}
           <Link to="/users/assignedprojects" className="block">
             <SideBarButton
               isOpen={isOpen}
@@ -187,7 +178,6 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             />
           </Link>
 
-          {/* Leave */}
           <Link to="/users/leaveRequests" className="block">
             <SideBarButton
               isOpen={isOpen}
@@ -200,7 +190,6 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             />
           </Link>
 
-          {/* Salary */}
           <Link to="/user/salarydetail" className="block">
             <SideBarButton
               isOpen={isOpen}
@@ -213,7 +202,6 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             />
           </Link>
 
-          {/* Progress */}
           <Link to="/users/progress" className="block">
             <SideBarButton
               isOpen={isOpen}
@@ -226,7 +214,6 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             />
           </Link>
 
-          {/* Dynamic */}
           <SideBarButton
             isOpen={isOpen}
             icon={<RiUserCommunityLine size={20} />}
@@ -246,7 +233,6 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             </AccordionItem>
           )}
 
-          {/* Reports */}
           <SideBarButton
             isOpen={isOpen}
             icon={<HiOutlineDocumentReport size={20} />}
@@ -268,7 +254,6 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
         </nav>
       </div>
 
-      {/* Mobile Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm transition-opacity md:hidden"

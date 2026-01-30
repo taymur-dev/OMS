@@ -6,6 +6,8 @@ import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 import { InputField } from "../InputFields/InputField";
+import { TextareaField } from "../InputFields/TextareaField";
+
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -91,7 +93,7 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
   }, [cart]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) => {
     const { name, value, type } = e.target;
     setAddQuotation((prev) => ({
@@ -188,7 +190,7 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
 return (
   <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex px-4 items-center justify-center z-50">
     {/* Container width adjusted to 42rem to match AddSale, with a flexible height for the cart */}
-    <div className="w-[42rem] max-h-[90vh] flex flex-col bg-white rounded-lg border border-indigo-900 shadow-xl overflow-hidden">
+    <div className="w-[42rem] max-h-[90vh] flex flex-col bg-white rounded border border-indigo-900 shadow-xl overflow-hidden">
       
       {/* HEADER: Cleaned up rounded corners and alignment */}
       <div className="bg-indigo-900 px-6 py-0.8">
@@ -236,11 +238,11 @@ return (
             handlerChange={handlerChange}
             value={addQuotation.UnitPrice}
           />
-          <InputField
+          <TextareaField
             labelName="Description *"
             name="description"
             handlerChange={handlerChange}
-            value={addQuotation.description}
+            inputVal={addQuotation.description}
           />
         </div>
 

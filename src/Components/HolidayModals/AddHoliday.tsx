@@ -66,7 +66,7 @@ export const AddHoliday = ({
   return (
     <div>
       <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50">
-        <div className="w-[42rem] max-h-[35rem] bg-white mx-auto rounded-lg border border-indigo-900 overflow-hidden">
+        <div className="w-[42rem] max-h-[35rem] bg-white mx-auto rounded border border-indigo-900 overflow-hidden">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 px-6">
               <Title

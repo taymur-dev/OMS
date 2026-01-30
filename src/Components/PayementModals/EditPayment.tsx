@@ -5,6 +5,7 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 import { InputField } from "../InputFields/InputField";
 import { OptionField } from "../InputFields/OptionField";
+import { TextareaField } from "../InputFields/TextareaField";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -50,7 +51,7 @@ export const EditPayment = ({
   const [loadingCustomers, setLoadingCustomers] = useState(true);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement >,
   ) => {
     const { name, value } = e.target;
     setUpdatePayment((prev) => ({ ...prev, [name]: value }));
@@ -113,9 +114,9 @@ export const EditPayment = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
-      <div className="w-[42rem] max-h-[80rem] bg-white mx-auto rounded-lg border border-indigo-900 overflow-y-auto">
+      <div className="w-[42rem] max-h-[80rem] bg-white mx-auto rounded border border-indigo-900 overflow-y-auto">
         <form onSubmit={handlerSubmitted}>
-          <div className="bg-indigo-900 rounded-t-xl px-6">
+          <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -169,12 +170,7 @@ export const EditPayment = ({
               />
             )}
 
-            <InputField
-              labelName="Description*"
-              name="description"
-              value={updatePayment.description}
-              handlerChange={handlerChange}
-            />
+            
 
             <InputField
               labelName="Amount*"
@@ -190,9 +186,16 @@ export const EditPayment = ({
               value={updatePayment.date}
               handlerChange={handlerChange}
             />
+
+            <TextareaField
+              labelName="Description*"
+              name="description"
+              inputVal={updatePayment.description}
+              handlerChange={handlerChange}
+            />
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
             <AddButton label="Update" />
           </div>

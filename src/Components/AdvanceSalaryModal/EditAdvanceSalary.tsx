@@ -8,6 +8,8 @@ import { Title } from "../Title";
 import { InputField } from "../InputFields/InputField";
 import { OptionField } from "../InputFields/OptionField";
 import { UserSelect } from "../InputFields/UserSelect";
+import { TextareaField } from "../InputFields/TextareaField";
+
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -82,7 +84,7 @@ export const EditAdvanceSalary = ({
   }, [token, currentUser]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setUpdateAdvance((prev) => ({ ...prev, [name]: value }));
@@ -120,9 +122,9 @@ export const EditAdvanceSalary = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs items-center flex items-center justify-center z-50">
-      <div className="w-[36rem] max-h-[28rem] bg-white mx-auto rounded-lg border border-indigo-900 overflow-y-auto">
+      <div className="w-[36rem] max-h-[28rem] bg-white mx-auto rounded border border-indigo-900 overflow-y-auto">
         <form onSubmit={handleSubmit}>
-          <div className="bg-indigo-900 rounded-t-lg px-6">
+          <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -162,12 +164,7 @@ export const EditAdvanceSalary = ({
               handlerChange={handleChange}
             />
 
-            <InputField
-              labelName="Description *"
-              name="description"
-              value={updateAdvance.description}
-              handlerChange={handleChange}
-            />
+            
 
             <OptionField
               labelName="Approval *"
@@ -181,9 +178,16 @@ export const EditAdvanceSalary = ({
               ]}
               inital="Select Approval"
             />
+
+            <TextareaField
+              labelName="Description *"
+              name="description"
+              inputVal={updateAdvance.description}
+              handlerChange={handleChange}
+            />
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded-b-xl py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
             <AddButton label="Updatee" />
           </div>
