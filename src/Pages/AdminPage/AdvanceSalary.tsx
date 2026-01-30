@@ -146,11 +146,11 @@ export const AdvanceSalary = () => {
     let colors = "bg-gray-100 text-gray-800"; // Default
 
     if (statusLower === "approved")
-      colors = "bg-green-100 text-green-800 border-green-200";
+      colors = "bg-green-700 text-white border-green-200";
     if (statusLower === "pending")
-      colors = "bg-yellow-100 text-yellow-800 border-yellow-200";
+      colors = "bg-orange-700 text-white";
     if (statusLower === "rejected")
-      colors = "bg-red-100 text-red-800 border-red-200";
+      colors = "bg-red-700 text-white border-red-200";
 
     return (
       <span

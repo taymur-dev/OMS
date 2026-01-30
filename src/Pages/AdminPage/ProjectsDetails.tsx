@@ -129,7 +129,7 @@ export const ProjectsDetails = () => {
 
     switch (status?.toLowerCase()) {
       case "complete":
-        return `${baseClasses} bg-green-100 text-green-700 border border-green-200`;
+        return `${baseClasses} bg-green-700 text-white border border-green-200`;
       case "new":
         return `${baseClasses} bg-blue-500 text-white border border-blue-200`;
       case "working":

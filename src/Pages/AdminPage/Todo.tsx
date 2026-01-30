@@ -251,7 +251,7 @@ export const Todo = () => {
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
                           todo.completionStatus === "Completed"
-                            ? "bg-green-100 text-green-700"
+                            ? "bg-green-700 text-white"
                             : todo.completionStatus === "Defer"
                               ? "bg-blue-700 text-white"
                               : "bg-red-700 text-white"

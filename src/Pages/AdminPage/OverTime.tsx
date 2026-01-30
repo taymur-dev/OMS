@@ -25,6 +25,7 @@ const numbers = [10, 25, 50, 100];
 
 type OVERTIMET = {
   id: number;
+  employee_id: number;
   name: string;
   date: string;
   totalTime: string;
@@ -129,16 +130,14 @@ export const OverTime = () => {
       case "accepted":
         return (
           <span
-            className={`${baseClasses} bg-green-100 text-green-700 border border-green-200`}
+            className={`${baseClasses} bg-green-700 text-white border border-green-200`}
           >
             {status}
           </span>
         );
       case "pending":
         return (
-          <span
-            className={`${baseClasses} bg-yellow-100 text-yellow-700 border border-yellow-200`}
-          >
+          <span className={`${baseClasses} bg-red-700 text-white border`}>
             {status}
           </span>
         );
@@ -328,7 +327,7 @@ export const OverTime = () => {
           setModal={() => setIsOpenModal("")}
           EditOvertime={{
             id: selectedOvertime.id,
-            employeeId: 0,
+            employeeId: selectedOvertime.employee_id,
             time: selectedOvertime.totalTime,
             date: selectedOvertime.date,
             description: "",

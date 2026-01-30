@@ -146,9 +146,9 @@ export const Promotion = () => {
       "px-2.5 py-1 rounded-full text-xs font-semibold uppercase border shadow-sm";
 
     const styles: Record<string, string> = {
-      ACCEPTED: "bg-green-100 text-green-700 border-green-200",
-      REJECTED: "bg-red-100 text-red-700 border-red-200",
-      PENDING: "bg-yellow-100 text-yellow-700 border-yellow-200",
+      ACCEPTED: "bg-green-700 text-white border-green-200",
+      REJECTED: "bg-red-700 text-white border-red-200",
+      PENDING: "bg-orange-700 text-white border-yellow-200",
       DEFAULT: "bg-gray-100 text-gray-700 border-gray-200",
     };
 
