@@ -428,7 +428,7 @@ export const MainContent = () => {
       </form> */}
 
       {/* Form Filter Section */}
-      <form className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 items-end w-full">
+      <form className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-end w-full">
         {/* Category Select - Mobile par full width (col-span-2) takay alignment kharab na ho */}
         <div className="col-span-2 md:col-span-1 w-full min-w-1">
           <OptionField
@@ -446,7 +446,7 @@ export const MainContent = () => {
         </div>
 
         {/* From Date - Mobile par adhi width */}
-        <div className="w-full min-w-2">
+        <div className="col-span-2 md:col-span-1 w-full">
           <InputField
             type="date"
             labelName="From Date"
@@ -457,7 +457,7 @@ export const MainContent = () => {
         </div>
 
         {/* To Date - Mobile par adhi width */}
-        <div className="w-full min-w-0 ">
+        <div className="col-span-2 md:col-span-1 w-full">
           <InputField
             type="date"
             labelName="To Date"

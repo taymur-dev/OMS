@@ -28,7 +28,8 @@ export const InputField = ({
         </label>
         <input
           type={type}
-          className={`p-2 rounded border-1 border-indigo-900  rounded-lg text-gray-800
+          // Added w-full here 👇
+          className={`w-full p-2 rounded border-1 border-indigo-900 rounded-lg text-gray-800
     ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"}
     focus:ring-2 focus:ring-indigo-900 focus:outline-none
     ${className || ""}`}
