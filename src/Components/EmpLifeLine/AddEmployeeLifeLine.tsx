@@ -64,7 +64,7 @@ export const AddEmployeeLifeLine = ({
   const token = currentUser?.token;
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setAddEmployee((prev) => ({ ...prev, [name]: value }));
@@ -93,7 +93,7 @@ export const AddEmployeeLifeLine = ({
       });
 
       const filteredUsers = res.data.users.filter(
-        (u: UserOption) => u.role === "user" && u.loginStatus === "Y"
+        (u: UserOption) => u.role === "user" && u.loginStatus === "Y",
       );
 
       setAllUsers(filteredUsers);
@@ -113,7 +113,7 @@ export const AddEmployeeLifeLine = ({
       const res = await axios.post(
         `${BASE_URL}/api/admin/addEmpll`,
         addEmployee,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       if (res.data?.newLifeLine) {
@@ -126,7 +126,7 @@ export const AddEmployeeLifeLine = ({
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(
-        axiosError.response?.data.message || "Failed to add lifeline"
+        axiosError.response?.data.message || "Failed to add lifeline",
       );
     }
   };
@@ -177,13 +177,15 @@ export const AddEmployeeLifeLine = ({
               handlerChange={handlerChange}
             />
 
-            <InputField
-              labelName="Date *"
-              name="date"
-              type="date"
-              value={addEmployee.date}
-              handlerChange={handlerChange}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Date *"
+                name="date"
+                type="date"
+                value={addEmployee.date}
+                handlerChange={handlerChange}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

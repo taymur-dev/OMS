@@ -10,7 +10,6 @@ import { OptionField } from "../InputFields/OptionField";
 import { UserSelect } from "../InputFields/UserSelect";
 import { TextareaField } from "../InputFields/TextareaField";
 
-
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 
@@ -84,7 +83,9 @@ export const EditAdvanceSalary = ({
   }, [token, currentUser]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value } = e.target;
     setUpdateAdvance((prev) => ({ ...prev, [name]: value }));
@@ -108,7 +109,7 @@ export const EditAdvanceSalary = ({
           approvalStatus: updateAdvance.approvalStatus,
           description: updateAdvance.description,
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       toast.success("Advance salary updated successfully");
@@ -164,8 +165,6 @@ export const EditAdvanceSalary = ({
               handlerChange={handleChange}
             />
 
-            
-
             <OptionField
               labelName="Approval *"
               name="approvalStatus"
@@ -179,12 +178,14 @@ export const EditAdvanceSalary = ({
               inital="Select Approval"
             />
 
-            <TextareaField
-              labelName="Description *"
-              name="description"
-              inputVal={updateAdvance.description}
-              handlerChange={handleChange}
-            />
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Description *"
+                name="description"
+                inputVal={updateAdvance.description}
+                handlerChange={handleChange}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

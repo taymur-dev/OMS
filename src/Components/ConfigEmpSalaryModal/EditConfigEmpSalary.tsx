@@ -81,7 +81,7 @@ export const EditConfigEmpSalary = ({
   }, [editData]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setEditConfigEmployee((prev) => ({ ...prev, [name]: value }));
@@ -111,7 +111,7 @@ export const EditConfigEmpSalary = ({
         `${BASE_URL}/api/admin/getUsers`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       const formattedUsers: SelectOption[] = res.data.users
@@ -150,7 +150,7 @@ export const EditConfigEmpSalary = ({
         payload,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       refreshSalaries();
@@ -224,13 +224,15 @@ export const EditConfigEmpSalary = ({
               disabled
             />
 
-            <InputField
-              labelName="Date *"
-              name="config_date"
-              type="date"
-              handlerChange={handlerChange}
-              value={editConfigEmployee.config_date}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Date *"
+                name="config_date"
+                type="date"
+                handlerChange={handlerChange}
+                value={editConfigEmployee.config_date}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

@@ -152,7 +152,7 @@ export const UpdateApplicant = ({
               handlerChange={handlerChange}
             />
 
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 md:col-span-2">
               <label className="text-xs font-semibold">Applicant Status *</label>
               <select
                 name="applicant_status"

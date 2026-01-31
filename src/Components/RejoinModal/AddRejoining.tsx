@@ -82,7 +82,10 @@ const initialState: AddRejoinState = {
   note: "",
 };
 
-export const AddRejoining = ({ setModal, handleRefresh }: AddRejoiningProps) => {
+export const AddRejoining = ({
+  setModal,
+  handleRefresh,
+}: AddRejoiningProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
@@ -96,9 +99,12 @@ export const AddRejoining = ({ setModal, handleRefresh }: AddRejoiningProps) => 
     if (!token) return;
 
     try {
-      const res = await axios.get<{ users: UserT[] }>(`${BASE_URL}/api/admin/getUsers`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get<{ users: UserT[] }>(
+        `${BASE_URL}/api/admin/getUsers`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       const filteredUsers = res.data.users
         .filter((u) => u.loginStatus === "N" && u.role === "user")
@@ -128,7 +134,7 @@ export const AddRejoining = ({ setModal, handleRefresh }: AddRejoiningProps) => 
       setLifeLines(
         Array.isArray(res.data)
           ? res.data.map((l) => ({ ...l, id: Number(l.id) }))
-          : []
+          : [],
       );
     } catch {
       toast.error("Failed to fetch lifelines");
@@ -152,7 +158,7 @@ export const AddRejoining = ({ setModal, handleRefresh }: AddRejoiningProps) => 
       setResignations(
         Array.isArray(res.data)
           ? res.data.map((r) => ({ ...r, user_id: Number(r.user_id) }))
-          : []
+          : [],
       );
     } catch {
       toast.error("Failed to fetch resignations");
@@ -170,7 +176,9 @@ export const AddRejoining = ({ setModal, handleRefresh }: AddRejoiningProps) => 
 
   // Handle form changes
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value } = e.target;
     setAddRejoin((prev) => ({
@@ -187,7 +195,9 @@ export const AddRejoining = ({ setModal, handleRefresh }: AddRejoiningProps) => 
 
     const latestLifeLine = lifeLines
       .filter((l) => l.id === uid)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+      .sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+      )[0];
 
     const resignation = resignations.find((r) => r.user_id === uid);
 
@@ -232,7 +242,7 @@ export const AddRejoining = ({ setModal, handleRefresh }: AddRejoiningProps) => 
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(
-        axiosError.response?.data.message || "Failed to add rejoin request"
+        axiosError.response?.data.message || "Failed to add rejoin request",
       );
     }
   };
@@ -242,7 +252,10 @@ export const AddRejoining = ({ setModal, handleRefresh }: AddRejoiningProps) => 
       <div className="w-[42rem] bg-white mx-auto roundedborder border-indigo-900">
         <form onSubmit={handlerSubmit}>
           <div className="bg-indigo-900 rounded px-6">
-            <Title setModal={setModal} className="text-white text-lg font-semibold">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
               ADD REJOINING REQUEST
             </Title>
           </div>
@@ -289,13 +302,15 @@ export const AddRejoining = ({ setModal, handleRefresh }: AddRejoiningProps) => 
               value={addRejoin.rejoin_date}
             />
 
-            <TextareaField
-              labelName="Note *"
-              placeHolder="Write here your note"
-              handlerChange={handlerChange}
-              name="note"
-              inputVal={addRejoin.note}
-            />
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Note *"
+                placeHolder="Write here your note"
+                handlerChange={handlerChange}
+                name="note"
+                inputVal={addRejoin.note}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

@@ -3,7 +3,7 @@ import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 import { InputField } from "../InputFields/InputField";
-import { OptionField } from "../InputFields/OptionField"; 
+import { OptionField } from "../InputFields/OptionField";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -41,7 +41,7 @@ export const AddAttendanceRule = ({
   const token = currentUser?.token;
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
   ) => {
     const { name, value } = e.target;
     setAddConfig({ ...addConfig, [name]: value });
@@ -93,7 +93,7 @@ export const AddAttendanceRule = ({
                 value={addConfig.endTime}
                 handlerChange={handlerChange}
               />
-              
+
               <OptionField
                 labelName="Off Day *"
                 name="offDay"
@@ -110,13 +110,16 @@ export const AddAttendanceRule = ({
                 value={addConfig.lateTime}
                 handlerChange={handlerChange}
               />
-              <InputField
-                labelName="Half Leave *"
-                type="time"
-                name="halfLeave"
-                value={addConfig.halfLeave}
-                handlerChange={handlerChange}
-              />
+
+              <div className="md:col-span-2">
+                <InputField
+                  labelName="Half Leave *"
+                  type="time"
+                  name="halfLeave"
+                  value={addConfig.halfLeave}
+                  handlerChange={handlerChange}
+                />
+              </div>
             </div>
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

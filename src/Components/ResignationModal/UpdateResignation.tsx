@@ -170,7 +170,7 @@ export const UpdateResignation = ({
               placeHolder="Write resignation note"
             />
 
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col md:col-span-2 gap-1">
               <label className="text-sm font-medium text-gray-700">
                 Approval Status*
               </label>

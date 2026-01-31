@@ -6,7 +6,7 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 import { UserSelect } from "../InputFields/UserSelect";
 import { OptionField } from "../InputFields/OptionField";
-
+import { InputField } from "../InputFields/InputField";
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -36,14 +36,14 @@ type EditAssignProjectProps = {
     name: string;
     projectName: string;
     projectId: number;
-    date: string; 
+    date: string;
   }) => void;
 };
 
 type FormState = {
   employee_id: string;
   projectId: string;
-  date: string; 
+  date: string;
 };
 
 export const EditAssignProject = ({
@@ -69,14 +69,15 @@ export const EditAssignProject = ({
       setFormData({
         employee_id: String(editData.employee_id),
         projectId: String(editData.projectId),
-        date: editData.date ? editData.date.split("T")[0] : "", 
-
+        date: editData.date ? editData.date.split("T")[0] : "",
       });
     }
   }, [editData, allUsers, allProjects]);
 
   /* ================= HANDLER ================= */
-  const handlerChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+  const handlerChange = (
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -96,7 +97,7 @@ export const EditAssignProject = ({
           value: String(u.id),
           projectName: "",
           loginStatus: u.loginStatus ?? "Y",
-        })
+        }),
       );
 
       setAllUsers(users);
@@ -120,7 +121,7 @@ export const EditAssignProject = ({
           value: String(p.id),
           projectName: p.projectName,
           loginStatus: "Y",
-        })
+        }),
       );
 
       setAllProjects(projects);
@@ -148,14 +149,14 @@ export const EditAssignProject = ({
         },
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       const selectedUser = allUsers.find(
-        (u) => u.id === Number(formData.employee_id)
+        (u) => u.id === Number(formData.employee_id),
       );
       const selectedProject = allProjects.find(
-        (p) => p.id === Number(formData.projectId)
+        (p) => p.id === Number(formData.projectId),
       );
 
       onUpdate({
@@ -210,14 +211,15 @@ export const EditAssignProject = ({
             />
 
             {/* 🔥 Date Input */}
-            <div className="flex flex-col mb-3">
+            <div className="flex flex-col mb-3 md:col-span-2">
               <label className="text-sm font-medium text-black">Date *</label>
-              <input
+
+              <InputField
                 type="date"
                 name="date"
                 value={formData.date}
-                onChange={handlerChange}
-                className="border border-indigo-900 rounded px-2 py-1 mt-1"
+                handlerChange={handlerChange}
+                className="border border-indigo-900 rounded px-2 py-2 mt-1"
               />
             </div>
           </div>

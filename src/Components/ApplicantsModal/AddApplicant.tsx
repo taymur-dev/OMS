@@ -191,14 +191,16 @@ export const AddApplicant = ({
                 </select>
               </div>
 
-              <InputField
-                labelName="Interview Phase *"
-                placeHolder="Enter the interview phase"
-                type="text"
-                name="interviewPhase"
-                value={addApplicant.interviewPhase}
-                handlerChange={handlerChange}
-              />
+              <div className="md:col-span-2">
+                <InputField
+                  labelName="Interview Phase *"
+                  placeHolder="Enter the interview phase"
+                  type="text"
+                  name="interviewPhase"
+                  value={addApplicant.interviewPhase}
+                  handlerChange={handlerChange}
+                />
+              </div>
             </div>
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

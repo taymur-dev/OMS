@@ -171,17 +171,19 @@ export const UpdatePromotion = ({
               handlerChange={handleChange}
               placeHolder="Write promotion details"
             />
-
-            {isAdmin && (
-              <OptionField
-                labelName="Approval Status"
-                name="approvalStatus"
-                value={promotion.approvalStatus}
-                handlerChange={handleChange}
-                optionData={ApprovalOptions}
-                inital="Select Status"
-              />
-            )}
+            
+            <div className="md:col-span-2">
+              {isAdmin && (
+                <OptionField
+                  labelName="Approval Status"
+                  name="approvalStatus"
+                  value={promotion.approvalStatus}
+                  handlerChange={handleChange}
+                  optionData={ApprovalOptions}
+                  inital="Select Status"
+                />
+              )}
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

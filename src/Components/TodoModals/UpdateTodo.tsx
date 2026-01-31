@@ -64,16 +64,18 @@ export const UpdateTodo = ({
   const [todo, setTodo] = useState<TodoType | null>(seleteTodo);
   const [allUsers, setAllUsers] = useState<UserT[]>([]);
 
-const handlerChange = (
-  e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>,
-) => {
-  const { name, value } = e.target;
-  setTodo((prev) =>
-    prev
-      ? { ...prev, [name]: name === "employee_id" ? Number(value) : value }
-      : prev,
-  );
-};
+  const handlerChange = (
+    e: React.ChangeEvent<
+      HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement
+    >,
+  ) => {
+    const { name, value } = e.target;
+    setTodo((prev) =>
+      prev
+        ? { ...prev, [name]: name === "employee_id" ? Number(value) : value }
+        : prev,
+    );
+  };
 
   const getAllUsers = useCallback(async () => {
     if (!token) return;
@@ -199,13 +201,14 @@ const handlerChange = (
               optionData={StatusOptions}
               inital="Select Completion Status"
             />
-
-            <TextareaField
-              labelName="Note *"
-              name="note"
-              inputVal={todo?.note || ""}
-              handlerChange={handlerChange}
-            />
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Note *"
+                name="note"
+                inputVal={todo?.note || ""}
+                handlerChange={handlerChange}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

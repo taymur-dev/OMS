@@ -112,7 +112,7 @@ export const AddPayment = ({
               </Title>
             </div>
 
-            <div className="mx-3  pt-3 flex lg:flex-row flex-cols items-center  text-gray-800  ">
+            <div className="mx-3  pt-3 py-2 flex lg:flex-row flex-cols items-center  text-gray-800  ">
               <h1 className="text-lg font-semibold underline ">
                 Account Type*
               </h1>

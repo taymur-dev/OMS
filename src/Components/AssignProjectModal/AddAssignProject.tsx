@@ -6,6 +6,7 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 import { UserSelect } from "../InputFields/UserSelect";
 import { OptionField } from "../InputFields/OptionField";
+import { InputField } from "../InputFields/InputField";
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -152,14 +153,14 @@ export const AddAssignProject = ({
               inital="Please Select Project"
             />
 
-            <div className="flex flex-col">
+            <div className="flex flex-col md:col-span-2">
               <label className="text-sm font-medium text-black  ">Date *</label>
-              <input
+              <InputField
                 type="date"
                 name="date"
                 value={addProject.date}
-                onChange={handlerChange}
-                className="border border-indigo-900 rounded p-1"
+                handlerChange={handlerChange}
+                className="border border-indigo-900 rounded p-2"
               />
             </div>
           </div>

@@ -65,7 +65,7 @@ export const AddAttendance = ({
 
   const token = currentUser?.token;
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     e.preventDefault();
     const { name, value } = e.target;
@@ -76,32 +76,30 @@ export const AddAttendance = ({
     addUserAttendance.attendanceStatus === "absent" ||
     addUserAttendance.attendanceStatus === "leave";
 
- const handlerGetUsers = useCallback(async () => {
-  try {
-    const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  const handlerGetUsers = useCallback(async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    const filteredUsers = res.data.users
-      .filter(
-        (user: User) =>
-          user.loginStatus === "Y" && user.role === "user"
-      )
-      .map((user: User) => ({
-        ...user,
-        value: user.id,
-        label: user.name,
-      }));
+      const filteredUsers = res.data.users
+        .filter(
+          (user: User) => user.loginStatus === "Y" && user.role === "user",
+        )
+        .map((user: User) => ({
+          ...user,
+          value: user.id,
+          label: user.name,
+        }));
 
-    setAllUsers(filteredUsers);
-  } catch (error) {
-    const axiosError = error as AxiosError<{ message: string }>;
-    toast.error(axiosError?.response?.data?.message);
-  }
-}, [token]);
-
+      setAllUsers(filteredUsers);
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(axiosError?.response?.data?.message);
+    }
+  }, [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -114,7 +112,7 @@ export const AddAttendance = ({
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       console.log(res.data);
@@ -193,14 +191,16 @@ export const AddAttendance = ({
                 disabled={isAbsentOrLeave}
               />
 
-              <OptionField
-                labelName="Attendance Status *"
-                name="attendanceStatus"
-                value={addUserAttendance.attendanceStatus}
-                handlerChange={handlerChange}
-                optionData={reasonLeaveOption}
-                inital="Please Select Status"
-              />
+              <div className="md:col-span-2">
+                <OptionField
+                  labelName="Attendance Status *"
+                  name="attendanceStatus"
+                  value={addUserAttendance.attendanceStatus}
+                  handlerChange={handlerChange}
+                  optionData={reasonLeaveOption}
+                  inital="Please Select Status"
+                />
+              </div>
             </div>
 
             <div className="flex justify-end  gap-3 px-6 py-4 bg-indigo-900 rounded">

@@ -162,7 +162,7 @@ export const EditSale = ({
                 inital="Please Select Project"
               />
 
-              <div className="flex flex-col my-2">
+              <div className="flex flex-col my-2 md:col-span-2">
                 <label className="text-xs font-semibold mb-1">Date *</label>
                 <InputField
                   type="date"

@@ -105,7 +105,7 @@ export const AddPromotion = ({
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
 
@@ -115,7 +115,7 @@ export const AddPromotion = ({
       const latestLifeLine = lifeLines
         .filter((l) => String(l.id) === value)
         .sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
         )[0];
 
       setAddPromotion((prev) => ({
@@ -158,7 +158,7 @@ export const AddPromotion = ({
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(
-        axiosError.response?.data.message || "Failed to add promotion"
+        axiosError.response?.data.message || "Failed to add promotion",
       );
     }
   };
@@ -225,13 +225,15 @@ export const AddPromotion = ({
               value={addPromotion.date}
             />
 
-            <TextareaField
-              labelName="Note *"
-              placeHolder="Write promotion reason"
-              handlerChange={handlerChange}
-              name="note"
-              inputVal={addPromotion.note}
-            />
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Note *"
+                placeHolder="Write promotion reason"
+                handlerChange={handlerChange}
+                name="note"
+                inputVal={addPromotion.note}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

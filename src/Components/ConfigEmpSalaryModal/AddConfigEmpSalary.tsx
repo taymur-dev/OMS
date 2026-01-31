@@ -194,13 +194,15 @@ export const AddConfigEmpSalary = ({
               disabled
             />
 
-            <InputField
-              labelName="Date *"
-              name="config_date"
-              type="date"
-              handlerChange={handlerChange}
-              value={addConfigEmployee.config_date}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Date *"
+                name="config_date"
+                type="date"
+                handlerChange={handlerChange}
+                value={addConfigEmployee.config_date}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

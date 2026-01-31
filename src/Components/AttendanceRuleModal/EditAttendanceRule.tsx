@@ -40,12 +40,14 @@ export const EditAttendanceRule = ({
   selectData,
 }: EditAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-  const [updateConfig, setUpdateConfig] = useState<ALLCONFIGT | null>(selectData);
+  const [updateConfig, setUpdateConfig] = useState<ALLCONFIGT | null>(
+    selectData,
+  );
 
   const token = currentUser?.token;
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
   ) => {
     const { name, value } = e.target;
     if (updateConfig) {
@@ -65,7 +67,7 @@ export const EditAttendanceRule = ({
           headers: {
             Authorization: token,
           },
-        }
+        },
       );
       handleGetAllTimeConfig();
       setModal();
@@ -122,14 +124,16 @@ export const EditAttendanceRule = ({
                 value={updateConfig?.lateTime ?? ""}
                 handlerChange={handlerChange}
               />
-              
-              <InputField
-                labelName="Half Leave *"
-                type="time"
-                name="halfLeave"
-                value={updateConfig?.halfLeave ?? ""}
-                handlerChange={handlerChange}
-              />
+
+              <div className="md:col-span-2">
+                <InputField
+                  labelName="Half Leave *"
+                  type="time"
+                  name="halfLeave"
+                  value={updateConfig?.halfLeave ?? ""}
+                  handlerChange={handlerChange}
+                />
+              </div>
             </div>
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
