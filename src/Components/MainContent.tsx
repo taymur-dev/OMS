@@ -336,10 +336,7 @@ export const MainContent = () => {
           />
         </div>
 
-        <div
-          onClick={() => navigate("/expensesCatogries")}
-          className="cursor-pointer"
-        >
+        <div onClick={() => navigate("/expensesCatogries")} className="cursor-pointer">
           <Card
             titleName="Expense Categories"
             totalUser="Total Categories"
@@ -390,7 +387,7 @@ export const MainContent = () => {
         </div>
       </div>
 
-      <form className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-6 items-end w-full">
+      <form className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end w-full">
         {/* Category Select */}
         <div className="w-full min-w-0">
           <OptionField
@@ -407,29 +404,27 @@ export const MainContent = () => {
           />
         </div>
 
-        <form className="grid grid-cols-1 gap-6 items-end w-full">
-          {/* From Date */}
-          <div className="w-full min-w-0">
-            <InputField
-              type="date"
-              labelName="From Date"
-              name="fromDate"
-              value={formData.fromDate}
-              handlerChange={handleChange}
-            />
-          </div>
+        {/* From Date */}
+        <div className="w-full min-w-0">
+          <InputField
+            type="date"
+            labelName="From Date"
+            name="fromDate"
+            value={formData.fromDate}
+            handlerChange={handleChange}
+          />
+        </div>
 
-          {/* To Date */}
-          <div className="w-full min-w-0">
-            <InputField
-              type="date"
-              labelName="To Date"
-              name="toDate"
-              value={formData.toDate}
-              handlerChange={handleChange}
-            />
-          </div>
-        </form>
+        {/* To Date */}
+        <div className="w-full min-w-0">
+          <InputField
+            type="date"
+            labelName="To Date"
+            name="toDate"
+            value={formData.toDate}
+            handlerChange={handleChange}
+          />
+        </div>
       </form>
 
       <DragDropContext onDragEnd={onDragEnd}>
