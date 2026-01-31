@@ -42,11 +42,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   }, []);
 
   useEffect(() => {
-    if (isOpen) {
-      setIsHoverable(true);
-    } else {
-      setIsHoverable(false);
-    }
+    setIsHoverable(isOpen);
   }, [isOpen]);
 
   const handleMouseEnter = () => {
@@ -61,8 +57,14 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
     }
   };
 
-  const toggleButtonActive = (activeBtn: TActivButton) => {
-    setActiveBtns((prev) => (prev === activeBtn ? "" : activeBtn));
+  // Centralized click handler
+  const handleItemClick = (btn: TActivButton, hasSubmenu: boolean = false) => {
+    setActiveBtns((prev) => (prev === btn ? "" : btn));
+    
+    // Close sidebar on mobile if it's a direct link (no submenu)
+    if (!hasSubmenu && window.innerWidth < 768) {
+      setIsOpen?.(false);
+    }
   };
 
   useEffect(() => {
@@ -74,6 +76,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
     return (
       <Link
         to={to}
+        // Always close on mobile when a sub-link is clicked
         onClick={() => window.innerWidth < 768 && setIsOpen?.(false)}
         className={`flex justify-between items-center w-full px-4 py-2 mb-1 rounded-md text-sm font-bold transition-all duration-200 ${
           isActive ? "bg-white text-indigo-900" : "bg-transparent text-black font-normal"
@@ -114,10 +117,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<MdOutlineDashboard size={20} />}
               title="Dashboard"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => {
-                toggleButtonActive("Dashboard");
-                if (window.innerWidth < 768) setIsOpen?.(false);
-              }}
+              handlerClick={() => handleItemClick("Dashboard")}
               activeBtns={activeBtns}
               activeBtn="Dashboard"
             />
@@ -129,7 +129,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<PiFingerprintDuotone size={20} />}
               title="Attendance"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => toggleButtonActive("Attendance")}
+              handlerClick={() => handleItemClick("Attendance")}
               activeBtns={activeBtns}
               activeBtn="Attendance"
             />
@@ -141,7 +141,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<LuListTodo size={20} />}
               title="Todo's"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => toggleButtonActive("Todo")}
+              handlerClick={() => handleItemClick("Todo")}
               activeBtns={activeBtns}
               activeBtn="Todo"
             />
@@ -152,7 +152,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             icon={<CiCreditCard1 size={20} />}
             title="Payroll"
             arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("Payroll")}
+            handlerClick={() => handleItemClick("Payroll", true)} // Has submenu
             activeBtns={activeBtns}
             activeBtn="Payroll"
           />
@@ -172,7 +172,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<GoProjectRoadmap size={20} />}
               title="Assigned Projects"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => toggleButtonActive("Projects")}
+              handlerClick={() => handleItemClick("Projects")}
               activeBtns={activeBtns}
               activeBtn="Projects"
             />
@@ -184,7 +184,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<FaUserSlash size={20} />}
               title="Apply Leave"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => toggleButtonActive("Leave")}
+              handlerClick={() => handleItemClick("Leave")}
               activeBtns={activeBtns}
               activeBtn="Leave"
             />
@@ -196,7 +196,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<FaMoneyCheck size={20} />}
               title="Salary"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => toggleButtonActive("Salary")}
+              handlerClick={() => handleItemClick("Salary")}
               activeBtns={activeBtns}
               activeBtn="Salary"
             />
@@ -208,7 +208,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<GiProgression size={20} />}
               title="Progress"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => toggleButtonActive("Progress")}
+              handlerClick={() => handleItemClick("Progress")}
               activeBtns={activeBtns}
               activeBtn="Progress"
             />
@@ -219,7 +219,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             icon={<RiUserCommunityLine size={20} />}
             title="Dynamic"
             arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("Dynamic")}
+            handlerClick={() => handleItemClick("Dynamic", true)} // Has submenu
             activeBtns={activeBtns}
             activeBtn="Dynamic"
           />
@@ -238,7 +238,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             icon={<HiOutlineDocumentReport size={20} />}
             title="Reports"
             arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("Reports")}
+            handlerClick={() => handleItemClick("Reports", true)} // Has submenu
             activeBtns={activeBtns}
             activeBtn="Reports"
           />

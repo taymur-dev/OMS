@@ -15,7 +15,7 @@ export const EmployeePrivateLayout = () => {
       <Header isOpen={isOpen} toggleSideBar={toggleSideBar} />
 
       <div className="flex flex-1 overflow-hidden">
-        <EmployeeSideBar isOpen={isOpen} />
+        <EmployeeSideBar isOpen={isOpen} setIsOpen={setIsopen} />
 
         <main className="flex-1 flex flex-col overflow-y-auto bg-gray-50">
           <div className="">
