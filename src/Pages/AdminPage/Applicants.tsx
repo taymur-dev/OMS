@@ -217,7 +217,7 @@ export const Applicants = () => {
                   <span className="text-center">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-semibold
-                    ${item.status === "pending" && "bg-orange-700 text-white"}
+                    ${item.status === "pending" && "bg-orange-600 text-white"}
                     ${item.status === "approved" && "bg-green-700 text-white"}
                     ${item.status === "rejected" && "bg-red-700 text-white"}`}
                     >

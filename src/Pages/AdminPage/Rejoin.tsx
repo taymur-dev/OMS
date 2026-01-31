@@ -133,7 +133,7 @@ export const Rejoin = () => {
       case "rejected":
         return "bg-red-700 text-white border-red-200";
       default:
-        return "bg-yellow-700 text-white border-yellow-200"; // For "Pending"
+        return "bg-orange-600 text-white border-orange-200"; // For "Pending"
     }
   };
 

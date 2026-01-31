@@ -148,7 +148,7 @@ export const Promotion = () => {
     const styles: Record<string, string> = {
       ACCEPTED: "bg-green-700 text-white border-green-200",
       REJECTED: "bg-red-700 text-white border-red-200",
-      PENDING: "bg-orange-700 text-white border-yellow-200",
+      PENDING: "bg-orange-600 text-white border-orange-200",
       DEFAULT: "bg-gray-100 text-gray-700 border-gray-200",
     };
 

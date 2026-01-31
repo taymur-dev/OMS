@@ -160,7 +160,7 @@ export const Resignation = () => {
 
     // Map statuses to specific Tailwind classes
     const statusStyles: Record<string, string> = {
-      PENDING: "bg-orange-700 text-white border-amber-200",
+      PENDING: "bg-orange-600 text-white border-amber-200",
       APPROVED:  "bg-green-700 text-white border-emerald-200",
       ACCEPTED: "bg-green-700 text-white border-emerald-200", // Handle 'Accepted'
       REJECTED: "bg-red-700 text-white border-rose-200",

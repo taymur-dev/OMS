@@ -254,7 +254,7 @@ export const Todo = () => {
                             ? "bg-green-700 text-white"
                             : todo.completionStatus === "Defer"
                               ? "bg-blue-700 text-white"
-                              : "bg-red-700 text-white"
+                              : "bg-orange-500 text-white"
                         }`}
                       >
                         {todo.completionStatus || "Pending"}

@@ -137,7 +137,7 @@ export const OverTime = () => {
         );
       case "pending":
         return (
-          <span className={`${baseClasses} bg-red-700 text-white border`}>
+          <span className={`${baseClasses} bg-orange-600 text-white border`}>
             {status}
           </span>
         );
