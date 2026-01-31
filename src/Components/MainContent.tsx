@@ -446,7 +446,7 @@ export const MainContent = () => {
         </div>
 
         {/* From Date - Mobile par adhi width */}
-        <div className="w-full min-w-1">
+        <div className="w-full min-w-2">
           <InputField
             type="date"
             labelName="From Date"
