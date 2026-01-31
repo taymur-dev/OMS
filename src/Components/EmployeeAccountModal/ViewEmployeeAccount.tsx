@@ -1,3 +1,208 @@
+// import { useEffect, useCallback, useState } from "react";
+// import axios from "axios";
+// import { Title } from "../Title";
+// import { Loader } from "../LoaderComponent/Loader";
+// import { BASE_URL } from "../../Content/URL";
+// import { useAppSelector } from "../../redux/Hooks";
+// import { FaUser, FaEnvelope, FaPhoneAlt, FaHistory } from "react-icons/fa";
+
+// type Props = {
+//   setModal: () => void;
+//   employee: {
+//     id: number;
+//     name: string;
+//     email: string;
+//     contact: string;
+//   };
+// };
+
+// type AccountEntry = {
+//   id: number;
+//   refNo: string;
+//   debit: number;
+//   credit: number;
+//   payment_method: string;
+//   payment_date: string;
+// };
+
+// export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
+//   const { currentUser } = useAppSelector((state) => state.officeState);
+//   const token = currentUser?.token;
+
+//   const [accounts, setAccounts] = useState<AccountEntry[]>([]);
+//   const [loading, setLoading] = useState(false);
+//   const isAdmin = currentUser?.role === "admin";
+
+//   const formatDate = (dateString: string) => {
+//     if (!dateString) return "-";
+//     return new Date(dateString).toLocaleDateString("en-GB", {
+//     day: "2-digit",
+//     month: "short",
+//     year: "numeric",
+//   }).replace(/ /g, '-');
+//   };
+
+//   const fetchEmployeeAccounts = useCallback(async () => {
+//     if (!currentUser || !token) return;
+//     if (currentUser.role === "admin" && !employee?.id) return;
+
+//     setLoading(true);
+//     try {
+//       const endpoint = isAdmin
+//         ? `${BASE_URL}/api/admin/getEmployeeAccount/${employee.id}`
+//         : `${BASE_URL}/api/user/getMyEmployeeAccount`;
+
+//       const res = await axios.get(endpoint, {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+//       setAccounts(res.data.accounts || []);
+//     } catch (error) {
+//       console.error("Failed to fetch employee account details", error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, [employee?.id, token, currentUser, isAdmin]);
+
+//   useEffect(() => {
+//     fetchEmployeeAccounts();
+//   }, [fetchEmployeeAccounts]);
+
+//   if (loading) return <Loader />;
+
+//   return (
+//     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
+//       <div className="w-full max-w-6xl bg-white rounded-lg overflow-hidden shadow-2xl border border-gray-300">
+//         {/* Header */}
+//         <div className="bg-indigo-900 rounded px-4">
+//           <div className="text-white">
+//             <Title setModal={setModal}>EMPLOYEE ACCOUNT DETAILS</Title>
+//           </div>
+//         </div>
+
+//         <div className="p-4 space-y-6">
+//           {/* Section 1: Employee Basic Info */}
+//           <div className="border border-gray-200 rounded-md p-4 relative">
+//             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+//               Employee Information
+//             </h3>
+//             <div className="grid grid-cols-1 md:grid-cols-3 gap-y-4 pt-2">
+//               <div>
+//                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+//                   <FaUser className="text-gray-400" /> Name
+//                 </label>
+//                 <p className="text-gray-800 font-medium">{employee.name}</p>
+//               </div>
+//               <div>
+//                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+//                   <FaEnvelope className="text-gray-400" /> Email
+//                 </label>
+//                 <p className="text-gray-800 font-medium">{employee.email}</p>
+//               </div>
+//               <div>
+//                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+//                   <FaPhoneAlt className="text-gray-400" /> Contact
+//                 </label>
+//                 <p className="text-gray-800 font-medium">{employee.contact}</p>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* Section 2: Account History Table */}
+//           <div className="border border-gray-200 rounded-md p-4 relative">
+//             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+//               <span className="flex items-center gap-1">
+//                 <FaHistory /> Transaction History
+//               </span>
+//             </h3>
+
+//             <div className="overflow-x-auto mt-2 max-h-[50vh]">
+//               <table className="w-full text-left border-collapse min-w-[800px]">
+//                 <thead className="sticky top-0 z-50">
+//                   <tr className="bg-indigo-900 text-white text-[11px] ">
+//                     <th className="p-2  border-indigo-800">Sr#</th>
+//                     <th className="p-2  border-indigo-800">Ref No</th>
+//                     <th className="p-2  border-indigo-800">Debit</th>
+//                     <th className="p-2  border-indigo-800">Credit</th>
+//                     <th className="p-2  border-indigo-800">Balance</th>
+//                     <th className="p-2  border-indigo-800">Net Balance</th>
+//                     <th className="p-2  border-indigo-800">Method</th>
+//                     <th className="p-2">Date</th>
+//                   </tr>
+//                 </thead>
+//                 <tbody className="text-sm">
+//                   {accounts.length === 0 ? (
+//                     <tr>
+//                       <td
+//                         colSpan={8}
+//                         className="text-center py-8 text-gray-400 italic"
+//                       >
+//                         No account records found
+//                       </td>
+//                     </tr>
+//                   ) : (
+//                     accounts.map((acc, idx) => {
+//                       const previousBalance =
+//                         idx === 0
+//                           ? 0
+//                           : accounts[idx - 1].debit - accounts[idx - 1].credit;
+//                       const balance = acc.debit - acc.credit;
+//                       const netBalance = previousBalance - balance;
+
+//                       return (
+//                         <tr
+//                           key={acc.id}
+//                           className="border-b hover:bg-gray-50 transition-colors"
+//                         >
+//                           <td className="p-2 text-gray-600 font-semibold">
+//                             {idx + 1}
+//                           </td>
+//                           <td className="p-2 text-gray-800">
+//                             {acc.refNo || "-"}
+//                           </td>
+//                           <td className="p-2 text-blue-600 font-medium">
+//                             {acc.debit || 0}
+//                           </td>
+//                           <td className="p-2 text-orange-600 font-medium">
+//                             {acc.credit || 0}
+//                           </td>
+//                           <td className="p-2 font-bold">{balance}</td>
+//                           <td
+//                             className={`p-2 font-bold ${netBalance < 0 ? "text-red-600" : "text-green-600"}`}
+//                           >
+//                             {netBalance}
+//                           </td>
+//                           <td className="p-2">
+//                             <span className="py-0.5 text-[11px] font-bold text-gray-600">
+//                               {acc.payment_method}
+//                             </span>
+//                           </td>
+//                           <td className="p-2 text-gray-600">
+//                             {formatDate(acc.payment_date)}
+//                           </td>
+//                         </tr>
+//                       );
+//                     })
+//                   )}
+//                 </tbody>
+//               </table>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Footer Section */}
+//         <div className="bg-indigo-900 p-3 flex justify-end">
+//           <button
+//             onClick={setModal}
+//             className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-1 px-8 rounded shadow-sm transition-colors"
+//           >
+//             Close
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
 import { useEffect, useCallback, useState } from "react";
 import axios from "axios";
 import { Title } from "../Title";
@@ -35,11 +240,13 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "-";
-    return new Date(dateString).toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).replace(/ /g, '-');
+    return new Date(dateString)
+      .toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })
+      .replace(/ /g, "-");
   };
 
   const fetchEmployeeAccounts = useCallback(async () => {
@@ -68,6 +275,9 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
   }, [fetchEmployeeAccounts]);
 
   if (loading) return <Loader />;
+
+  // Initialize running balance variable for calculation
+  let runningNetBalance = 0;
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
@@ -116,16 +326,23 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
             </h3>
 
             <div className="overflow-x-auto mt-2 max-h-[50vh]">
-              <table className="w-full text-left border-collapse min-w-[800px]">
+              <table className="w-full text-left border-collapse min-w-[900px]">
                 <thead className="sticky top-0 z-50">
                   <tr className="bg-indigo-900 text-white text-[11px] ">
-                    <th className="p-2  border-indigo-800">Sr#</th>
-                    <th className="p-2  border-indigo-800">Ref No</th>
-                    <th className="p-2  border-indigo-800">Debit</th>
-                    <th className="p-2  border-indigo-800">Credit</th>
-                    <th className="p-2  border-indigo-800">Balance</th>
-                    <th className="p-2  border-indigo-800">Net Balance</th>
-                    <th className="p-2  border-indigo-800">Method</th>
+                    <th className="p-2 border-indigo-800">Sr#</th>
+                    <th className="p-2 border-indigo-800">Ref No</th>
+                    <th className="p-2 border-indigo-800 text-right">Debit</th>
+                    <th className="p-2 border-indigo-800 text-right">Credit</th>
+                    <th className="p-2 border-indigo-800 text-right">
+                      Balance
+                    </th>
+                    <th className="p-2 border-indigo-800 text-right">
+                      Prev Balance
+                    </th>
+                    <th className="p-2 border-indigo-800 text-right">
+                      Net Balance
+                    </th>
+                    <th className="p-2 border-indigo-800">Method</th>
                     <th className="p-2">Date</th>
                   </tr>
                 </thead>
@@ -133,7 +350,7 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
                   {accounts.length === 0 ? (
                     <tr>
                       <td
-                        colSpan={8}
+                        colSpan={9}
                         className="text-center py-8 text-gray-400 italic"
                       >
                         No account records found
@@ -141,13 +358,14 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
                     </tr>
                   ) : (
                     accounts.map((acc, idx) => {
-                      const previousBalance =
-                        idx === 0
-                          ? 0
-                          : accounts[idx - 1].debit - accounts[idx - 1].credit;
-                      const balance = acc.debit - acc.credit;
-                      const netBalance = previousBalance - balance;
+                      
+                      const rowBalance = (acc.debit || 0) - (acc.credit || 0);
 
+                      const currentPrevBalance = runningNetBalance;
+
+                      const netBalance = currentPrevBalance + rowBalance;
+
+                      runningNetBalance = netBalance;
                       return (
                         <tr
                           key={acc.id}
@@ -159,17 +377,25 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
                           <td className="p-2 text-gray-800">
                             {acc.refNo || "-"}
                           </td>
-                          <td className="p-2 text-blue-600 font-medium">
+                          <td className="p-2 text-right text-blue-600 font-medium">
                             {acc.debit || 0}
                           </td>
-                          <td className="p-2 text-orange-600 font-medium">
+                          <td className="p-2 text-right text-orange-600 font-medium">
                             {acc.credit || 0}
                           </td>
-                          <td className="p-2 font-bold">{balance}</td>
+
+                          <td className="p-2 text-right font-medium">
+                            {rowBalance.toLocaleString()}
+                          </td>
+                          <td className="p-2 text-right text-gray-500">
+                            {currentPrevBalance.toLocaleString()}
+                          </td>
                           <td
-                            className={`p-2 font-bold ${netBalance < 0 ? "text-red-600" : "text-green-600"}`}
+                            className={`p-2 text-right font-bold ${
+                              netBalance < 0 ? "text-red-600" : "text-green-600"
+                            }`}
                           >
-                            {netBalance}
+                            {netBalance.toLocaleString()}
                           </td>
                           <td className="p-2">
                             <span className="py-0.5 text-[11px] font-bold text-gray-600">

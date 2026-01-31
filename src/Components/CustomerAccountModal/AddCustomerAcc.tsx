@@ -40,8 +40,8 @@ const initialState = {
   customerAddress: "",
   debit: "",
   credit: "",
-  paymentMethod: currentDate,
-  paymentDate: "",
+  paymentMethod: "",
+  paymentDate: currentDate,
 };
 
 export const AddCustomerAccount = ({

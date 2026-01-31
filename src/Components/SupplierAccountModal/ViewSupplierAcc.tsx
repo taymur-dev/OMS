@@ -18,6 +18,8 @@ type SupplierAccountEntry = {
   refNo: string;
   debit: number;
   credit: number;
+  paymentMethod: string;
+  paymentDate: string;
 };
 
 type Supplier = {
@@ -25,6 +27,18 @@ type Supplier = {
   supplierContact: string;
   supplierAddress: string;
 };
+
+const formatDate = (dateString: string) => {
+  if (!dateString) return "-";
+  return new Date(dateString)
+    .toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    })
+    .replace(/ /g, "-");
+};
+
 
 export const ViewSupplierAcc = ({
   setModal,
@@ -151,6 +165,12 @@ export const ViewSupplierAcc = ({
                     <th className="p-2 text-[10px] font-bold text-gray-500 uppercase">
                       Net Bal
                     </th>
+                    <th className="p-2 text-[10px] font-bold text-gray-500 uppercase">
+                      Payment Meyhod
+                    </th>
+                    <th className="p-2 text-[10px] font-bold text-gray-500 uppercase">
+                      Date
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="text-sm">
@@ -186,6 +206,18 @@ export const ViewSupplierAcc = ({
                           className={`p-2 font-bold ${acc.netBalance < 0 ? "text-red-600" : "text-green-700"}`}
                         >
                           {Number(acc.netBalance).toLocaleString()}
+                        </td>
+
+                        <td
+                          className={`p-2 font-bold`}
+                        >
+                          {(acc.paymentMethod)}
+                        </td>
+
+                        <td
+                          className={`p-2 font-bold`}
+                        >
+                          {formatDate(acc.paymentDate)}
                         </td>
                       </tr>
                     ))

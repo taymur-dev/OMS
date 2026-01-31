@@ -1,11 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { 
-  FaUser, 
-  FaPhoneAlt, 
-  FaMapMarkerAlt, 
-  FaFileInvoiceDollar 
+import {
+  FaUser,
+  FaPhoneAlt,
+  FaMapMarkerAlt,
+  FaFileInvoiceDollar,
 } from "react-icons/fa";
 
 import { Title } from "../Title";
@@ -23,12 +23,25 @@ type CustomerAccountEntry = {
   refNo: string;
   debit: number;
   credit: number;
+  paymentMethod: string;
+  paymentDate: string;
 };
 
 type Customer = {
   customerName: string;
   customerContact: string;
   customerAddress: string;
+};
+
+const formatDate = (dateString: string) => {
+  if (!dateString) return "-";
+  return new Date(dateString)
+    .toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    })
+    .replace(/ /g, "-");
 };
 
 export const ViewCustomerAcc = ({
@@ -51,7 +64,7 @@ export const ViewCustomerAcc = ({
         }),
         axios.get(`${BASE_URL}/api/admin/getCustomerAccounts/${customerId}`, {
           headers: { Authorization: `Bearer ${token}` },
-        })
+        }),
       ]);
       setCustomer(customerRes.data);
       setAccounts(accountsRes.data || []);
@@ -105,19 +118,26 @@ export const ViewCustomerAcc = ({
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                   <FaUser className="text-gray-400" /> Name
                 </label>
-                <p className="text-gray-800 font-medium">{customer.customerName}</p>
+                <p className="text-gray-800 font-medium">
+                  {customer.customerName}
+                </p>
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                   <FaPhoneAlt className="text-gray-400" /> Contact
                 </label>
-                <p className="text-gray-800 font-medium">{customer.customerContact}</p>
+                <p className="text-gray-800 font-medium">
+                  {customer.customerContact}
+                </p>
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                   <FaMapMarkerAlt className="text-gray-400" /> Address
                 </label>
-                <p className="text-gray-800 font-medium truncate pr-2" title={customer.customerAddress}>
+                <p
+                  className="text-gray-800 font-medium truncate pr-2"
+                  title={customer.customerAddress}
+                >
                   {customer.customerAddress || "N/A"}
                 </p>
               </div>
@@ -129,7 +149,7 @@ export const ViewCustomerAcc = ({
             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
               Transaction Ledger
             </h3>
-            
+
             <div className="overflow-x-auto mt-2">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -141,26 +161,48 @@ export const ViewCustomerAcc = ({
                     <th className="px-3 py-2 text-right">Balance</th>
                     <th className="px-3 py-2 text-right">Prev Balance</th>
                     <th className="px-3 py-2 text-right">Net Balance</th>
+                    <th className="px-3 py-2 text-right">Payment Method</th>
+                    <th className="px-3 py-2 text-right">Date</th>
                   </tr>
                 </thead>
                 <tbody className="text-sm">
                   {accountsWithBalance.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="text-center py-8 text-gray-400 italic">
+                      <td
+                        colSpan={7}
+                        className="text-center py-8 text-gray-400 italic"
+                      >
                         No transactions found for this customer.
                       </td>
                     </tr>
                   ) : (
                     accountsWithBalance.map((acc, index) => (
-                      <tr key={acc.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      <tr
+                        key={acc.id}
+                        className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                      >
                         <td className="px-3 py-2 text-gray-500">{index + 1}</td>
-                        <td className="px-3 py-2 font-semibold text-gray-700">{acc.refNo}</td>
-                        <td className="px-3 py-2 text-right text-red-600">{Number(acc.debit).toFixed(2)}</td>
-                        <td className="px-3 py-2 text-right text-green-600">{Number(acc.credit).toFixed(2)}</td>
-                        <td className="px-3 py-2 text-right font-medium">{Number(acc.balance).toFixed(2)}</td>
-                        <td className="px-3 py-2 text-right text-gray-500">{Number(acc.prevBalance).toFixed(2)}</td>
+                        <td className="px-3 py-2 font-semibold text-gray-700">
+                          {acc.refNo}
+                        </td>
+                        <td className="px-3 py-2 text-right text-red-600">
+                          {Number(acc.debit).toFixed(2)}
+                        </td>
+                        <td className="px-3 py-2 text-right text-green-600">
+                          {Number(acc.credit).toFixed(2)}
+                        </td>
+                        <td className="px-3 py-2 text-right font-medium">
+                          {Number(acc.balance).toFixed(2)}
+                        </td>
+                        <td className="px-3 py-2 text-right text-gray-500">
+                          {Number(acc.prevBalance).toFixed(2)}
+                        </td>
                         <td className="px-3 py-2 text-right font-bold text-indigo-900 bg-indigo-50/30">
                           {Number(acc.netBalance).toFixed(2)}
+                        </td>
+                        <td className="px-3 py-2 text-right font-medium">{acc.paymentMethod}</td>
+                        <td className="px-3 py-2 text-right font-medium">
+                          {formatDate(acc.paymentDate)}
                         </td>
                       </tr>
                     ))
