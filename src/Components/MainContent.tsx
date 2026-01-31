@@ -336,7 +336,10 @@ export const MainContent = () => {
           />
         </div>
 
-        <div onClick={() => navigate("/expensesCatogries")} className="cursor-pointer">
+        <div
+          onClick={() => navigate("/expensesCatogries")}
+          className="cursor-pointer"
+        >
           <Card
             titleName="Expense Categories"
             totalUser="Total Categories"
@@ -387,8 +390,7 @@ export const MainContent = () => {
         </div>
       </div>
 
-      <form className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end w-full">
-        {/* Category Select */}
+      {/* <form className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end w-full">
         <div className="w-full min-w-0">
           <OptionField
             labelName="Category"
@@ -404,7 +406,6 @@ export const MainContent = () => {
           />
         </div>
 
-        {/* From Date */}
         <div className="w-full min-w-0">
           <InputField
             type="date"
@@ -415,7 +416,6 @@ export const MainContent = () => {
           />
         </div>
 
-        {/* To Date */}
         <div className="w-full min-w-0">
           <InputField
             type="date"
@@ -424,6 +424,49 @@ export const MainContent = () => {
             value={formData.toDate}
             handlerChange={handleChange}
           />
+        </div>
+      </form> */}
+
+      <form className="flex flex-col md:grid md:grid-cols-3 gap-6 items-end w-full">
+        {/* Category Select - Desktop par 1 column, Mobile par full width */}
+        <div className="w-full">
+          <OptionField
+            labelName="Category"
+            name="categoryName"
+            handlerChange={handleChange}
+            value={formData.categoryName}
+            optionData={allCategory?.map((category) => ({
+              id: category.id,
+              label: category.categoryName,
+              value: category.categoryName,
+            }))}
+            inital="All Categories"
+          />
+        </div>
+
+        {/* Dates Container - Mobile par ek line mein lane ke liye 'flex' use kiya hai */}
+        <div className="w-full flex gap-3 md:contents">
+          {/* From Date */}
+          <div className="flex-1 min-w-0">
+            <InputField
+              type="date"
+              labelName="From Date"
+              name="fromDate"
+              value={formData.fromDate}
+              handlerChange={handleChange}
+            />
+          </div>
+
+          {/* To Date */}
+          <div className="flex-1 min-w-0">
+            <InputField
+              type="date"
+              labelName="To Date"
+              name="toDate"
+              value={formData.toDate}
+              handlerChange={handleChange}
+            />
+          </div>
         </div>
       </form>
 
