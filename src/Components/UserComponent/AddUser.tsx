@@ -220,7 +220,7 @@ export const AddUser = ({
           </div>
 
           {/* ===== Body ===== */}
-          <div className="mx-4 my-4 grid grid-cols-1 sm:grid-cols-2 width-auto gap-4">
+          <div className="mx-4 my-4 grid grid-cols-1 sm:grid-cols-2 width-full gap-4">
             {/* Image Upload Section */}
 
             <InputField
