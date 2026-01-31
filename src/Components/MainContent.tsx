@@ -427,9 +427,10 @@ export const MainContent = () => {
         </div>
       </form> */}
 
-      <form className="flex flex-col md:grid md:grid-cols-3 gap-6 items-end w-full">
-        {/* Category Select - Desktop par 1 column, Mobile par full width */}
-        <div className="w-full">
+      {/* Form Filter Section */}
+      <form className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 items-end w-full">
+        {/* Category Select - Mobile par full width (col-span-2) takay alignment kharab na ho */}
+        <div className="col-span-2 md:col-span-1 w-full min-w-0">
           <OptionField
             labelName="Category"
             name="categoryName"
@@ -444,29 +445,26 @@ export const MainContent = () => {
           />
         </div>
 
-        {/* Dates Container - Mobile par ek line mein lane ke liye 'flex' use kiya hai */}
-        <div className="w-full flex gap-3 md:contents">
-          {/* From Date */}
-          <div className="flex-1 min-w-0">
-            <InputField
-              type="date"
-              labelName="From Date"
-              name="fromDate"
-              value={formData.fromDate}
-              handlerChange={handleChange}
-            />
-          </div>
+        {/* From Date - Mobile par adhi width */}
+        <div className="w-full">
+          <InputField
+            type="date"
+            labelName="From Date"
+            name="fromDate"
+            value={formData.fromDate}
+            handlerChange={handleChange}
+          />
+        </div>
 
-          {/* To Date */}
-          <div className="flex-1 min-w-0">
-            <InputField
-              type="date"
-              labelName="To Date"
-              name="toDate"
-              value={formData.toDate}
-              handlerChange={handleChange}
-            />
-          </div>
+        {/* To Date - Mobile par adhi width */}
+        <div className="w-full">
+          <InputField
+            type="date"
+            labelName="To Date"
+            name="toDate"
+            value={formData.toDate}
+            handlerChange={handleChange}
+          />
         </div>
       </form>
 
