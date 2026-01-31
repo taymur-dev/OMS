@@ -130,7 +130,7 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center px-4  justify-center z-50">
-      <div className="w-[42rem] max-h-[28rem] bg-white rounded border border-indigo-900">
+      <div className="w-[42rem] max-h-[35rem] bg-white rounded border border-indigo-900">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded px-6">
             <Title
