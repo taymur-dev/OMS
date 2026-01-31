@@ -407,7 +407,7 @@ export const MainContent = () => {
           />
         </div>
 
-        <form className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6 items-end w-full">
+        <form className="grid grid-cols-1 gap-6 items-end w-full">
           {/* From Date */}
           <div className="w-full min-w-0">
             <InputField
