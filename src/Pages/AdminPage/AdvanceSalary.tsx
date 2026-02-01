@@ -143,12 +143,11 @@ export const AdvanceSalary = () => {
   const getStatusBadge = (status: string) => {
     const statusLower = status?.toLowerCase();
 
-    let colors = "bg-gray-100 text-gray-800"; // Default
+    let colors = "bg-gray-100 text-gray-800";
 
     if (statusLower === "approved")
       colors = "bg-green-700 text-white border-green-200";
-    if (statusLower === "pending")
-      colors = "bg-orange-700 text-white";
+    if (statusLower === "pending") colors = "bg-orange-700 text-white";
     if (statusLower === "rejected")
       colors = "bg-red-700 text-white border-red-200";
 
@@ -164,7 +163,6 @@ export const AdvanceSalary = () => {
   return (
     <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add Button */}
         <TableTitle
           tileName="Advance Salary"
           rightElement={
@@ -179,7 +177,6 @@ export const AdvanceSalary = () => {
 
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            {/* Left Side: Show entries */}
             <div className="text-sm flex items-center">
               <span>Show</span>
               <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
@@ -198,7 +195,6 @@ export const AdvanceSalary = () => {
               <span className="hidden xs:inline">entries</span>
             </div>
 
-            {/* Right Side: Search Input */}
             <TableInputField
               searchTerm={searchTerm}
               setSearchTerm={(term) => {
@@ -209,10 +205,8 @@ export const AdvanceSalary = () => {
           </div>
         </div>
 
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
         <div className="overflow-auto px-2">
           <div className="min-w-[900px]">
-            {/* Sticky Table Header */}
             <div
               className={`grid ${
                 isAdmin ? "grid-cols-6" : "grid-cols-5"
@@ -227,7 +221,6 @@ export const AdvanceSalary = () => {
               <span className="text-center">Actions</span>
             </div>
 
-            {/* Table Body */}
             {paginatedAdvance.length === 0 ? (
               <div className="text-gray-800 text-lg text-center py-10">
                 No records available at the moment!
@@ -280,7 +273,6 @@ export const AdvanceSalary = () => {
           </div>
         </div>
 
-        {/* 4) Pagination placed under the table */}
         <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
           <ShowDataNumber
             start={totalItems === 0 ? 0 : startIndex + 1}
@@ -295,7 +287,6 @@ export const AdvanceSalary = () => {
         </div>
       </div>
 
-      {/* --- MODALS SECTION --- */}
       {isOpenModal === "ADD" && (
         <AddAdvanceSalary
           setModal={() => handleToggleViewModal("")}
@@ -323,7 +314,6 @@ export const AdvanceSalary = () => {
         />
       )}
 
-      {/* --- FOOTER SECTION --- */}
       <div className="border border-t-5 border-gray-200">
         <Footer />
       </div>

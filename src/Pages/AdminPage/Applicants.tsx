@@ -127,7 +127,6 @@ export const Applicants = () => {
   return (
     <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add Applicant button as the rightElement */}
         <TableTitle
           tileName="Applicants"
           rightElement={
@@ -142,7 +141,6 @@ export const Applicants = () => {
 
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            {/* Left Side: Show entries */}
             <div className="text-sm flex items-center">
               <span>Show</span>
               <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
@@ -164,7 +162,6 @@ export const Applicants = () => {
               <span className="hidden xs:inline">entries</span>
             </div>
 
-            {/* Right Side: Search Input */}
             <TableInputField
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
@@ -172,10 +169,8 @@ export const Applicants = () => {
           </div>
         </div>
 
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
         <div className="overflow-auto px-2">
           <div className="min-w-[900px]">
-            {/* Sticky Table Header */}
             <div
               className="grid grid-cols-7 bg-indigo-900 text-white items-center font-semibold
              text-sm sticky top-0 z-10 p-2"
@@ -189,7 +184,6 @@ export const Applicants = () => {
               <span className="text-center">Actions</span>
             </div>
 
-            {/* Table Body */}
             {filteredApplicants.length === 0 ? (
               <div className="text-gray-800 text-lg text-center py-10">
                 No records available at the moment!
@@ -250,7 +244,6 @@ export const Applicants = () => {
           </div>
         </div>
 
-        {/* 4) Pagination placed under the table */}
         <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
           <ShowDataNumber
             start={
@@ -267,7 +260,6 @@ export const Applicants = () => {
         </div>
       </div>
 
-      {/* --- MODALS SECTION --- */}
       {isOpenModal === "ADD" && (
         <AddApplicant
           setModal={() => {
@@ -299,7 +291,6 @@ export const Applicants = () => {
         />
       )}
 
-      {/* --- FOOTER SECTION --- */}
       <div className="border border-t-5 border-gray-200">
         <Footer />
       </div>

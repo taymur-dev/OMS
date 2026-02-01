@@ -31,7 +31,6 @@ export const ViewAdvanceSalary = ({
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
       <div className="w-full max-w-4xl bg-white rounded overflow-hidden shadow-2xl border border-gray-300">
-        {/* Header Section */}
         <div className="bg-indigo-900 rounded px-4">
           <div className="text-white">
             <Title setModal={setIsOpenModal}>ADVANCE SALARY DETAILS</Title>
@@ -39,7 +38,6 @@ export const ViewAdvanceSalary = ({
         </div>
 
         <div className="p-4 space-y-4">
-          {/* Section 1: Employee Information */}
           <div className="border border-gray-200 rounded-md p-4 relative">
             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
               Employee Information
@@ -70,7 +68,6 @@ export const ViewAdvanceSalary = ({
             </div>
           </div>
 
-          {/* Section 2: Financial Details */}
           <div className="border border-gray-200 rounded-md p-4 relative">
             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
               Financial Details
@@ -101,7 +98,6 @@ export const ViewAdvanceSalary = ({
             </div>
           </div>
 
-          {/* Section 3: Additional Notes */}
           <div className="border border-gray-200 rounded-md p-4 relative">
             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
               Additional Notes
@@ -119,7 +115,6 @@ export const ViewAdvanceSalary = ({
           </div>
         </div>
 
-        {/* Footer Section */}
         <div className="bg-indigo-900 p-3 flex justify-end">
           <button
             onClick={setIsOpenModal}

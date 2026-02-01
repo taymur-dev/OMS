@@ -29,13 +29,6 @@ type UserT = {
 type TodoT = { id: number; todoStatus: "Y" | "N" };
 type completionStatus = "New" | "Working" | "Complete";
 
-// type AssignProjectAPIResponse = {
-//   projectId: number;
-//   projectName: string;
-//   completionStatus: completionStatus;
-//   projectCategory: string;
-// };
-
 type ProjectT = {
   id: string;
   projectName: string;
@@ -390,7 +383,7 @@ export const MainContent = () => {
         </div>
       </div>
 
-       <form className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end w-full">
+      <form className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end w-full">
         <div className="w-full min-w-0">
           <OptionField
             labelName="Category"
@@ -425,45 +418,7 @@ export const MainContent = () => {
             handlerChange={handleChange}
           />
         </div>
-      </form> 
-
-      {/* Form Filter Section */}
-      {/* <form className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-end w-full">
-        <div className="col-span-2 md:col-span-1 w-full min-w-1">
-          <OptionField
-            labelName="Category"
-            name="categoryName"
-            handlerChange={handleChange}
-            value={formData.categoryName}
-            optionData={allCategory?.map((category) => ({
-              id: category.id,
-              label: category.categoryName,
-              value: category.categoryName,
-            }))}
-            inital="All Categories"
-          />
-        </div>
-
-        <div className="col-span-2 md:col-span-1 w-full">
-          <InputField
-            type="date"
-            labelName="From Date"
-            name="fromDate"
-            value={formData.fromDate}
-            handlerChange={handleChange}
-          />
-        </div>
-
-        <div className="col-span-2 md:col-span-1 w-full">
-          <InputField
-            type="date"
-            labelName="To Date"
-            name="toDate"
-            value={formData.toDate}
-            handlerChange={handleChange}
-          />
-        </div>
-      </form> */}
+      </form>
 
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-6">

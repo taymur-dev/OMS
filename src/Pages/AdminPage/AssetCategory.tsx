@@ -135,7 +135,6 @@ export const AssetCategory = () => {
   return (
   <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
     <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-      {/* 1 & 3) Table Title with Add Category button as the rightElement */}
       <TableTitle
         tileName="Assets Category"
         rightElement={
@@ -150,7 +149,6 @@ export const AssetCategory = () => {
 
       <div className="p-2">
         <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-          {/* Left Side: Show entries */}
           <div className="text-sm flex items-center">
             <span>Show</span>
             <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
