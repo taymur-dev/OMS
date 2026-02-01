@@ -102,14 +102,12 @@ export const Login = () => {
       className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden bg-gradient-to-br
      from-indigo-500 via-indigo-900 to-indigo-600"
     >
-      <div className="absolute top-1/2 -left-24 w-96 h-96 bg-blue-100/40 rounded-full animate-pulse" />
-      <div
-        className="absolute -top-24 -right-24 w-96 h-96 bg-blue-100/40 rounded-full  animate-[float_2s_ease-in-out_infinite] 
-      delay-2000"
-      />
+      <div className="absolute -bottom-10 -left-16 w-60 h-60 bg-slate-200/20 rounded-full animate-[float_2s_ease-in-out_infinite] delay-1000 animate-pulse blur-1xl" />
+
+      <div className="absolute -top-10 -right-16 w-60 h-60 bg-slate-200/20 rounded-full animate-[float_2s_ease-in-out_infinite] delay-1000 blur-1xl" />
 
       <div className="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl px-8 py-10 animate-[fadeIn_0.6s_ease-out]">
-        <div className="flex flex-col items-center mb-6">
+        <div className="flex flex-col items-center  justify-center">
           <div className="relative mb-4">
             <div
               className="relative w-32 h-32 rounded-full bg-indigo-900 flex items-center

@@ -390,7 +390,7 @@ export const MainContent = () => {
         </div>
       </div>
 
-      {/* <form className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end w-full">
+       <form className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end w-full">
         <div className="w-full min-w-0">
           <OptionField
             labelName="Category"
@@ -425,11 +425,10 @@ export const MainContent = () => {
             handlerChange={handleChange}
           />
         </div>
-      </form> */}
+      </form> 
 
       {/* Form Filter Section */}
-      <form className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-end w-full">
-        {/* Category Select - Mobile par full width (col-span-2) takay alignment kharab na ho */}
+      {/* <form className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-end w-full">
         <div className="col-span-2 md:col-span-1 w-full min-w-1">
           <OptionField
             labelName="Category"
@@ -445,7 +444,6 @@ export const MainContent = () => {
           />
         </div>
 
-        {/* From Date - Mobile par adhi width */}
         <div className="col-span-2 md:col-span-1 w-full">
           <InputField
             type="date"
@@ -456,7 +454,6 @@ export const MainContent = () => {
           />
         </div>
 
-        {/* To Date - Mobile par adhi width */}
         <div className="col-span-2 md:col-span-1 w-full">
           <InputField
             type="date"
@@ -466,7 +463,7 @@ export const MainContent = () => {
             handlerChange={handleChange}
           />
         </div>
-      </form>
+      </form> */}
 
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-6">
