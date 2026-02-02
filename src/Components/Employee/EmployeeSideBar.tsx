@@ -147,24 +147,20 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             />
           </Link>
 
-          <SideBarButton
-            isOpen={isOpen}
-            icon={<CiCreditCard1 size={20} />}
-            title="Payroll"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => handleItemClick("Payroll", true)} // Has submenu
-            activeBtns={activeBtns}
-            activeBtn="Payroll"
-          />
-          {activeBtns === "Payroll" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/user/overTime" label="Over Time" />
-                <SubLink to="/user/advanceSalary" label="Advance Salary" />
-                <SubLink to="/user/applyLoan" label="Apply Loan" />
-              </div>
-            </AccordionItem>
-          )}
+
+          <Link to="/users/progress" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<GiProgression size={20} />}
+              title="Progress"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => handleItemClick("Progress")}
+              activeBtns={activeBtns}
+              activeBtn="Progress"
+            />
+          </Link>
+
+         
 
           <Link to="/users/assignedprojects" className="block">
             <SideBarButton
@@ -202,17 +198,26 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             />
           </Link>
 
-          <Link to="/users/progress" className="block">
-            <SideBarButton
-              isOpen={isOpen}
-              icon={<GiProgression size={20} />}
-              title="Progress"
-              arrowIcon={<BiArrowBack />}
-              handlerClick={() => handleItemClick("Progress")}
-              activeBtns={activeBtns}
-              activeBtn="Progress"
-            />
-          </Link>
+          
+
+           <SideBarButton
+            isOpen={isOpen}
+            icon={<CiCreditCard1 size={20} />}
+            title="Payroll"
+            arrowIcon={<BiArrowBack />}
+            handlerClick={() => handleItemClick("Payroll", true)} // Has submenu
+            activeBtns={activeBtns}
+            activeBtn="Payroll"
+          />
+          {activeBtns === "Payroll" && (
+            <AccordionItem isOpen={isOpen}>
+              <div className="flex flex-col">
+                <SubLink to="/user/overTime" label="Over Time" />
+                <SubLink to="/user/advanceSalary" label="Advance Salary" />
+                <SubLink to="/user/applyLoan" label="Apply Loan" />
+              </div>
+            </AccordionItem>
+          )}
 
           <SideBarButton
             isOpen={isOpen}
