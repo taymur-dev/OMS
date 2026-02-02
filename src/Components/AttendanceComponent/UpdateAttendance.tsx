@@ -29,6 +29,7 @@ type UpdateAttendanceT = {
 type AddAttendanceProps = {
   setModal: () => void;
   updatedAttendance: UpdateAttendanceT | null;
+   handleGetAttendance: () => void;
 };
 
 type OptionType = {
@@ -47,6 +48,8 @@ const reasonLeaveOption = [
 export const UpdateAttendance = ({
   setModal,
   updatedAttendance,
+    handleGetAttendance,
+
 }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
@@ -118,6 +121,7 @@ export const UpdateAttendance = ({
         { headers: { Authorization: token } },
       );
       toast.success("Attendance updated successfully!");
+      handleGetAttendance();
       setModal();
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;

@@ -293,6 +293,7 @@ export const UserAttendance = () => {
         <UpdateAttendance
           setModal={() => setIsOpenModal("")}
           updatedAttendance={updatedAttendance}
+           handleGetAttendance={handleGetAttendance}
         />
       )}
 
