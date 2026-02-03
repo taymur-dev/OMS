@@ -77,7 +77,6 @@ export const AddJob = ({ setModal, refreshJobs }: AddJobsProps) => {
           <div className="mx-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
             <InputField
               labelName="Job Title *"
-              placeHolder="Enter job title"
               type="text"
               name="job_title"
               value={addJob.job_title}
@@ -86,7 +85,6 @@ export const AddJob = ({ setModal, refreshJobs }: AddJobsProps) => {
 
             <TextareaField
               labelName="Job Description *"
-              placeHolder="Enter job description"
               name="description"
               inputVal={addJob.description}
               handlerChange={handlerChange}

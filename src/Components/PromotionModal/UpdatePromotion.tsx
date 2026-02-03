@@ -144,7 +144,6 @@ export const UpdatePromotion = ({
               value={promotion.current_designation}
               handlerChange={handleChange}
               type="text"
-              placeHolder="Enter current designation"
             />
 
             <InputField
@@ -153,7 +152,6 @@ export const UpdatePromotion = ({
               value={promotion.requested_designation}
               handlerChange={handleChange}
               type="text"
-              placeHolder="Enter requested designation"
             />
 
             <InputField
@@ -169,7 +167,6 @@ export const UpdatePromotion = ({
               name="note"
               inputVal={promotion.note}
               handlerChange={handleChange}
-              placeHolder="Write promotion details"
             />
             
             <div className="md:col-span-2">

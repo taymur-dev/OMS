@@ -224,7 +224,6 @@ export const UpdateOverTime = ({
                   name="description"
                   inputVal={formData.description}
                   handlerChange={handleChange}
-                  placeHolder="Write overtime details..."
                 />
               </div>
             </div>

@@ -66,16 +66,14 @@ export const ComfirmPasswordModal = ({ catchId, setModal }: PasswordProps) => {
         <div className="px-4 py-4 sm:px-6 sm:py-6 space-y-4">
           <InputField
             type="password"
-            placeHolder="Password"
-            labelName="Password*"
+            labelName="Password *"
             name="password"
             handlerChange={handleOnchange}
           />
 
           <InputField
             type="password"
-            placeHolder="Confirm Password"
-            labelName="Confirm Password*"
+            labelName="Confirm Password *"
             name="confirmPassword"
             handlerChange={handleOnchange}
           />

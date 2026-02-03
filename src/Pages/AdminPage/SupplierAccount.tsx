@@ -184,7 +184,6 @@ export const SupplierAccount = () => {
                           handleToggleViewModal("VIEW", supplier.supplierId)
                         }
                       />
-                      {/* Placeholder for Edit/Delete if you add them later to match User UI */}
                     </span>
                   </div>
                 ))

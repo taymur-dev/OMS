@@ -167,7 +167,6 @@ export const UpdateResignation = ({
               name="note"
               inputVal={updateResignation.note}
               handlerChange={handleChange}
-              placeHolder="Write resignation note"
             />
 
             <div className="flex flex-col md:col-span-2 gap-1">

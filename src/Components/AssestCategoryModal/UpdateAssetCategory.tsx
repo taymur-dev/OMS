@@ -86,7 +86,6 @@ export const UpdateAssetCategory = ({
           <div className="mx-2 flex-wrap py-2 gap-3">
             <InputField
               labelName="Category Name *"
-              placeHolder="Enter the Project Category"
               type="text"
               name="category_name"
               value={updateCategory.category_name}

@@ -143,7 +143,6 @@ export const UpdateCustomer = ({
           <div className="overflow-y-auto p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <InputField
               labelName="Customer Name *"
-              placeHolder="Enter the Customer Name"
               type="text"
               name="customerName"
               handlerChange={handlerChange}
@@ -152,7 +151,6 @@ export const UpdateCustomer = ({
 
             <InputField
               labelName="Customer Contact *"
-              placeHolder="Enter the Contact Number"
               type="number"
               name="customerContact"
               handlerChange={handlerChange}
@@ -160,7 +158,6 @@ export const UpdateCustomer = ({
             />
             <InputField
               labelName="Company Name *"
-              placeHolder="Enter the Company Name"
               type="text"
               name="companyName"
               handlerChange={handlerChange}

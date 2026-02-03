@@ -117,7 +117,6 @@ export const UpdateProject = ({
 
             <InputField
               labelName="Project Name *"
-              placeHolder="Enter the Project Name"
               type="text"
               name="projectName"
               value={updateProject?.projectName}
@@ -126,7 +125,6 @@ export const UpdateProject = ({
 
             <InputField
               labelName="Start Date *"
-              placeHolder="Select Start Date"
               type="date"
               name="startDate"
               value={updateProject?.startDate ?? ""}
@@ -135,7 +133,6 @@ export const UpdateProject = ({
 
             <InputField
               labelName="End Date *"
-              placeHolder="Select End Date"
               type="date"
               name="endDate"
               value={updateProject?.endDate ?? ""}
@@ -145,7 +142,6 @@ export const UpdateProject = ({
             <TextareaField
               labelName="Project Description"
               name="description"
-              placeHolder="Enter Project Description..."
               handlerChange={handlerChange}
               inputVal={updateProject?.description ?? ""}
             />

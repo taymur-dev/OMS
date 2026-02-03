@@ -175,7 +175,6 @@ export const AddOverTime = ({
               name="description"
               inputVal={addOvertime.description}
               handlerChange={handlerChange}
-              placeHolder="Write overtime details..."
             />
           </div>
 

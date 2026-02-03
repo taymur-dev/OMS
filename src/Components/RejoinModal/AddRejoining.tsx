@@ -305,7 +305,6 @@ export const AddRejoining = ({
             <div className="md:col-span-2">
               <TextareaField
                 labelName="Note *"
-                placeHolder="Write here your note"
                 handlerChange={handlerChange}
                 name="note"
                 inputVal={addRejoin.note}

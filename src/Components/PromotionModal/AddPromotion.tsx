@@ -199,7 +199,6 @@ export const AddPromotion = ({
 
             <InputField
               labelName="Current Designation *"
-              placeHolder="Current Designation"
               type="text"
               name="current_designation"
               handlerChange={handlerChange}
@@ -209,7 +208,6 @@ export const AddPromotion = ({
 
             <InputField
               labelName="Requested Designation *"
-              placeHolder="Enter requested designation"
               type="text"
               name="requested_designation"
               handlerChange={handlerChange}
@@ -218,7 +216,6 @@ export const AddPromotion = ({
 
             <InputField
               labelName="Date *"
-              placeHolder="Select Date"
               type="date"
               name="date"
               handlerChange={handlerChange}
@@ -228,7 +225,6 @@ export const AddPromotion = ({
             <div className="md:col-span-2">
               <TextareaField
                 labelName="Note *"
-                placeHolder="Write promotion reason"
                 handlerChange={handlerChange}
                 name="note"
                 inputVal={addPromotion.note}

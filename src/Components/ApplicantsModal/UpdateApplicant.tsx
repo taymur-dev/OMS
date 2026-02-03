@@ -118,7 +118,6 @@ export const UpdateApplicant = ({
           <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
             <InputField
               labelName="Applicant Name *"
-              placeHolder="Enter the applicant name"
               type="text"
               name="applicant_name"
               value={updateApplicant.applicant_name}
@@ -127,7 +126,6 @@ export const UpdateApplicant = ({
 
             <InputField
               labelName="Applicant Contact *"
-              placeHolder="Enter contact number"
               type="text"
               name="applicant_contact"
               value={updateApplicant.applicant_contact}
@@ -136,7 +134,6 @@ export const UpdateApplicant = ({
 
             <InputField
               labelName="Job Title *"
-              placeHolder="Enter the job title"
               type="text"
               name="job"
               value={updateApplicant.job}
@@ -145,7 +142,6 @@ export const UpdateApplicant = ({
 
             <InputField
               labelName="Applied Date *"
-              placeHolder="Enter the date"
               type="date"
               name="applied_date"
               value={updateApplicant.applied_date}

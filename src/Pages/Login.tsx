@@ -133,7 +133,6 @@ export const Login = () => {
             <InputField
               type="email"
               labelName="Email"
-              placeHolder="Enter Your Email"
               name="email"
               handlerChange={handlerChange}
               value={formData.email}
@@ -148,7 +147,6 @@ export const Login = () => {
             <InputField
               type={showPassword ? "text" : "password"}
               labelName="Password"
-              placeHolder="Enter Your Password"
               name="password"
               handlerChange={handlerChange}
               value={formData.password}

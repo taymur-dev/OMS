@@ -125,7 +125,6 @@ export const AddCustomer = ({
           <div className="px-6 py-6 grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-5">
             <InputField
               labelName="Customer Name *"
-              placeHolder="Enter the Customer Name"
               type="text"
               name="customerName"
               handlerChange={handlerChange}
@@ -134,7 +133,6 @@ export const AddCustomer = ({
 
             <InputField
               labelName="Customer Contact *"
-              placeHolder="Enter Contact Number"
               type="text"
               name="customerContact"
               handlerChange={handlerChange}
@@ -142,7 +140,6 @@ export const AddCustomer = ({
             />
             <InputField
               labelName="Company Name *"
-              placeHolder="Enter Company Name"
               type="text"
               name="companyName"
               handlerChange={handlerChange}
@@ -151,7 +148,6 @@ export const AddCustomer = ({
 
             <TextareaField
               labelName="Customer Address *"
-              placeHolder="Enter the Customer Address"
               name="customerAddress"
               handlerChange={handlerChange}
               inputVal={customerData.customerAddress}
@@ -160,7 +156,6 @@ export const AddCustomer = ({
             <div className="md:col-span-2">
               <TextareaField
                 labelName="Company Address *"
-                placeHolder="Enter Company Address"
                 name="companyAddress"
                 handlerChange={handlerChange}
                 inputVal={customerData.companyAddress}

@@ -64,7 +64,6 @@ export const AddProjectCategory = ({
             <div className="mx-2   flex-wrap gap-3 py-5  ">
               <InputField
                 labelName="Category Name *"
-                placeHolder="Enter the Project Category"
                 type="text"
                 name="categoryName"
                 value={addCategory.categoryName}

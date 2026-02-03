@@ -140,7 +140,6 @@ export const UpdateAsset = ({
 
               <InputField
                 labelName="Asset Name *"
-                placeHolder="Enter the asset name"
                 type="text"
                 name="asset_name"
                 value={updateAsset.asset_name}
@@ -149,7 +148,6 @@ export const UpdateAsset = ({
 
               <InputField
                 labelName="Created Date *"
-                placeHolder="Enter the created date"
                 type="date"
                 name="date"
                 value={updateAsset.date}
@@ -158,7 +156,6 @@ export const UpdateAsset = ({
 
               <TextareaField
                 labelName="Description *"
-                placeHolder="Write the asset description"
                 name="description"
                 inputVal={updateAsset.description}
                 handlerChange={handlerChange}

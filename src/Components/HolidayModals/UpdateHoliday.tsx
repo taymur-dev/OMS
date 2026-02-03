@@ -107,7 +107,6 @@ export const UpdateHoliday = ({
             {/* Full width Title Field */}
             <InputField
               labelName="Holiday Name*"
-              placeHolder="Enter holiday title"
               type="text"
               name="holiday"
               value={holidayData.holiday}

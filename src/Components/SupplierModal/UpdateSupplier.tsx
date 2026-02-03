@@ -116,7 +116,6 @@ export const UpdateSupplier = ({
           <div className="mx-2 py-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3">
             <InputField
               labelName="Supplier Name *"
-              placeHolder="Enter the Supplier Name"
               type="text"
               name="supplierName"
               handlerChange={handlerChange}
@@ -124,7 +123,6 @@ export const UpdateSupplier = ({
             />
             <InputField
               labelName="Supplier Email *"
-              placeHolder="Enter the Supplier Email"
               type="email"
               name="supplierEmail"
               handlerChange={handlerChange}
@@ -132,7 +130,6 @@ export const UpdateSupplier = ({
             />
             <InputField
               labelName="Supplier Contact *"
-              placeHolder="Enter the Supplier Contact Number"
               type="text"
               name="supplierContact"
               handlerChange={handlerChange}
@@ -140,7 +137,6 @@ export const UpdateSupplier = ({
             />
             <TextareaField
               labelName="Supplier Address *"
-              placeHolder="Enter the Supplier Address"
               name="supplierAddress"
               handlerChange={handlerChange}
               inputVal={updateSupplier.supplierAddress}

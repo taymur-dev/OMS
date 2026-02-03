@@ -164,7 +164,6 @@ export const AddAttendance = ({
 
               <InputField
                 labelName="Date *"
-                placeHolder="Enter the Company Name"
                 type="Date"
                 name="date"
                 value={addUserAttendance.date ?? ""}
@@ -173,7 +172,6 @@ export const AddAttendance = ({
 
               <InputField
                 labelName="Clock In *"
-                placeHolder="Enter the Company Name"
                 type="time"
                 name="clockIn"
                 value={addUserAttendance.clockIn}
@@ -183,7 +181,6 @@ export const AddAttendance = ({
 
               <InputField
                 labelName="Clock Out *"
-                placeHolder="Enter the Company Name"
                 type="time"
                 name="clockOut"
                 value={addUserAttendance.clockOut}

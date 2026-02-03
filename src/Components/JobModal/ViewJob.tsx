@@ -71,7 +71,6 @@ export const ViewJob = ({ setIsOpenModal, viewJob }: ViewJobProps) => {
             </div>
           </div>
 
-          {/* Section 3: Optional/Meta Info (Placeholder for symmetry) */}
           <div className="border border-gray-200 rounded-md p-4 relative">
             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
               Status

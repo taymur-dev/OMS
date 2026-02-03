@@ -181,7 +181,6 @@ export const UpdateRejoining = ({
 
             <InputField
               labelName="Current Designation *"
-              placeHolder="Enter the Current Designation"
               type="text"
               name="designation"
               handlerChange={handlerChange}
@@ -191,7 +190,6 @@ export const UpdateRejoining = ({
 
             <InputField
               labelName="Resignation Date *"
-              placeHolder="Enter the Resignation Date"
               type="date"
               name="resignation_date"
               handlerChange={handlerChange}
@@ -201,7 +199,6 @@ export const UpdateRejoining = ({
 
             <InputField
               labelName="Rejoin Date *"
-              placeHolder="Enter the Rejoin Date"
               type="date"
               name="rejoin_date"
               handlerChange={handlerChange}
@@ -210,7 +207,6 @@ export const UpdateRejoining = ({
 
             <TextareaField
               labelName="Note *"
-              placeHolder="Write your rejoining description"
               handlerChange={handlerChange}
               name="note"
               inputVal={updateData.note}

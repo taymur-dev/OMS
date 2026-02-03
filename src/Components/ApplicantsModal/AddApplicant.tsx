@@ -117,7 +117,6 @@ export const AddApplicant = ({
             <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3  ">
               <InputField
                 labelName="Applicant Name *"
-                placeHolder="Enter the applicant name"
                 type="text"
                 name="applicant_name"
                 value={addApplicant.applicant_name}
@@ -126,7 +125,6 @@ export const AddApplicant = ({
 
               <InputField
                 labelName="Father Name *"
-                placeHolder="Enter the  father name"
                 type="text"
                 name="fatherName"
                 value={addApplicant.fatherName}
@@ -135,7 +133,6 @@ export const AddApplicant = ({
 
               <InputField
                 labelName="Email *"
-                placeHolder="Enter the  email"
                 type="text"
                 name="email"
                 value={addApplicant.email}
@@ -144,7 +141,6 @@ export const AddApplicant = ({
 
               <InputField
                 labelName="Contact No *"
-                placeHolder="Enter 11 digit contact number"
                 type="text"
                 name="applicant_contact"
                 value={addApplicant.applicant_contact}
@@ -161,7 +157,6 @@ export const AddApplicant = ({
 
               <InputField
                 labelName="Applied Date *"
-                placeHolder="Enter the date"
                 type="date"
                 name="applied_date"
                 value={addApplicant.applied_date}
@@ -194,7 +189,6 @@ export const AddApplicant = ({
               <div className="md:col-span-2">
                 <InputField
                   labelName="Interview Phase *"
-                  placeHolder="Enter the interview phase"
                   type="text"
                   name="interviewPhase"
                   value={addApplicant.interviewPhase}

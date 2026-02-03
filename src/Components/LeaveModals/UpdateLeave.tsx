@@ -125,7 +125,6 @@ export const UpdateLeave = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 px-6 py-2">
             <InputField
               labelName="Subject Leave*"
-              placeHolder="Enter the Leave Subject"
               type="text"
               name="leaveSubject"
               value={updateLeave.leaveSubject}
@@ -154,7 +153,6 @@ export const UpdateLeave = ({
 
             <TextareaField
               labelName="Leave Reason*"
-              placeHolder="Enter the Leave Reason"
               name="leaveReason"
               inputVal={updateLeave.leaveReason}
               handlerChange={handleChange}

@@ -93,7 +93,6 @@ export const AddUser = ({
         .join(" ");
     }
 
-    if (name === "email") value = value.toLowerCase();
 
     if (name === "contact") value = value.replace(/\D/g, "").slice(0, 11);
 

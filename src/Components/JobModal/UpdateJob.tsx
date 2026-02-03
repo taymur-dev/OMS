@@ -97,7 +97,6 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({
           <div className="mx-4 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
             <InputField
               labelName="Job Title *"
-              placeHolder="Enter job title"
               type="text"
               name="job_title"
               value={formData.job_title}
@@ -106,7 +105,6 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({
 
             <TextareaField
               labelName="Job Description *"
-              placeHolder="Enter job description"
               name="description"
               inputVal={formData.description}
               handlerChange={handleChange}
