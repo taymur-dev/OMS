@@ -3,7 +3,7 @@ import { SideBarButton } from "./SideBarComponent/SideBarButton";
 import { BiArrowBack } from "react-icons/bi";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FaUser, FaUserFriends } from "react-icons/fa";
+import { FaUserFriends, FaUserCog } from "react-icons/fa";
 import { PiFingerprintDuotone } from "react-icons/pi";
 import { GoProjectRoadmap } from "react-icons/go";
 import { LuListTodo } from "react-icons/lu";
@@ -46,7 +46,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   const [activeBtns, setActiveBtns] = useState<TActivButton | "">("");
   const [allTodos, setAllTodos] = useState([]);
   const [isHoverable, setIsHoverable] = useState(false);
-  const [isBlurred, setIsBlurred] = useState(false); 
+  const [isBlurred, setIsBlurred] = useState(false);
 
   const { currentUser } = useAppSelector((state) => state?.officeState);
   const token = currentUser?.token;
@@ -220,8 +220,8 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           {/* Employee */}
           <SideBarButton
             isOpen={isOpen}
-            icon={<FaUser size={20} />}
-            title="Employee"
+            icon={<FaUserCog size={20} />}
+            title="Human Resources"
             arrowIcon={<BiArrowBack />}
             handlerClick={() => toggleButtonActive("Employee")}
             activeBtns={activeBtns}

@@ -79,7 +79,7 @@ export const UpdateApplicant = ({
   }, [applicant]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setUpdateApplicant((prev) => ({ ...prev, [name]: value }));
@@ -87,24 +87,64 @@ export const UpdateApplicant = ({
 
   const handlerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const {
+      applicant_name,
+      fatherName,
+      email,
+      applicant_contact,
+      applied_date,
+      job,
+      interviewPhase,
+    } = updateApplicant;
+
+    if (
+      !applicant_name?.trim() ||
+      !applicant_contact?.trim() ||
+      !fatherName?.trim() ||
+      !email?.trim() ||
+      !applied_date?.trim() ||
+      !job?.trim() ||
+      !interviewPhase?.trim() ||
+      !applicant_contact?.trim()
+    ) {
+      return toast.error("Please fill in all required fields", {
+        toastId: "add-applicant-validation",
+      });
+    }
+
+    if (applicant_contact.length !== 11) {
+      return toast.error("Contact number must be exactly 11 digits", {
+        toastId: "add-applicant-contact",
+      });
+    }
+
     try {
       const res = await axios.patch(
         `${BASE_URL}/api/admin/updateapplicant/${updateApplicant.id}`,
         updateApplicant,
-        { headers: { Authorization: token } }
+        { headers: { Authorization: token } },
       );
 
-      toast.success(res.data.message);
+      toast.success(res.data.message, { toastId: "add-applicant-success" });
+
       refreshApplicants();
       setModal();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to update applicant.");
+      toast.error("Failed to add applicant", {
+        toastId: "add-applicant-error",
+      });
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[42rem] bg-white mx-auto rounded border border-indigo-900">
         <form onSubmit={handlerSubmit}>
           <div className="bg-indigo-900 rounded px-6">
@@ -149,7 +189,9 @@ export const UpdateApplicant = ({
             />
 
             <div className="flex flex-col gap-1 md:col-span-2">
-              <label className="text-xs font-semibold">Applicant Status *</label>
+              <label className="text-xs font-semibold">
+                Applicant Status *
+              </label>
               <select
                 name="applicant_status"
                 value={updateApplicant.applicant_status}

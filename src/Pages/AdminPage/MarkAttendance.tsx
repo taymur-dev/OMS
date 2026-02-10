@@ -130,7 +130,7 @@ export const MarkAttendance = () => {
       getAttendance(id);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.info(axiosError?.response?.data?.message || "Something went wrong");
+      toast.error(axiosError?.response?.data?.message || "Something went wrong");
     }
   };
 

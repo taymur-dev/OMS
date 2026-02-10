@@ -70,15 +70,27 @@ export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!addSale.customerId || !addSale.projectId || !addSale.saleDate) {
+      return toast.error("Customer, Project, and Date are required", {
+        toastId: "required-fields",
+      });
+    }
+
     try {
       await axios.post(`${BASE_URL}/api/admin/addSale`, addSale, {
         headers: { Authorization: `Bearer ${token}` },
       });
       handleGetsales();
-      toast.success("Sale added successfully");
+      toast.success("Sale added successfully", { toastId: "success" });
       setModal();
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || "Failed to add sale";
+        toast.error(message, { toastId: "add-sale-error" });
+      } else {
+        toast.error("Something went wrong!", { toastId: "add-sale-error" });
+      }
     }
   };
 
@@ -89,7 +101,12 @@ export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {
 
   return (
     <div>
-      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div
+        className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") e.preventDefault();
+        }}
+      >
         <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded border border-indigo-900">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 rounded px-6">

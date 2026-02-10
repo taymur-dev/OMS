@@ -97,7 +97,7 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
       !addTodo.endDate ||
       !addTodo.deadline
     ) {
-      toast.error("Please fill all required fields");
+      toast.error("Please fill all required fields" , { toastId: "required-fields" });
       return;
     }
 
@@ -106,13 +106,13 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      toast.success("Todo added successfully");
+      toast.success("Todo added successfully" , { toastId: "success" });
       getAllTodos();
       setModal();
       setAddTodo(initialState);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to add todo");
+      toast.error("Failed to add todo" , { toastId: "failed" });
     }
   };
 
@@ -131,7 +131,7 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center px-4  justify-center z-50">
       <div className="w-[42rem] max-h-[35rem] bg-white rounded border border-indigo-900">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === "Enter") e.preventDefault(); }}>
           <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}

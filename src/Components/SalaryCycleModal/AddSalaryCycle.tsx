@@ -62,7 +62,7 @@ export const AddSalaryCycle = ({
     }
 
     if (status.toLowerCase() === "active") {
-      toast.info("Salary cycle already active for this month");
+      toast.error("Salary cycle already active for this month");
       return;
     }
 
@@ -74,7 +74,9 @@ export const AddSalaryCycle = ({
   const isActive = status.toLowerCase() === "active";
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50" onKeyDown={(e) => {
+          if (e.key === "Enter") e.preventDefault();
+        }}>
       <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded border border-indigo-900">
         <form onSubmit={handleSubmit}>
           {/* Header */}

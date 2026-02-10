@@ -76,21 +76,21 @@ export const AddProject = ({
         }
       );
 
-      await handleGetAllProjects();
+      await handleGetAllProjects(); 
       console.log(res);
 
       setModal();
-      toast.success("Project submitted successfully!");
+      toast.success("Project submitted successfully!" , { toastId: "added success" });
     } catch (error) {
       console.error(error);
-      toast.error("Failed to submit project!");
+      toast.error("All Fields Required!" , { toastId: "failed" });
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4  flex items-center justify-center z-50">
       <div className="w-full max-w-3xl bg-white rounded shadow-lg border border-indigo-900 overflow-hidden">
-        <form onSubmit={handlerSubmitted}>
+        <form onSubmit={handlerSubmitted} onKeyDown={(e) => { if (e.key === "Enter") e.preventDefault(); }}>
           {/* Header */}
           <div className="bg-indigo-900 px-6 ">
             <Title

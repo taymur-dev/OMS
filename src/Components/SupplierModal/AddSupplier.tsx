@@ -35,7 +35,7 @@ export const AddSupplier = ({
   const token = currentUser?.token;
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     e.preventDefault();
     const { name } = e.target;
@@ -76,17 +76,17 @@ export const AddSupplier = ({
       !supplierContact ||
       !supplierAddress
     ) {
-      toast.error("All fields are required");
+      toast.error("All fields are required" , { toastId: "required-fields" });
       return;
     }
 
     if (!/^\d{11}$/.test(supplierContact)) {
-      toast.error("Contact must be 11 digits");
+      toast.error("Contact must be 11 digits" , { toastId: "contact-length" });
       return;
     }
 
     if (!/^[a-z0-9._%+-]+@gmail\.com$/.test(supplierEmail)) {
-      toast.error("Email must be a valid @gmail.com address");
+      toast.error("Email must be a valid @gmail.com address" , { toastId: "valid-domain" });
       return;
     }
 
@@ -95,16 +95,16 @@ export const AddSupplier = ({
       const res = await axios.post(
         `${BASE_URL}/api/admin/addSupplier`,
         supplierData,
-        { headers: { Authorization: token } }
+        { headers: { Authorization: token } },
       );
 
-      toast.success(res.data.message);
+      toast.success(res.data.message , { toastId: "add-success" }) ;
       handleGetAllSupplier();
       setModal();
       setSupplierData(initialState);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message || "Something went wrong");
+      toast.error(axiosError.response?.data.message || "Something went wrong" , { toastId: "wrong" });
     }
     setLoading(false);
   };
@@ -112,7 +112,12 @@ export const AddSupplier = ({
   return (
     <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
       <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded border  border-indigo-900 ">
-        <form onSubmit={handlerSubmitted}>
+        <form
+          onSubmit={handlerSubmitted}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.preventDefault();
+          }}
+        >
           <div className="bg-indigo-900 rounded px-6 ">
             <Title
               setModal={setModal}

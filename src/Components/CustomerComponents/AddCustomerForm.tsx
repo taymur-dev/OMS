@@ -80,11 +80,11 @@ export const AddCustomer = ({
       !cleanedData.customerAddress ||
       !cleanedData.customerContact
     ) {
-      return toast.error("Customer Name, Address and Contact are required");
+      return toast.error("Customer Name, Address and Contact are required" , { toastId: "required-fields" });
     }
 
     if (!/^\d{11}$/.test(cleanedData.customerContact)) {
-      return toast.error("Contact number must be 11 digits");
+      return toast.error("Contact number must be 11 digits" , { toastId: "contact-length" });
     }
 
     setLoading(true);
@@ -95,20 +95,39 @@ export const AddCustomer = ({
         { headers: { Authorization: token } },
       );
 
-      toast.success(res.data.message);
+      toast.success(res.data.message , { toastId: "customer-success" });
       handleGetAllCustomers();
       setCustomerData(initialState);
       setIsOpenModal();
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message || "Something went wrong");
+      const message = axiosError.response?.data.message || "";
+
+      if (axiosError.response?.status === 409) {
+        if (message.includes("contact")) {
+          toast.error("Customer contact number already exists" , { toastId: "contact number already exists" });
+        }  else {
+          toast.error(message , { toastId: "contact-exist" });
+        }
+      } else {
+        toast.error(message || "Something went wrong" , { toastId: "something wrong" });
+      }
     } finally {
       setLoading(false);
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && (e.target as HTMLElement).tagName !== "TEXTAREA") {
+      e.preventDefault();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-50"
+      onKeyDown={handleKeyDown}
+    >
       <div className="w-full max-w-3xl max-h-[90vh] bg-white rounded border border-indigo-900 shadow-lg overflow-y-auto">
         <form onSubmit={handlerSubmitted} className="flex flex-col">
           {/* Header */}

@@ -95,7 +95,7 @@ export const EditAdvanceSalary = ({
     e.preventDefault();
 
     if (!currentUser?.role || currentUser.role !== "admin") {
-      toast.error("Only admins can update advance salary");
+      toast.error("Only admins can update advance salary" , { toastId: "admin" });
       return;
     }
 
@@ -112,17 +112,22 @@ export const EditAdvanceSalary = ({
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
-      toast.success("Advance salary updated successfully");
+      toast.success("Advance salary updated successfully" , { toastId: "success" });
       handleRefresh();
       setModal();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to update advance salary");
+      toast.error("Failed to update advance salary" , { toastId: "failed" });
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs items-center flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-opacity-50 backdrop-blur-xs items-center flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[36rem] max-h-[28rem] bg-white mx-auto rounded border border-indigo-900 overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded px-6">

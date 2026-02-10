@@ -111,7 +111,7 @@ export const CustomerDetail = () => {
       );
 
       handleGetAllCustomers();
-      toast.info("Customer deleted successfully");
+      toast.error("Customer deleted successfully");
     } catch (error) {
       console.log(error);
       toast.error("Cannot delete this customer");

@@ -2,8 +2,6 @@ import axios, { AxiosError } from "axios";
 import { InputField } from "../Components/InputFields/InputField";
 import technic from "../assets/technic.png";
 import Logo from "../assets/Logo.png";
-import successSound from "../assets/success.mp3";
-import errorSound from "../assets/error.mp3";
 
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../Content/URL";
@@ -78,12 +76,10 @@ export const Login = () => {
     try {
       const res = await axios.post(`${BASE_URL}/api/login`, formData);
       const { token } = res.data;
-      playSound(successSound);
       setAuthToken(token);
       dispatch(authSuccess(res.data));
       toast.success(res.data.message);
     } catch (error) {
-      playSound(errorSound);
       const axiosError = error as AxiosError<{ message: string }>;
       dispatch(authFailure(axiosError.response?.data?.message ?? ""));
       toast.error(axiosError.response?.data?.message ?? "");
@@ -92,28 +88,27 @@ export const Login = () => {
     setFormData(initialState);
   };
 
-  const playSound = (audioFile: string) => {
-    const audio = new Audio(audioFile);
-    audio.play().catch((err) => console.error("Audio play failed:", err));
-  };
-
   return (
     <div
       className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden bg-gradient-to-br
      from-indigo-500 via-indigo-900 to-indigo-600"
     >
-      <div className="absolute -bottom-10 -left-16 w-60 h-60 bg-slate-200/20 rounded-full animate-[float_2s_ease-in-out_infinite] delay-1000 animate-pulse blur-1xl" />
+      <div className="absolute -bottom-10 -left-16 w-60 h-60 bg-slate-200/20 rounded-full
+       animate-[float_2s_ease-in-out_infinite] delay-1000 animate-pulse blur-1xl" />
 
-      <div className="absolute -top-10 -right-16 w-60 h-60 bg-slate-200/20 rounded-full animate-[float_2s_ease-in-out_infinite] delay-1000 blur-1xl" />
+      <div className="absolute -top-10 -right-16 w-60 h-60 bg-slate-200/20 rounded-full
+       animate-[float_2s_ease-in-out_infinite] delay-1000 blur-1xl" />
 
-      <div className="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl px-8 py-10 animate-[fadeIn_0.6s_ease-out]">
+      <div className="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl px-8 py-10
+       animate-[fadeIn_0.6s_ease-out]">
         <div className="flex flex-col items-center  justify-center">
           <div className="relative mb-4">
             <div
               className="relative w-32 h-32 rounded-full bg-indigo-900 flex items-center
              justify-center shadow-xl animate-[float_3s_ease-in-out_infinite]"
             >
-              <div className="absolute inset-0 rounded-full bg-indigo-900/30 blur-3xl animate-[pulse_2s_ease-in-out_infinite]" />
+              <div className="absolute inset-0 rounded-full bg-indigo-900/30 blur-3xl 
+              animate-[pulse_2s_ease-in-out_infinite]" />
               <img
                 src={technic}
                 alt="Logo"
@@ -136,7 +131,8 @@ export const Login = () => {
               name="email"
               handlerChange={handlerChange}
               value={formData.email}
-              className="pl-10 pr-10 border border-gray-300 focus:border-indigo-900 focus:outline-none rounded-lg w-full h-12"
+              className="pl-10 pr-10 border border-gray-300 focus:border-indigo-900 focus:outline-none 
+              rounded-lg w-full h-12"
             />
             <div className="absolute inset-y-0 top-3 left-0 flex items-center pl-3 pointer-events-none">
               <FiMail className="w-5 h-5" />
@@ -150,7 +146,8 @@ export const Login = () => {
               name="password"
               handlerChange={handlerChange}
               value={formData.password}
-              className="pl-10 pr-10 border border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg w-full h-12"
+              className="pl-10 pr-10 border border-gray-300 focus:border-blue-500 focus:outline-none
+               rounded-lg w-full h-12"
             />
             <div className="absolute inset-y-0 top-3 left-0 flex items-center pl-3 pointer-events-none">
               <FiLock className="w-5 h-5" />

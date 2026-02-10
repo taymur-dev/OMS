@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
+
 
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
@@ -135,9 +137,11 @@ export const EditAssignProject = ({
     e.preventDefault();
 
     if (!formData.employee_id || !formData.projectId || !formData.date) {
-      alert("Please select employee, project and date");
-      return;
-    }
+    return toast.error(
+      "Employee, Project, and Date are required",
+      { toastId: "required-fields" }
+    );
+  }
 
     try {
       await axios.put(
@@ -165,13 +169,22 @@ export const EditAssignProject = ({
         projectId: Number(formData.projectId),
         name: selectedUser?.name || "",
         projectName: selectedProject?.projectName || "",
-        date: formData.date, // 🔥 pass updated date
+        date: formData.date, // 
       });
 
+      toast.success("Assigned project updated successfully!", {
+      toastId: "update-success",
+    });
+
       setModal();
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const message = error.response?.data?.message || "Failed to update project!";
+      toast.error(message, { toastId: "update-error" });
+    } else {
+      toast.error("Something went wrong!", { toastId: "update-error" });
     }
+  }
   };
 
   /* ================= INIT ================= */
@@ -183,7 +196,12 @@ export const EditAssignProject = ({
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
       <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded border border-indigo-900">
-        <form onSubmit={handlerSubmitted}>
+        <form
+          onSubmit={handlerSubmitted}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.preventDefault();
+          }}
+        >
           <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}

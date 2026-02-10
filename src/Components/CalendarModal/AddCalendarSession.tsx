@@ -7,8 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 
 type AddAttendanceProps = {
   setModal: () => void;
@@ -23,12 +22,12 @@ const currentDate = new Date();
 const startOfCurrentMonth = new Date(
   currentDate.getFullYear(),
   currentDate.getMonth(),
-  1
+  1,
 );
 const endOfCurrentMonth = new Date(
   currentDate.getFullYear(),
   currentDate.getMonth() + 1,
-  0
+  0,
 );
 
 export const AddCalendarSession = ({
@@ -76,7 +75,7 @@ export const AddCalendarSession = ({
           headers: {
             Authorization: token,
           },
-        }
+        },
       );
 
       toast.success("Calendar session added successfully");
@@ -85,11 +84,11 @@ export const AddCalendarSession = ({
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 409) {
-          toast.warning("Calendar session already exists for this month");
+          toast.error("Calendar session already exists for this month");
         } else {
           toast.error(
             error.response?.data?.message ||
-              "Something went wrong. Please try again"
+              "Something went wrong. Please try again",
           );
         }
       } else {
@@ -102,21 +101,15 @@ export const AddCalendarSession = ({
 
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        pauseOnHover
-        theme="colored"
-      />
-
-      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div
+        className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") e.preventDefault();
+        }}
+      >
         <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded border border-indigo-900">
           <form onSubmit={handlerSubmitted}>
-
-             <div className="bg-indigo-900 rounded px-6">
+            <div className="bg-indigo-900 rounded px-6">
               <Title
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
@@ -145,7 +138,7 @@ export const AddCalendarSession = ({
               />
             </div>
 
-             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
+            <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
               <AddButton label="Save" />
             </div>

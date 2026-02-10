@@ -92,8 +92,9 @@ export const UpdatePromotion = ({
     } = promotion;
 
     if (!current_designation || !requested_designation || !note || !date) {
-      toast.error("Please fill all required fields");
-      return;
+      return toast.error("Please fill all required fields", {
+        toastId: "update-promotion-validation",
+      });
     }
 
     try {
@@ -113,19 +114,28 @@ export const UpdatePromotion = ({
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
-      toast.success("Promotion updated successfully");
+      toast.success("Promotion updated successfully", {
+        toastId: "update-promotion-success",
+      });
+
       handleRefresh();
       setModal();
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(
         axiosError.response?.data.message || "Failed to update promotion",
+        { toastId: "update-promotion-error" },
       );
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[42rem] bg-white rounded border border-indigo-900">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded px-6">
@@ -168,7 +178,7 @@ export const UpdatePromotion = ({
               inputVal={promotion.note}
               handlerChange={handleChange}
             />
-            
+
             <div className="md:col-span-2">
               {isAdmin && (
                 <OptionField

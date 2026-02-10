@@ -121,7 +121,7 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur flex px-4 items-center justify-center z-50">
       <div className="w-[42rem] bg-white rounded border border-indigo-900">
-        <form onSubmit={handlerSubmitted}>
+        <form onSubmit={handlerSubmitted} onKeyDown={(e) => { if (e.key === "Enter") e.preventDefault(); }}>
           <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}

@@ -78,7 +78,7 @@ export const UpdateRejoining = ({
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setUpdateData({ ...updateData, [name]: value });
@@ -90,11 +90,11 @@ export const UpdateRejoining = ({
     try {
       const res = await axios.get<{ users: UserT[] }>(
         `${BASE_URL}/api/admin/getUsers`,
-        { headers: { Authorization: token } }
+        { headers: { Authorization: token } },
       );
 
       const filteredUsers = res.data.users.filter(
-        (u) => u.loginStatus === "N" && u.role === "user"
+        (u) => u.loginStatus === "N" && u.role === "user",
       );
 
       setAllUsersRaw(filteredUsers);
@@ -126,6 +126,26 @@ export const UpdateRejoining = ({
     e.preventDefault();
     if (!token) return;
 
+    const {
+      designation,
+      resignation_date,
+      rejoin_date,
+      note,
+      approval_status,
+    } = updateData;
+
+    if (
+      !designation?.trim() ||
+      !resignation_date?.trim() ||
+      !rejoin_date?.trim() ||
+      !note?.trim() ||
+      !approval_status?.trim()
+    ) {
+      return toast.error("Please fill all required fields", {
+        toastId: "update-rejoin-validation",
+      });
+    }
+
     try {
       const url =
         currentUser?.role === "admin"
@@ -136,13 +156,16 @@ export const UpdateRejoining = ({
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      toast.success(res.data.message);
+      toast.success(res.data.message || "Rejoin request updated successfully", {
+        toastId: "update-rejoin-success",
+      });
       handleRefresh?.();
       setModal();
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(
-        axiosError.response?.data.message || "Failed to update rejoin request"
+        axiosError.response?.data?.message || "Failed to update rejoin request",
+        { toastId: "update-rejoin-error" },
       );
     }
   };
@@ -152,7 +175,12 @@ export const UpdateRejoining = ({
   }, [getAllUsers]);
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[42rem] bg-white mx-auto rounded border border-indigo-900">
         <form onSubmit={handlerSubmit}>
           <div className="bg-indigo-900 rounded px-6">

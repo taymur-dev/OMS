@@ -73,12 +73,16 @@ export const AddWithdraw = ({
       setAllUsers(filteredUsers);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message);
+      toast.error(axiosError.response?.data.message , { toastId: "error" });
     }
   }, [token]);
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!addWithdraw?.id || !addWithdraw?.withdrawReason) {
+    return toast.error("Please provide a reason for withdrawal", { toastId: "required-withdraw" });
+  }
 
     try {
       const res = await axios.post(
@@ -96,10 +100,10 @@ export const AddWithdraw = ({
       console.log(res.data);
       handlegetwithDrawEmployeess();
       setModal();
-      toast.success("Employee withdrawn successfully");
+      toast.success("Employee withdrawn successfully" , { toastId: "withdraw-success" });
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message);
+      toast.error(axiosError.response?.data.message , { toastId: "error" });
     }
   };
 

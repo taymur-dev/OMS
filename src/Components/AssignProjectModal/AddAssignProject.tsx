@@ -1,5 +1,6 @@
 import React, { FormEvent, useEffect, useState, useCallback } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
@@ -95,6 +96,12 @@ export const AddAssignProject = ({
   const handlerSubmitted = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!addProject.userId || !addProject.projectId || !addProject.date) {
+      return toast.error("Employee, Project, and Date are required", {
+        toastId: "required-fields",
+      });
+    }
+
     try {
       const payload = {
         employee_id: addProject.userId,
@@ -107,9 +114,19 @@ export const AddAssignProject = ({
       });
 
       handleGetAllAssignProjects();
+      toast.success("Project assigned successfully!", {
+        toastId: "assign-success",
+      });
+
       setModal();
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message || "Failed to assign project!";
+        toast.error(message, { toastId: "assign-error" });
+      } else {
+        toast.error("Something went wrong!", { toastId: "assign-error" });
+      }
     }
   };
 
@@ -121,7 +138,12 @@ export const AddAssignProject = ({
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
       <div className="w-[42rem] max-h-[30rem] bg-white mx-auto rounded border border-indigo-900">
-        <form onSubmit={handlerSubmitted}>
+        <form
+          onSubmit={handlerSubmitted}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.preventDefault();
+          }}
+        >
           <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}

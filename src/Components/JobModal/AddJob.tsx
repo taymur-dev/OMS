@@ -33,7 +33,7 @@ export const AddJob = ({ setModal, refreshJobs }: AddJobsProps) => {
   const [addJob, setAddJob] = useState(initialState);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setAddJob({ ...addJob, [name]: value });
@@ -43,7 +43,10 @@ export const AddJob = ({ setModal, refreshJobs }: AddJobsProps) => {
     e.preventDefault();
 
     if (!addJob.job_title || !addJob.description) {
-      toast.error("Please fill all required fields");
+      return toast.error("Please fill all required fields", {
+        toastId: "add-job-validation",
+      });
+
       return;
     }
 
@@ -52,17 +55,25 @@ export const AddJob = ({ setModal, refreshJobs }: AddJobsProps) => {
         headers: { Authorization: token },
       });
 
-      toast.success(res.data.message || "Job added successfully");
+      toast.success(res.data.message || "Job added successfully", {
+        toastId: "add-job-success",
+      });
+
       refreshJobs();
       setModal();
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong");
+      toast.error("Something went wrong", { toastId: "add-job-error" });
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[42rem] bg-white mx-auto rounded border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded px-6">

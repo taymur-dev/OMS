@@ -9,6 +9,7 @@ import { OptionField } from "../InputFields/OptionField";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
+import { toast } from "react-toastify";
 
 type AddProgressProps = {
   setModal: () => void;
@@ -74,7 +75,7 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
       try {
         const res = await axios.get(
           `${BASE_URL}/api/admin/getAssignProjects/${userId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } },
         );
         const projects = res.data?.projects || res.data?.data || res.data || [];
         setSelectProject(Array.isArray(projects) ? projects : []);
@@ -83,7 +84,7 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
         setSelectProject([]);
       }
     },
-    [token]
+    [token],
   );
 
   useEffect(() => {
@@ -116,7 +117,7 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
 
@@ -131,35 +132,45 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!addProgress.employee_id) {
-      alert("Please select an employee");
-      return;
-    }
-
-    if (!addProgress.projectId || !addProgress.date || !addProgress.note) {
-      alert("Please fill all required fields");
-      return;
+    if (
+      !addProgress.employee_id ||
+      !addProgress.projectId ||
+      !addProgress.date ||
+      !addProgress.note
+    ) {
+      return toast.error("Please fill all required fields", {
+        toastId: "required-fields",
+      });
     }
 
     try {
       await axios.post(
         `${BASE_URL}/api/admin/addProgress`,
         { ...addProgress, projectId: Number(addProgress.projectId) },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
+      toast.success("Progress added successfully!", {
+        toastId: "add-progress-success",
+      });
+
       handleRefresh();
       setModal();
       setAddProgress(initialState);
-    } catch (err) {
-      console.error("Error adding progress:", err);
-      alert("Failed to add progress");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message || "Failed to add progress";
+        toast.error(message, { toastId: "add-progress-error" });
+      } else {
+        toast.error("Something went wrong!", { toastId: "add-progress-error" });
+      }
     }
   };
 
   const userOptions = isAdmin
     ? allUsers
         .filter(
-          (u) => u.role === "user" && u.loginStatus === "Y" && u.id != null
+          (u) => u.role === "user" && u.loginStatus === "Y" && u.id != null,
         )
         .map((u) => ({
           id: Number(u.id),
@@ -175,7 +186,12 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur  px-4  flex items-center justify-center z-50">
       <div className="w-[42rem] bg-white rounded border border-indigo-900">
-        <form onSubmit={handlerSubmitted}>
+        <form
+          onSubmit={handlerSubmitted}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.preventDefault();
+          }}
+        >
           <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}

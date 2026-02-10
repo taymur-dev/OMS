@@ -49,24 +49,52 @@ export const AddAttendanceRule = ({
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const { startTime, endTime, lateTime, halfLeave } = addConfig;
+
+     if (lateTime < startTime || lateTime > endTime && halfLeave < startTime || halfLeave > endTime) {
+      toast.error("Late and Half Leave Time must be between Start Time and End Time");
+      return;
+    }
+
+    if (lateTime < startTime || lateTime > endTime) {
+      toast.error("Late Time must be between Start Time and End Time");
+      return;
+    }
+
+    if (halfLeave < startTime || halfLeave > endTime) {
+      toast.error("Half Leave Time must be between Start Time and End Time");
+      return;
+    }
+
+   
+
+    if (startTime >= endTime) {
+      toast.error("Start Time must be before End Time");
+      return;
+    }
+
     try {
       await axios.post(`${BASE_URL}/api/admin/configureTime`, addConfig, {
-        headers: {
-          Authorization: token,
-        },
+        headers: { Authorization: token },
       });
       handleGetAllTimeConfig();
       setModal();
       toast.success("Configuration saved successfully");
     } catch (error) {
       console.error(error);
-      toast.error("Failed to save configuration");
+      toast.error("Error saving configuration");
     }
   };
 
   return (
     <div>
-      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50">
+      <div
+        className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") e.preventDefault();
+        }}
+      >
         <div className="w-[42rem] max-h-[35rem] bg-white mx-auto rounded border border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 rounded px-6">

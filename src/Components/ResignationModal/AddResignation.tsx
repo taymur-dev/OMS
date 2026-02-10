@@ -12,7 +12,7 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { useAppSelector } from "../../redux/Hooks";
 import { BASE_URL } from "../../Content/URL";
 
-const today = new Date().toLocaleDateString('sv-SE');
+const today = new Date().toLocaleDateString("sv-SE");
 
 type AddResignationProps = {
   setModal: () => void;
@@ -96,7 +96,7 @@ export const AddResignation = ({
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
 
@@ -109,7 +109,7 @@ export const AddResignation = ({
       const latestLifeLine = lifeLines
         .filter((l) => String(l.id) === value)
         .sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
         )[0];
 
       setFormData((prev) => ({
@@ -135,8 +135,9 @@ export const AddResignation = ({
     e.preventDefault();
 
     if (!formData.id || !formData.designation || !formData.note) {
-      toast.error("Please fill all required fields");
-      return;
+      return toast.error("Please fill all required fields", {
+        toastId: "add-resignation-validation",
+      });
     }
 
     try {
@@ -148,14 +149,18 @@ export const AddResignation = ({
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      toast.success("Resignation added successfully");
+      toast.success("Resignation added successfully", {
+        toastId: "add-resignation-success",
+      });
+
       setModal();
       handleRefresh?.();
       setFormData(initialState);
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
       toast.error(
-        axiosError.response?.data?.message || "Failed to add resignation"
+        axiosError.response?.data?.message || "Failed to add resignation",
+        { toastId: "add-resignation-error" },
       );
     }
   };
@@ -168,7 +173,12 @@ export const AddResignation = ({
     }));
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[42rem] bg-white rounded border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded px-6">

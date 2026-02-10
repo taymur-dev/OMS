@@ -51,7 +51,9 @@ export const EditPayment = ({
   const [loadingCustomers, setLoadingCustomers] = useState(true);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement >,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value } = e.target;
     setUpdatePayment((prev) => ({ ...prev, [name]: value }));
@@ -87,6 +89,18 @@ export const EditPayment = ({
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (
+      !updatePayment.customerId ||
+      !updatePayment.amount ||
+      !updatePayment.date ||
+      !updatePayment.description
+    ) {
+      return toast.error(
+        "Customer, Amount, Date, and Description are required",
+        { toastId: "required-fields" },
+      );
+    }
 
     try {
       const formattedDate = updatePayment.date
@@ -169,8 +183,6 @@ export const EditPayment = ({
                 }
               />
             )}
-
-            
 
             <InputField
               labelName="Amount*"

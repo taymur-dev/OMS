@@ -13,7 +13,7 @@ import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 import { OptionField } from "../InputFields/OptionField";
 import { InputField } from "../InputFields/InputField";
-
+import { toast } from "react-toastify";
 
 type ADDSALET = {
   id: number;
@@ -102,6 +102,17 @@ export const EditSale = ({
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (
+      !updateSale?.customerId ||
+      !updateSale?.projectId ||
+      !updateSale?.saleDate
+    ) {
+      return toast.error("Customer, Project, and Date are required", {
+        toastId: "required-fields",
+      });
+    }
+
     try {
       const res = await axios.put(
         `${BASE_URL}/api/admin/updateSalesData/${updateSale?.id}`,
@@ -111,10 +122,20 @@ export const EditSale = ({
         },
       );
       console.log(res.data);
+      toast.success("Sale updated successfully!", {
+        toastId: "update-sale-success",
+      });
+
       handleGetsales();
       setModal();
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message || "Failed to update sale";
+        toast.error(message, { toastId: "update-sale-error" });
+      } else {
+        toast.error("Something went wrong!", { toastId: "update-sale-error" });
+      }
     }
   };
 
@@ -124,7 +145,12 @@ export const EditSale = ({
   }, [getAllCustomers, handleGetProjects]);
   return (
     <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-50">
+      <div
+        className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-50"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") e.preventDefault();
+        }}
+      >
         <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded border  border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 rounded px-6">

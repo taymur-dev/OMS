@@ -139,7 +139,7 @@ export const UpdateAttendance = ({
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50">
       <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded border border-indigo-900">
-        <form onSubmit={handlerSubmitted}>
+        <form onSubmit={handlerSubmitted} onKeyDown={(e) => { if (e.key === "Enter") e.preventDefault(); }}>
           <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}

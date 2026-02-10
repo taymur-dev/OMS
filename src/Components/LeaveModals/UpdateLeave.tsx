@@ -110,7 +110,13 @@ export const UpdateLeave = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center px-4 justify-center bg-black/40 backdrop-blur-sm">
       <div className="w-full max-w-3xl bg-white rounded border border-indigo-900 overflow-auto shadow-lg">
-        <form onSubmit={handleSubmit} className="flex flex-col">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.preventDefault();
+          }}
+        >
           {/* Header */}
           <div className="bg-indigo-900 rounded px-6">
             <Title

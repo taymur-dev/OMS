@@ -44,7 +44,7 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({
   }, [job]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -54,7 +54,10 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({
     e.preventDefault();
 
     if (!formData.job_title || !formData.description) {
-      toast.error("All fields are required");
+      return toast.error("All fields are required", {
+        toastId: "update-job-validation",
+      });
+
       return;
     }
 
@@ -69,20 +72,28 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({
         payload,
         {
           headers: { Authorization: token },
-        }
+        },
       );
 
-      toast.success(res.data.message || "Job updated successfully");
+      toast.success(res.data.message || "Job updated successfully", {
+        toastId: "update-job-success",
+      });
+
       refreshJobs();
       setModal();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to update job");
+      toast.error("Failed to update job", { toastId: "update-job-error" });
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-opacity-50 backdrop-blur-xs  flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[42rem] bg-white mx-auto rounded border border-indigo-900">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded px-6">

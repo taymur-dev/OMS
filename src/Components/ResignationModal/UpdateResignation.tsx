@@ -86,8 +86,9 @@ export const UpdateResignation = ({
       updateResignation;
 
     if (!designation || !note || !resignation_date) {
-      toast.error("Please fill all required fields");
-      return;
+      return toast.error("Please fill all required fields", {
+        toastId: "update-resignation-validation",
+      });
     }
 
     try {
@@ -102,7 +103,9 @@ export const UpdateResignation = ({
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
-      toast.success(res.data.message || "Resignation updated successfully");
+      toast.success(res.data.message || "Resignation updated successfully", {
+        toastId: "update-resignation-success",
+      });
 
       handleRefresh?.({
         id: Number(id),
@@ -118,12 +121,18 @@ export const UpdateResignation = ({
       const axiosError = err as AxiosError<{ message: string }>;
       toast.error(
         axiosError.response?.data?.message || "Failed to update resignation",
+        { toastId: "update-resignation-error" },
       );
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[42rem] bg-white rounded border border-indigo-900">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded px-6">

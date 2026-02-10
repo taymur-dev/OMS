@@ -79,7 +79,7 @@ export const ProfileChangePassword = ({
           {/* Body */}
           <div className="px-6 py-6 flex flex-col gap-5">
             <InputField
-              labelName="Old Password*"
+              labelName="Old Password *"
               type="password"
               name="oldPassword"
               value={changePassword.oldPassword}
@@ -87,7 +87,7 @@ export const ProfileChangePassword = ({
             />
 
             <InputField
-              labelName="New Password*"
+              labelName="New Password *"
               type="password"
               name="newPassword"
               value={changePassword.newPassword}

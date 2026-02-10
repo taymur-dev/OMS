@@ -95,12 +95,12 @@ export const UpdateCustomer = ({
       !companyName ||
       !companyAddress
     ) {
-      toast.error("All fields are required");
+      toast.error("All fields are required" , { toastId: "required-fields" });
       return;
     }
 
     if (!/^\d{11}$/.test(customerContact)) {
-      toast.error("Contact must be 11 digits");
+      toast.error("Contact must be 11 digits" , { toastId: "contact-length" });
       return;
     }
 
@@ -112,13 +112,22 @@ export const UpdateCustomer = ({
           headers: { Authorization: token || "" },
         },
       );
-      toast.success(res.data.message);
+      toast.success(res.data.message , { toastId: "updated-success" });
       setIsOpenModal();
       handleGetAllCustomers();
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data?.message || "Something went wrong");
-      console.log(error);
+      const message = axiosError.response?.data.message || "";
+
+      if (axiosError.response?.status === 409) {
+         if (message.includes("contact")) {
+          toast.error("This contact number already exists" , { toastId: "customer_contact-exists" });
+        } else {
+          toast.error(message , { toastId: "contact-already" });
+        }
+      } else {
+        toast.error(message || "Something went wrong" , { toastId: "wrong" });
+      }
     }
   };
 
@@ -128,6 +137,9 @@ export const UpdateCustomer = ({
         <form
           onSubmit={(e) => handlerSubmitted(e, customerData?.id ?? null)}
           className="flex flex-col h-full"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.preventDefault();
+          }}
         >
           {/* Header */}
           <div className="bg-indigo-900 rounded px-6">
@@ -170,7 +182,7 @@ export const UpdateCustomer = ({
               handlerChange={handlerChange}
               inputVal={customerData?.customerAddress || ""}
             />
-            
+
             <div className="col-span-1 sm:col-span-2">
               <TextareaField
                 labelName="Company Address *"

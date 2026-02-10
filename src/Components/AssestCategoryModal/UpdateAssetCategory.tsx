@@ -35,7 +35,7 @@ export const UpdateAssetCategory = ({
           `${BASE_URL}/api/admin/assetCategories/${categoryId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
-          }
+          },
         );
         setUpdateCategory({ category_name: res.data.category_name });
       } catch (error) {
@@ -56,23 +56,56 @@ export const UpdateAssetCategory = ({
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!token) {
+      return toast.error("Unauthorized", {
+        toastId: "update-category-unauthorized",
+      });
+    }
+
+    if (!updateCategory.category_name?.trim()) {
+      return toast.error("Category name is required", {
+        toastId: "update-category-required",
+      });
+    }
+
     try {
       const res = await axios.put(
         `${BASE_URL}/api/admin/updateAssetCategory/${categoryId}`,
         updateCategory,
-        { headers: { Authorization: token } }
+        { headers: { Authorization: token } },
       );
+
+      toast.success(res.data.message || "Category updated successfully", {
+        toastId: "update-category-success",
+      });
+
       refreshCategories();
       toast.success(res.data.message);
       setModal();
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to update category.");
+    } catch (error: unknown) {
+      console.error("Update category failed:", error);
+
+      if (axios.isAxiosError(error)) {
+        toast.error(
+          error.response?.data?.message || "Failed to update category",
+          { toastId: "update-category-error" },
+        );
+      } else {
+        toast.error("Something went wrong", {
+          toastId: "update-category-error-unknown",
+        });
+      }
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 px-4  backdrop-blur-xs flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-opacity-50 px-4  backdrop-blur-xs flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded px-6">

@@ -52,7 +52,9 @@ export const AddPayment = ({
   const token = currentUser?.token;
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement
+    >,
   ) => {
     e.preventDefault();
 
@@ -76,6 +78,19 @@ export const AddPayment = ({
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (
+      !addProgress.customerId ||
+      !addProgress.amount ||
+      !addProgress.date ||
+      !addProgress.description
+    ) {
+      return toast.error(
+        "Customer, Amount, Date, and Description are required",
+        { toastId: "required-fields" },
+      );
+    }
+
     try {
       const res = await axios.post(
         `${BASE_URL}/api/admin/addPayment`,
@@ -88,9 +103,19 @@ export const AddPayment = ({
       );
       console.log(res.data);
       handleGetPayments();
-      toast.success("Payment added successfully");
+      toast.success("Payment added successfully", {
+        toastId: "payment-success",
+      });
+
       setModal();
-    } catch (error) {
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Failed to add payment", {
+          toastId: "payment-error",
+        });
+      } else {
+        toast.error("Something went wrong!", { toastId: "payment-error" });
+      }
       console.log(error);
     }
   };
@@ -151,8 +176,6 @@ export const AddPayment = ({
                 inital="Please Select Customer"
               />
 
-             
-
               <InputField
                 labelName="Amount*"
                 name="amount"
@@ -168,7 +191,7 @@ export const AddPayment = ({
                 value={addProgress.date}
               />
 
-               <TextareaField
+              <TextareaField
                 labelName="Description*"
                 name="description"
                 handlerChange={handlerChange}

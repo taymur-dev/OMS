@@ -50,7 +50,7 @@ export const UpdateAsset = ({
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setUpdateAsset((prev) => ({ ...prev, [name]: value }));
@@ -78,7 +78,7 @@ export const UpdateAsset = ({
       setCategories(options);
 
       const exists = options.find(
-        (opt) => opt.value === String(assetData.category_id)
+        (opt) => opt.value === String(assetData.category_id),
       );
       if (!exists && options.length > 0) {
         setUpdateAsset((prev) => ({ ...prev, category_id: options[0].value }));
@@ -98,24 +98,51 @@ export const UpdateAsset = ({
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (
+      !updateAsset.category_id ||
+      !updateAsset.asset_name ||
+      !updateAsset.description ||
+      !updateAsset.date
+    ) {
+      return toast.error("Please fill in all required fields", {
+        toastId: "add-asset-validation",
+      });
+    }
+
     try {
       const res = await axios.put(
         `${BASE_URL}/api/admin/updateasset/${assetData.id}`,
         updateAsset,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
-      toast.success(res.data.message);
+      toast.success(res.data.message || "Asset updated successfully", {
+        toastId: "updated-asset-success",
+      });
       refreshAssets();
       setModal();
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to update asset");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Failed to add asset", {
+          toastId: "updated-asset-error",
+        });
+      } else {
+        toast.error("Something went wrong", {
+          toastId: "updated-asset-error-unknown",
+        });
+      }
+      console.error("updated asset failed:", error);
     }
   };
 
   return (
     <div>
-      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div
+        className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") e.preventDefault();
+        }}
+      >
         <div className="w-[42rem] bg-white mx-auto rounded border border-indigo-900">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 rounded px-6">

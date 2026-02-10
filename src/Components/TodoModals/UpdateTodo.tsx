@@ -6,6 +6,7 @@ import { UserSelect } from "../InputFields/UserSelect";
 import { InputField } from "../InputFields/InputField";
 import { OptionField } from "../InputFields/OptionField";
 import { TextareaField } from "../InputFields/TextareaField";
+import { toast } from "react-toastify";
 
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
@@ -110,6 +111,20 @@ export const UpdateTodo = ({
     e.preventDefault();
     if (!todo?.id) return;
 
+    if (
+      !todo.task ||
+      !todo.startDate ||
+      !todo.endDate ||
+      !todo.deadline ||
+      !todo.note ||
+      (isAdmin && !todo.employee_id)
+    ) {
+      return toast.error(
+        "Please fill all required fields (Task, Dates, Note, Employee)",
+        { toastId: "required-fields" },
+      );
+    }
+
     try {
       await axios.put(
         `${BASE_URL}/api/admin/updateTodo/${todo.id}`,
@@ -126,9 +141,19 @@ export const UpdateTodo = ({
       );
 
       onUpdate({ ...todo });
+
+      toast.success("Todo updated successfully!", {
+        toastId: "update-success",
+      });
       setModal();
-    } catch (error) {
-      console.error("Update Todo Error:", error);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message || "Failed to update Todo!";
+        toast.error(message, { toastId: "update-error" });
+      } else {
+        toast.error("Something went wrong!", { toastId: "update-error" });
+      }
     }
   };
 
@@ -144,7 +169,12 @@ export const UpdateTodo = ({
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
       <div className="w-[42rem] max-h-[30rem] bg-white mx-auto rounded border border-indigo-900 ">
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.preventDefault();
+          }}
+        >
           <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}

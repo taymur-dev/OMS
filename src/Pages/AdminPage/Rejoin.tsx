@@ -177,9 +177,6 @@ export const Rejoin = () => {
               </span>
               <span className="hidden xs:inline">entries</span>
               {/* Total Count Badge matching UsersDetails feel */}
-              <span className="ml-4 text-xs font-medium bg-indigo-50 text-indigo-700 px-2 py-1 rounded-full">
-                Total: {totalItems}
-              </span>
             </div>
 
             {/* Right Side: Search Input */}

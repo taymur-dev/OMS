@@ -34,7 +34,6 @@ const payment_method = [
 
 const currentDate = new Date().toLocaleDateString("en-CA");
 
-
 const initialState = {
   selectEmployee: "",
   employee_name: "",
@@ -54,7 +53,7 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
   const [users, setUsers] = useState<User[]>([]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -81,8 +80,8 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
 
       setUsers(
         res.data.users.filter(
-          (u: User) => u.loginStatus === "Y" && u.role === "user"
-        )
+          (u: User) => u.loginStatus === "Y" && u.role === "user",
+        ),
       );
     } catch {
       toast.error("Failed to fetch employees");
@@ -101,14 +100,27 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.selectEmployee) {
-      toast.error("Please select employee");
-      return;
-    }
+    const {
+      selectEmployee,
+      employee_name,
+      employeeContact,
+      employeeEmail,
+      debit,
+      credit,
+    } = form;
 
-    if (!form.debit && !form.credit) {
-      toast.error("Enter debit or credit amount");
-      return;
+    // Validation
+    if (
+      !selectEmployee ||
+      (!debit && !credit) ||
+      (Number(debit || 0) <= 0 && Number(credit || 0) <= 0) ||
+      !employee_name?.trim() ||
+      !employeeContact?.trim() ||
+      !employeeEmail?.trim()
+    ) {
+      return toast.error("Please Fill in all fields", {
+        toastId: "employee-account-validation-employee",
+      });
     }
 
     try {
@@ -124,20 +136,30 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
           payment_method: form.payment_method,
           payment_date: form.payment_date,
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
-      toast.success("Employee account entry added!");
+      toast.success("Employee account entry added!", {
+        toastId: "employee-account-success",
+      });
+
       setForm(initialState);
       setModal();
       refreshData?.();
     } catch {
-      toast.error("Failed to save employee account");
+      toast.error("Failed to save employee account", {
+        toastId: "employee-account-error",
+      });
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 px-4  backdrop-blur-xs flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-opacity-50 px-4  backdrop-blur-xs flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[42rem] bg-white rounded border border-indigo-900">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded px-6">

@@ -1,7 +1,7 @@
 import { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import { InputField } from "../InputFields/InputField";
 import { Title } from "../Title";
-import { OptionField } from "../InputFields/OptionField";
+import { TextareaField } from "../InputFields/TextareaField";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import axios from "axios";
@@ -42,16 +42,17 @@ const initialState: IAddUserValues = {
   cnic: "",
   address: "",
   date: currentDate,
-  role: "",
+  role: "User",
   userId: "",
   password: "",
   confirmPassword: "",
 };
 
-const optionData = [
-  { id: 1, label: "Admin", value: "Admin" },
-  { id: 2, label: "User", value: "User" },
-];
+const isValidEmail = (email: string): boolean => {
+  const emailRegex =
+    /^(?!\.)(?!.*\.\.)[a-zA-Z0-9._+-]+(?<!\.)@(?!(?:-|\.)).*?(?<!-)\.[a-zA-Z]{2,}$/;
+  return emailRegex.test(email);
+};
 
 export const AddUser = ({
   handlerGetUsers,
@@ -74,25 +75,56 @@ export const AddUser = ({
     if (initialValues) {
       setUserData({
         ...initialValues,
-        role: initialValues.role?.toLowerCase() === "admin" ? "Admin" : "User",
+        role: "User",
       });
     }
   }, [initialValues]);
 
   const handlerChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) => {
     const { name } = e.target;
     let value = e.target.value;
+    value = value.replace(/^\s+/, "");
 
     if (name === "name") {
-      value = value.replace(/[^a-zA-Z\s]/g, "").replace(/^\s+/, "");
+      value = value.replace(/[^a-zA-Z\s]/g, "");
       value = value
         .split(" ")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
+      value = value.slice(0, 50);
     }
 
+    if (name === "email") {
+      value = value.replace(/^\s+/, "");
+
+      value = value.replace(/[^a-zA-Z0-9@._+-]/g, "");
+
+      const [local, domain] = value.split("@");
+      if (local?.includes("..")) {
+        return;
+      }
+
+      if (local?.startsWith(".")) {
+        return;
+      }
+
+      if (local?.endsWith(".") && !domain) {
+        return;
+      }
+
+      if (domain?.startsWith(".")) {
+        return;
+      }
+
+      if (local?.startsWith("-") || local?.endsWith("-")) {
+        return;
+      }
+      if (domain?.startsWith("-") || domain?.endsWith("-")) {
+        return;
+      }
+    }
 
     if (name === "contact") value = value.replace(/\D/g, "").slice(0, 11);
 
@@ -102,8 +134,16 @@ export const AddUser = ({
       else if (digits.length <= 12)
         value = `${digits.slice(0, 5)}-${digits.slice(5)}`;
       else
-        value = `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(12, 13)}`;
+        value = `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(
+          12,
+          13,
+        )}`;
     }
+
+    if (name === "password" || name === "confirmPassword")
+      value = value.slice(0, 20);
+
+    if (name === "address") value = value.slice(0, 250);
 
     setUserData({ ...userData, [name]: value });
   };
@@ -126,30 +166,37 @@ export const AddUser = ({
     });
 
     if (selectedFile) {
-      data.append("image", selectedFile); // Ensure backend looks for "image"
+      data.append("image", selectedFile);
     }
     return data;
   };
 
   const handleAddUser = async (): Promise<void> => {
-    const { name, email, password, confirmPassword, cnic, contact, role } =
-      userData;
+    const { name, email, password, confirmPassword, cnic, contact } = userData;
 
-    if (
-      !name ||
-      !email ||
-      !password ||
-      !confirmPassword ||
-      !contact ||
-      !cnic ||
-      !role
-    ) {
-      toast.error("Please fill all required fields");
+    if (!name || !email || !password || !confirmPassword || !contact || !cnic) {
+      toast.error("Please fill all required fields", {
+        toastId: "required-fields",
+      });
+      return;
+    }
+
+    if (password.length < 8 || password.length > 20) {
+      toast.error("Password must be between 8 and 20 characters", {
+        toastId: "password-length",
+      });
       return;
     }
 
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
+      toast.error("Passwords do not match", { toastId: "password-mismatch" });
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      toast.error("Please enter a valid email address", {
+        toastId: "invalid-email",
+      });
       return;
     }
 
@@ -163,16 +210,18 @@ export const AddUser = ({
           "Content-Type": "multipart/form-data",
         },
       });
-      toast.success("User added successfully");
+      toast.success("User added successfully", { toastId: "user-success" });
       setUserData(initialState);
       setSelectedFile(null);
       handlerGetUsers();
       onSuccesAction();
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "Error adding user");
+        toast.error(error.response?.data?.message || "Error adding user", {
+          toastId: "user-error",
+        });
       } else {
-        toast.error("An unexpected error occurred");
+        toast.error("An unexpected error occurred", { toastId: "user-error" });
       }
     } finally {
       setLoading(false);
@@ -183,6 +232,16 @@ export const AddUser = ({
     id: string | number | undefined,
   ): Promise<void> => {
     if (!id) return;
+
+    const { password } = userData;
+
+    if (password.length < 8 || password.length > 20) {
+      toast.error("Password must be between 8 and 20 characters", {
+        toastId: "password-length-update",
+      });
+      return;
+    }
+
     const data = prepareFormData();
 
     setLoading(true);
@@ -193,14 +252,20 @@ export const AddUser = ({
           "Content-Type": "multipart/form-data",
         },
       });
-      toast.success("User updated successfully");
+      toast.success("User updated successfully", {
+        toastId: "user-update-success",
+      });
       handlerGetUsers();
       onSuccesAction();
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "Error updating user");
+        toast.error(error.response?.data?.message || "Error updating user", {
+          toastId: "user-update-error",
+        });
       } else {
-        toast.error("An unexpected error occurred");
+        toast.error("An unexpected error occurred", {
+          toastId: "user-update-error",
+        });
       }
     } finally {
       setLoading(false);
@@ -210,7 +275,12 @@ export const AddUser = ({
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-50">
       <div className="w-[42rem] max-h-[90vh] overflow-y-auto bg-white mx-auto rounded shadow-xl">
-        <form onSubmit={handlerSubmitted}>
+        <form
+          onSubmit={handlerSubmitted}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.preventDefault();
+          }}
+        >
           {/* ===== Header ===== */}
           <div className=" bg-indigo-900 rounded px-4">
             <div className="text-white">
@@ -220,8 +290,6 @@ export const AddUser = ({
 
           {/* ===== Body ===== */}
           <div className="mx-4 my-4 grid grid-cols-1 sm:grid-cols-2 width-full gap-4">
-            {/* Image Upload Section */}
-
             <InputField
               labelName="Name *"
               type="text"
@@ -250,20 +318,6 @@ export const AddUser = ({
               handlerChange={handlerChange}
               value={userData.cnic}
             />
-            <InputField
-              labelName="Address *"
-              type="text"
-              name="address"
-              handlerChange={handlerChange}
-              value={userData.address}
-            />
-            <InputField
-              labelName="Joining Date *"
-              type="date"
-              name="date"
-              handlerChange={handlerChange}
-              value={userData.date}
-            />
 
             <InputField
               labelName="Password *"
@@ -280,14 +334,22 @@ export const AddUser = ({
               value={userData.confirmPassword}
             />
 
-            <div className="sm:col-span-2">
-              <OptionField
-                value={userData.role}
-                labelName="Role *"
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Joining Date *"
+                type="date"
+                name="date"
                 handlerChange={handlerChange}
-                name="role"
-                optionData={optionData}
-                inital="Please Select User"
+                value={userData.date}
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Address *"
+                name="address"
+                handlerChange={handlerChange}
+                inputVal={userData.address}
               />
             </div>
           </div>

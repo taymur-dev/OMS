@@ -6,6 +6,7 @@ import { InputField } from "../InputFields/InputField";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
+import { toast } from "react-toastify";
 
 type AddCategoryProps = {
   setModal: () => void;
@@ -30,6 +31,13 @@ export const AddCategory = ({ setModal, refreshTable }: AddCategoryProps) => {
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!addCategory.categoryName.trim()) {
+      return toast.error("Expense category name is required", {
+        toastId: "required-category",
+      });
+    }
+
     try {
       const res = await axios.post(
         `${BASE_URL}/api/admin/createExpenseCategory`,
@@ -38,20 +46,30 @@ export const AddCategory = ({ setModal, refreshTable }: AddCategoryProps) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
+
+      toast.success("Expense category added successfully", {
+        toastId: "category-success",
+      });
 
       refreshTable();
       console.log(res.data);
       setModal();
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      toast.error("Failed to add category", { toastId: "category-error" });
+      console.error("Add Category Error:", error);
     }
   };
 
   return (
     <div>
-      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div
+        className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") e.preventDefault();
+        }}
+      >
         <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded border border-indigo-900">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 rounded px-6">

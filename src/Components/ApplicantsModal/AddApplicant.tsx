@@ -60,9 +60,35 @@ export const AddApplicant = ({
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (addApplicant.applicant_contact.length !== 11) {
-      toast.error("Contact number must be exactly 11 digits");
-      return;
+    const {
+      applicant_name,
+      fatherName,
+      email,
+      applicant_contact,
+      applied_date,
+      job_id,
+      interviewPhase,
+    } = addApplicant;
+
+    if (
+      !applicant_name?.trim() ||
+      !applicant_contact?.trim() ||
+      !fatherName?.trim() ||
+      !email?.trim() ||
+      !applied_date?.trim() ||
+      !job_id?.trim() ||
+      !interviewPhase?.trim() ||
+      !applicant_contact?.trim()
+    ) {
+      return toast.error("Please fill in all required fields", {
+        toastId: "add-applicant-validation",
+      });
+    }
+
+    if (applicant_contact.length !== 11) {
+      return toast.error("Contact number must be exactly 11 digits", {
+        toastId: "add-applicant-contact",
+      });
     }
 
     try {
@@ -77,12 +103,15 @@ export const AddApplicant = ({
         { headers: { Authorization: token } },
       );
 
-      toast.success(res.data.message);
+      toast.success(res.data.message, { toastId: "add-applicant-success" });
+
       refreshApplicants();
       setModal();
     } catch (error) {
       console.log(error);
-      toast.error("Failed to add applicant");
+      toast.error("Failed to add applicant", {
+        toastId: "add-applicant-error",
+      });
     }
   };
 
@@ -103,7 +132,12 @@ export const AddApplicant = ({
 
   return (
     <div>
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm px-4  flex items-center justify-center z-50">
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm px-4  flex items-center justify-center z-50"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") e.preventDefault();
+        }}
+      >
         <div className="w-[42rem]   bg-white mx-auto rounded border  border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 rounded px-6">

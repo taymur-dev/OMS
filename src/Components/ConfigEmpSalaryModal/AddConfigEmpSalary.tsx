@@ -9,6 +9,7 @@ import { InputField } from "../InputFields/InputField";
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
+import { toast } from "react-toastify";
 
 type AddSalaryProps = {
   setModal: () => void;
@@ -109,6 +110,20 @@ export const AddConfigEmpSalary = ({
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!token) {
+      return toast.error("Unauthorized", { toastId: "salary-unauthorized" });
+    }
+
+    if (
+      !addConfigEmployee.employee_id ||
+      !addConfigEmployee.salary_amount ||
+      !addConfigEmployee.config_date
+    ) {
+      return toast.error("Employee, Salary, and Config Date are required", {
+        toastId: "salary-required-fields",
+      });
+    }
+
     try {
       const payload = {
         employee_id: Number(addConfigEmployee.employee_id),
@@ -124,15 +139,34 @@ export const AddConfigEmpSalary = ({
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      toast.success("Salary configuration added successfully", {
+        toastId: "salary-success",
+      });
+
       refreshSalaries();
       setModal();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Salary submit failed:", error);
+
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Failed to add salary", {
+          toastId: "salary-error",
+        });
+      } else {
+        toast.error("Something went wrong", {
+          toastId: "salary-error-unknown",
+        });
+      }
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[42rem] max-h-[39rem] bg-white mx-auto rounded border border-indigo-900 overflow-y-auto">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded px-6">

@@ -23,7 +23,6 @@ interface Category {
 
 const currentDate = new Date().toLocaleDateString("en-CA");
 
-
 const initialState = {
   asset_name: "",
   category_id: "",
@@ -43,7 +42,7 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     e.preventDefault();
     const { name, value } = e.target;
@@ -94,27 +93,53 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!addAsset.category_id || !addAsset.asset_name || !addAsset.description || !addAsset.date) {
+      return toast.error("Please fill in all required fields", {
+        toastId: "add-asset-validation",
+      });
+    }
+
+    if (!token) {
+      return toast.error("Unauthorized", { toastId: "add-asset-unauthorized" });
+    }
+
     try {
       const res = await axios.post(
         `${BASE_URL}/api/admin/createassets`,
         addAsset,
         {
-          headers: { Authorization: token },
-        }
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
       console.log(res.data);
-      toast.success(res.data.message);
+      toast.success(res.data.message || "Asset added successfully", {
+        toastId: "add-asset-success",
+      });
       refreshAssets();
       setModal();
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to add asset");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Failed to add asset", {
+          toastId: "add-asset-error",
+        });
+      } else {
+        toast.error("Something went wrong", {
+          toastId: "add-asset-error-unknown",
+        });
+      }
+      console.error("Add asset failed:", error);
     }
   };
 
   return (
     <div>
-      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+      <div
+        className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") e.preventDefault();
+        }}
+      >
         <div className="w-[42rem] bg-white mx-auto rounded border border-indigo-900">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 rounded px-6">

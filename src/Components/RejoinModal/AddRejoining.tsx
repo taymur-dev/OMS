@@ -215,8 +215,9 @@ export const AddRejoining = ({
     e.preventDefault();
 
     if (!addRejoin.id || !addRejoin.rejoin_date) {
-      toast.error("Employee and rejoin date are required");
-      return;
+      return toast.error("Please fill all required fields", {
+        toastId: "update-resignation-validation",
+      });
     }
 
     try {
@@ -235,21 +236,30 @@ export const AddRejoining = ({
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      toast.success(res.data.message);
+      toast.success(res.data.message || "Resignation updated successfully", {
+        toastId: "update-resignation-success",
+      });
+
       setModal();
       handleRefresh?.();
       setAddRejoin(initialState);
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
+    } catch (err) {
+      const axiosError = err as AxiosError<{ message: string }>;
       toast.error(
-        axiosError.response?.data.message || "Failed to add rejoin request",
+        axiosError.response?.data?.message || "Failed to update resignation",
+        { toastId: "update-resignation-error" },
       );
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
-      <div className="w-[42rem] bg-white mx-auto roundedborder border-indigo-900">
+    <div
+      className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
+      <div className="w-[42rem] bg-white mx-auto rounded border border-indigo-900">
         <form onSubmit={handlerSubmit}>
           <div className="bg-indigo-900 rounded px-6">
             <Title

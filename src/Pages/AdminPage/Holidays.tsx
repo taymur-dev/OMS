@@ -34,8 +34,8 @@ type THOLIDAYMODAL = "EDIT" | "DELETE" | "ADDHOLIDAY" | "VIEW" | "";
 interface HOLIDAYSTATET {
   id: number;
   holiday: string;
-  fromDate: string; 
-  toDate: string;   
+  fromDate: string;
+  toDate: string;
 }
 
 export const Holidays = () => {
@@ -258,6 +258,7 @@ export const Holidays = () => {
         <AddHoliday
           handleGetAllHodidays={handleGetAllHolidays}
           setModal={() => setIsOpenModal("")}
+          allHoliday={allHoliday}
         />
       )}
 
@@ -266,6 +267,7 @@ export const Holidays = () => {
           setModal={() => setIsOpenModal("")}
           handleGetAllHodidays={handleGetAllHolidays}
           editHoliday={editHoliday}
+          allHoliday={allHoliday}
         />
       )}
 

@@ -3,8 +3,9 @@ type InputFieldProps = {
   labelName?: string;
   placeHolder?: string;
   handlerChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void; 
   name?: string;
-  value?: string;
+  value?: string | number; 
   disabled?: boolean;
   readOnly?: boolean;
   className?: string;
@@ -15,6 +16,7 @@ export const InputField = ({
   labelName,
   placeHolder,
   handlerChange,
+  onKeyDown, 
   name,
   value,
   disabled,
@@ -28,13 +30,13 @@ export const InputField = ({
         </label>
         <input
           type={type}
-          // Added w-full here 👇
-          className={`w-full p-2 rounded border-1 border-indigo-900 rounded-lg text-gray-800
-    ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"}
-    focus:ring-2 focus:ring-indigo-900 focus:outline-none
-    ${className || ""}`}
+          className={`w-full p-2 border-1 border-indigo-900 rounded-lg text-gray-800
+            ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"}
+            focus:ring-2 focus:ring-indigo-900 focus:outline-none
+            ${className || ""}`}
           placeholder={placeHolder}
           onChange={handlerChange}
+          onKeyDown={onKeyDown} 
           name={name}
           value={value}
           disabled={disabled}

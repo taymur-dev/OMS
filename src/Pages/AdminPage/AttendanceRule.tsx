@@ -62,9 +62,9 @@ export const AttendanceRule = () => {
         const sortedData = [...res.data].sort(
           (a: ALLCONFIGT, b: ALLCONFIGT) => a.id - b.id,
         );
-        setAllConfig(sortedData); 
+        setAllConfig(sortedData);
       } else {
-        setAllConfig([]); 
+        setAllConfig([]);
       }
     } catch (error) {
       console.error("Fetch Error:", error);
@@ -74,7 +74,7 @@ export const AttendanceRule = () => {
 
   useEffect(() => {
     handleGetAllTimeConfig();
-  }, [handleGetAllTimeConfig]); 
+  }, [handleGetAllTimeConfig]);
 
   const handleDeleteAttendanceRule = async () => {
     try {
@@ -145,10 +145,12 @@ export const AttendanceRule = () => {
         <TableTitle
           tileName="Attendance Rules"
           rightElement={
-            <CustomButton
-              label="+ Add Rule"
-              handleToggle={() => handleToggleViewModal("ADD")}
-            />
+            allConfig.length === 0 && (
+              <CustomButton
+                label="+ Add Rule"
+                handleToggle={() => handleToggleViewModal("ADD")}
+              />
+            )
           }
         />
 

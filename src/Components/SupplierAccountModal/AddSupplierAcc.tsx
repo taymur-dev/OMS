@@ -32,7 +32,6 @@ const paymentMethods = [
 
 const currentDate = new Date().toLocaleDateString("en-CA");
 
-
 const initialState = {
   selectSupplier: "",
   supplierName: "",
@@ -55,7 +54,7 @@ export const AddSupplierAccount = ({
   const [allSuppliers, setAllSuppliers] = useState<Supplier[]>([]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -64,7 +63,7 @@ export const AddSupplierAccount = ({
 
       if (name === "selectSupplier") {
         const selectedSupplier = allSuppliers.find(
-          (s) => s.supplierId === Number(value)
+          (s) => s.supplierId === Number(value),
         );
 
         if (selectedSupplier) {
@@ -102,9 +101,19 @@ export const AddSupplierAccount = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.selectSupplier) {
-      toast.error("Please select a supplier");
-      return;
+    if (
+      !form.selectSupplier ||
+      !form.supplierName ||
+      !form.supplierContact ||
+      !form.supplierAddress ||
+      !form.debit ||
+      !form.credit ||
+      !form.paymentMethod ||
+      !form.paymentDate
+    ) {
+      return toast.error("Please fill all required fields", {
+        toastId: "supplier-account-validation-supplier",
+      });
     }
 
     try {
@@ -123,18 +132,28 @@ export const AddSupplierAccount = ({
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      toast.success("Supplier account added successfully!");
+      toast.success("Supplier account added successfully!", {
+        toastId: "supplier-account-success",
+      });
+
       setForm(initialState);
       setModal();
       refreshData();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to add supplier account");
+      toast.error("Failed to add supplier account", {
+        toastId: "supplier-account-error",
+      });
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[40rem] bg-white rounded border border-indigo-900">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded px-6">

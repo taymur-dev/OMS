@@ -138,8 +138,9 @@ export const AddPromotion = ({
       !note ||
       !date
     ) {
-      toast.error("Please fill all required fields");
-      return;
+      return toast.error("Please fill all required fields", {
+        toastId: "add-promotion-validation",
+      });
     }
 
     try {
@@ -151,7 +152,10 @@ export const AddPromotion = ({
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      toast.success("Promotion request added successfully!");
+      toast.success("Promotion request added successfully!", {
+        toastId: "add-promotion-success",
+      });
+
       handleRefresh();
       setAddPromotion(initialState);
       setModal();
@@ -159,6 +163,9 @@ export const AddPromotion = ({
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(
         axiosError.response?.data.message || "Failed to add promotion",
+        {
+          toastId: "add-promotion-error",
+        },
       );
     }
   };
@@ -174,7 +181,12 @@ export const AddPromotion = ({
     : [];
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[42rem] bg-white rounded border border-indigo-900">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-indigo-900 rounded  px-6">

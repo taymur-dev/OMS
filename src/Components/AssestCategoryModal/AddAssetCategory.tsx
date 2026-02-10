@@ -33,27 +33,56 @@ export const AddAssetCategory = ({
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!token) {
+      return toast.error("Unauthorized", {
+        toastId: "asset-category-unauthorized",
+      });
+    }
+
+    if (!addCategory.category_name?.trim()) {
+      return toast.error("Category name is required", {
+        toastId: "asset-category-required",
+      });
+    }
+
     try {
       const res = await axios.post(
         `${BASE_URL}/api/admin/createAssetCategory`,
         addCategory,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
-      toast.success(res.data.message);
+      toast.success(res.data.message || "Category added successfully", {
+        toastId: "asset-category-success",
+      });
 
       refreshCategories();
       setAddCategory(initialState);
       setModal();
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to add category");
+    } catch (error: unknown) {
+      console.error("Add category failed:", error);
+
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Failed to add category", {
+          toastId: "asset-category-error",
+        });
+      } else {
+        toast.error("Something went wrong", {
+          toastId: "asset-category-error-unknown",
+        });
+      }
     }
   };
 
   return (
     <div>
-      <div className="fixed inset-0 bg-opacity-50 px-4  backdrop-blur-xs flex items-center justify-center z-50">
+      <div
+        className="fixed inset-0 bg-opacity-50 px-4  backdrop-blur-xs flex items-center justify-center z-50"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") e.preventDefault();
+        }}
+      >
         <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded border border-indigo-900">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 rounded px-6">

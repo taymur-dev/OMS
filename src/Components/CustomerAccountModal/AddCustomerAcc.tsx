@@ -32,7 +32,6 @@ const paymentMethods = [
 
 const currentDate = new Date().toLocaleDateString("en-CA");
 
-
 const initialState = {
   selectCustomer: "",
   customerName: "",
@@ -55,7 +54,7 @@ export const AddCustomerAccount = ({
   const [allCustomers, setAllCustomers] = useState<Customer[]>([]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -64,7 +63,7 @@ export const AddCustomerAccount = ({
 
       if (name === "selectCustomer") {
         const selectedCustomer = allCustomers.find(
-          (c) => c.id === Number(value)
+          (c) => c.id === Number(value),
         );
         if (selectedCustomer) {
           updated.customerName = selectedCustomer.customerName;
@@ -100,9 +99,19 @@ export const AddCustomerAccount = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.selectCustomer) {
-      toast.error("Please select a customer");
-      return;
+    if (
+      !form.selectCustomer ||
+      !form.customerName ||
+      !form.customerContact ||
+      !form.customerAddress ||
+      !form.debit ||
+      !form.credit ||
+      !form.paymentMethod ||
+      !form.paymentDate
+    ) {
+      return toast.error("Please fill whole form", {
+        toastId: "customer-account-validation-details",
+      });
     }
 
     try {
@@ -121,18 +130,28 @@ export const AddCustomerAccount = ({
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      toast.success("Customer account added successfully!");
+      toast.success("Customer account entry added!", {
+        toastId: "customer-account-success",
+      });
+
       setForm(initialState);
       setModal();
       refreshData();
     } catch (err) {
       console.error(err);
-      toast.error("Failed to add customer account");
+      toast.error("Failed to save customer account", {
+        toastId: "customer-account-error",
+      });
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[40rem] bg-white rounded border border-indigo-900">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded px-6">

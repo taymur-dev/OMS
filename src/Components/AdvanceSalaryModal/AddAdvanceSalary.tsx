@@ -24,14 +24,14 @@ type User = {
 };
 
 type AdvanceSalaryFormType = {
-  employee_id: string; 
+  employee_id: string;
   date: string;
   description: string;
-  amount: string; 
+  amount: string;
 };
 
 const today = new Date();
-const currentDate = today.toLocaleDateString('sv-SE');
+const currentDate = today.toLocaleDateString("sv-SE");
 
 const initialState: AdvanceSalaryFormType = {
   employee_id: "",
@@ -40,7 +40,10 @@ const initialState: AdvanceSalaryFormType = {
   amount: "",
 };
 
-export const AddAdvanceSalary = ({ setModal, handleRefresh }: AddAdvanceSalaryProps) => {
+export const AddAdvanceSalary = ({
+  setModal,
+  handleRefresh,
+}: AddAdvanceSalaryProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
   const isAdmin = currentUser?.role === "admin";
@@ -53,12 +56,12 @@ export const AddAdvanceSalary = ({ setModal, handleRefresh }: AddAdvanceSalaryPr
     try {
       const res = await axios.get<{ users: User[] }>(
         `${BASE_URL}/api/admin/getUsers`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setAllUsers(res.data.users ?? []);
     } catch (err) {
       console.error("Error fetching users:", err);
-      toast.error("Failed to fetch users");
+      toast.error("Failed to fetch users" , { toastId: "failed" });
     }
   }, [token]);
 
@@ -74,7 +77,9 @@ export const AddAdvanceSalary = ({ setModal, handleRefresh }: AddAdvanceSalaryPr
   }, [isAdmin, currentUser, getAllUsers]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -83,12 +88,17 @@ export const AddAdvanceSalary = ({ setModal, handleRefresh }: AddAdvanceSalaryPr
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!formData.employee_id || !formData.date || !formData.description || !formData.amount) {
-      toast.error("Please fill all required fields");
+    if (
+      !formData.employee_id ||
+      !formData.date ||
+      !formData.description ||
+      !formData.amount
+    ) {
+      toast.error("Please fill all required fields" , { toastId: "required-fields" });
       return;
     }
     if (isNaN(Number(formData.amount)) || Number(formData.amount) <= 0) {
-      toast.error("Please enter a valid amount");
+      toast.error("Please enter a valid amount" , { toastId: "enter amount" });
       return;
     }
 
@@ -102,16 +112,16 @@ export const AddAdvanceSalary = ({ setModal, handleRefresh }: AddAdvanceSalaryPr
         },
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
-      toast.success("Advance Salary added successfully");
+      toast.success("Advance Salary added successfully" , { toastId: "success" });
       setModal();
-      handleRefresh?.(); 
+      handleRefresh?.();
       setFormData(initialState);
     } catch (err) {
       console.error("Error adding advance salary:", err);
-      toast.error("Failed to add advance salary");
+      toast.error("Failed to add advance salary" , { toastId: "error" });
     }
   };
 
@@ -123,18 +133,27 @@ export const AddAdvanceSalary = ({ setModal, handleRefresh }: AddAdvanceSalaryPr
     }));
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-black/30 backdrop-blur px-4 flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (
+          e.key === "Enter" &&
+          (e.target as HTMLElement).tagName !== "TEXTAREA"
+        ) {
+          e.preventDefault();
+        }
+      }}
+    >
       <div className="w-[42rem] bg-white rounded border border-indigo-900">
         <form onSubmit={handleSubmit}>
-
-           <div className="bg-indigo-900 rounded px-6">
-              <Title
-                setModal={setModal}
-                className="text-white text-lg font-semibold"
-              >
-                Add Advance Salary
-              </Title>
-            </div>
+          <div className="bg-indigo-900 rounded px-6">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              Add Advance Salary
+            </Title>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 mx-2 gap-2 py-2 space-y-2">
             {isAdmin && (
               <UserSelect
@@ -180,10 +199,10 @@ export const AddAdvanceSalary = ({ setModal, handleRefresh }: AddAdvanceSalaryPr
             />
           </div>
 
-           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
-              <CancelBtn setModal={setModal} />
-              <AddButton label="Save" />
-            </div>
+          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
+            <CancelBtn setModal={setModal} />
+            <AddButton label="Save" />
+          </div>
         </form>
       </div>
     </div>

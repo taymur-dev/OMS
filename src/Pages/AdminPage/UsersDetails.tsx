@@ -119,7 +119,7 @@ export const UsersDetails = () => {
         { headers: { Authorization: token } },
       );
       handlerGetUsers();
-      toast.info("User deleted successfully");
+      toast.error("User deleted successfully");
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(axiosError?.response?.data?.message);
@@ -196,14 +196,13 @@ export const UsersDetails = () => {
           <div className="min-w-[900px]">
             {/* Sticky Table Header */}
             <div
-              className="grid grid-cols-7 bg-indigo-900 text-white items-center font-semibold
+              className="grid grid-cols-6 bg-indigo-900 text-white items-center font-semibold
              text-sm sticky top-0 sm:z-10 p-2"
             >
               <span>Sr#</span>
               <span>Users</span>
               <span>Email</span>
               <span>Contact No</span>
-              <span>Position</span>
               <span>Joining Date</span>
               <span className="text-center">Actions</span>
             </div>
@@ -217,14 +216,13 @@ export const UsersDetails = () => {
               paginatedUsers.map((user, index) => (
                 <div
                   key={user.id}
-                  className="grid grid-cols-7 border-b border-x border-gray-200 text-gray-800 items-center
+                  className="grid grid-cols-6 border-b border-x border-gray-200 text-gray-800 items-center
                    text-sm p-2 hover:bg-gray-50 transition"
                 >
                   <span>{startIndex + index + 1}</span>
                   <span className="truncate">{user.name}</span>
                   <span className="truncate">{user.email}</span>
                   <span>{user.contact}</span>
-                  <span>{user.role}</span>
                   <span>
                     {new Date(user.date)
                       .toLocaleDateString("en-GB", {

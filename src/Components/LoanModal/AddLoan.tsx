@@ -118,14 +118,14 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!token) return toast.error("Unauthorized");
+    if (!token) return toast.error("Unauthorized" , { toastId: "loan-unauthorized" });
 
     if (!addLoan.employee_id || !addLoan.loanAmount || !addLoan.applyDate)
-      return toast.error("Please fill all required fields");
+      return toast.error("Please fill all required fields" ,  { toastId: "required" });
 
     const loanAmount = Number(addLoan.loanAmount);
     if (loanAmount <= 0)
-      return toast.error("Loan amount must be greater than 0");
+      return toast.error("Loan amount must be greater than 0" , { toastId: "error" });
 
     const payload: AddLoanType = {
       employee_id: addLoan.employee_id,
@@ -140,16 +140,16 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
       await axios.post(`${BASE_URL}/api/addLoan`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success("Loan added successfully");
+      toast.success("Loan added successfully" , { toastId: "success" });
       setModal();
       handleRefresh();
       setAddLoan(initialState);
     } catch (error: unknown) {
       console.error("Add loan error:", error);
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "Failed to add loan");
+        toast.error(error.response?.data?.message || "Failed to add loan" , { toastId: "failed" });
       } else {
-        toast.error("Something went wrong");
+        toast.error("Something went wrong" , { toastId: "wrong" });
       }
     }
   };
@@ -160,7 +160,9 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
 
   /* ================= UI ================= */
   return (
-    <div className="fixed inset-0 bg-opacity-50 px-4  backdrop-blur-xs flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-opacity-50 px-4  backdrop-blur-xs flex items-center justify-center z-50" onKeyDown={(e) => {
+          if (e.key === "Enter") e.preventDefault();
+        }}>
       <div className="w-[42rem] bg-white mx-auto rounded border border-indigo-900">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded px-6">
