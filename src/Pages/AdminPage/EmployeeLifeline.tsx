@@ -258,18 +258,6 @@ export const EmployeeLifeline = () => {
         <ViewEmployeeLifeLine
           setIsOpenModal={() => handleToggleViewModal("")}
           employeeData={selectedEmployee}
-          handleEdit={(updatedEmployee: LifeLine) => {
-            setLifeLines((prev) =>
-              prev.map((item) =>
-                item.id === updatedEmployee.id ? updatedEmployee : item,
-              ),
-            );
-            handleToggleViewModal("");
-          }}
-          handleDelete={(id: number) => {
-            setLifeLines((prev) => prev.filter((item) => item.id !== id));
-            handleToggleViewModal("");
-          }}
         />
       )}
 
