@@ -7,7 +7,6 @@ import { Title } from "../Title";
 import { InputField } from "../InputFields/InputField";
 import { toast } from "react-toastify";
 
-
 type EditCategoryProps = {
   setModal: () => void;
   categoryId: number;
@@ -27,7 +26,10 @@ export const EditCategory = ({
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUpdateCategory({ ...updateCategory, [name]: value });
+
+    const updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+
+    setUpdateCategory({ ...updateCategory, [name]: updatedValue });
   };
 
   useEffect(() => {
@@ -60,9 +62,9 @@ export const EditCategory = ({
         setModal();
       }
     } catch (error) {
-    console.error("Update failed:", error);
-    toast.error("Failed to update category", { toastId: "update-error" });
-  }
+      console.error("Update failed:", error);
+      toast.error("Failed to update category", { toastId: "update-error" });
+    }
   };
 
   return (

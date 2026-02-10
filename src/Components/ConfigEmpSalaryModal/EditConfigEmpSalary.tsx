@@ -71,11 +71,11 @@ export const EditConfigEmpSalary = ({
     if (editData) {
       setEditConfigEmployee({
         employee_id: editData.employee_id.toString(),
-        salary_amount: editData.salary_amount?.toString() || "0",
-        emp_of_mon_allowance: editData.emp_of_mon_allowance?.toString() || "0",
-        transport_allowance: editData.transport_allowance?.toString() || "0",
-        medical_allowance: editData.medical_allowance?.toString() || "0",
-        total_salary: editData.total_salary?.toString() || "0",
+        salary_amount: editData.salary_amount?.toString() || "",
+        emp_of_mon_allowance: editData.emp_of_mon_allowance?.toString() || "",
+        transport_allowance: editData.transport_allowance?.toString() || "",
+        medical_allowance: editData.medical_allowance?.toString() || "",
+        total_salary: editData.total_salary?.toString() || "",
         config_date: editData.config_date?.split("T")[0] || "",
       });
     }
@@ -84,8 +84,15 @@ export const EditConfigEmpSalary = ({
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const { name, value } = e.target;
-    setEditConfigEmployee((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+
+    let updatedValue = value;
+
+    if (type === "number") {
+      updatedValue = value.replace(/\D/g, "").slice(0, 12);
+    }
+
+    setEditConfigEmployee((prev) => ({ ...prev, [name]: updatedValue }));
   };
 
   useEffect(() => {

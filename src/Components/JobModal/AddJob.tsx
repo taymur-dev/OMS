@@ -36,7 +36,18 @@ export const AddJob = ({ setModal, refreshJobs }: AddJobsProps) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    setAddJob({ ...addJob, [name]: value });
+
+    let updatedValue = value;
+
+    if (name === "description") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+    }
+
+    if (name === "job_title") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    setAddJob({ ...addJob, [name]: updatedValue });
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {

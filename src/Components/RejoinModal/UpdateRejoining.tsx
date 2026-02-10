@@ -81,7 +81,15 @@ export const UpdateRejoining = ({
     >,
   ) => {
     const { name, value } = e.target;
-    setUpdateData({ ...updateData, [name]: value });
+
+    let updatedValue = value;
+
+    if (name === "note") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+    }
+
+
+    setUpdateData({ ...updateData, [name]: updatedValue });
   };
 
   const getAllUsers = useCallback(async () => {

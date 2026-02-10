@@ -100,9 +100,17 @@ export const AddResignation = ({
   ) => {
     const { name, value } = e.target;
 
+     let updatedValue = value;
+
+   
+
+    if (name === "note") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]:updatedValue,
     }));
 
     if (name === "id") {

@@ -76,7 +76,13 @@ export const UpdateResignation = ({
     >,
   ) => {
     const { name, value } = e.target;
-    setUpdateResignation((prev) => ({ ...prev, [name]: value }));
+
+    let updatedValue = value;
+
+    if (name === "note") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+    }
+    setUpdateResignation((prev) => ({ ...prev, [name]: updatedValue }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

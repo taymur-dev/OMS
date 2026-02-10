@@ -62,8 +62,15 @@ export const AddConfigEmpSalary = ({
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const { name, value } = e.target;
-    setAddConfigEmployee((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+
+    let updatedValue = value;
+
+    if (type === "number") {
+      updatedValue = value.replace(/\D/g, "").slice(0, 12);
+    }
+
+    setAddConfigEmployee((prev) => ({ ...prev, [name]: updatedValue }));
   };
 
   useEffect(() => {

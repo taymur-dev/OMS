@@ -89,7 +89,14 @@ export const AddOverTime = ({
     >,
   ) => {
     const { name, value } = e.target;
-    setAddOvertime((prev) => ({ ...prev, [name]: value }));
+
+    let updatedValue = value;
+
+    if (name === "description") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    setAddOvertime((prev) => ({ ...prev, [name]: updatedValue }));
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {

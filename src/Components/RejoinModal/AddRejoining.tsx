@@ -181,9 +181,16 @@ export const AddRejoining = ({
     >,
   ) => {
     const { name, value } = e.target;
+
+    let updatedValue = value;
+
+    if (name === "note") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+    }
+
     setAddRejoin((prev) => ({
       ...prev,
-      [name]: name === "id" ? (value ? Number(value) : null) : value,
+      [name]: name === "id" ? (value ? Number(value) : null) : updatedValue,
     }));
   };
 

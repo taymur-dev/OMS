@@ -109,7 +109,17 @@ export const AddPromotion = ({
   ) => {
     const { name, value } = e.target;
 
-    setAddPromotion((prev) => ({ ...prev, [name]: value }));
+    let updatedValue = value;
+
+    if (name === "note") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+    }
+
+    if (name === "requested_designation") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    setAddPromotion((prev) => ({ ...prev, [name]: updatedValue }));
 
     if (name === "id") {
       const latestLifeLine = lifeLines

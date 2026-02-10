@@ -53,8 +53,35 @@ export const AddApplicant = ({
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const { name, value } = e.target;
-    setAddApplicant((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+
+    let updatedValue = value;
+
+    if (name === "applicant_name") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    if (name === "fatherName") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    if (name === "email") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    if (type === "number") {
+      updatedValue = value.replace(/\D/g, "").slice(0, 11);
+    }
+
+    if (name === "job_id") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    if (name === "interviewPhase") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    setAddApplicant((prev) => ({ ...prev, [name]: updatedValue }));
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {

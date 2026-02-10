@@ -88,14 +88,27 @@ export const EditAdvanceSalary = ({
     >,
   ) => {
     const { name, value } = e.target;
-    setUpdateAdvance((prev) => ({ ...prev, [name]: value }));
+
+    let updatedValue = value;
+
+    if (name === "description") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    if (name === "amount") {
+      updatedValue = value.replace(/\D/g, "").slice(0, 12);
+    }
+
+    setUpdateAdvance((prev) => ({ ...prev, [name]: updatedValue }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!currentUser?.role || currentUser.role !== "admin") {
-      toast.error("Only admins can update advance salary" , { toastId: "admin" });
+      toast.error("Only admins can update advance salary", {
+        toastId: "admin",
+      });
       return;
     }
 
@@ -112,12 +125,14 @@ export const EditAdvanceSalary = ({
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
-      toast.success("Advance salary updated successfully" , { toastId: "success" });
+      toast.success("Advance salary updated successfully", {
+        toastId: "success",
+      });
       handleRefresh();
       setModal();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to update advance salary" , { toastId: "failed" });
+      toast.error("Failed to update advance salary", { toastId: "failed" });
     }
   };
 

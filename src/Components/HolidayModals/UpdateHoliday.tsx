@@ -76,7 +76,7 @@ export const UpdateHoliday = ({
     if (name === "holiday") {
       const cleanedValue = value.trimStart();
 
-      if (cleanedValue.length > 30) return;
+      if (cleanedValue.length > 50) return;
 
       const isPureNumber = /^\d+$/.test(cleanedValue);
 

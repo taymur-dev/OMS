@@ -121,7 +121,13 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
   ) => {
     const { name, value } = e.target;
 
-    setAddProgress((prev) => ({ ...prev, [name]: value }));
+    let updatedValue = value;
+
+    if (name === "note") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+    }
+
+    setAddProgress((prev) => ({ ...prev, [name]: updatedValue }));
 
     if (name === "employee_id" && value) {
       fetchProjectsByUser(value);

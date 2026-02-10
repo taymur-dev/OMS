@@ -36,8 +36,20 @@ const NotificationDropdown = ({
   return (
     <>
       <div className="fixed inset-0 z-40" onClick={onClose}></div>
-
-      <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden">
+      <div
+        className="
+    fixed md:absolute
+    top-4 md:top-full
+    left-1/2 md:left-auto
+    right-auto md:right-0
+    -translate-x-1/2 md:translate-x-0
+    mt-0 md:mt-2
+    w-[90%] sm:w-80
+    bg-white rounded-lg shadow-xl
+    border border-gray-200
+    z-50 overflow-hidden
+  "
+      >
         <div className="bg-indigo-900 p-3">
           <h3 className="text-white font-semibold text-sm">Notifications</h3>
         </div>
@@ -52,7 +64,7 @@ const NotificationDropdown = ({
               <div
                 key={item.id}
                 className="p-3 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
-                onClick={handleViewAll} 
+                onClick={handleViewAll}
               >
                 <div className="flex justify-between items-start">
                   <p className="text-xs font-bold text-gray-800">{item.name}</p>

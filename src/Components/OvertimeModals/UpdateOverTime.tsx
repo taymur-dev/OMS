@@ -119,7 +119,13 @@ export const UpdateOverTime = ({
     >,
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    let updatedValue = value;
+
+    if (name === "description") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+    setFormData((prev) => ({ ...prev, [name]: updatedValue }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -155,9 +161,12 @@ export const UpdateOverTime = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex px-4  items-center justify-center z-50" onKeyDown={(e) => {
-          if (e.key === "Enter") e.preventDefault();
-        }}>
+    <div
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex px-4  items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[42rem] max-h-[85vh] bg-white rounded border border-indigo-300 shadow-xl overflow-hidden">
         {currentUser?.role !== "admin" ? (
           <div className="flex flex-col items-center justify-center px-6 py-10 text-center">

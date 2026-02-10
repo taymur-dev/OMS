@@ -61,7 +61,7 @@ export const AddAdvanceSalary = ({
       setAllUsers(res.data.users ?? []);
     } catch (err) {
       console.error("Error fetching users:", err);
-      toast.error("Failed to fetch users" , { toastId: "failed" });
+      toast.error("Failed to fetch users", { toastId: "failed" });
     }
   }, [token]);
 
@@ -82,7 +82,17 @@ export const AddAdvanceSalary = ({
     >,
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    let updatedValue = value;
+
+    if (name === "description") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    if (name === "amount") {
+      updatedValue = value.replace(/\D/g, "").slice(0, 12);
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: updatedValue }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -94,11 +104,13 @@ export const AddAdvanceSalary = ({
       !formData.description ||
       !formData.amount
     ) {
-      toast.error("Please fill all required fields" , { toastId: "required-fields" });
+      toast.error("Please fill all required fields", {
+        toastId: "required-fields",
+      });
       return;
     }
     if (isNaN(Number(formData.amount)) || Number(formData.amount) <= 0) {
-      toast.error("Please enter a valid amount" , { toastId: "enter amount" });
+      toast.error("Please enter a valid amount", { toastId: "enter amount" });
       return;
     }
 
@@ -115,13 +127,15 @@ export const AddAdvanceSalary = ({
         },
       );
 
-      toast.success("Advance Salary added successfully" , { toastId: "success" });
+      toast.success("Advance Salary added successfully", {
+        toastId: "success",
+      });
       setModal();
       handleRefresh?.();
       setFormData(initialState);
     } catch (err) {
       console.error("Error adding advance salary:", err);
-      toast.error("Failed to add advance salary" , { toastId: "error" });
+      toast.error("Failed to add advance salary", { toastId: "error" });
     }
   };
 

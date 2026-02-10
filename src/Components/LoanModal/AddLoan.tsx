@@ -31,14 +31,14 @@ type User = {
   role: string;
 };
 
-const currentDate = new Date().toLocaleDateString('sv-SE');
+const currentDate = new Date().toLocaleDateString("sv-SE");
 
 const initialState = {
   employee_id: "",
   contact: "",
-  loanAmount: "0",
-  deduction: "0",
-  remainingAmount: "0",
+  loanAmount: "",
+  deduction: "",
+  remainingAmount: "",
   applyDate: currentDate,
 };
 
@@ -62,7 +62,28 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
   /* ================= INPUT HANDLER ================= */
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setAddLoan((prev) => ({ ...prev, [name]: value }));
+
+    let updatedValue = value;
+
+    if (name === "contact") {
+      updatedValue = value.replace(/\D/g, "").slice(0, 11);
+    }
+
+    if (name === "loanAmount") {
+      updatedValue = value.replace(/\D/g, "").slice(0, 12);
+    }
+
+    if (name === "remainingAmount") {
+      updatedValue = value.replace(/\D/g, "").slice(0, 12);
+    }
+
+    if (name === "deduction") {
+      updatedValue = value.replace(/\D/g, "").slice(0, 12);
+    }
+
+
+
+    setAddLoan((prev) => ({ ...prev, [name]:  updatedValue }));
   };
 
   /* ================= USER SELECT HANDLER (FIXED) ================= */
@@ -70,7 +91,7 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
     const selectedId = e.target.value;
 
     const selectedUser = allUsers.find(
-      (user) => String(user.id) === selectedId
+      (user) => String(user.id) === selectedId,
     );
 
     setAddLoan((prev) => ({
@@ -87,7 +108,7 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
     try {
       const res = await axios.get<{ users: User[] }>(
         `${BASE_URL}/api/admin/getUsers`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setAllUsers(res.data.users || []);
     } catch (error) {
@@ -118,14 +139,19 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!token) return toast.error("Unauthorized" , { toastId: "loan-unauthorized" });
+    if (!token)
+      return toast.error("Unauthorized", { toastId: "loan-unauthorized" });
 
     if (!addLoan.employee_id || !addLoan.loanAmount || !addLoan.applyDate)
-      return toast.error("Please fill all required fields" ,  { toastId: "required" });
+      return toast.error("Please fill all required fields", {
+        toastId: "required",
+      });
 
     const loanAmount = Number(addLoan.loanAmount);
     if (loanAmount <= 0)
-      return toast.error("Loan amount must be greater than 0" , { toastId: "error" });
+      return toast.error("Loan amount must be greater than 0", {
+        toastId: "error",
+      });
 
     const payload: AddLoanType = {
       employee_id: addLoan.employee_id,
@@ -140,29 +166,34 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
       await axios.post(`${BASE_URL}/api/addLoan`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success("Loan added successfully" , { toastId: "success" });
+      toast.success("Loan added successfully", { toastId: "success" });
       setModal();
       handleRefresh();
       setAddLoan(initialState);
     } catch (error: unknown) {
       console.error("Add loan error:", error);
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "Failed to add loan" , { toastId: "failed" });
+        toast.error(error.response?.data?.message || "Failed to add loan", {
+          toastId: "failed",
+        });
       } else {
-        toast.error("Something went wrong" , { toastId: "wrong" });
+        toast.error("Something went wrong", { toastId: "wrong" });
       }
     }
   };
 
   const activeUsers = allUsers.filter(
-    (user) => user.loginStatus === "Y" && user.role === "user"
+    (user) => user.loginStatus === "Y" && user.role === "user",
   );
 
   /* ================= UI ================= */
   return (
-    <div className="fixed inset-0 bg-opacity-50 px-4  backdrop-blur-xs flex items-center justify-center z-50" onKeyDown={(e) => {
-          if (e.key === "Enter") e.preventDefault();
-        }}>
+    <div
+      className="fixed inset-0 bg-opacity-50 px-4  backdrop-blur-xs flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[42rem] bg-white mx-auto rounded border border-indigo-900">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded px-6">

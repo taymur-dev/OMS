@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 
 type AddCategoryProps = {
   setModal: () => void;
-  refreshTable: () => void; // new prop to refresh parent table
+  refreshTable: () => void;
 };
 
 const initialState = {
@@ -26,7 +26,14 @@ export const AddCategory = ({ setModal, refreshTable }: AddCategoryProps) => {
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setAddCategory({ ...addCategory, [name]: value });
+
+    let updatedValue = value;
+
+    if (name === "categoryName") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    setAddCategory({ ...addCategory, [name]: updatedValue });
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {

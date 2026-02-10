@@ -60,7 +60,17 @@ export const AddPayment = ({
 
     const { name, value } = e.target;
 
-    setAddProgress({ ...addProgress, [name]: value });
+    let updatedValue = value;
+
+    if (name === "amount") {
+      updatedValue = value.replace(/\D/g, "").slice(0, 12);
+    }
+
+    if (name === "description") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+    }
+
+    setAddProgress({ ...addProgress, [name]: updatedValue });
   };
 
   const getAllCustomers = useCallback(async () => {
@@ -139,7 +149,7 @@ export const AddPayment = ({
 
             <div className="mx-3  pt-3 py-2 flex lg:flex-row flex-cols items-center  text-gray-800  ">
               <h1 className="text-lg font-semibold underline ">
-                Account Type*
+                Account Type *
               </h1>
               <div className=" ml-5 lg:space-x-2 space-x-2">
                 <input
@@ -164,7 +174,7 @@ export const AddPayment = ({
             </div>
             <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3  ">
               <OptionField
-                labelName="Select Customer"
+                labelName="Select Customer *"
                 name="customerId"
                 handlerChange={handlerChange}
                 value={addProgress.customerId}
@@ -177,14 +187,14 @@ export const AddPayment = ({
               />
 
               <InputField
-                labelName="Amount*"
+                labelName="Amount *"
                 name="amount"
                 handlerChange={handlerChange}
                 value={addProgress.amount}
               />
 
               <InputField
-                labelName="Date*"
+                labelName="Date *"
                 name="date"
                 type="date"
                 handlerChange={handlerChange}
@@ -192,7 +202,7 @@ export const AddPayment = ({
               />
 
               <TextareaField
-                labelName="Description*"
+                labelName="Description *"
                 name="description"
                 handlerChange={handlerChange}
                 inputVal={addProgress.description}

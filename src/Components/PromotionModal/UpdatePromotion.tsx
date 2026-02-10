@@ -77,7 +77,18 @@ export const UpdatePromotion = ({
     >,
   ) => {
     const { name, value } = e.target;
-    setPromotion((prev) => ({ ...prev, [name]: value }));
+
+     let updatedValue = value;
+
+    if (name === "note") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+    }
+
+    if (name === "requested_designation") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    setPromotion((prev) => ({ ...prev, [name]: updatedValue }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

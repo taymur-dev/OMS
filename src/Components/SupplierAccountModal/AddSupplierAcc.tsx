@@ -56,10 +56,16 @@ export const AddSupplierAccount = ({
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
+
+    let updatedValue = value;
+
+    if (type === "number") {
+      updatedValue = value.replace(/\D/g, "").slice(0, 12);
+    }
 
     setForm((prev) => {
-      const updated = { ...prev, [name]: value };
+      const updated = { ...prev, [name]: updatedValue };
 
       if (name === "selectSupplier") {
         const selectedSupplier = allSuppliers.find(

@@ -46,7 +46,18 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
   ) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setAddAsset({ ...addAsset, [name]: value });
+
+     let updatedValue = value;
+
+    if (name === "asset_name") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    if (name === "description") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+    }
+
+    setAddAsset({ ...addAsset, [name]: updatedValue });
   };
 
   const fetchCategories = useCallback(async () => {

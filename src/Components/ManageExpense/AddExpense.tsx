@@ -47,7 +47,17 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
 
     const { name, value } = e.target;
 
-    setAddExpense({ ...addExpense, [name]: value });
+    let updatedValue = value;
+
+    if (name === "expenseName") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    if (name === "amount") {
+      updatedValue = value.replace(/\D/g, "").slice(0, 12);
+    }
+
+    setAddExpense({ ...addExpense, [name]: updatedValue });
   };
 
   const getAllUsers = useCallback(async () => {
@@ -89,9 +99,12 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
   }, [getAllUsers]);
   return (
     <div>
-      <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-50" onKeyDown={(e) => {
+      <div
+        className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-50"
+        onKeyDown={(e) => {
           if (e.key === "Enter") e.preventDefault();
-        }}>
+        }}
+      >
         <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded border  border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 rounded px-6">

@@ -51,7 +51,13 @@ export const UpdateAssetCategory = ({
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUpdateCategory({ ...updateCategory, [name]: value });
+
+     let updatedValue = value;
+
+    if (name === "category_name") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+    setUpdateCategory({ ...updateCategory, [name]: updatedValue });
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {

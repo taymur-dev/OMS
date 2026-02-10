@@ -8,7 +8,6 @@ import { Title } from "../Title";
 import { InputField } from "../InputFields/InputField";
 import { TextareaField } from "../InputFields/TextareaField";
 
-
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 
@@ -93,12 +92,27 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
   }, [cart]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value, type } = e.target;
+
+    let updatedValue = value;
+
+   
+
+    if (name === "description") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+    }
+
+    if (type === "number") {
+      updatedValue = value.replace(/\D/g, "").slice(0, 12);
+    }
+
     setAddQuotation((prev) => ({
       ...prev,
-      [name]: type === "number" ? value.replace(/\D/g, "") : value,
+      [name]: updatedValue,
     }));
   };
 
@@ -187,215 +201,226 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
     setModal();
   };
 
-return (
-  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex px-4 items-center justify-center z-50">
-    {/* Container width adjusted to 42rem to match AddSale, with a flexible height for the cart */}
-    <div className="w-[42rem] max-h-[90vh] flex flex-col bg-white rounded border border-indigo-900 shadow-xl overflow-hidden">
-      
-      {/* HEADER: Cleaned up rounded corners and alignment */}
-      <div className="bg-indigo-900 px-6 py-0.8">
-        <Title
-          setModal={setModal}
-          className="text-white text-lg font-semibold uppercase tracking-wide"
-        >
-          ADD QUOTATION
-        </Title>
-      </div>
-
-      {/* BODY: Added overflow-y-auto to keep header/footer fixed while scrolling content */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
-        
-        {/* Input Section: Top Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
-          <div>
-            <label className="text-xs font-semibold text-black mb-1 block">
-              Project *
-            </label>
-            <select
-              className="w-full border border-indigo-900 rounded p-1.5 text-sm focus:ring-1 focus:ring-indigo-900"
-              value={selectedProject}
-              onChange={(e) => setSelectedProject(e.target.value)}
-            >
-              <option value="">Select Project</option>
-              {projects.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.projectName}
-                </option>
-              ))}
-            </select>
-          </div>
-          <InputField
-            labelName="QTY *"
-            type="number"
-            name="QTY"
-            handlerChange={handlerChange}
-            value={addQuotation.QTY}
-          />
-          <InputField
-            labelName="Unit Price *"
-            type="number"
-            name="UnitPrice"
-            handlerChange={handlerChange}
-            value={addQuotation.UnitPrice}
-          />
-          <TextareaField
-            labelName="Description *"
-            name="description"
-            handlerChange={handlerChange}
-            inputVal={addQuotation.description}
-          />
+  return (
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex px-4 items-center justify-center z-50">
+      {/* Container width adjusted to 42rem to match AddSale, with a flexible height for the cart */}
+      <div className="w-[42rem] max-h-[90vh] flex flex-col bg-white rounded border border-indigo-900 shadow-xl overflow-hidden">
+        {/* HEADER: Cleaned up rounded corners and alignment */}
+        <div className="bg-indigo-900 px-6 py-0.8">
+          <Title
+            setModal={setModal}
+            className="text-white text-lg font-semibold uppercase tracking-wide"
+          >
+            ADD QUOTATION
+          </Title>
         </div>
 
-        <div className="flex justify-end">
-          <AddButton
-            label="Add to Cart"
-            handleClick={addToCart}
-            disabled={isAddToCartDisabled}
-          />
-        </div>
-
-        {/* CART TABLE */}
-        <div className="border rounded-lg overflow-hidden border-indigo-100">
-          <div className="grid grid-cols-6 bg-indigo-900 text-white text-xs font-bold border-b border-indigo-100 text-center">
-            <span className="py-2">Sr</span>
-            <span className="py-2 text-left">Project</span>
-            <span className="py-2 text-left">Description</span>
-            <span className="py-2">QTY</span>
-            <span className="py-2">Price</span>
-            <span className="py-2">Actions</span>
+        {/* BODY: Added overflow-y-auto to keep header/footer fixed while scrolling content */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+          {/* Input Section: Top Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-semibold text-black mb-1 block">
+                Project *
+              </label>
+              <select
+                className="w-full border border-indigo-900 rounded p-1.5 text-sm focus:ring-1 focus:ring-indigo-900"
+                value={selectedProject}
+                onChange={(e) => setSelectedProject(e.target.value)}
+              >
+                <option value="">Select Project</option>
+                {projects.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.projectName}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <InputField
+              labelName="QTY *"
+              type="number"
+              name="QTY"
+              handlerChange={handlerChange}
+              value={addQuotation.QTY}
+            />
+            <InputField
+              labelName="Unit Price *"
+              type="number"
+              name="UnitPrice"
+              handlerChange={handlerChange}
+              value={addQuotation.UnitPrice}
+            />
+            <TextareaField
+              labelName="Description *"
+              name="description"
+              handlerChange={handlerChange}
+              inputVal={addQuotation.description}
+            />
           </div>
 
-          <div className="max-h-40 overflow-y-auto">
-            {cart.length === 0 ? (
-              <div className="text-center text-gray-400 p-4 text-xs italic">
-                No items in cart
-              </div>
-            ) : (
-              cart.map((item, index) => (
-                <div
-                  key={item.id}
-                  className="grid grid-cols-6 text-xs border-b last:border-0 hover:bg-gray-50 items-center text-center py-1"
-                >
-                  <span className="text-gray-500">{index + 1}</span>
-                  <span className="text-left truncate px-1">{item.projectName}</span>
+          <div className="flex justify-end">
+            <AddButton
+              label="Add to Cart"
+              handleClick={addToCart}
+              disabled={isAddToCartDisabled}
+            />
+          </div>
 
-                  {item.isEditing ? (
-                    <>
-                      <input
-                        type="text"
-                        className="border rounded px-1 mx-1 text-xs"
-                        value={item.description}
-                        onChange={(e) => {
-                          const updatedCart = [...cart];
-                          updatedCart[index].description = e.target.value;
-                          setCart(updatedCart);
-                        }}
-                      />
-                      <input
-                        type="number"
-                        className="border rounded px-1 w-12 mx-auto text-xs"
-                        value={item.QTY}
-                        onChange={(e) => {
-                          const value = Number(e.target.value);
-                          if (value < 0) return;
-                          const updatedCart = [...cart];
-                          updatedCart[index].QTY = value;
-                          setCart(updatedCart);
-                        }}
-                      />
-                      <input
-                        type="number"
-                        className="border rounded px-1 w-16 mx-auto text-xs"
-                        value={item.UnitPrice}
-                        onChange={(e) => {
-                          const value = Number(e.target.value);
-                          if (value < 0) return;
-                          const updatedCart = [...cart];
-                          updatedCart[index].UnitPrice = value;
-                          setCart(updatedCart);
-                        }}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-left truncate px-1">{item.description}</span>
-                      <span>{item.QTY}</span>
-                      <span>{item.UnitPrice}</span>
-                    </>
-                  )}
+          {/* CART TABLE */}
+          <div className="border rounded-lg overflow-hidden border-indigo-100">
+            <div className="grid grid-cols-6 bg-indigo-900 text-white text-xs font-bold border-b border-indigo-100 text-center">
+              <span className="py-2">Sr</span>
+              <span className="py-2 text-left">Project</span>
+              <span className="py-2 text-left">Description</span>
+              <span className="py-2">QTY</span>
+              <span className="py-2">Price</span>
+              <span className="py-2">Actions</span>
+            </div>
 
-                  <button
-                    className="text-indigo-600 font-semibold hover:text-indigo-800 transition-colors"
-                    onClick={() => {
-                      const updatedCart = [...cart];
-                      updatedCart[index].isEditing = !updatedCart[index].isEditing;
-                      setCart(updatedCart);
-                    }}
-                  >
-                    {item.isEditing ? "Save" : "Edit"}
-                  </button>
+            <div className="max-h-40 overflow-y-auto">
+              {cart.length === 0 ? (
+                <div className="text-center text-gray-400 p-4 text-xs italic">
+                  No items in cart
                 </div>
-              ))
-            )}
-          </div>
-        </div>
+              ) : (
+                cart.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="grid grid-cols-6 text-xs border-b last:border-0 hover:bg-gray-50 items-center text-center py-1"
+                  >
+                    <span className="text-gray-500">{index + 1}</span>
+                    <span className="text-left truncate px-1">
+                      {item.projectName}
+                    </span>
 
-        {/* SUMMARY SECTION */}
-        <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-          <div>
-            <label className="text-xs font-semibold text-gray-700 mb-1 block">
-              Customer*
-            </label>
-            <select
-              className="w-full border border-indigo-900 rounded p-1.5 text-sm"
-              value={selectedCustomer}
-              onChange={(e) => setSelectedCustomer(e.target.value)}
-            >
-              <option value="">Please select customer</option>
-              {customers.map((c) => (
-                <option key={c.id} value={c.id}>{c.customerName}</option>
-              ))}
-            </select>
+                    {item.isEditing ? (
+                      <>
+                        <input
+                          type="text"
+                          className="border rounded px-1 mx-1 text-xs"
+                          value={item.description}
+                          onChange={(e) => {
+                            const updatedCart = [...cart];
+                            updatedCart[index].description = e.target.value;
+                            setCart(updatedCart);
+                          }}
+                        />
+                        <input
+                          type="number"
+                          className="border rounded px-1 w-12 mx-auto text-xs"
+                          value={item.QTY}
+                          onChange={(e) => {
+                            const value = Number(e.target.value);
+                            if (value < 0) return;
+                            const updatedCart = [...cart];
+                            updatedCart[index].QTY = value;
+                            setCart(updatedCart);
+                          }}
+                        />
+                        <input
+                          type="number"
+                          className="border rounded px-1 w-16 mx-auto text-xs"
+                          value={item.UnitPrice}
+                          onChange={(e) => {
+                            const value = Number(e.target.value);
+                            if (value < 0) return;
+                            const updatedCart = [...cart];
+                            updatedCart[index].UnitPrice = value;
+                            setCart(updatedCart);
+                          }}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-left truncate px-1">
+                          {item.description}
+                        </span>
+                        <span>{item.QTY}</span>
+                        <span>{item.UnitPrice}</span>
+                      </>
+                    )}
+
+                    <button
+                      className="text-indigo-600 font-semibold hover:text-indigo-800 transition-colors"
+                      onClick={() => {
+                        const updatedCart = [...cart];
+                        updatedCart[index].isEditing =
+                          !updatedCart[index].isEditing;
+                        setCart(updatedCart);
+                      }}
+                    >
+                      {item.isEditing ? "Save" : "Edit"}
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          {/* SUMMARY SECTION */}
+          <div className="bg-gray-50 p-4 rounded-lg space-y-3">
             <div>
-              <label className="text-xs font-semibold text-gray-700 mb-1 block">Date*</label>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
+              <label className="text-xs font-semibold text-gray-700 mb-1 block">
+                Customer*
+              </label>
+              <select
                 className="w-full border border-indigo-900 rounded p-1.5 text-sm"
-              />
+                value={selectedCustomer}
+                onChange={(e) => setSelectedCustomer(e.target.value)}
+              >
+                <option value="">Please select customer</option>
+                {customers.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.customerName}
+                  </option>
+                ))}
+              </select>
             </div>
-            <div>
-              <label className="text-xs font-semibold text-gray-700 mb-1 block">Sub Total</label>
-              <input
-                type="number"
-                value={subTotal}
-                readOnly
-                className="w-full border rounded p-1.5 text-sm bg-gray-200"
-              />
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-gray-700 mb-1 block">Total Bill</label>
-              <input
-                type="number"
-                value={totalBill}
-                readOnly
-                className="w-full border rounded p-1.5 text-sm bg-indigo-100 font-bold"
-              />
+
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="text-xs font-semibold text-gray-700 mb-1 block">
+                  Date*
+                </label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="w-full border border-indigo-900 rounded p-1.5 text-sm"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-gray-700 mb-1 block">
+                  Sub Total
+                </label>
+                <input
+                  type="number"
+                  value={subTotal}
+                  readOnly
+                  className="w-full border rounded p-1.5 text-sm bg-gray-200"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-gray-700 mb-1 block">
+                  Total Bill
+                </label>
+                <input
+                  type="number"
+                  value={totalBill}
+                  readOnly
+                  className="w-full border rounded p-1.5 text-sm bg-indigo-100 font-bold"
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* FOOTER: Fixed at bottom with identical padding/colors to AddSale */}
-      <div className="flex justify-end gap-3 px-6 py-3 bg-indigo-900 border-t border-indigo-900">
-        <CancelBtn setModal={closeModal} />
-        <AddButton label="Save" handleClick={handlerSubmitted} />
+        {/* FOOTER: Fixed at bottom with identical padding/colors to AddSale */}
+        <div className="flex justify-end gap-3 px-6 py-3 bg-indigo-900 border-t border-indigo-900">
+          <CancelBtn setModal={closeModal} />
+          <AddButton label="Save" handleClick={handlerSubmitted} />
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 };
