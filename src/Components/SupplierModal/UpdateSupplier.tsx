@@ -41,19 +41,36 @@ export const UpdateSupplier = ({
     const { name } = e.target;
     let value = e.target.value;
 
-    if (name === "supplierName" || name === "supplierAddress") {
-      value = value.replace(/\b\w/g, (char) => char.toUpperCase());
+    value = value.replace(/^\s+/, "");
+
+    if (name === "supplierName") {
+      value = value.replace(/[^a-zA-Z\s]/g, "");
+      value = value
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+      value = value.slice(0, 50);
+    }
+
+    if (name === "supplierAddress") {
+      value = value.replace(/[^a-zA-Z0-9\s,.-]/g, "");
+      value = value.slice(0, 250);
     }
 
     if (name === "supplierEmail") {
       value = value.toLowerCase();
+      value = value.replace(/[^a-z0-9@._%+-]/g, "");
+      value = value.slice(0, 100);
     }
 
     if (name === "supplierContact") {
       value = value.replace(/\D/g, "").slice(0, 11);
     }
 
-    setUpdateSupplier({ ...updateSupplier, [name]: value });
+    setUpdateSupplier((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {

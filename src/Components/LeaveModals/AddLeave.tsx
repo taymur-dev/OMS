@@ -5,9 +5,10 @@ import { InputField } from "../InputFields/InputField";
 import { Title } from "../Title";
 import { TextareaField } from "../InputFields/TextareaField";
 import { UserSelect } from "../InputFields/UserSelect";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
+import { toast } from "react-toastify";
 
 type AddLeaveProps = {
   setModal: () => void;
@@ -84,6 +85,15 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const { employee_id, leaveSubject, date, leaveReason } = addLeave;
+
+    if ((isAdmin && !employee_id) || !leaveSubject || !date || !leaveReason) {
+      toast.error("Please fill all required fields", {
+        toastId: "leave-employee-required",
+      });
+      return;
+    }
+
     try {
       await axios.post(
         `${BASE_URL}/api/addLeave`,
@@ -98,12 +108,19 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
         },
       );
 
+      toast.success("Leave added successfully", {
+        toastId: "leave-success",
+      });
+
       refreshLeaves();
       setModal();
       setAddLeave(initialState);
-    } catch (err) {
-      console.error("Add leave failed:", err);
-      alert("Failed to add leave");
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(
+        axiosError?.response?.data?.message || "Failed to add leave",
+        { toastId: "leave-error" },
+      );
     }
   };
 
@@ -121,7 +138,12 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur flex px-4 items-center justify-center z-50">
       <div className="w-[42rem] bg-white rounded border border-indigo-900">
-        <form onSubmit={handlerSubmitted} onKeyDown={(e) => { if (e.key === "Enter") e.preventDefault(); }}>
+        <form
+          onSubmit={handlerSubmitted}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.preventDefault();
+          }}
+        >
           <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}

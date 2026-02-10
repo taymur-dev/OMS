@@ -36,31 +36,47 @@ export const AddCustomer = ({
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const { name, value } = e.target;
-    let newValue = value;
+    const { name } = e.target;
+    let value = e.target.value;
 
-    if (newValue.startsWith(" ")) {
-      newValue = newValue.trimStart();
+    // remove leading spaces
+    value = value.replace(/^\s+/, "");
+
+    if (name === "customerName") {
+      value = value.replace(/[^a-zA-Z\s]/g, "");
+      value = value
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+      value = value.slice(0, 50);
     }
 
-    if (
-      name === "customerName" ||
-      name === "customerAddress" ||
-      name === "companyName" ||
-      name === "companyAddress"
-    ) {
-      newValue = newValue.replace(/\d/g, "");
-      newValue = newValue.replace(/\b\w/g, (char) => char.toUpperCase());
+    if (name === "companyName") {
+      value = value.replace(/[^a-zA-Z\s]/g, "");
+      value = value
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+      value = value.slice(0, 50);
+    }
+
+    if (name === "customerAddress") {
+      value = value.replace(/[^a-zA-Z0-9\s,.-]/g, "");
+      value = value.slice(0, 250);
+    }
+
+    if (name === "companyAddress") {
+      value = value.replace(/[^a-zA-Z0-9\s,.-]/g, "");
+      value = value.slice(0, 250);
     }
 
     if (name === "customerContact") {
-      newValue = newValue.replace(/\D/g, "");
-      if (newValue.length > 11) newValue = newValue.slice(0, 11);
+      value = value.replace(/\D/g, "").slice(0, 11);
     }
 
     setCustomerData((prev) => ({
       ...prev,
-      [name]: newValue,
+      [name]: value,
     }));
   };
 
@@ -80,11 +96,15 @@ export const AddCustomer = ({
       !cleanedData.customerAddress ||
       !cleanedData.customerContact
     ) {
-      return toast.error("Customer Name, Address and Contact are required" , { toastId: "required-fields" });
+      return toast.error("Customer Name, Address and Contact are required", {
+        toastId: "required-fields",
+      });
     }
 
     if (!/^\d{11}$/.test(cleanedData.customerContact)) {
-      return toast.error("Contact number must be 11 digits" , { toastId: "contact-length" });
+      return toast.error("Contact number must be 11 digits", {
+        toastId: "contact-length",
+      });
     }
 
     setLoading(true);
@@ -95,7 +115,7 @@ export const AddCustomer = ({
         { headers: { Authorization: token } },
       );
 
-      toast.success(res.data.message , { toastId: "customer-success" });
+      toast.success(res.data.message, { toastId: "customer-success" });
       handleGetAllCustomers();
       setCustomerData(initialState);
       setIsOpenModal();
@@ -105,12 +125,16 @@ export const AddCustomer = ({
 
       if (axiosError.response?.status === 409) {
         if (message.includes("contact")) {
-          toast.error("Customer contact number already exists" , { toastId: "contact number already exists" });
-        }  else {
-          toast.error(message , { toastId: "contact-exist" });
+          toast.error("Customer contact number already exists", {
+            toastId: "contact number already exists",
+          });
+        } else {
+          toast.error(message, { toastId: "contact-exist" });
         }
       } else {
-        toast.error(message || "Something went wrong" , { toastId: "something wrong" });
+        toast.error(message || "Something went wrong", {
+          toastId: "something wrong",
+        });
       }
     } finally {
       setLoading(false);

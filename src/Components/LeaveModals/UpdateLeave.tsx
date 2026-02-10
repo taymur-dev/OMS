@@ -82,6 +82,15 @@ export const UpdateLeave = ({
     e.preventDefault();
     if (!EditLeave) return;
 
+    const { leaveSubject, date, leaveReason } = updateLeave;
+
+    if (!leaveSubject || !date || !leaveReason) {
+      toast.error("Please fill all required fields", {
+        toastId: "update-leave-required",
+      });
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -96,12 +105,15 @@ export const UpdateLeave = ({
         `${BASE_URL}/api/admin/updateLeave/${EditLeave.id}`,
         payload,
       );
-      toast.success("Leave updated successfully!");
+      toast.success("Leave updated successfully!", {
+        toastId: "update-leave-success",
+      });
+
       await refreshLeaves();
       setModal();
     } catch (error) {
       console.error("Update error:", error);
-      toast.error("Failed to update leave.");
+      toast.error("Failed to update leave.", { toastId: "update-leave-error" });
     } finally {
       setSubmitting(false);
     }

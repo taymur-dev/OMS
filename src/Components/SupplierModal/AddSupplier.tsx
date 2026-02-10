@@ -37,31 +37,40 @@ export const AddSupplier = ({
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    e.preventDefault();
     const { name } = e.target;
     let value = e.target.value;
 
+    // remove leading spaces
     value = value.replace(/^\s+/, "");
 
     if (name === "supplierName") {
+      value = value.replace(/[^a-zA-Z\s]/g, "");
       value = value
-        .replace(/[0-9]/g, "")
-        .replace(/\b\w/g, (char) => char.toUpperCase());
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+      value = value.slice(0, 50); // ✅ limit
     }
 
     if (name === "supplierAddress") {
-      value = value.replace(/\b\w/g, (char) => char.toUpperCase());
+      value = value.replace(/[^a-zA-Z0-9\s,.-]/g, "");
+      value = value.slice(0, 250); // ✅ limit
     }
 
     if (name === "supplierEmail") {
       value = value.toLowerCase();
+      value = value.replace(/[^a-z0-9@._%+-]/g, "");
+      value = value.slice(0, 100); // ✅ safe limit
     }
 
     if (name === "supplierContact") {
       value = value.replace(/\D/g, "").slice(0, 11);
     }
 
-    setSupplierData({ ...supplierData, [name]: value });
+    setSupplierData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -76,17 +85,19 @@ export const AddSupplier = ({
       !supplierContact ||
       !supplierAddress
     ) {
-      toast.error("All fields are required" , { toastId: "required-fields" });
+      toast.error("All fields are required", { toastId: "required-fields" });
       return;
     }
 
     if (!/^\d{11}$/.test(supplierContact)) {
-      toast.error("Contact must be 11 digits" , { toastId: "contact-length" });
+      toast.error("Contact must be 11 digits", { toastId: "contact-length" });
       return;
     }
 
     if (!/^[a-z0-9._%+-]+@gmail\.com$/.test(supplierEmail)) {
-      toast.error("Email must be a valid @gmail.com address" , { toastId: "valid-domain" });
+      toast.error("Email must be a valid @gmail.com address", {
+        toastId: "valid-domain",
+      });
       return;
     }
 
@@ -98,13 +109,15 @@ export const AddSupplier = ({
         { headers: { Authorization: token } },
       );
 
-      toast.success(res.data.message , { toastId: "add-success" }) ;
+      toast.success(res.data.message, { toastId: "add-success" });
       handleGetAllSupplier();
       setModal();
       setSupplierData(initialState);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message || "Something went wrong" , { toastId: "wrong" });
+      toast.error(axiosError.response?.data.message || "Something went wrong", {
+        toastId: "wrong",
+      });
     }
     setLoading(false);
   };

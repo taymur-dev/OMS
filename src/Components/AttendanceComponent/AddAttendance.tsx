@@ -103,6 +103,22 @@ export const AddAttendance = ({
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const { selectUser, date, attendanceStatus, clockIn, clockOut } =
+      addUserAttendance;
+
+    if (
+      !selectUser ||
+      !date ||
+      !attendanceStatus ||
+      (!isAbsentOrLeave && (!clockIn || !clockOut))
+    ) {
+      toast.error("Please fill all required fields", {
+        toastId: "attendance-required",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await axios.post(
@@ -116,13 +132,21 @@ export const AddAttendance = ({
       );
 
       console.log(res.data);
+      toast.success("Attendance added successfully", {
+        toastId: "attendance-success",
+      });
       setModal();
       handleGetALLattendance();
       setLoading(false);
       toast.success("Attendance has been added successfully");
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message || "Something went wrong");
+      toast.error(
+        axiosError?.response?.data?.message || "Something went wrong",
+        { toastId: "attendance-error" },
+      );
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -143,7 +167,12 @@ export const AddAttendance = ({
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50">
         <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded border  border-indigo-900 ">
-          <form onSubmit={handlerSubmitted} onKeyDown={(e) => { if (e.key === "Enter") e.preventDefault(); }}>
+          <form
+            onSubmit={handlerSubmitted}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") e.preventDefault();
+            }}
+          >
             <div className="bg-indigo-900 rounded px-6">
               <Title
                 setModal={setModal}
