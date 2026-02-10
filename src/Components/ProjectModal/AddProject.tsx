@@ -16,7 +16,7 @@ type AddProjectProps = {
   handleGetAllProjects: () => void;
 };
 
-const currentDate = new Date().toLocaleDateString('sv-SE');
+const currentDate = new Date().toLocaleDateString("sv-SE");
 
 type AllCategoryT = {
   id: number;
@@ -44,10 +44,21 @@ export const AddProject = ({
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
-    setAddProject({ ...addProject, [name]: value });
+
+    let updatedValue = value;
+
+    if (name === "projectName") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    if (name === "description") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+    }
+
+    setAddProject({ ...addProject, [name]: updatedValue });
   };
 
   const handleGetAllCategories = useCallback(async () => {
@@ -73,24 +84,43 @@ export const AddProject = ({
         addProject,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
-      await handleGetAllProjects(); 
+      await handleGetAllProjects();
       console.log(res);
 
       setModal();
-      toast.success("Project submitted successfully!" , { toastId: "added success" });
-    } catch (error) {
-      console.error(error);
-      toast.error("All Fields Required!" , { toastId: "failed" });
+      toast.success("Project submitted successfully!", {
+        toastId: "added success",
+      });
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 400) {
+          toast.error(
+            error.response.data.message ||
+              "Project with this name and category already exists",
+            { toastId: "duplicate-project" },
+          );
+        } else {
+          toast.error("Failed to add project", { toastId: "failed" });
+        }
+      } else {
+        console.error(error);
+        toast.error("An unexpected error occurred", { toastId: "failed" });
+      }
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4  flex items-center justify-center z-50">
       <div className="w-full max-w-3xl bg-white rounded shadow-lg border border-indigo-900 overflow-hidden">
-        <form onSubmit={handlerSubmitted} onKeyDown={(e) => { if (e.key === "Enter") e.preventDefault(); }}>
+        <form
+          onSubmit={handlerSubmitted}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.preventDefault();
+          }}
+        >
           {/* Header */}
           <div className="bg-indigo-900 px-6 ">
             <Title

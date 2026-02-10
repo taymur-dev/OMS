@@ -29,7 +29,10 @@ export const AddProjectCategory = ({
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setAddCategory({ ...addCategory, [name]: value });
+
+    const updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+
+    setAddCategory({ ...addCategory, [name]: updatedValue });
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -51,8 +54,26 @@ export const AddProjectCategory = ({
       getAllCategories();
       toast.success(res.data.message, { toastId: "add-success" });
       setModal();
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 400) {
+          toast.error(
+            error.response.data.message || "This category already exists",
+            {
+              toastId: "duplicate-category",
+            },
+          );
+        } else {
+          toast.error("Something went wrong", {
+            toastId: "add-category-error",
+          });
+        }
+      } else {
+        console.error(error);
+        toast.error("An unexpected error occurred", {
+          toastId: "add-category-error",
+        });
+      }
     }
   };
   return (

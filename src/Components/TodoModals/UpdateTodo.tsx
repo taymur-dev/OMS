@@ -67,13 +67,28 @@ export const UpdateTodo = ({
 
   const handlerChange = (
     e: React.ChangeEvent<
-      HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >,
   ) => {
     const { name, value } = e.target;
+
+    let updatedValue = value;
+
+    if (name === "task") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    if (name === "note") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+    }
+
     setTodo((prev) =>
       prev
-        ? { ...prev, [name]: name === "employee_id" ? Number(value) : value }
+        ? {
+            ...prev,
+            [name]:
+              name === "employee_id" ? Number(updatedValue) : updatedValue,
+          }
         : prev,
     );
   };

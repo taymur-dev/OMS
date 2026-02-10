@@ -46,11 +46,18 @@ export const AddWithdraw = ({
   );
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setAddWithdraw((prev) => ({ ...prev, [name]: value }));
-  };
+  e: React.ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>,
+) => {
+  const { name, value } = e.target;
+  let updatedValue = value;
+
+  if (name === "withdrawReason") {
+    updatedValue = updatedValue.slice(0, 250);
+  }
+
+  setAddWithdraw((prev) => ({ ...prev, [name]: updatedValue }));
+};
+
 
   const getAllUsers = useCallback(async () => {
     try {

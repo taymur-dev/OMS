@@ -71,10 +71,23 @@ export const UpdateLeave = ({
 
   const handleChange = (
     e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >,
   ) => {
-    const { name, value } = e.target;
+    const { name } = e.target;
+    let value = e.target.value;
+
+    value = value.replace(/^\s+/, "");
+
+    if (name === "leaveSubject") {
+      value = value.replace(/[^a-zA-Z\s]/g, "");
+      value = value.slice(0, 50);
+    }
+
+    if (name === "leaveReason") {
+      value = value.slice(0, 250);
+    }
+
     setUpdateLeave((prev) => ({ ...prev, [name]: value }));
   };
 

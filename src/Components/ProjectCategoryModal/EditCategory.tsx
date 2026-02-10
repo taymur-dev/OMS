@@ -40,8 +40,15 @@ export const EditCategory = ({
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setUpdateCategory({ ...updateCategory, [name]: value } as selectCategory);
+
+    const updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+
+    setUpdateCategory({
+      ...updateCategory,
+      [name]: updatedValue,
+    } as selectCategory);
   };
+
   const token = currentUser?.token;
 
   const handleUpdateCategory = async (e: React.FormEvent<HTMLFormElement>) => {

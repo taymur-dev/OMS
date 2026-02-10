@@ -85,7 +85,18 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
     >,
   ) => {
     const { name, value } = e.target;
-    setAddTodo((prev) => ({ ...prev, [name]: value }));
+
+    let updatedValue = value;
+
+    if (name === "task") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    }
+
+    if (name === "note") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+    }
+
+    setAddTodo((prev) => ({ ...prev, [name]: updatedValue }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -97,7 +108,9 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
       !addTodo.endDate ||
       !addTodo.deadline
     ) {
-      toast.error("Please fill all required fields" , { toastId: "required-fields" });
+      toast.error("Please fill all required fields", {
+        toastId: "required-fields",
+      });
       return;
     }
 
@@ -106,13 +119,27 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      toast.success("Todo added successfully" , { toastId: "success" });
+      toast.success("Todo added successfully", { toastId: "success" });
       getAllTodos();
       setModal();
       setAddTodo(initialState);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
-      toast.error("Failed to add todo" , { toastId: "failed" });
+
+      if (axios.isAxiosError(err)) {
+        if (
+          err.response?.status === 400 &&
+          err.response?.data?.message.includes("already exists")
+        ) {
+          toast.error(err.response.data.message, { toastId: "duplicate-task" });
+        } else {
+          toast.error("Failed to add todo", { toastId: "failed" });
+        }
+      } else {
+        toast.error("An unexpected error occurred", {
+          toastId: "unexpected-error",
+        });
+      }
     }
   };
 
@@ -131,7 +158,12 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur flex items-center px-4  justify-center z-50">
       <div className="w-[42rem] max-h-[35rem] bg-white rounded border border-indigo-900">
-        <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === "Enter") e.preventDefault(); }}>
+        <form
+          onSubmit={handleSubmit}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.preventDefault();
+          }}
+        >
           <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}

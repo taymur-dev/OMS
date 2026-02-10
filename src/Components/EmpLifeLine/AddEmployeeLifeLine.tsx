@@ -67,7 +67,17 @@ export const AddEmployeeLifeLine = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
-    setAddEmployee((prev) => ({ ...prev, [name]: value }));
+    let updatedValue = value;
+
+    if (name === "position") {
+      updatedValue = updatedValue.replace(/[^a-zA-Z\s]/g, "").slice(0, 50);
+      updatedValue = updatedValue
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    }
+
+    setAddEmployee((prev) => ({ ...prev, [name]: updatedValue }));
   };
 
   const handleEmployeeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -99,7 +109,10 @@ export const AddEmployeeLifeLine = ({
       setAllUsers(filteredUsers);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message || "Failed to fetch users" , { toastId: "user-error" });
+      toast.error(
+        axiosError.response?.data.message || "Failed to fetch users",
+        { toastId: "user-error" },
+      );
     }
   }, [token]);
 
@@ -118,7 +131,7 @@ export const AddEmployeeLifeLine = ({
 
       if (res.data?.newLifeLine) {
         onAdd(res.data.newLifeLine);
-        toast.success(res.data.message , { toastId: "add-success" });
+        toast.success(res.data.message, { toastId: "add-success" });
       }
 
       setAddEmployee(initialState);
@@ -126,7 +139,8 @@ export const AddEmployeeLifeLine = ({
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(
-        axiosError.response?.data.message || "Failed to add lifeline", { toastId: "error" }
+        axiosError.response?.data.message || "Failed to add lifeline",
+        { toastId: "error" },
       );
     }
   };
@@ -134,7 +148,12 @@ export const AddEmployeeLifeLine = ({
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
       <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded border border-indigo-900">
-        <form onSubmit={handlerSubmitted} onKeyDown={(e) => { if (e.key === "Enter") e.preventDefault(); }}>
+        <form
+          onSubmit={handlerSubmitted}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.preventDefault();
+          }}
+        >
           <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}
