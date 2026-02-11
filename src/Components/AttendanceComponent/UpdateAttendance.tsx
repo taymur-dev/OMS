@@ -29,7 +29,7 @@ type UpdateAttendanceT = {
 type AddAttendanceProps = {
   setModal: () => void;
   updatedAttendance: UpdateAttendanceT | null;
-   handleGetAttendance: () => void;
+  handleGetAttendance: () => void;
 };
 
 type OptionType = {
@@ -48,10 +48,11 @@ const reasonLeaveOption = [
 export const UpdateAttendance = ({
   setModal,
   updatedAttendance,
-    handleGetAttendance,
-
+  handleGetAttendance,
 }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
+  const [loading, setLoading] = useState(false);
+
   const token = currentUser?.token;
 
   const [addUserAttendance, setAddUserAttendance] =
@@ -78,6 +79,7 @@ export const UpdateAttendance = ({
   };
 
   const handlerGetUsers = useCallback(async () => {
+
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
         headers: { Authorization: token },
@@ -88,7 +90,7 @@ export const UpdateAttendance = ({
       toast.error(
         axiosError?.response?.data?.message || "Failed to fetch users",
       );
-    }
+    } 
   }, [token]);
 
   useEffect(() => {
@@ -98,6 +100,8 @@ export const UpdateAttendance = ({
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!addUserAttendance) return;
+
+    setLoading(true);
 
     try {
       const formattedDate = addUserAttendance.date.slice(0, 10);
@@ -120,6 +124,7 @@ export const UpdateAttendance = ({
         },
         { headers: { Authorization: token } },
       );
+
       toast.success("Attendance updated successfully!");
       handleGetAttendance();
       setModal();
@@ -128,6 +133,8 @@ export const UpdateAttendance = ({
       toast.error(
         axiosError?.response?.data?.message || "Failed to update attendance.",
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -139,7 +146,12 @@ export const UpdateAttendance = ({
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50">
       <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded border border-indigo-900">
-        <form onSubmit={handlerSubmitted} onKeyDown={(e) => { if (e.key === "Enter") e.preventDefault(); }}>
+        <form
+          onSubmit={handlerSubmitted}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.preventDefault();
+          }}
+        >
           <div className="bg-indigo-900 rounded px-6">
             <Title
               setModal={setModal}
@@ -201,7 +213,10 @@ export const UpdateAttendance = ({
 
           <div className="flex justify-end  gap-3 px-6 py-4 bg-indigo-900 rounded">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

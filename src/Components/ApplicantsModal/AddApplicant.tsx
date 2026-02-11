@@ -44,6 +44,8 @@ export const AddApplicant = ({
 }: AddApplicantProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
+  const [loading, setLoading] = useState(false);
+
   const token = currentUser?.token;
 
   const [addApplicant, setAddApplicant] = useState(initialState);
@@ -118,6 +120,8 @@ export const AddApplicant = ({
       });
     }
 
+    setLoading(true);
+
     try {
       const payload = {
         ...addApplicant,
@@ -139,6 +143,8 @@ export const AddApplicant = ({
       toast.error("Failed to add applicant", {
         toastId: "add-applicant-error",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -260,7 +266,10 @@ export const AddApplicant = ({
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
-              <AddButton label="Save" />
+              <AddButton
+                loading={loading}
+                label={loading ? "Saving" : "Save"}
+              />
             </div>
           </form>
         </div>

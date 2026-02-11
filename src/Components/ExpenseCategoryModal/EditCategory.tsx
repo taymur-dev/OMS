@@ -24,6 +24,8 @@ export const EditCategory = ({
     expenseCategory: categoryName,
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -45,6 +47,8 @@ export const EditCategory = ({
       });
     }
 
+    setLoading(true);
+
     try {
       const res = await axios.put(
         `${BASE_URL}/api/admin/updateExpenseCategory/${categoryId}`,
@@ -64,6 +68,8 @@ export const EditCategory = ({
     } catch (error) {
       console.error("Update failed:", error);
       toast.error("Failed to update category", { toastId: "update-error" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -96,7 +102,10 @@ export const EditCategory = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

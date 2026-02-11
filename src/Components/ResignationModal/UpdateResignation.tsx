@@ -39,6 +39,9 @@ export const UpdateResignation = ({
   handleRefresh,
 }: UpdateResignationProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
+
+  const [loading, setLoading] = useState(false);
+
   const token = currentUser?.token;
 
   const [updateResignation, setUpdateResignation] = useState({
@@ -97,6 +100,8 @@ export const UpdateResignation = ({
       });
     }
 
+    setLoading(true);
+
     try {
       const res = await axios.put(
         `${BASE_URL}/api/updateResignation/${id}`,
@@ -129,6 +134,8 @@ export const UpdateResignation = ({
         axiosError.response?.data?.message || "Failed to update resignation",
         { toastId: "update-resignation-error" },
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -203,7 +210,10 @@ export const UpdateResignation = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

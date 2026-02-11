@@ -27,6 +27,8 @@ export const EditCategory = ({
 }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
+  const [loading, setLoading] = useState(false);
+
   const [updateCategory, setUpdateCategory] = useState<selectCategory | null>(
     null,
   );
@@ -53,24 +55,46 @@ export const EditCategory = ({
 
   const handleUpdateCategory = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!updateCategory?.categoryName?.trim()) {
+      toast.error("Category name is required", {
+        toastId: "category-required",
+      });
+      return;
+    }
+
+    setLoading(true);
     try {
       const res = await axios.put(
-        `${BASE_URL}/api/admin/updateCategory/${updateCategory?.id}`,
-        updateCategory,
+        `${BASE_URL}/api/admin/updateCategory/${updateCategory.id}`,
+        { categoryName: updateCategory.categoryName.trim() },
         {
           headers: {
             Authorization: token,
           },
         },
       );
-      console.log(res.data.message);
+
+      toast.success(res.data.message, { toastId: "edit-success" });
       getAllCategories();
       setModal();
-      toast.success(res.data.message, { toastId: "edit-success" });
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message || "Failed to update category";
+
+        toast.error(message, { toastId: "edit-failed" });
+      } else {
+        console.error(error);
+        toast.error("Unexpected error occurred", {
+          toastId: "edit-failed",
+        });
+      }
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-50">
@@ -101,7 +125,10 @@ export const EditCategory = ({
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
-              <AddButton label="Update" />
+              <AddButton
+                loading={loading}
+                label={loading ? "Updating" : "Update"}
+              />
             </div>
           </form>
         </div>

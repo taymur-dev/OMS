@@ -46,6 +46,8 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const [addLoan, setAddLoan] = useState(initialState);
   const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(false);
+
   const token = currentUser?.token;
 
   /* ================= USER ROLE PREFILL ================= */
@@ -81,9 +83,7 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
       updatedValue = value.replace(/\D/g, "").slice(0, 12);
     }
 
-
-
-    setAddLoan((prev) => ({ ...prev, [name]:  updatedValue }));
+    setAddLoan((prev) => ({ ...prev, [name]: updatedValue }));
   };
 
   /* ================= USER SELECT HANDLER (FIXED) ================= */
@@ -162,6 +162,8 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
       applyDate: addLoan.applyDate,
     };
 
+    setLoading(true);
+
     try {
       await axios.post(`${BASE_URL}/api/addLoan`, payload, {
         headers: { Authorization: `Bearer ${token}` },
@@ -179,6 +181,8 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
       } else {
         toast.error("Something went wrong", { toastId: "wrong" });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -276,7 +280,10 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

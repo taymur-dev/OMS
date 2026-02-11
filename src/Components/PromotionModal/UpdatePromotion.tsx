@@ -48,6 +48,8 @@ export const UpdatePromotion = ({
   handleRefresh,
 }: UpdatePromotionProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
+  const [loading, setLoading] = useState(false);
+
   const token = currentUser?.token;
   const isAdmin = currentUser?.role === "admin";
 
@@ -78,7 +80,7 @@ export const UpdatePromotion = ({
   ) => {
     const { name, value } = e.target;
 
-     let updatedValue = value;
+    let updatedValue = value;
 
     if (name === "note") {
       updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
@@ -107,6 +109,8 @@ export const UpdatePromotion = ({
         toastId: "update-promotion-validation",
       });
     }
+
+    setLoading(true);
 
     try {
       const url = isAdmin
@@ -137,6 +141,8 @@ export const UpdatePromotion = ({
         axiosError.response?.data.message || "Failed to update promotion",
         { toastId: "update-promotion-error" },
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -206,7 +212,10 @@ export const UpdatePromotion = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

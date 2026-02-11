@@ -51,6 +51,8 @@ export const AddAssignProject = ({
 
   const [addProject, setAddProject] = useState(initialState);
   const [allUsers, setAllUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [allProjects, setAllProjects] = useState<ProjectT[] | null>(null);
 
   const handlerChange = (
@@ -102,6 +104,8 @@ export const AddAssignProject = ({
       });
     }
 
+    setLoading(true);
+
     try {
       const payload = {
         employee_id: addProject.userId,
@@ -127,6 +131,8 @@ export const AddAssignProject = ({
       } else {
         toast.error("Something went wrong!", { toastId: "assign-error" });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -189,7 +195,10 @@ export const AddAssignProject = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

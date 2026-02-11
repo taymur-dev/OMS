@@ -8,6 +8,7 @@ import { TextareaField } from "../InputFields/TextareaField";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
+import { toast } from "react-toastify";
 
 type AllProjectT = {
   id: number;
@@ -39,6 +40,8 @@ export const UpdateProject = ({
   const token = currentUser?.token;
 
   const [updateProject, setUpdateProject] = useState(selectProject);
+  const [loading, setLoading] = useState(false);
+
   const [categories, setCategories] = useState<AllCategoryT[] | null>(null);
 
   const handlerChange = (
@@ -80,6 +83,8 @@ export const UpdateProject = ({
     e.preventDefault();
     if (!updateProject) return;
 
+    setLoading(true);
+
     try {
       const res = await axios.put(
         `${BASE_URL}/api/admin/updateProject/${updateProject.id}`,
@@ -90,10 +95,27 @@ export const UpdateProject = ({
       if (res.status === 200) {
         onUpdate?.(res.data.project);
         setModal();
+        toast.success("Project updated successfully!", {
+          toastId: "update-success",
+        });
       }
     } catch (error: unknown) {
-      console.error("Update failed:", error);
-      alert("Failed to update project. Please try again.");
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 400) {
+          toast.error(
+            error.response.data.message || "Duplicate project detected",
+            {
+              toastId: "update-duplicate",
+            },
+          );
+        } else {
+          toast.error("Failed to update project", { toastId: "update-failed" });
+        }
+      } else {
+        console.error(error);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -179,7 +201,10 @@ export const UpdateProject = ({
           {/* Footer */}
           <div className="flex justify-end gap-4 px-6 py-4 bg-indigo-900 border-t border-indigo-900 rounded">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

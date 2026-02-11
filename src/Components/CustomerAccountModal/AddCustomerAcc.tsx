@@ -52,18 +52,18 @@ export const AddCustomerAccount = ({
 
   const [form, setForm] = useState(initialState);
   const [allCustomers, setAllCustomers] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const { name, value , type } = e.target;
+    const { name, value, type } = e.target;
 
-     let updatedValue = value;
+    let updatedValue = value;
 
     if (type === "number") {
       updatedValue = value.replace(/\D/g, "").slice(0, 12);
     }
-
 
     setForm((prev) => {
       const updated = { ...prev, [name]: updatedValue };
@@ -121,6 +121,8 @@ export const AddCustomerAccount = ({
       });
     }
 
+    setLoading(true);
+
     try {
       const payload = {
         customerId: Number(form.selectCustomer),
@@ -149,6 +151,8 @@ export const AddCustomerAccount = ({
       toast.error("Failed to save customer account", {
         toastId: "customer-account-error",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -230,7 +234,10 @@ export const AddCustomerAccount = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

@@ -63,6 +63,8 @@ export const EditAssignProject = ({
   });
 
   const [allUsers, setAllUsers] = useState<Option[]>([]);
+    const [loading, setLoading] = useState(false);
+
   const [allProjects, setAllProjects] = useState<Option[]>([]);
 
   /* ================= PREFILL ================= */
@@ -143,6 +145,9 @@ export const EditAssignProject = ({
     );
   }
 
+      setLoading(true);
+
+
     try {
       await axios.put(
         `${BASE_URL}/api/admin/editAssignProject/${editData.id}`,
@@ -184,7 +189,9 @@ export const EditAssignProject = ({
     } else {
       toast.error("Something went wrong!", { toastId: "update-error" });
     }
-  }
+  }finally {
+      setLoading(false);
+    }
   };
 
   /* ================= INIT ================= */
@@ -244,7 +251,10 @@ export const EditAssignProject = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

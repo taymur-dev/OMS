@@ -32,6 +32,8 @@ export const AddJob = ({ setModal, refreshJobs }: AddJobsProps) => {
 
   const [addJob, setAddJob] = useState(initialState);
 
+  const [loading, setLoading] = useState(false);
+
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -57,9 +59,9 @@ export const AddJob = ({ setModal, refreshJobs }: AddJobsProps) => {
       return toast.error("Please fill all required fields", {
         toastId: "add-job-validation",
       });
-
-      return;
     }
+
+    setLoading(true);
 
     try {
       const res = await axios.post(`${BASE_URL}/api/admin/addjob`, addJob, {
@@ -75,6 +77,8 @@ export const AddJob = ({ setModal, refreshJobs }: AddJobsProps) => {
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong", { toastId: "add-job-error" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -115,7 +119,10 @@ export const AddJob = ({ setModal, refreshJobs }: AddJobsProps) => {
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

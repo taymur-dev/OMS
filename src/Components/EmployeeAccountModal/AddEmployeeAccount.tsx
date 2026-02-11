@@ -51,6 +51,7 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
 
   const [form, setForm] = useState(initialState);
   const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -129,6 +130,8 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
       });
     }
 
+    setLoading(true);
+
     try {
       await axios.post(
         `${BASE_URL}/api/admin/addEmployeeAccount`,
@@ -156,6 +159,8 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
       toast.error("Failed to save employee account", {
         toastId: "employee-account-error",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -238,7 +243,10 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

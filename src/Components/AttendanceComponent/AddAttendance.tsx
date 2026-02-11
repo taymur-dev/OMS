@@ -232,8 +232,8 @@ export const AddAttendance = ({
             <div className="flex justify-end  gap-3 px-6 py-4 bg-indigo-900 rounded">
               <CancelBtn setModal={setModal} />
               <AddButton
-                label={loading ? "Saving..." : "Save"}
                 loading={loading}
+                label={loading ? "Saving" : "Save"}
               />
             </div>
           </form>

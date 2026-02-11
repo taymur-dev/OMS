@@ -41,6 +41,8 @@ export const AddCalendarSession = ({
     startingMonth: Date | null;
   }>(initialState);
 
+  const [loading, setLoading] = useState(false);
+
   const handlerChange = (e: {
     target: { name: string; value: Date | null };
   }) => {
@@ -50,6 +52,8 @@ export const AddCalendarSession = ({
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    setLoading(true);
 
     try {
       if (!addCalendar.startingMonth) {
@@ -96,6 +100,8 @@ export const AddCalendarSession = ({
       }
 
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -140,7 +146,10 @@ export const AddCalendarSession = ({
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
-              <AddButton label="Save" />
+              <AddButton
+                loading={loading}
+                label={loading ? "Saving" : "Save"}
+              />
             </div>
           </form>
         </div>

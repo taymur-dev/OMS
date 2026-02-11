@@ -23,6 +23,9 @@ export const AddCategory = ({ setModal, refreshTable }: AddCategoryProps) => {
 
   const [addCategory, setAddCategory] = useState(initialState);
 
+    const [loading, setLoading] = useState(false);
+
+
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const { name, value } = e.target;
@@ -45,6 +48,9 @@ export const AddCategory = ({ setModal, refreshTable }: AddCategoryProps) => {
       });
     }
 
+        setLoading(true);
+
+
     try {
       const res = await axios.post(
         `${BASE_URL}/api/admin/createExpenseCategory`,
@@ -66,6 +72,8 @@ export const AddCategory = ({ setModal, refreshTable }: AddCategoryProps) => {
     } catch (error: unknown) {
       toast.error("Failed to add category", { toastId: "category-error" });
       console.error("Add Category Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -97,7 +105,10 @@ export const AddCategory = ({ setModal, refreshTable }: AddCategoryProps) => {
             </div>
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
-              <AddButton label="Save" />
+              <AddButton
+                loading={loading}
+                label={loading ? "Saving" : "Save"}
+              />
             </div>
           </form>
         </div>

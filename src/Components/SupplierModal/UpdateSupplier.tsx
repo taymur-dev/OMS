@@ -171,7 +171,10 @@ export const UpdateSupplier = ({
 
           <div className="flex justify-end gap-3 px-4 py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" loading={loading} />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

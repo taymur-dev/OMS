@@ -55,6 +55,8 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
 
   const [addProgress, setAddProgress] = useState<AddProgressType>(initialState);
   const [allUsers, setAllUsers] = useState<UserT[]>([]);
+  const [loading, setLoading] = useState(false);
+
   const [selectProject, setSelectProject] = useState<ProjectT[]>([]);
 
   const getAllUsers = useCallback(async () => {
@@ -149,6 +151,8 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
       });
     }
 
+    setLoading(true);
+
     try {
       await axios.post(
         `${BASE_URL}/api/admin/addProgress`,
@@ -170,6 +174,8 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
       } else {
         toast.error("Something went wrong!", { toastId: "add-progress-error" });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -256,7 +262,10 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

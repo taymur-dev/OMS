@@ -53,6 +53,7 @@ export const AddOverTime = ({
   const isAdmin = currentUser?.role === "admin";
 
   const [addOvertime, setAddOvertime] = useState<AddOvertimeType>(initialState);
+  const [loading, setLoading] = useState(false);
 
   const [allUsers, setAllUsers] = useState<UserT[]>([]);
 
@@ -113,6 +114,8 @@ export const AddOverTime = ({
       });
     }
 
+    setLoading(true);
+
     try {
       await axios.post(
         `${BASE_URL}/api/createOvertime`,
@@ -134,6 +137,8 @@ export const AddOverTime = ({
     } catch (err) {
       console.error("Add overtime failed:", err);
       toast.error("Failed to add overtime");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -202,7 +207,10 @@ export const AddOverTime = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

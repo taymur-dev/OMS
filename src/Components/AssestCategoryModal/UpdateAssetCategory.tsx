@@ -28,6 +28,8 @@ export const UpdateAssetCategory = ({
 
   const [updateCategory, setUpdateCategory] = useState(initialState);
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const fetchCategory = async () => {
       try {
@@ -52,7 +54,7 @@ export const UpdateAssetCategory = ({
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-     let updatedValue = value;
+    let updatedValue = value;
 
     if (name === "category_name") {
       updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
@@ -74,6 +76,8 @@ export const UpdateAssetCategory = ({
         toastId: "update-category-required",
       });
     }
+
+    setLoading(true);
 
     try {
       const res = await axios.put(
@@ -102,6 +106,8 @@ export const UpdateAssetCategory = ({
           toastId: "update-category-error-unknown",
         });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -133,7 +139,10 @@ export const UpdateAssetCategory = ({
           </div>
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

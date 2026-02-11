@@ -29,6 +29,8 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({
   refreshJobs,
 }) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
+  const [loading, setLoading] = useState(false);
+
   const token = currentUser?.token;
 
   const [formData, setFormData] = useState({
@@ -67,9 +69,9 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({
       return toast.error("All fields are required", {
         toastId: "update-job-validation",
       });
-
-      return;
     }
+
+    setLoading(true);
 
     try {
       const payload = {
@@ -94,6 +96,8 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({
     } catch (error) {
       console.error(error);
       toast.error("Failed to update job", { toastId: "update-job-error" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -134,7 +138,10 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

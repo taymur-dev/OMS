@@ -117,7 +117,7 @@ export const ComfirmPasswordModal = ({ catchId, setModal }: PasswordProps) => {
           <AddButton
             loading={loading}
             handleClick={() => handleChangePassword(catchId)}
-            label={loading ? "Saving..." : "Save Password"}
+            label={loading ? "Saving" : "Save Password"}
           />
         </div>
       </div>

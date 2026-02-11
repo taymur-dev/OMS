@@ -25,6 +25,7 @@ export const AddProjectCategory = ({
   const token = currentUser?.token;
 
   const [addCategory, setAddCategory] = useState(initialState);
+  const [loading, setLoading] = useState(false);
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -43,6 +44,8 @@ export const AddProjectCategory = ({
         toastId: "required-fields",
       });
     }
+
+    setLoading(true);
 
     try {
       const res = await axios.post(
@@ -74,6 +77,8 @@ export const AddProjectCategory = ({
           toastId: "add-category-error",
         });
       }
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -106,7 +111,10 @@ export const AddProjectCategory = ({
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
-              <AddButton label="Save" />
+              <AddButton
+                loading={loading}
+                label={loading ? "Saving" : "Save"}
+              />
             </div>
           </form>
         </div>

@@ -66,6 +66,7 @@ export const EditConfigEmpSalary = ({
   const [editConfigEmployee, setEditConfigEmployee] =
     useState<SalaryState>(initialState);
   const [allUsers, setAllUsers] = useState<SelectOption[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (editData) {
@@ -158,6 +159,8 @@ export const EditConfigEmpSalary = ({
       });
     }
 
+    setLoading(true);
+
     try {
       const payload = {
         employee_id: Number(editConfigEmployee.employee_id),
@@ -196,6 +199,8 @@ export const EditConfigEmpSalary = ({
           toastId: "salary-update-error-unknown",
         });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -281,7 +286,10 @@ export const EditConfigEmpSalary = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

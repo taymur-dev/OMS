@@ -40,7 +40,6 @@ export const AddSupplier = ({
     const { name } = e.target;
     let value = e.target.value;
 
-    // remove leading spaces
     value = value.replace(/^\s+/, "");
 
     if (name === "supplierName") {
@@ -49,18 +48,18 @@ export const AddSupplier = ({
         .split(" ")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
-      value = value.slice(0, 50); // ✅ limit
+      value = value.slice(0, 50);
     }
 
     if (name === "supplierAddress") {
       value = value.replace(/[^a-zA-Z0-9\s,.-]/g, "");
-      value = value.slice(0, 250); // ✅ limit
+      value = value.slice(0, 250);
     }
 
     if (name === "supplierEmail") {
       value = value.toLowerCase();
       value = value.replace(/[^a-z0-9@._%+-]/g, "");
-      value = value.slice(0, 100); // ✅ safe limit
+      value = value.slice(0, 100);
     }
 
     if (name === "supplierContact") {
@@ -173,8 +172,8 @@ export const AddSupplier = ({
           <div className="flex justify-end items-center gap-3 px-2 py-2 bg-indigo-900 rounded">
             <CancelBtn setModal={setModal} />
             <AddButton
-              label={loading ? "Saving..." : "Save"}
               loading={loading}
+              label={loading ? "Saving" : "Save"}
             />
           </div>
         </form>

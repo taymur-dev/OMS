@@ -50,6 +50,7 @@ export const AddAdvanceSalary = ({
 
   const [formData, setFormData] = useState<AdvanceSalaryFormType>(initialState);
   const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const getAllUsers = useCallback(async () => {
     if (!token) return;
@@ -114,6 +115,8 @@ export const AddAdvanceSalary = ({
       return;
     }
 
+    setLoading(true);
+
     try {
       await axios.post(
         `${BASE_URL}/api/createAdvanceSalary`,
@@ -136,6 +139,8 @@ export const AddAdvanceSalary = ({
     } catch (err) {
       console.error("Error adding advance salary:", err);
       toast.error("Failed to add advance salary", { toastId: "error" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -215,7 +220,10 @@ export const AddAdvanceSalary = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

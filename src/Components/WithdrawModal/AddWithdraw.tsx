@@ -41,23 +41,24 @@ export const AddWithdraw = ({
 
   const [addWithdraw, setAddWithdraw] = useState<WithdrawState>(initialState);
 
+  const [loading, setLoading] = useState(false);
+
   const [allUsers, setAllUsers] = useState<{ value: number; label: string }[]>(
     [],
   );
 
   const handlerChange = (
-  e: React.ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>,
-) => {
-  const { name, value } = e.target;
-  let updatedValue = value;
+    e: React.ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    let updatedValue = value;
 
-  if (name === "withdrawReason") {
-    updatedValue = updatedValue.slice(0, 250);
-  }
+    if (name === "withdrawReason") {
+      updatedValue = updatedValue.slice(0, 250);
+    }
 
-  setAddWithdraw((prev) => ({ ...prev, [name]: updatedValue }));
-};
-
+    setAddWithdraw((prev) => ({ ...prev, [name]: updatedValue }));
+  };
 
   const getAllUsers = useCallback(async () => {
     try {
@@ -80,7 +81,7 @@ export const AddWithdraw = ({
       setAllUsers(filteredUsers);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message , { toastId: "error" });
+      toast.error(axiosError.response?.data.message, { toastId: "error" });
     }
   }, [token]);
 
@@ -88,8 +89,12 @@ export const AddWithdraw = ({
     e.preventDefault();
 
     if (!addWithdraw?.id || !addWithdraw?.withdrawReason) {
-    return toast.error("Please provide a reason for withdrawal", { toastId: "required-withdraw" });
-  }
+      return toast.error("Please provide a reason for withdrawal", {
+        toastId: "required-withdraw",
+      });
+    }
+
+    setLoading(true);
 
     try {
       const res = await axios.post(
@@ -107,10 +112,14 @@ export const AddWithdraw = ({
       console.log(res.data);
       handlegetwithDrawEmployeess();
       setModal();
-      toast.success("Employee withdrawn successfully" , { toastId: "withdraw-success" });
+      toast.success("Employee withdrawn successfully", {
+        toastId: "withdraw-success",
+      });
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message , { toastId: "error" });
+      toast.error(axiosError.response?.data.message, { toastId: "error" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -149,7 +158,10 @@ export const AddWithdraw = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

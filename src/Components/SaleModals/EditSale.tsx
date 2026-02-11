@@ -49,6 +49,8 @@ export const EditSale = ({
 
   const [updateSale, setUpdateSale] = useState(seleteSale);
 
+  const [loading, setLoading] = useState(false);
+
   const [allProjects, setAllProjects] = useState<ProjectT[] | null>(null);
 
   const [allCustomers, setAllCustomers] = useState<CustomerT[] | null>(null);
@@ -113,6 +115,8 @@ export const EditSale = ({
       });
     }
 
+    setLoading(true);
+
     try {
       const res = await axios.put(
         `${BASE_URL}/api/admin/updateSalesData/${updateSale?.id}`,
@@ -136,6 +140,8 @@ export const EditSale = ({
       } else {
         toast.error("Something went wrong!", { toastId: "update-sale-error" });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -202,7 +208,10 @@ export const EditSale = ({
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
-              <AddButton label="Update" />
+              <AddButton
+                loading={loading}
+                label={loading ? "Updating" : "Update"}
+              />
             </div>
           </form>
         </div>

@@ -93,6 +93,7 @@ export const AddRejoining = ({
   const [addRejoin, setAddRejoin] = useState<AddRejoinState>(initialState);
   const [lifeLines, setLifeLines] = useState<LifeLine[]>([]);
   const [resignations, setResignations] = useState<ResignationT[]>([]);
+  const [loading, setLoading] = useState(false);
 
   // Fetch all users for admin
   const getAllUsers = useCallback(async () => {
@@ -227,6 +228,8 @@ export const AddRejoining = ({
       });
     }
 
+    setLoading(true);
+
     try {
       const url =
         currentUser?.role === "admin"
@@ -256,6 +259,8 @@ export const AddRejoining = ({
         axiosError.response?.data?.message || "Failed to update resignation",
         { toastId: "update-resignation-error" },
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -331,7 +336,10 @@ export const AddRejoining = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

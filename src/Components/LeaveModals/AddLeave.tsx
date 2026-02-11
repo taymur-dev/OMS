@@ -47,6 +47,7 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
 
   const [addLeave, setAddLeave] = useState<AddLeaveType>(initialState);
   const [allUsers, setAllUsers] = useState<UserT[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const getAllUsers = useCallback(async () => {
     if (!token) return;
@@ -107,6 +108,8 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
       return;
     }
 
+    setLoading(true);
+
     try {
       await axios.post(
         `${BASE_URL}/api/addLeave`,
@@ -134,6 +137,8 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
         axiosError?.response?.data?.message || "Failed to add leave",
         { toastId: "leave-error" },
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -202,7 +207,10 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
 
           <div className="flex justify-end gap-3 rounded px-4 py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

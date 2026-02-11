@@ -61,6 +61,8 @@ export const UpdateOverTime = ({
   /* ------------------ STATE ------------------ */
   const [allUsers, setAllUsers] = useState<User[]>([]);
 
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     employeeId: "",
     date: currentDate,
@@ -132,6 +134,8 @@ export const UpdateOverTime = ({
     e.preventDefault();
     if (!EditOvertime) return;
 
+    setLoading(true);
+
     try {
       const payload = {
         employeeId: Number(formData.employeeId),
@@ -156,7 +160,7 @@ export const UpdateOverTime = ({
       console.error(error);
       toast.error("Failed to update overtime.");
     } finally {
-      // setSubmitting(false);
+      setLoading(false);
     }
   };
 
@@ -242,7 +246,10 @@ export const UpdateOverTime = ({
             {/* Footer */}
             <div className="flex justify-end gap-3 px-6 py-4 bg-indigo-900 border-t border-indigo-800">
               <CancelBtn setModal={setModal} />
-              <AddButton label="Update" />
+              <AddButton
+                loading={loading}
+                label={loading ? "Updating" : "Update"}
+              />
             </div>
           </form>
         )}

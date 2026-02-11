@@ -44,6 +44,8 @@ export const UpdateApplicant = ({
   refreshApplicants,
 }: UpdateApplicantProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
+  const [loading, setLoading] = useState(false);
+
   const token = currentUser?.token;
 
   const [updateApplicant, setUpdateApplicant] = useState({
@@ -83,7 +85,7 @@ export const UpdateApplicant = ({
   ) => {
     const { name, value, type } = e.target;
 
-     let updatedValue = value;
+    let updatedValue = value;
 
     if (name === "applicant_name") {
       updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
@@ -146,6 +148,8 @@ export const UpdateApplicant = ({
       });
     }
 
+    setLoading(true);
+
     try {
       const res = await axios.patch(
         `${BASE_URL}/api/admin/updateapplicant/${updateApplicant.id}`,
@@ -162,6 +166,8 @@ export const UpdateApplicant = ({
       toast.error("Failed to add applicant", {
         toastId: "add-applicant-error",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -235,7 +241,10 @@ export const UpdateApplicant = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

@@ -39,6 +39,8 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
     { id: number; label: string; value: string }[]
   >([]);
 
+  const [loading, setLoading] = useState(false);
+
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -47,7 +49,7 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
     e.preventDefault();
     const { name, value } = e.target;
 
-     let updatedValue = value;
+    let updatedValue = value;
 
     if (name === "asset_name") {
       updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
@@ -105,7 +107,12 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!addAsset.category_id || !addAsset.asset_name || !addAsset.description || !addAsset.date) {
+    if (
+      !addAsset.category_id ||
+      !addAsset.asset_name ||
+      !addAsset.description ||
+      !addAsset.date
+    ) {
       return toast.error("Please fill in all required fields", {
         toastId: "add-asset-validation",
       });
@@ -114,6 +121,8 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
     if (!token) {
       return toast.error("Unauthorized", { toastId: "add-asset-unauthorized" });
     }
+
+    setLoading(true);
 
     try {
       const res = await axios.post(
@@ -140,6 +149,8 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
         });
       }
       console.error("Add asset failed:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -197,7 +208,10 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
-              <AddButton label="Save" />
+              <AddButton
+                loading={loading}
+                label={loading ? "Saving" : "Save"}
+              />
             </div>
           </form>
         </div>

@@ -30,6 +30,8 @@ export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
   const token = currentUser?.token;
 
   const [expense, setExpense] = useState<ExpenseT | null>(editExpense);
+  const [loading, setLoading] = useState(false);
+
   const [categories, setCategories] = useState<ExpenseCategoryT[] | null>(null);
 
   const handlerChange = (
@@ -54,6 +56,8 @@ export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
     e.preventDefault();
     if (!expense) return;
 
+    setLoading(true);
+
     try {
       await axios.put(
         `${BASE_URL}/api/admin/updateExpense/${expense.id}`,
@@ -70,6 +74,8 @@ export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
     } catch (error) {
       console.error("Failed to update expense:", error);
       toast.error("Failed to update expense");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,9 +84,12 @@ export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
   }, [getAllCategories]);
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50" onKeyDown={(e) => {
-          if (e.key === "Enter") e.preventDefault();
-        }}>
+    <div
+      className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-[42rem] max-h-[90rem] bg-white mx-auto rounded border border-indigo-900 overflow-auto">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded px-6">
@@ -135,7 +144,10 @@ export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

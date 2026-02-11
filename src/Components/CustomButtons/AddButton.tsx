@@ -19,13 +19,13 @@ export const AddButton = <T,>({
     <div>
       <button
         disabled={loading}
-        className="bg-white text-indigo-900 py-1 px-3 rounded hover:cursor-pointer hover:scale-105 duration-300"
+        className="bg-white text-indigo-900 py-1 px-2 rounded hover:cursor-pointer hover:scale-105 duration-300"
         onClick={(e) => handleClick && handleClick(e, param)}
       >
         {loading ? (
           <div className="flex items-center justify-center gap-2">
-            <span>Loading...</span>
-            <ClipLoader size={18} color="white" />
+            <span>{label}</span>
+            {loading && <ClipLoader size={18} color="#120988" />}
           </div>
         ) : (
           label

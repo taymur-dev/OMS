@@ -46,6 +46,7 @@ export const AddHoliday = ({
   const token = currentUser?.token;
 
   const [holiday, setHoliday] = useState(initialState);
+  const [loading, setLoading] = useState(false);
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -118,6 +119,8 @@ export const AddHoliday = ({
       return;
     }
 
+    setLoading(true);
+
     try {
       const res = await axios.post(
         `${BASE_URL}/api/admin/configHolidays`,
@@ -146,6 +149,8 @@ export const AddHoliday = ({
           toastId: "unknown-error",
         });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -200,7 +205,10 @@ export const AddHoliday = ({
             <div className="flex justify-end gap-3 px-4 py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
 
-              <AddButton label="Save" />
+              <AddButton
+                loading={loading}
+                label={loading ? "Saving" : "Save"}
+              />
             </div>
           </form>
         </div>

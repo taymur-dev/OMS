@@ -43,6 +43,7 @@ export const EditAttendanceRule = ({
   const [updateConfig, setUpdateConfig] = useState<ALLCONFIGT | null>(
     selectData,
   );
+  const [loading, setLoading] = useState(false);
 
   const token = currentUser?.token;
 
@@ -59,30 +60,35 @@ export const EditAttendanceRule = ({
     e.preventDefault();
     if (!updateConfig) return;
 
-        const { startTime, endTime, lateTime, halfLeave } = updateConfig;
+    const { startTime, endTime, lateTime, halfLeave } = updateConfig;
 
+    if (
+      lateTime < startTime ||
+      (lateTime > endTime && halfLeave < startTime) ||
+      halfLeave > endTime
+    ) {
+      toast.error(
+        "Late and Half Leave Time must be between Start Time and End Time",
+      );
+      return;
+    }
 
-     if (lateTime < startTime || lateTime > endTime && halfLeave < startTime || halfLeave > endTime) {
-          toast.error("Late and Half Leave Time must be between Start Time and End Time");
-          return;
-        }
-    
-        if (lateTime < startTime || lateTime > endTime) {
-          toast.error("Late Time must be between Start Time and End Time");
-          return;
-        }
-    
-        if (halfLeave < startTime || halfLeave > endTime) {
-          toast.error("Half Leave Time must be between Start Time and End Time");
-          return;
-        }
-    
-       
-    
-        if (startTime >= endTime) {
-          toast.error("Start Time must be before End Time");
-          return;
-        }
+    if (lateTime < startTime || lateTime > endTime) {
+      toast.error("Late Time must be between Start Time and End Time");
+      return;
+    }
+
+    if (halfLeave < startTime || halfLeave > endTime) {
+      toast.error("Half Leave Time must be between Start Time and End Time");
+      return;
+    }
+
+    if (startTime >= endTime) {
+      toast.error("Start Time must be before End Time");
+      return;
+    }
+
+    setLoading(true);
 
     try {
       await axios.put(
@@ -100,16 +106,19 @@ export const EditAttendanceRule = ({
     } catch (error) {
       console.error(error);
       toast.error("Failed to update configuration");
+    } finally {
+      setLoading(false);
     }
   };
 
-
-  
   return (
     <div>
-      <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50" onKeyDown={(e) => {
+      <div
+        className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50"
+        onKeyDown={(e) => {
           if (e.key === "Enter") e.preventDefault();
-        }}>
+        }}
+      >
         <div className="w-[42rem] max-h-[35rem] bg-white mx-auto rounded border border-indigo-900 ">
           <form onSubmit={handlerSubmitted}>
             <div className="bg-indigo-900 rounded px-6">
@@ -167,7 +176,10 @@ export const EditAttendanceRule = ({
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
-              <AddButton label="Update" />
+              <AddButton
+                loading={loading}
+                label={loading ? "Updating" : "Update"}
+              />
             </div>
           </form>
         </div>

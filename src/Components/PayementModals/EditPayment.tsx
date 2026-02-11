@@ -49,6 +49,7 @@ export const EditPayment = ({
 
   const [allCustomers, setAllCustomers] = useState<CustomerT[]>([]);
   const [loadingCustomers, setLoadingCustomers] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const handlerChange = (
     e: React.ChangeEvent<
@@ -102,6 +103,8 @@ export const EditPayment = ({
       );
     }
 
+    setLoading(true);
+
     try {
       const formattedDate = updatePayment.date
         ? updatePayment.date.split("T")[0]
@@ -123,6 +126,8 @@ export const EditPayment = ({
     } catch (error) {
       console.error("Update Payment Error:", error);
       toast.error("Failed to update payment");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -209,7 +214,10 @@ export const EditPayment = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

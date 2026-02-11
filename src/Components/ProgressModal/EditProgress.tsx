@@ -45,6 +45,8 @@ export const EditProgress = ({
   handleRefresh,
 }: EditProgressProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
+  const [loading, setLoading] = useState(false);
+
   const token = currentUser?.token;
 
   const [updateProgress, setUpdateProgress] = useState<UpdateProgressState>({
@@ -128,6 +130,8 @@ export const EditProgress = ({
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    setLoading(true);
+
     try {
       const selectedProject = selectProject?.find(
         (p) => p.projectName === updateProgress.project,
@@ -160,6 +164,8 @@ export const EditProgress = ({
     } catch (error) {
       console.error(error);
       toast.error("Failed to update progress");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -223,7 +229,10 @@ export const EditProgress = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

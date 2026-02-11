@@ -194,8 +194,8 @@ export const UpdateLeave = ({
           <div className="flex justify-end gap-3 px-6 py-2 bg-indigo-900 rounded border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
             <AddButton
-              label={submitting ? "Updating..." : "Update"}
               loading={submitting}
+              label={submitting ? "Updating" : "Update"}
             />
           </div>
         </form>

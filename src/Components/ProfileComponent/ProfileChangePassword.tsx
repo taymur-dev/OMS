@@ -25,6 +25,7 @@ export const ProfileChangePassword = ({
 
   const [changePassword, setChangePassword] = useState(initialState);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -39,6 +40,8 @@ export const ProfileChangePassword = ({
       return;
     }
 
+    setLoading(true);
+
     try {
       const res = await axios.put(
         `${BASE_URL}/api/changePassword/${id}`,
@@ -48,7 +51,7 @@ export const ProfileChangePassword = ({
         },
         {
           headers: { Authorization: token || "" },
-        }
+        },
       );
 
       setMessage(res.data.message);
@@ -59,6 +62,8 @@ export const ProfileChangePassword = ({
       } else {
         setMessage("Network error or server is down");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,7 +108,10 @@ export const ProfileChangePassword = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

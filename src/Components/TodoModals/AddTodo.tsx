@@ -52,6 +52,8 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
   const isAdmin = currentUser?.role === "admin";
 
   const [addTodo, setAddTodo] = useState(initialState);
+  const [loading, setLoading] = useState(false);
+
   const [allUsers, setAllUsers] = useState<UserT[]>([]);
 
   useEffect(() => {
@@ -114,6 +116,8 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
       return;
     }
 
+    setLoading(true);
+
     try {
       await axios.post(`${BASE_URL}/api/admin/createTodo`, addTodo, {
         headers: { Authorization: `Bearer ${token}` },
@@ -140,6 +144,8 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
           toastId: "unexpected-error",
         });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -223,7 +229,10 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
 
           <div className="flex justify-end gap-3 px-4 py-3 rounded bg-indigo-900  border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

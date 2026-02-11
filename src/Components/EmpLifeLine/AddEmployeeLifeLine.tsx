@@ -59,6 +59,7 @@ export const AddEmployeeLifeLine = ({
 }: AddEmployeeLifeLineProps) => {
   const [allUsers, setAllUsers] = useState<UserOption[]>([]);
   const [addEmployee, setAddEmployee] = useState<Employee>(initialState);
+  const [loading, setLoading] = useState(false);
 
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
@@ -122,6 +123,7 @@ export const AddEmployeeLifeLine = ({
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res = await axios.post(
         `${BASE_URL}/api/admin/addEmpll`,
@@ -142,6 +144,8 @@ export const AddEmployeeLifeLine = ({
         axiosError.response?.data.message || "Failed to add lifeline",
         { toastId: "error" },
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -209,7 +213,10 @@ export const AddEmployeeLifeLine = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

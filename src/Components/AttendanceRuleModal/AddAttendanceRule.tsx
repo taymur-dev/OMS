@@ -38,6 +38,8 @@ export const AddAttendanceRule = ({
 }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const [addConfig, setAddConfig] = useState(initialState);
+    const [loading, setLoading] = useState(false);
+
   const token = currentUser?.token;
 
   const handlerChange = (
@@ -74,6 +76,9 @@ export const AddAttendanceRule = ({
       return;
     }
 
+        setLoading(true);
+
+
     try {
       await axios.post(`${BASE_URL}/api/admin/configureTime`, addConfig, {
         headers: { Authorization: token },
@@ -84,6 +89,8 @@ export const AddAttendanceRule = ({
     } catch (error) {
       console.error(error);
       toast.error("Error saving configuration");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -152,7 +159,10 @@ export const AddAttendanceRule = ({
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
-              <AddButton label="Save" />
+              <AddButton
+                loading={loading}
+                label={loading ? "Saving" : "Save"}
+              />
             </div>
           </form>
         </div>

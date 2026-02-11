@@ -53,6 +53,8 @@ export const EditAdvanceSalary = ({
 
   const [allUsers, setAllUsers] = useState<{ id: number; name: string }[]>([]);
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if (advanceData) {
       setUpdateAdvance({
@@ -112,6 +114,8 @@ export const EditAdvanceSalary = ({
       return;
     }
 
+    setLoading(true);
+
     try {
       await axios.put(
         `${BASE_URL}/api/admin/updateAdvanceSalary/${advanceData.id}`,
@@ -133,6 +137,8 @@ export const EditAdvanceSalary = ({
     } catch (error) {
       console.error(error);
       toast.error("Failed to update advance salary", { toastId: "failed" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -210,7 +216,10 @@ export const EditAdvanceSalary = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Updatee" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

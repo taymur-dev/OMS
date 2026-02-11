@@ -1,4 +1,3 @@
-// AddProject.tsx
 import React, { FormEvent, useEffect, useState, useCallback } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
@@ -39,6 +38,8 @@ export const AddProject = ({
   const { currentUser } = useAppSelector((state) => state.officeState);
   const [addProject, setAddProject] = useState(initialState);
   const [categories, setCategories] = useState<AllCategoryT[] | null>(null);
+  const [loading, setLoading] = useState(false);
+
   const token = currentUser?.token;
 
   const handlerChange = (
@@ -78,6 +79,8 @@ export const AddProject = ({
 
   const handlerSubmitted = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
       const res = await axios.post(
         `${BASE_URL}/api/admin/addProject`,
@@ -109,6 +112,8 @@ export const AddProject = ({
         console.error(error);
         toast.error("An unexpected error occurred", { toastId: "failed" });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -178,7 +183,6 @@ export const AddProject = ({
               className="col-span-1 md:col-span-2"
             />
 
-            {/* ✅ Completion Status Field */}
             <OptionField
               labelName="Completion Status *"
               name="completionStatus"
@@ -196,7 +200,10 @@ export const AddProject = ({
           {/* Footer */}
           <div className="flex justify-end gap-3 px-6 py-4 bg-indigo-900 border-t border-indigo-900 rounded">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

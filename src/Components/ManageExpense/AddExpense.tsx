@@ -32,6 +32,8 @@ const initialState = {
 export const AddExpense = ({ setModal }: AddAttendanceProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
+  const [loading, setLoading] = useState(false);
+
   const [addExpense, setAddExpense] = useState(initialState);
 
   const [allExpenseCategory, setAllExpenseCategory] = useState<
@@ -76,6 +78,9 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    setLoading(true);
+
     try {
       const res = await axios.post(
         `${BASE_URL}/api/admin/addExpense`,
@@ -91,6 +96,8 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
       toast.success("Expense added successfully");
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -155,7 +162,10 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
-              <AddButton label="Save" />
+              <AddButton
+                loading={loading}
+                label={loading ? "Saving" : "Save"}
+              />
             </div>
           </form>
         </div>

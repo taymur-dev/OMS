@@ -65,6 +65,7 @@ export const UpdateRejoining = ({
 
   const [allUsers, setAllUsers] = useState<SelectOption[]>([]);
   const [allUsersRaw, setAllUsersRaw] = useState<UserT[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const [updateData, setUpdateData] = useState<UpdateRejoinState>({
     id: rejoinData.employee_id.toString(),
@@ -87,7 +88,6 @@ export const UpdateRejoining = ({
     if (name === "note") {
       updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
     }
-
 
     setUpdateData({ ...updateData, [name]: updatedValue });
   };
@@ -154,6 +154,8 @@ export const UpdateRejoining = ({
       });
     }
 
+    setLoading(true);
+
     try {
       const url =
         currentUser?.role === "admin"
@@ -175,6 +177,8 @@ export const UpdateRejoining = ({
         axiosError.response?.data?.message || "Failed to update rejoin request",
         { toastId: "update-rejoin-error" },
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -260,7 +264,10 @@ export const UpdateRejoining = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

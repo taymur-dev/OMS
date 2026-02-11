@@ -51,6 +51,8 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
   const [selectedProject, setSelectedProject] = useState("");
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const [cart, setCart] = useState<CartItem[]>(() => {
     const storedCart = sessionStorage.getItem("cart");
     return storedCart ? JSON.parse(storedCart) : [];
@@ -99,8 +101,6 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
     const { name, value, type } = e.target;
 
     let updatedValue = value;
-
-   
 
     if (name === "description") {
       updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
@@ -158,6 +158,8 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
     if (!cart.length) return toast.error("Please add items before submitting");
     if (!selectedCustomer) return toast.error("Please select a customer.");
 
+    setLoading(true);
+
     try {
       const payload = {
         date,
@@ -183,6 +185,8 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
     } catch (error) {
       console.log(error);
       toast.error("Failed to submit quotation.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -418,7 +422,11 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
         {/* FOOTER: Fixed at bottom with identical padding/colors to AddSale */}
         <div className="flex justify-end gap-3 px-6 py-3 bg-indigo-900 border-t border-indigo-900">
           <CancelBtn setModal={closeModal} />
-          <AddButton label="Save" handleClick={handlerSubmitted} />
+          <AddButton
+            loading={loading}
+            label={loading ? "Saving" : "Save"}
+            handleClick={handlerSubmitted}
+          />
         </div>
       </div>
     </div>

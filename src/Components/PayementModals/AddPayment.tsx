@@ -44,6 +44,7 @@ export const AddPayment = ({
   const { currentUser } = useAppSelector((state) => state.officeState);
 
   const [addProgress, setAddProgress] = useState(initialState);
+  const [loading, setLoading] = useState(false);
 
   console.log(addProgress);
 
@@ -101,6 +102,8 @@ export const AddPayment = ({
       );
     }
 
+    setLoading(true);
+
     try {
       const res = await axios.post(
         `${BASE_URL}/api/admin/addPayment`,
@@ -127,6 +130,8 @@ export const AddPayment = ({
         toast.error("Something went wrong!", { toastId: "payment-error" });
       }
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -211,7 +216,10 @@ export const AddPayment = ({
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
-              <AddButton label="Save" />
+              <AddButton
+                loading={loading}
+                label={loading ? "Saving" : "Save"}
+              />
             </div>
           </form>
         </div>

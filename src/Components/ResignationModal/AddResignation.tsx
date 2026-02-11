@@ -59,6 +59,7 @@ export const AddResignation = ({
   const [allUsers, setAllUsers] = useState<UserT[]>([]);
   const [lifeLines, setLifeLines] = useState<LifeLine[]>([]);
   const [formData, setFormData] = useState<ResignationT>(initialState);
+  const [loading, setLoading] = useState(false);
 
   const getAllUsers = useCallback(async () => {
     if (!token || !isAdmin) return;
@@ -100,9 +101,7 @@ export const AddResignation = ({
   ) => {
     const { name, value } = e.target;
 
-     let updatedValue = value;
-
-   
+    let updatedValue = value;
 
     if (name === "note") {
       updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
@@ -110,7 +109,7 @@ export const AddResignation = ({
 
     setFormData((prev) => ({
       ...prev,
-      [name]:updatedValue,
+      [name]: updatedValue,
     }));
 
     if (name === "id") {
@@ -148,6 +147,8 @@ export const AddResignation = ({
       });
     }
 
+    setLoading(true);
+
     try {
       const url = isAdmin
         ? `${BASE_URL}/api/admin/addResignation`
@@ -170,6 +171,8 @@ export const AddResignation = ({
         axiosError.response?.data?.message || "Failed to add resignation",
         { toastId: "add-resignation-error" },
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -235,7 +238,10 @@ export const AddResignation = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

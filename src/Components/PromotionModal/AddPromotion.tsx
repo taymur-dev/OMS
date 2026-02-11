@@ -65,6 +65,8 @@ export const AddPromotion = ({
   const [addPromotion, setAddPromotion] =
     useState<AddPromotionType>(initialState);
 
+  const [loading, setLoading] = useState(false);
+
   const getAllUsers = useCallback(async () => {
     if (!token) return;
     try {
@@ -153,6 +155,8 @@ export const AddPromotion = ({
       });
     }
 
+    setLoading(true);
+
     try {
       const url = isAdmin
         ? `${BASE_URL}/api/admin/addPromotion`
@@ -177,6 +181,8 @@ export const AddPromotion = ({
           toastId: "add-promotion-error",
         },
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -256,7 +262,10 @@ export const AddPromotion = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Save" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving" : "Save"}
+            />
           </div>
         </form>
       </div>

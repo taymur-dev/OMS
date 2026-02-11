@@ -47,6 +47,8 @@ export const UpdateAsset = ({
   >([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
 
+  const [loading, setLoading] = useState(false);
+
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -110,6 +112,8 @@ export const UpdateAsset = ({
       });
     }
 
+    setLoading(true);
+
     try {
       const res = await axios.put(
         `${BASE_URL}/api/admin/updateasset/${assetData.id}`,
@@ -132,6 +136,8 @@ export const UpdateAsset = ({
         });
       }
       console.error("updated asset failed:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -191,7 +197,10 @@ export const UpdateAsset = ({
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
-              <AddButton label="Update" />
+              <AddButton
+                loading={loading}
+                label={loading ? "Updating" : "Update"}
+              />
             </div>
           </form>
         </div>

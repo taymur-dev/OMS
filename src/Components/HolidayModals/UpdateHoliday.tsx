@@ -38,6 +38,8 @@ export const UpdateHoliday = ({
 }: UpdateHolidayProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
+  const [loading, setLoading] = useState(false);
+
   const token = currentUser?.token ?? "";
 
   const formatDateForInput = (date: string) => {
@@ -136,6 +138,8 @@ export const UpdateHoliday = ({
       return;
     }
 
+    setLoading(true);
+
     try {
       const res = await axios.put(
         `${BASE_URL}/api/admin/updateHoliday/${holidayData.id}`,
@@ -168,6 +172,8 @@ export const UpdateHoliday = ({
           toastId: "server-error",
         });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -224,7 +230,10 @@ export const UpdateHoliday = ({
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
 
-            <AddButton label="Update Holiday" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

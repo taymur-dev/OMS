@@ -35,6 +35,8 @@ export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {
 
   const [addSale, setAddSale] = useState(initialState);
   const [allProjects, setAllProjects] = useState<ProjectT[] | null>(null);
+    const [loading, setLoading] = useState(false);
+
   const [allCustomers, setAllCustomers] = useState<CustomerT[] | null>(null);
 
   const token = currentUser?.token;
@@ -77,6 +79,9 @@ export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {
       });
     }
 
+       setLoading(true);
+
+
     try {
       await axios.post(`${BASE_URL}/api/admin/addSale`, addSale, {
         headers: { Authorization: `Bearer ${token}` },
@@ -91,6 +96,8 @@ export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {
       } else {
         toast.error("Something went wrong!", { toastId: "add-sale-error" });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -159,7 +166,10 @@ export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
               <CancelBtn setModal={setModal} />
-              <AddButton label="Save" />
+              <AddButton
+                loading={loading}
+                label={loading ? "Saving" : "Save"}
+              />
             </div>
           </form>
         </div>

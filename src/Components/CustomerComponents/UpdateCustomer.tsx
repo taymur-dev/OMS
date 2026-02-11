@@ -31,6 +31,8 @@ export const UpdateCustomer = ({
   customerDetail,
 }: AddCustomerProps) => {
   const [customerData, setCustomerData] = useState<CustomerT | null>(null);
+  const [loading, setLoading] = useState(false);
+
   const { currentUser } = useAppSelector((state) => state?.officeState);
   const token = currentUser?.token;
 
@@ -122,6 +124,8 @@ export const UpdateCustomer = ({
       return;
     }
 
+    setLoading(true);
+
     try {
       const res = await axios.patch(
         `${BASE_URL}/api/admin/updateCustomer/${customerId}`,
@@ -148,6 +152,8 @@ export const UpdateCustomer = ({
       } else {
         toast.error(message || "Something went wrong", { toastId: "wrong" });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -216,7 +222,7 @@ export const UpdateCustomer = ({
           {/* Footer */}
           <div className="flex justify-end gap-3 px-4 py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setIsOpenModal} />
-            <AddButton label="Update" />
+            <AddButton loading={loading} label={loading ? "Updating" : "Update"}  />
           </div>
         </form>
       </div>

@@ -360,7 +360,11 @@ export const AddUser = ({
             <AddButton
               loading={loading}
               label={
-                loading ? "Loading..." : viewType === "ADD" ? "Save" : "Update"
+                loading
+                  ? "Processing"
+                  : viewType === "ADD"
+                    ? "Save"
+                    : "Update"
               }
             />
           </div>

@@ -63,6 +63,8 @@ export const UpdateTodo = ({
   const isAdmin = currentUser?.role === "admin";
 
   const [todo, setTodo] = useState<TodoType | null>(seleteTodo);
+    const [loading, setLoading] = useState(false);
+
   const [allUsers, setAllUsers] = useState<UserT[]>([]);
 
   const handlerChange = (
@@ -140,6 +142,8 @@ export const UpdateTodo = ({
       );
     }
 
+        setLoading(true);
+
     try {
       await axios.put(
         `${BASE_URL}/api/admin/updateTodo/${todo.id}`,
@@ -169,6 +173,8 @@ export const UpdateTodo = ({
       } else {
         toast.error("Something went wrong!", { toastId: "update-error" });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -258,7 +264,10 @@ export const UpdateTodo = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton label="Update" />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

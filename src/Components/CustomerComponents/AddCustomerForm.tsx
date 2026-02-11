@@ -210,8 +210,8 @@ export const AddCustomer = ({
           <div className="flex justify-end items-center gap-3 px-6 py-4 bg-indigo-900 rounded">
             <CancelBtn setModal={setIsOpenModal} />
             <AddButton
-              label={loading ? "Saving..." : "Save"}
               loading={loading}
+              label={loading ? "Saving" : "Save"}
             />
           </div>
         </form>
