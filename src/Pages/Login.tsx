@@ -13,6 +13,7 @@ import { navigationStart, navigationSuccess } from "../redux/NavigationSlice";
 import { toast } from "react-toastify";
 import Lottie from "lottie-react";
 import SplashAnimation from "../assets/login-splash.json";
+import { ClipLoader } from "react-spinners";
 
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 
@@ -93,22 +94,30 @@ export const Login = () => {
       className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden bg-gradient-to-br
      from-indigo-500 via-indigo-900 to-indigo-600"
     >
-      <div className="absolute -bottom-10 -left-16 w-60 h-60 bg-slate-200/20 rounded-full
-       animate-[float_2s_ease-in-out_infinite] delay-1000 animate-pulse blur-1xl" />
+      <div
+        className="absolute -bottom-10 -left-16 w-60 h-60 bg-slate-200/20 rounded-full
+       animate-[float_2s_ease-in-out_infinite] delay-1000 animate-pulse blur-1xl"
+      />
 
-      <div className="absolute -top-10 -right-16 w-60 h-60 bg-slate-200/20 rounded-full
-       animate-[float_2s_ease-in-out_infinite] delay-1000 blur-1xl" />
+      <div
+        className="absolute -top-10 -right-16 w-60 h-60 bg-slate-200/20 rounded-full
+       animate-[float_2s_ease-in-out_infinite] delay-1000 blur-1xl"
+      />
 
-      <div className="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl px-8 py-10
-       animate-[fadeIn_0.6s_ease-out]">
+      <div
+        className="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl px-8 py-10
+       animate-[fadeIn_0.6s_ease-out]"
+      >
         <div className="flex flex-col items-center  justify-center">
           <div className="relative mb-4">
             <div
               className="relative w-32 h-32 rounded-full bg-indigo-900 flex items-center
              justify-center shadow-xl animate-[float_3s_ease-in-out_infinite]"
             >
-              <div className="absolute inset-0 rounded-full bg-indigo-900/30 blur-3xl 
-              animate-[pulse_2s_ease-in-out_infinite]" />
+              <div
+                className="absolute inset-0 rounded-full bg-indigo-900/30 blur-3xl 
+              animate-[pulse_2s_ease-in-out_infinite]"
+              />
               <img
                 src={technic}
                 alt="Logo"
@@ -171,7 +180,8 @@ export const Login = () => {
           >
             {loading ? (
               <div className="flex items-center justify-center gap-2">
-                <span>Logging in...</span>
+                <span>Logging in</span>
+                {loading && <ClipLoader size={22} color="#ffffff" />}
               </div>
             ) : (
               "LOGIN"
