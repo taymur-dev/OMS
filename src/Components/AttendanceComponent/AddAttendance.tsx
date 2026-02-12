@@ -138,7 +138,6 @@ export const AddAttendance = ({
       setModal();
       handleGetALLattendance();
       setLoading(false);
-      toast.success("Attendance has been added successfully");
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(

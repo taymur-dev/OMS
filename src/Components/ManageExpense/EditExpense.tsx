@@ -18,14 +18,20 @@ type ExpenseT = {
   categoryName: string;
   date: string;
   amount: number | string;
+  addedBy: string;
 };
 
 type EditExpenseProps = {
   setModal: () => void;
   editExpense: ExpenseT | null;
+  handleRefresh: () => void;
 };
 
-export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
+export const EditExpense = ({
+  setModal,
+  editExpense,
+  handleRefresh,
+}: EditExpenseProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
@@ -71,12 +77,19 @@ export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
       );
       toast.success("Expense updated successfully!");
       setModal();
-    } catch (error) {
-      console.error("Failed to update expense:", error);
-      toast.error("Failed to update expense");
-    } finally {
-      setLoading(false);
+      handleRefresh();
+    } catch (err) {
+    if (axios.isAxiosError(err)) {
+      const message = (err.response?.data as { message: string })?.message;
+      if (err.response?.status === 409) {
+        toast.error(message || "Duplicate entry found");
+      } else {
+        toast.error("Failed to update expense");
+      }
+    } else {
+      toast.error("An unexpected error occurred");
     }
+  }
   };
 
   useEffect(() => {
@@ -131,6 +144,13 @@ export const EditExpense = ({ setModal, editExpense }: EditExpenseProps) => {
               type="number"
               handlerChange={handlerChange}
               value={expense?.amount ? String(expense.amount) : ""}
+            />
+
+            <InputField
+              labelName="Added By *"
+              name="addedBy"
+              handlerChange={handlerChange}
+              value={expense?.addedBy ?? ""}
             />
 
             <InputField

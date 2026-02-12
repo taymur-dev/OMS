@@ -218,7 +218,8 @@ export const Jobs = () => {
 
       {/* --- MODALS SECTION --- */}
       {isOpenModal === "ADD" && (
-        <AddJob setModal={() => handleToggleModal("")} refreshJobs={getJobs} />
+        <AddJob setModal={() => handleToggleModal("")} refreshJobs={getJobs} existingJobs={jobs} />
+
       )}
 
       {isOpenModal === "EDIT" && selectedJob && (
@@ -226,6 +227,7 @@ export const Jobs = () => {
           job={selectedJob}
           setModal={() => handleToggleModal("")}
           refreshJobs={getJobs}
+          existingJobs={jobs}
         />
       )}
 

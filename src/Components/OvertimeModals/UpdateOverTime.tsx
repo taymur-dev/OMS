@@ -14,6 +14,12 @@ import { UserSelect } from "../InputFields/UserSelect";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 
+import { AxiosError } from "axios";
+
+interface BackendError {
+  message: string;
+}
+
 type UpdateOvertimeData = {
   id: number;
   employeeId: number;
@@ -157,8 +163,11 @@ export const UpdateOverTime = ({
       await refreshOvertimes();
       setModal();
     } catch (error) {
-      console.error(error);
-      toast.error("Failed to update overtime.");
+  const axiosError = error as AxiosError<BackendError>;
+  const msg = axiosError.response?.data?.message || "Failed to update overtime.";
+  
+  console.error(error);
+  toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -197,8 +206,7 @@ export const UpdateOverTime = ({
               </Title>
             </div>
 
-            {/* Body */}
-            {/* Body */}
+           
             <div className="mx-2 p-6 grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
               <UserSelect
                 labelName="Employee *"

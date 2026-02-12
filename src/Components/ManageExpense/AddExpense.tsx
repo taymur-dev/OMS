@@ -6,8 +6,7 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 
 import { Title } from "../Title";
 
-import axios from "axios";
-
+import axios, { AxiosError } from "axios";
 import { BASE_URL } from "../../Content/URL";
 
 import { useAppSelector } from "../../redux/Hooks";
@@ -27,6 +26,7 @@ const initialState = {
   expenseName: "",
   expenseCategoryId: "",
   amount: "",
+  addedBy: "",
   date: currentDate,
 };
 export const AddExpense = ({ setModal }: AddAttendanceProps) => {
@@ -57,6 +57,10 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
 
     if (name === "amount") {
       updatedValue = value.replace(/\D/g, "").slice(0, 12);
+    }
+
+    if (name === "addedBy") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
     }
 
     setAddExpense({ ...addExpense, [name]: updatedValue });
@@ -94,8 +98,15 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
       console.log(res.data);
       setModal();
       toast.success("Expense added successfully");
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+
+      if (error.response && error.response.status === 409) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Failed to update expense");
+      }
+      console.error("Failed to update expense:", error);
     } finally {
       setLoading(false);
     }
@@ -149,6 +160,13 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
                 type="number"
                 handlerChange={handlerChange}
                 value={addExpense.amount}
+              />
+
+              <InputField
+                labelName="Added By *"
+                name="addedBy"
+                handlerChange={handlerChange}
+                value={addExpense.addedBy}
               />
 
               <InputField

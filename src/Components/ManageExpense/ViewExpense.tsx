@@ -4,7 +4,6 @@ import {
   FaFileInvoiceDollar,
   FaMoneyBillWave,
   FaCalendarAlt,
-  FaInfoCircle,
 } from "react-icons/fa";
 
 type allExpenseT = {
@@ -14,6 +13,7 @@ type allExpenseT = {
   date: string;
   expenseStatus: string;
   amount: number | string;
+  addedBy: string;
 };
 
 type CustomerDetailProps = {
@@ -61,6 +61,15 @@ export const ViewExpense = ({
                   {viewExpense.expenseName}
                 </p>
               </div>
+
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaFileInvoiceDollar className="text-gray-400" /> Added By
+                </label>
+                <p className="text-gray-800 font-medium">
+                  {viewExpense.addedBy}
+                </p>
+              </div>
             </div>
           </div>
 
@@ -77,20 +86,6 @@ export const ViewExpense = ({
                 <p className="text-indigo-700 font-bold text-lg">
                   ${Number(viewExpense.amount).toLocaleString()}
                 </p>
-              </div>
-              <div>
-                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaInfoCircle className="text-gray-400" /> Status
-                </label>
-                <span
-                  className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                    viewExpense.expenseStatus === "Paid"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-yellow-100 text-yellow-700"
-                  }`}
-                >
-                  {viewExpense.expenseStatus || "N/A"}
-                </span>
               </div>
             </div>
           </div>

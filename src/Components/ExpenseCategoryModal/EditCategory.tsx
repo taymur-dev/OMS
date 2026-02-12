@@ -12,6 +12,7 @@ type EditCategoryProps = {
   categoryId: number;
   categoryName: string;
   refreshTable?: () => void;
+  existingCategories: string[];
 };
 
 export const EditCategory = ({
@@ -19,6 +20,7 @@ export const EditCategory = ({
   categoryId,
   categoryName,
   refreshTable,
+  existingCategories,
 }: EditCategoryProps) => {
   const [updateCategory, setUpdateCategory] = useState({
     expenseCategory: categoryName,
@@ -41,9 +43,22 @@ export const EditCategory = ({
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!updateCategory.expenseCategory?.trim()) {
+    const updatedName = updateCategory.expenseCategory.trim();
+
+    if (!updatedName) {
       return toast.error("Category name cannot be empty", {
         toastId: "empty-category",
+      });
+    }
+
+    // DUPLICATION CHECK (ignore current category)
+    if (
+      existingCategories
+        .filter((c) => c.toLowerCase() !== categoryName.toLowerCase())
+        .some((c) => c.toLowerCase() === updatedName.toLowerCase())
+    ) {
+      return toast.error("This category already exists", {
+        toastId: "duplicate-category",
       });
     }
 
@@ -53,20 +68,19 @@ export const EditCategory = ({
       const res = await axios.put(
         `${BASE_URL}/api/admin/updateExpenseCategory/${categoryId}`,
         {
-          categoryName: updateCategory.expenseCategory,
+          categoryName: updatedName,
         },
       );
-
       if (res.status === 200) {
         toast.success("Category updated successfully", {
           toastId: "update-success",
         });
-
         refreshTable?.();
         setModal();
       }
     } catch (error) {
-      console.error("Update failed:", error);
+      console.log(error);
+
       toast.error("Failed to update category", { toastId: "update-error" });
     } finally {
       setLoading(false);

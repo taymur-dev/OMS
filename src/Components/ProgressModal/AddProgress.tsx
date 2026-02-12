@@ -138,46 +138,54 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (
-      !addProgress.employee_id ||
-      !addProgress.projectId ||
-      !addProgress.date ||
-      !addProgress.note
-    ) {
-      return toast.error("Please fill all required fields", {
-        toastId: "required-fields",
-      });
-    }
+  if (
+    !addProgress.employee_id ||
+    !addProgress.projectId ||
+    !addProgress.date ||
+    !addProgress.note
+  ) {
+    return toast.error("Please fill all required fields", {
+      toastId: "required-fields",
+    });
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      await axios.post(
-        `${BASE_URL}/api/admin/addProgress`,
-        { ...addProgress, projectId: Number(addProgress.projectId) },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      toast.success("Progress added successfully!", {
-        toastId: "add-progress-success",
-      });
+  try {
+    await axios.post(
+      `${BASE_URL}/api/admin/addProgress`,
+      { ...addProgress, projectId: Number(addProgress.projectId) },
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+    toast.success("Progress added successfully!", {
+      toastId: "add-progress-success",
+    });
 
-      handleRefresh();
-      setModal();
-      setAddProgress(initialState);
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        const message =
-          error.response?.data?.message || "Failed to add progress";
-        toast.error(message, { toastId: "add-progress-error" });
+    handleRefresh();
+    setModal();
+    setAddProgress(initialState);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const message =
+        error.response?.data?.message || "Failed to add progress";
+      
+      if (error.response?.status === 409) {
+        toast.error(message, { 
+          toastId: "duplicate-progress-error",
+          autoClose: 8000 
+        });
       } else {
-        toast.error("Something went wrong!", { toastId: "add-progress-error" });
+        toast.error(message, { toastId: "add-progress-error" });
       }
-    } finally {
-      setLoading(false);
+    } else {
+      toast.error("Something went wrong!", { toastId: "add-progress-error" });
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
   const userOptions = isAdmin
     ? allUsers

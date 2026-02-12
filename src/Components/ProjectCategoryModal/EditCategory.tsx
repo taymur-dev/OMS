@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { InputField } from "../InputFields/InputField";
@@ -28,16 +28,32 @@ export const EditCategory = ({
   const { currentUser } = useAppSelector((state) => state.officeState);
 
   const [loading, setLoading] = useState(false);
-
+  const [allCategories, setAllCategories] = useState<selectCategory[]>([]);
   const [updateCategory, setUpdateCategory] = useState<selectCategory | null>(
     null,
   );
 
+  // Fetch all categories for duplication validation
+  const fetchAllCategories = useCallback(async () => {
+    try {
+      const token = currentUser?.token;
+      const res = await axios.get(`${BASE_URL}/api/admin/getAllCategories`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      setAllCategories(res.data);
+    } catch (error) {
+      console.error("Failed to fetch categories for validation:", error);
+    }
+  }, [currentUser?.token]);
+
   useEffect(() => {
     if (selectCategory) {
       setUpdateCategory(selectCategory);
+      fetchAllCategories();
     }
-  }, [selectCategory]);
+  }, [selectCategory, fetchAllCategories]);
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -53,6 +69,17 @@ export const EditCategory = ({
 
   const token = currentUser?.token;
 
+  const isDuplicateCategory = (
+    categoryName: string,
+    currentId: number,
+  ): boolean => {
+    return allCategories.some(
+      (category) =>
+        category.categoryName.toLowerCase() === categoryName.toLowerCase() &&
+        category.id !== currentId, // Exclude current category being edited
+    );
+  };
+
   const handleUpdateCategory = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -63,11 +90,33 @@ export const EditCategory = ({
       return;
     }
 
+    const trimmedCategoryName = updateCategory.categoryName.trim();
+
+    // Check for duplicate category name
+    if (isDuplicateCategory(trimmedCategoryName, updateCategory.id)) {
+      toast.error(
+        "Category name already exists. Please use a different name.",
+        {
+          toastId: "category-duplicate",
+        },
+      );
+      return;
+    }
+
+    // Check if the name hasn't changed
+    if (trimmedCategoryName === selectCategory?.categoryName) {
+      toast.info("No changes were made to the category name", {
+        toastId: "no-changes",
+      });
+      setModal(); // Close modal if no changes
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await axios.put(
         `${BASE_URL}/api/admin/updateCategory/${updateCategory.id}`,
-        { categoryName: updateCategory.categoryName.trim() },
+        { categoryName: trimmedCategoryName },
         {
           headers: {
             Authorization: token,
@@ -80,10 +129,19 @@ export const EditCategory = ({
       setModal();
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        const message =
-          error.response?.data?.message || "Failed to update category";
-
-        toast.error(message, { toastId: "edit-failed" });
+        // Handle duplicate error from backend as fallback
+        if (
+          error.response?.status === 400 &&
+          error.response?.data?.message?.includes("already exists")
+        ) {
+          toast.error("Category name already exists", {
+            toastId: "edit-duplicate",
+          });
+        } else {
+          const message =
+            error.response?.data?.message || "Failed to update category";
+          toast.error(message, { toastId: "edit-failed" });
+        }
       } else {
         console.error(error);
         toast.error("Unexpected error occurred", {
@@ -94,7 +152,6 @@ export const EditCategory = ({
       setLoading(false);
     }
   };
-
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4   flex items-center justify-center z-50">
@@ -121,6 +178,18 @@ export const EditCategory = ({
                 value={updateCategory?.categoryName}
                 handlerChange={handlerChange}
               />
+
+              {updateCategory?.categoryName &&
+                updateCategory.categoryName.trim() !==
+                  selectCategory?.categoryName &&
+                isDuplicateCategory(
+                  updateCategory.categoryName.trim(),
+                  updateCategory.id,
+                ) && (
+                  <p className="text-red-500 text-sm mt-1 ml-1">
+                    This category name already exists
+                  </p>
+                )}
             </div>
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

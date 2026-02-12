@@ -12,6 +12,8 @@ import { UpdateTodo, TodoType } from "../../Components/TodoModals/UpdateTodo";
 import { ViewTodo } from "../../Components/TodoModals/ViewTodo";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import axios from "axios";
+import { toast } from "react-toastify";
+
 import { BASE_URL } from "../../Content/URL";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
@@ -90,6 +92,8 @@ export const Todo = () => {
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
+      toast.error("Todo has been deleted successfully");
+
       await getAllTodos();
       toggleModal("");
     } catch (error) {

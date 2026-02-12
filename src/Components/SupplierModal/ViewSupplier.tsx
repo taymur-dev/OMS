@@ -94,7 +94,7 @@ export const ViewSupplierModal = ({ setModal, supplier }: ModalTProps) => {
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                   <FaMapMarkerAlt className="text-gray-400" /> Business Address
                 </label>
-                <p className="text-gray-800 font-medium">
+                <p className="text-gray-800 font-medium break-words">
                   {supplier.supplierAddress || "No address provided"}
                 </p>
               </div>

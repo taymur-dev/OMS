@@ -237,6 +237,7 @@ export const AssetCategory = () => {
     {isOpenModal === "ADD" && (
       <AddAssetCategory
         setModal={() => handleToggleViewModal("")}
+        existingCategories={categories}
         refreshCategories={async () => {
           await fetchCategories();
           const lastPage = Math.ceil(categories.length / selectedValue);
@@ -248,6 +249,7 @@ export const AssetCategory = () => {
     {isOpenModal === "EDIT" && selectedCategoryId !== null && (
       <UpdateAssetCategory
         categoryId={selectedCategoryId}
+        existingCategories={categories} 
         setModal={() => handleToggleViewModal("")}
         refreshCategories={fetchCategories}
       />

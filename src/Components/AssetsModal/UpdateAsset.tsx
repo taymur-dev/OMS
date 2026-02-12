@@ -20,6 +20,7 @@ type UpdateAssetProps = {
     date: string;
   };
   refreshAssets: () => void;
+  existingAssets: Asset[];
 };
 
 interface Category {
@@ -27,10 +28,17 @@ interface Category {
   category_name: string;
 }
 
+interface Asset {
+  id: number;
+  asset_name: string;
+  category_name: string;
+}
+
 export const UpdateAsset = ({
   setModal,
   assetData,
   refreshAssets,
+  existingAssets,
 }: UpdateAssetProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
@@ -71,11 +79,17 @@ export const UpdateAsset = ({
         categoryArray = res.data.categories;
       else if (Array.isArray(res.data.data)) categoryArray = res.data.data;
 
-      const options = categoryArray.map((cat: Category) => ({
-        id: cat.id,
-        label: cat.category_name,
-        value: String(cat.id),
-      }));
+      // Filter out empty or whitespace-only names, then map
+      const options = categoryArray
+        .filter(
+          (cat: Category) =>
+            cat.category_name && cat.category_name.trim() !== "",
+        )
+        .map((cat: Category) => ({
+          id: cat.id,
+          label: cat.category_name.trim(),
+          value: String(cat.id),
+        }));
 
       setCategories(options);
 
@@ -110,6 +124,17 @@ export const UpdateAsset = ({
       return toast.error("Please fill in all required fields", {
         toastId: "add-asset-validation",
       });
+    }
+
+    const isDuplicate = existingAssets.some(
+      (asset) =>
+        asset.asset_name.toLowerCase() ===
+          updateAsset.asset_name.trim().toLowerCase() &&
+        asset.id !== assetData.id,
+    );
+
+    if (isDuplicate) {
+      return toast.error("Another asset with this name already exists.");
     }
 
     setLoading(true);

@@ -27,6 +27,14 @@ type EditProgressProps = {
   handleRefresh: () => void;
 };
 
+type UserT = {
+  id: number;
+  employeeName?: string;
+  name?: string;
+  loginStatus: string;
+  role: string;
+};
+
 type UpdateProgressState = {
   employee_id: string;
   project: string;
@@ -56,7 +64,7 @@ export const EditProgress = ({
     note: "",
   });
 
-  const [allUsers, setAllUsers] = useState<[]>([]);
+  const [allUsers, setAllUsers] = useState<UserT[]>([]);
   const [selectProject, setSelectProject] = useState<SelectProjectT[] | null>(
     null,
   );
@@ -161,13 +169,34 @@ export const EditProgress = ({
       toast.success("Progress updated successfully");
 
       setModal();
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to update progress");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message || "Failed to update progress";
+
+        if (error.response?.status === 409) {
+          toast.error(message, {
+            toastId: "duplicate-edit-error",
+            autoClose: 5000,
+          });
+        } else {
+          toast.error(message);
+        }
+      } else {
+        toast.error("Something went wrong!");
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  const userOptions = allUsers
+    .filter((u) => u.role === "user" && u.loginStatus === "Y")
+    .map((u) => ({
+      id: u.id,
+      value: String(u.id),
+      label: u.employeeName || u.name || "Unknown User",
+    }));
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
@@ -194,7 +223,7 @@ export const EditProgress = ({
                 name="employee_id"
                 value={updateProgress.employee_id}
                 handlerChange={handlerChange}
-                optionData={allUsers}
+                optionData={userOptions}
               />
             )}
 

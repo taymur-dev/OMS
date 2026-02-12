@@ -20,7 +20,6 @@ import {
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import { Footer } from "../../Components/Footer";
 
-
 const numbers = [10, 25, 50, 100];
 
 type EXPENSECATEGORYT = "ADD" | "EDIT" | "DELETE" | "";
@@ -116,141 +115,153 @@ export const ExpensesCatogries = () => {
     pageNo * itemsPerPage,
   );
 
- 
- return (
-  <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-    <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-      {/* 1 & 3) Table Title with Add Button */}
-      <TableTitle
-        tileName="Expense Category"
-        rightElement={
-          <CustomButton
-            label="+ Add Category"
-            handleToggle={() => handleToggleViewModal("ADD")}
-          />
-        }
-      />
+  return (
+    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
+        {/* 1 & 3) Table Title with Add Button */}
+        <TableTitle
+          tileName="Expense Category"
+          rightElement={
+            <CustomButton
+              label="+ Add Category"
+              handleToggle={() => handleToggleViewModal("ADD")}
+            />
+          }
+        />
 
-      <hr className="border border-b border-gray-200" />
+        <hr className="border border-b border-gray-200" />
 
-      <div className="p-2">
-        <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-          {/* Left Side: Show entries */}
-          <div className="text-sm flex items-center">
-            <span>Show</span>
-            <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-              <select
-                value={itemsPerPage}
-                onChange={(e) => {
-                  setItemsPerPage(Number(e.target.value));
-                  setPageNo(1);
-                }}
-                className="bg-transparent outline-none py-1 cursor-pointer"
-              >
-                {numbers.map((num) => (
-                  <option key={num} value={num}>
-                    {num}
-                  </option>
-                ))}
-              </select>
-            </span>
-            <span className="hidden xs:inline">entries</span>
-          </div>
-
-          {/* Right Side: Search Input */}
-          <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={(value) => setSearchTerm(value)}
-          />
-        </div>
-      </div>
-
-      {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-      <div className="overflow-auto px-2">
-        <div className="min-w-[600px]">
-          {/* Sticky Table Header */}
-          <div
-            className="grid grid-cols-3 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
-          >
-            <span>Sr#</span>
-            <span>Category Name</span>
-            <span className="text-center">Actions</span>
-          </div>
-
-          {/* Table Body */}
-          {(paginatedCategories ?? []).length === 0 ? (
-            <div className="text-gray-800 text-lg text-center py-10">
-              No records available at the moment!
+        <div className="p-2">
+          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
+            {/* Left Side: Show entries */}
+            <div className="text-sm flex items-center">
+              <span>Show</span>
+              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(Number(e.target.value));
+                    setPageNo(1);
+                  }}
+                  className="bg-transparent outline-none py-1 cursor-pointer"
+                >
+                  {numbers.map((num) => (
+                    <option key={num} value={num}>
+                      {num}
+                    </option>
+                  ))}
+                </select>
+              </span>
+              <span className="hidden xs:inline">entries</span>
             </div>
-          ) : (
-            (paginatedCategories ?? []).map((category, index) => (
-              <div
-                key={category.id}
-                className="grid grid-cols-3 border-b border-x border-gray-200 text-gray-800 items-center
-                 text-sm p-2 hover:bg-gray-50 transition"
-              >
-                <span>{(pageNo - 1) * itemsPerPage + index + 1}</span>
-                <span className="truncate">{category.categoryName}</span>
-                <span className="flex flex-nowrap justify-center gap-1">
-                  <EditButton
-                    handleUpdate={() => handleClickEditButton(category)}
-                  />
-                  <DeleteButton
-                    handleDelete={() => handleClickDeleteButton(category.id)}
-                  />
-                </span>
+
+            {/* Right Side: Search Input */}
+            <TableInputField
+              searchTerm={searchTerm}
+              setSearchTerm={(value) => setSearchTerm(value)}
+            />
+          </div>
+        </div>
+
+        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
+        <div className="overflow-auto px-2">
+          <div className="min-w-[600px]">
+            {/* Sticky Table Header */}
+            <div
+              className="grid grid-cols-3 bg-indigo-900 text-white items-center font-semibold
+             text-sm sticky top-0 z-10 p-2"
+            >
+              <span>Sr#</span>
+              <span>Category Name</span>
+              <span className="text-center">Actions</span>
+            </div>
+
+            {/* Table Body */}
+            {(paginatedCategories ?? []).length === 0 ? (
+              <div className="text-gray-800 text-lg text-center py-10">
+                No records available at the moment!
               </div>
-            ))
-          )}
+            ) : (
+              (paginatedCategories ?? []).map((category, index) => (
+                <div
+                  key={category.id}
+                  className="grid grid-cols-3 border-b border-x border-gray-200 text-gray-800 items-center
+                 text-sm p-2 hover:bg-gray-50 transition"
+                >
+                  <span>{(pageNo - 1) * itemsPerPage + index + 1}</span>
+                  <span className="truncate">{category.categoryName}</span>
+                  <span className="flex flex-nowrap justify-center gap-1">
+                    <EditButton
+                      handleUpdate={() => handleClickEditButton(category)}
+                    />
+                    <DeleteButton
+                      handleDelete={() => handleClickDeleteButton(category.id)}
+                    />
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* 4) Pagination placed under the table */}
+        <div className="flex flex-row items-center justify-between p-2">
+          <ShowDataNumber
+            start={
+              filteredCategories?.length === 0
+                ? 0
+                : (pageNo - 1) * itemsPerPage + 1
+            }
+            end={Math.min(
+              pageNo * itemsPerPage,
+              filteredCategories?.length || 0,
+            )}
+            total={filteredCategories?.length || 0}
+          />
+          <Pagination
+            pageNo={pageNo}
+            handleDecrementPageButton={handleDecrementPageButton}
+            handleIncrementPageButton={handleIncrementPageButton}
+          />
         </div>
       </div>
 
-      {/* 4) Pagination placed under the table */}
-      <div className="flex flex-row items-center justify-between p-2">
-        <ShowDataNumber
-          start={filteredCategories?.length === 0 ? 0 : (pageNo - 1) * itemsPerPage + 1}
-          end={Math.min(pageNo * itemsPerPage, filteredCategories?.length || 0)}
-          total={filteredCategories?.length || 0}
+      {/* --- MODALS SECTION --- */}
+      {isOpenModal === "ADD" && (
+        <AddCategory
+          setModal={() => handleToggleViewModal("")}
+          refreshTable={handlegetExpenseCategory}
+          existingCategories={
+            allExpenseCategory?.map((c) => c.categoryName) || []
+          }
         />
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+      )}
+
+      {isOpenModal === "EDIT" && selectCategory && (
+        <EditCategory
+          setModal={() => handleToggleViewModal("")}
+          categoryId={selectCategory.id}
+          categoryName={selectCategory.categoryName}
+          refreshTable={handlegetExpenseCategory}
+          existingCategories={
+            allExpenseCategory?.map((c) => c.categoryName) || []
+          }
         />
+      )}
+
+      {isOpenModal === "DELETE" && (
+        <ConfirmationModal
+          isOpen={() => handleToggleViewModal("DELETE")}
+          onClose={() => handleToggleViewModal("")}
+          onConfirm={() => handleDeleteCategory()}
+          message="Are you sure you want to delete this category?"
+        />
+      )}
+
+      {/* --- FOOTER SECTION --- */}
+      <div className="border border-t-5 border-gray-200">
+        <Footer />
       </div>
     </div>
-
-    {/* --- MODALS SECTION --- */}
-    {isOpenModal === "ADD" && (
-      <AddCategory
-        setModal={() => handleToggleViewModal("")}
-        refreshTable={handlegetExpenseCategory}
-      />
-    )}
-
-    {isOpenModal === "EDIT" && selectCategory && (
-      <EditCategory
-        setModal={() => handleToggleViewModal("")}
-        categoryId={selectCategory.id}
-        categoryName={selectCategory.categoryName}
-        refreshTable={handlegetExpenseCategory}
-      />
-    )}
-
-    {isOpenModal === "DELETE" && (
-      <ConfirmationModal
-        isOpen={() => handleToggleViewModal("DELETE")}
-        onClose={() => handleToggleViewModal("")}
-        onConfirm={() => handleDeleteCategory()}
-        message="Are you sure you want to delete this category?"
-      />
-    )}
-
-    {/* --- FOOTER SECTION --- */}
-    <div className="border border-t-5 border-gray-200">
-      <Footer />
-    </div>
-  </div>
-);
+  );
 };

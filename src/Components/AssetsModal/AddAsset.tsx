@@ -14,10 +14,17 @@ import { TextareaField } from "../InputFields/TextareaField";
 type AddAssetProps = {
   setModal: () => void;
   refreshAssets: () => void;
+  existingAssets: Asset[];
 };
 
 interface Category {
   id: number;
+  category_name: string;
+}
+
+interface Asset {
+  id: number;
+  asset_name: string;
   category_name: string;
 }
 
@@ -30,7 +37,7 @@ const initialState = {
   date: currentDate,
 };
 
-export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
+export const AddAsset = ({ setModal, refreshAssets, existingAssets }: AddAssetProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
@@ -62,13 +69,11 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
     setAddAsset({ ...addAsset, [name]: updatedValue });
   };
 
-  const fetchCategories = useCallback(async () => {
+ const fetchCategories = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/assetCategories`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      console.log("Categories API response:", res.data);
 
       let categoryArray: Category[] = [];
 
@@ -86,11 +91,13 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
         return;
       }
 
-      const options = categoryArray.map((cat: Category) => ({
-        id: cat.id,
-        label: cat.category_name,
-        value: String(cat.id),
-      }));
+      const options = categoryArray
+        .filter((cat: Category) => cat.category_name && cat.category_name.trim() !== "")
+        .map((cat: Category) => ({
+          id: cat.id,
+          label: cat.category_name.trim(),
+          value: String(cat.id),
+        }));
 
       setCategories(options);
     } catch (error) {
@@ -121,6 +128,14 @@ export const AddAsset = ({ setModal, refreshAssets }: AddAssetProps) => {
     if (!token) {
       return toast.error("Unauthorized", { toastId: "add-asset-unauthorized" });
     }
+
+    const isDuplicate = existingAssets.some(
+    (asset) => asset.asset_name.toLowerCase() === addAsset.asset_name.trim().toLowerCase()
+  );
+
+  if (isDuplicate) {
+    return toast.error("An asset with this name already exists.");
+  }
 
     setLoading(true);
 

@@ -21,6 +21,8 @@ import { BASE_URL } from "../Content/URL";
 import { useAppDispatch, useAppSelector } from "../redux/Hooks";
 import { navigationStart, navigationSuccess } from "../redux/NavigationSlice";
 import { Footer } from "../Components/Footer";
+import { toast } from "react-toastify";
+
 
 const numbers = [5, 10, 15, 20];
 
@@ -84,22 +86,23 @@ export const Progress = () => {
   }, [token, currentUser]);
 
   const handleDeleteProgress = async () => {
-    if (!selectedId || !token) return;
+  if (!selectedId || !token) return;
 
-    try {
-      await axios.patch(
-        `${BASE_URL}/api/admin/deleteProgress/${selectedId}`,
-        {},
-        { headers: { Authorization: token } },
-      );
+  try {
+    await axios.patch(
+      `${BASE_URL}/api/admin/deleteProgress/${selectedId}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
-      handleGetAllProgress();
-      setIsOpenModal("");
-      setSelectedId(null);
-    } catch (error) {
-      console.error("Failed to delete progress:", error);
-    }
-  };
+  toast.error("Progress has been deleted successfully");
+    
+    handleGetAllProgress();
+    setIsOpenModal("");
+    setSelectedId(null);
+  } catch (error) {
+    console.error("Failed to delete progress:", error);
+  }
+};
 
   const handleEdit = (row: ALLPROGRESST) => {
     setSelectedProgress(row);

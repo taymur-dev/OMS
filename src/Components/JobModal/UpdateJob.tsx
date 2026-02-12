@@ -21,12 +21,14 @@ type UpdateJobProps = {
   job: Job;
   setModal: () => void;
   refreshJobs: () => void;
+  existingJobs: Job[];
 };
 
 export const UpdateJob: React.FC<UpdateJobProps> = ({
   job,
   setModal,
   refreshJobs,
+  existingJobs,
 }) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const [loading, setLoading] = useState(false);
@@ -69,6 +71,16 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({
       return toast.error("All fields are required", {
         toastId: "update-job-validation",
       });
+    }
+
+    const isDuplicate = existingJobs.some(
+      (j) =>
+        j.job_title.toLowerCase() === formData.job_title.trim().toLowerCase() &&
+        j.id !== job.id,
+    );
+
+    if (isDuplicate) {
+      return toast.error("Another job with this title already exists");
     }
 
     setLoading(true);

@@ -12,6 +12,12 @@ import { TextareaField } from "../InputFields/TextareaField";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 
+import { AxiosError } from "axios";
+
+interface BackendError {
+  message: string;
+}
+
 type AddOvertimeProps = {
   setModal: () => void;
   refreshOvertime?: () => void;
@@ -135,8 +141,11 @@ export const AddOverTime = ({
       setModal();
       setAddOvertime(initialState);
     } catch (err) {
-      console.error("Add overtime failed:", err);
-      toast.error("Failed to add overtime");
+ const axiosError = err as AxiosError<BackendError>;
+  const msg = axiosError.response?.data?.message || "Failed to add overtime";
+  
+  console.error("Add overtime failed:", err);
+  toast.error(msg);
     } finally {
       setLoading(false);
     }

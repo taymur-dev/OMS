@@ -236,6 +236,7 @@ export const Assets = () => {
       <AddAsset
         setModal={() => handleToggleViewModal("")}
         refreshAssets={fetchAssets}
+        existingAssets={assets}
       />
     )}
 
@@ -250,6 +251,7 @@ export const Assets = () => {
           date: selectedAsset.date || "",
         }}
         refreshAssets={fetchAssets}
+        existingAssets={assets}
       />
     )}
 

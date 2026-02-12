@@ -12,6 +12,7 @@ type UpdateAssetCategoryProps = {
   categoryId: number;
   setModal: () => void;
   refreshCategories: () => void;
+  existingCategories: { id: number; category_name: string }[];
 };
 
 const initialState = {
@@ -22,6 +23,7 @@ export const UpdateAssetCategory = ({
   setModal,
   categoryId,
   refreshCategories,
+  existingCategories,
 }: UpdateAssetCategoryProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
@@ -64,6 +66,7 @@ export const UpdateAssetCategory = ({
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const nameTrimmed = updateCategory.category_name?.trim();
 
     if (!token) {
       return toast.error("Unauthorized", {
@@ -76,6 +79,20 @@ export const UpdateAssetCategory = ({
         toastId: "update-category-required",
       });
     }
+
+    if (!nameTrimmed) {
+    return toast.error("Category name is required");
+  }
+
+  const isDuplicate = existingCategories.some(
+    (cat) => 
+      cat.category_name.toLowerCase() === nameTrimmed.toLowerCase() && 
+      cat.id !== categoryId
+  );
+
+  if (isDuplicate) {
+    return toast.error("Another category with this name already exists");
+  }
 
     setLoading(true);
 

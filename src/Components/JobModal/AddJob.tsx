@@ -14,6 +14,7 @@ import { useAppSelector } from "../../redux/Hooks";
 type AddJobsProps = {
   setModal: () => void;
   refreshJobs: () => void;
+  existingJobs: { job_title: string }[];
 };
 
 type AddJobState = {
@@ -26,7 +27,7 @@ const initialState: AddJobState = {
   description: "",
 };
 
-export const AddJob = ({ setModal, refreshJobs }: AddJobsProps) => {
+export const AddJob = ({ setModal, refreshJobs , existingJobs }: AddJobsProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
@@ -58,6 +59,16 @@ export const AddJob = ({ setModal, refreshJobs }: AddJobsProps) => {
     if (!addJob.job_title || !addJob.description) {
       return toast.error("Please fill all required fields", {
         toastId: "add-job-validation",
+      });
+    }
+    
+    const isDuplicate = existingJobs.some(
+      (job) => job.job_title.toLowerCase() === addJob.job_title.trim().toLowerCase()
+    );
+
+    if (isDuplicate) {
+      return toast.error("A job with this title already exists", {
+        toastId: "duplicate-job-error",
       });
     }
 

@@ -11,20 +11,20 @@ import { toast } from "react-toastify";
 type AddCategoryProps = {
   setModal: () => void;
   refreshTable: () => void;
+  existingCategories: string[];
 };
 
 const initialState = {
   categoryName: "",
 };
 
-export const AddCategory = ({ setModal, refreshTable }: AddCategoryProps) => {
+export const AddCategory = ({ setModal, refreshTable , existingCategories }: AddCategoryProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
   const [addCategory, setAddCategory] = useState(initialState);
 
-    const [loading, setLoading] = useState(false);
-
+  const [loading, setLoading] = useState(false);
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -42,36 +42,43 @@ export const AddCategory = ({ setModal, refreshTable }: AddCategoryProps) => {
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!addCategory.categoryName.trim()) {
+    const categoryNameTrimmed = addCategory.categoryName.trim();
+
+    if (!categoryNameTrimmed) {
       return toast.error("Expense category name is required", {
         toastId: "required-category",
       });
     }
 
-        setLoading(true);
+    if (
+      existingCategories.some(
+        (c) => c.toLowerCase() === categoryNameTrimmed.toLowerCase(),
+      )
+    ) {
+      return toast.error("This category already exists", {
+        toastId: "duplicate-category",
+      });
+    }
 
+    setLoading(true);
 
     try {
-      const res = await axios.post(
+      await axios.post(
         `${BASE_URL}/api/admin/createExpenseCategory`,
         addCategory,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
-
       toast.success("Expense category added successfully", {
         toastId: "category-success",
       });
-
       refreshTable();
-      console.log(res.data);
       setModal();
-    } catch (error: unknown) {
+    } catch (error) {
+      console.log(error);
+
       toast.error("Failed to add category", { toastId: "category-error" });
-      console.error("Add Category Error:", error);
     } finally {
       setLoading(false);
     }

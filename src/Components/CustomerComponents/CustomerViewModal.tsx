@@ -4,7 +4,6 @@ import {
   FaMapMarkerAlt,
   FaPhoneAlt,
   FaBuilding,
-  FaInfoCircle,
 } from "react-icons/fa";
 
 type CustomerDetailT = {
@@ -53,14 +52,6 @@ export const CustomerViewModal = ({
                   {customerDetail.customerName}
                 </p>
               </div>
-              <div>
-                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaInfoCircle className="text-gray-400" /> Status
-                </label>
-                <p className="text-gray-800 font-medium capitalize">
-                  {customerDetail.customerStatus}
-                </p>
-              </div>
             </div>
           </div>
 
@@ -82,7 +73,7 @@ export const CustomerViewModal = ({
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                   <FaMapMarkerAlt className="text-gray-400" /> Personal Address
                 </label>
-                <p className="text-gray-800 font-medium">
+                <p className="text-gray-800 font-medium break-words">
                   {customerDetail.customerAddress}
                 </p>
               </div>
@@ -107,7 +98,7 @@ export const CustomerViewModal = ({
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                   <FaMapMarkerAlt className="text-gray-400" /> Company Address
                 </label>
-                <p className="text-gray-800 font-medium">
+                <p className="text-gray-800 font-medium break-words">
                   {customerDetail.companyAddress}
                 </p>
               </div>

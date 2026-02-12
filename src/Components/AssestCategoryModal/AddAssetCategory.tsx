@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 type AddAssetCategoryProps = {
   setModal: () => void;
   refreshCategories: () => void;
+  existingCategories: { category_name: string }[];
 };
 
 const initialState = {
@@ -20,6 +21,7 @@ const initialState = {
 export const AddAssetCategory = ({
   setModal,
   refreshCategories,
+  existingCategories,
 }: AddAssetCategoryProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
@@ -41,6 +43,7 @@ export const AddAssetCategory = ({
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const nameTrimmed = addCategory.category_name?.trim();
 
     if (!token) {
       return toast.error("Unauthorized", {
@@ -53,6 +56,16 @@ export const AddAssetCategory = ({
         toastId: "asset-category-required",
       });
     }
+
+    const isDuplicate = existingCategories.some(
+    (cat) => cat.category_name.toLowerCase() === nameTrimmed.toLowerCase()
+  );
+
+  if (isDuplicate) {
+    return toast.error("This category name already exists", {
+      toastId: "duplicate-category",
+    });
+  }
 
     setLoading(true);
 
