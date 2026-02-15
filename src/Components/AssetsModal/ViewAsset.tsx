@@ -1,11 +1,5 @@
 import { Title } from "../Title";
-import {
-  FaBox,
-  FaTag,
-  FaFileAlt,
-  FaCalendarAlt,
-  FaCheckCircle,
-} from "react-icons/fa";
+import { FaBox, FaTag, FaFileAlt, FaCalendarAlt } from "react-icons/fa";
 
 export type AssetDetailT = {
   asset_name: string;
@@ -61,7 +55,7 @@ export const ViewAsset = ({ setIsOpenModal, viewAsset }: ViewAssetProps) => {
           {/* Section 2: Timeline & Status */}
           <div className="border border-gray-200 rounded-md p-4 relative">
             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
-              Status & Timeline
+              Timeline
             </h3>
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
@@ -79,16 +73,6 @@ export const ViewAsset = ({ setIsOpenModal, viewAsset }: ViewAssetProps) => {
                         .replace(/ /g, "-")
                     : "N/A"}
                 </p>
-              </div>
-              <div>
-                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCheckCircle className="text-gray-400" /> Current Status
-                </label>
-                <div className="mt-1">
-                  <span className="px-3 py-0.5 text-xs rounded-full bg-green-100 text-green-700 font-bold uppercase">
-                    Active
-                  </span>
-                </div>
               </div>
             </div>
           </div>

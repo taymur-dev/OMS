@@ -10,6 +10,8 @@ import {
 export interface Applicant {
   id: number;
   applicant_name: string;
+  fatherName?: string;
+  email?: string;
   applicant_contact: string;
   applied_date: string;
   job: string;
@@ -43,12 +45,31 @@ export const ViewApplicant = ({ setModal, applicant }: ViewApplicantProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> Full Name
+                  <FaUser className="text-gray-400" /> Applicant Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {applicant.applicant_name}
                 </p>
               </div>
+
+               <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaUser className="text-gray-400" /> Father Name
+                </label>
+                <p className="text-gray-800 font-medium">
+                  {applicant.fatherName}
+                </p>
+              </div>
+
+               <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaUser className="text-gray-400" /> Email
+                </label>
+                <p className="text-gray-800 font-medium">
+                  {applicant.email}
+                </p>
+              </div>
+
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                   <FaPhoneAlt className="text-gray-400" /> Contact Number

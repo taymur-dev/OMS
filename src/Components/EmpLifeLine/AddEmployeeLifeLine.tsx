@@ -42,6 +42,7 @@ type LifeLine = {
 type AddEmployeeLifeLineProps = {
   setModal: () => void;
   onAdd: (newLifeLine: LifeLine) => void;
+  existingLifeLines: LifeLine[];
 };
 
 const initialState: Employee = {
@@ -56,6 +57,7 @@ const initialState: Employee = {
 export const AddEmployeeLifeLine = ({
   setModal,
   onAdd,
+  existingLifeLines
 }: AddEmployeeLifeLineProps) => {
   const [allUsers, setAllUsers] = useState<UserOption[]>([]);
   const [addEmployee, setAddEmployee] = useState<Employee>(initialState);
@@ -123,6 +125,19 @@ export const AddEmployeeLifeLine = ({
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+
+    const isDuplicate = existingLifeLines.some(
+      (item) => item.id.toString() === addEmployee.employee_id
+    );
+
+    if (isDuplicate) {
+      toast.error("This employee already has a lifeline record.", {
+        toastId: "duplicate-error",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await axios.post(

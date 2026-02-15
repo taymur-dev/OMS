@@ -37,7 +37,11 @@ const initialState = {
   date: currentDate,
 };
 
-export const AddAsset = ({ setModal, refreshAssets, existingAssets }: AddAssetProps) => {
+export const AddAsset = ({
+  setModal,
+  refreshAssets,
+  existingAssets,
+}: AddAssetProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
@@ -63,13 +67,13 @@ export const AddAsset = ({ setModal, refreshAssets, existingAssets }: AddAssetPr
     }
 
     if (name === "description") {
-      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+      updatedValue = value.replace(/[^a-zA-Z0-9., ]/g, "").slice(0, 250);
     }
 
     setAddAsset({ ...addAsset, [name]: updatedValue });
   };
 
- const fetchCategories = useCallback(async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/assetCategories`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -92,7 +96,10 @@ export const AddAsset = ({ setModal, refreshAssets, existingAssets }: AddAssetPr
       }
 
       const options = categoryArray
-        .filter((cat: Category) => cat.category_name && cat.category_name.trim() !== "")
+        .filter(
+          (cat: Category) =>
+            cat.category_name && cat.category_name.trim() !== "",
+        )
         .map((cat: Category) => ({
           id: cat.id,
           label: cat.category_name.trim(),
@@ -130,12 +137,14 @@ export const AddAsset = ({ setModal, refreshAssets, existingAssets }: AddAssetPr
     }
 
     const isDuplicate = existingAssets.some(
-    (asset) => asset.asset_name.toLowerCase() === addAsset.asset_name.trim().toLowerCase()
-  );
+      (asset) =>
+        asset.asset_name.toLowerCase() ===
+        addAsset.asset_name.trim().toLowerCase(),
+    );
 
-  if (isDuplicate) {
-    return toast.error("An asset with this name already exists.");
-  }
+    if (isDuplicate) {
+      return toast.error("An asset with this name already exists.");
+    }
 
     setLoading(true);
 

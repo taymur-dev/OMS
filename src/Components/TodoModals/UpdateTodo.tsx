@@ -63,7 +63,7 @@ export const UpdateTodo = ({
   const isAdmin = currentUser?.role === "admin";
 
   const [todo, setTodo] = useState<TodoType | null>(seleteTodo);
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [allUsers, setAllUsers] = useState<UserT[]>([]);
 
@@ -142,7 +142,35 @@ export const UpdateTodo = ({
       );
     }
 
-        setLoading(true);
+    if (
+      new Date(todo.startDate) > new Date(todo.deadline) &&
+      new Date(todo.endDate) > new Date(todo.deadline)
+    ) {
+      toast.error("Start Date and End Date cannot be later than Deadline", {
+        toastId: "date-validation",
+      });
+      return;
+    }
+
+    if (new Date(todo.startDate) > new Date(todo.endDate)) {
+      return toast.error("Start Date cannot be later than End Date", {
+        toastId: "date-validation-update",
+      });
+    }
+
+    if (new Date(todo.startDate) > new Date(todo.deadline)) {
+      return toast.error("Start Date cannot be later than Deadline", {
+        toastId: "date-validation-update",
+      });
+    }
+
+    if (new Date(todo.endDate) > new Date(todo.deadline)) {
+      return toast.error("End Date cannot be later than Deadline", {
+        toastId: "date-validation-update",
+      });
+    }
+
+    setLoading(true);
 
     try {
       await axios.put(

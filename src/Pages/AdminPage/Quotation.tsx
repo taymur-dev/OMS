@@ -34,7 +34,7 @@ type QuotationItem = {
   updatedAt?: string;
 };
 
-type QuotationT = "ADD" | "VIEW" | "";
+type QuotationT = "ADD" | "VIEW" | "DELETE" | "";
 
 export const Quotation = () => {
   const dispatch = useAppDispatch();
@@ -49,8 +49,11 @@ export const Quotation = () => {
   const [selectedValue, setSelectedValue] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
 
+
   const [selectedQuotation, setSelectedQuotation] =
     useState<QuotationItem | null>(null);
+
+    
 
   const [quotations, setQuotations] = useState<QuotationItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -118,7 +121,6 @@ export const Quotation = () => {
 
   if (loader) return <Loader />;
 
- 
   return (
     <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
@@ -155,7 +157,6 @@ export const Quotation = () => {
                 </select>
               </span>
               <span className="hidden xs:inline">entries</span>
-              
             </div>
 
             {/* Right Side: Search Input */}
@@ -236,6 +237,8 @@ export const Quotation = () => {
           onAdded={handleGetQuotations}
         />
       )}
+
+      
 
       {isOpenModal === "VIEW" && selectedQuotation && (
         <ViewQuotation

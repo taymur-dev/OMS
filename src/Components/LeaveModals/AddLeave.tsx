@@ -18,7 +18,8 @@ type AddLeaveProps = {
 type AddLeaveType = {
   employee_id: string;
   leaveSubject: string;
-  date: string;
+  fromDate: string;
+  toDate: string;
   leaveReason: string;
 };
 
@@ -36,7 +37,8 @@ const currentDate = new Date().toLocaleDateString("sv-SE", {
 const initialState: AddLeaveType = {
   employee_id: "",
   leaveSubject: "",
-  date: currentDate,
+  fromDate: currentDate,
+  toDate: currentDate,
   leaveReason: "",
 };
 
@@ -99,9 +101,16 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const { employee_id, leaveSubject, date, leaveReason } = addLeave;
+    const { employee_id, leaveSubject, fromDate, toDate, leaveReason } =
+      addLeave;
 
-    if ((isAdmin && !employee_id) || !leaveSubject || !date || !leaveReason) {
+    if (
+      (isAdmin && !employee_id) ||
+      !leaveSubject ||
+      !fromDate ||
+      !toDate ||
+      !leaveReason
+    ) {
       toast.error("Please fill all required fields", {
         toastId: "leave-employee-required",
       });
@@ -115,7 +124,8 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
         `${BASE_URL}/api/addLeave`,
         {
           leaveSubject: addLeave.leaveSubject,
-          date: addLeave.date,
+          fromDate: addLeave.fromDate,
+          toDate: addLeave.toDate,
           leaveReason: addLeave.leaveReason,
           ...(isAdmin && { employee_id: addLeave.employee_id }),
         },
@@ -190,10 +200,18 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
             />
 
             <InputField
-              labelName="Date *"
+              labelName="From Date *"
               type="date"
-              name="date"
-              value={addLeave.date}
+              name="fromDate"
+              value={addLeave.fromDate}
+              handlerChange={handlerChange}
+            />
+
+            <InputField
+              labelName="To Date *"
+              type="date"
+              name="toDate"
+              value={addLeave.toDate}
               handlerChange={handlerChange}
             />
 
@@ -207,10 +225,7 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
 
           <div className="flex justify-end gap-3 rounded px-4 py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

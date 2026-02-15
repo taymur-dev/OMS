@@ -81,6 +81,11 @@ export const AddProject = ({
     e.preventDefault();
     setLoading(true);
 
+    if (new Date(addProject.startDate) > new Date(addProject.endDate)) {
+    toast.error("Start Date cannot be later than End Date", { toastId: "date-error" });
+    return;
+  }
+
     try {
       const res = await axios.post(
         `${BASE_URL}/api/admin/addProject`,

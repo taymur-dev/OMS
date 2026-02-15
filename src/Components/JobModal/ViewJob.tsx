@@ -1,9 +1,7 @@
 import { Title } from "../Title";
 import { 
   FaBriefcase, 
-  FaAlignLeft, 
-  FaCalendarAlt, 
-  FaInfoCircle 
+  FaAlignLeft,  
 } from "react-icons/fa";
 
 type JobDetailT = {
@@ -45,14 +43,7 @@ export const ViewJob = ({ setIsOpenModal, viewJob }: ViewJobProps) => {
                   {viewJob.job_title}
                 </p>
               </div>
-              <div>
-                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> Posted Date
-                </label>
-                <p className="text-gray-800 font-medium">
-                  {viewJob.date ? viewJob.date.slice(0, 10) : "N/A"}
-                </p>
-              </div>
+              
             </div>
           </div>
 
@@ -71,19 +62,7 @@ export const ViewJob = ({ setIsOpenModal, viewJob }: ViewJobProps) => {
             </div>
           </div>
 
-          <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
-              Status
-            </h3>
-            <div className="grid grid-cols-1 pt-2">
-              <div>
-                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaInfoCircle className="text-gray-400" /> Job Status
-                </label>
-                <p className="text-green-600 font-bold">Active</p>
-              </div>
-            </div>
-          </div>
+          
         </div>
 
         {/* Footer Section */}

@@ -49,7 +49,7 @@ export const ViewResignation = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaBriefcase className="text-gray-400" /> Designation
+                  <FaBriefcase className="text-gray-400" />Current Position
                 </label>
                 <p className="text-gray-800 font-medium">
                   {resignationData.designation}

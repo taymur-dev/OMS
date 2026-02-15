@@ -12,12 +12,14 @@ import { useAppSelector } from "../../redux/Hooks";
 
 type PAYMENTMETHODT = {
   id: number;
-  customerId: string;
+  customerId: number;    
+  customerName: string;    
   amount: string;
   paymentMethod: string;
   description: string;
   date: string;
 };
+
 
 type CustomerT = {
   id: number;
@@ -40,7 +42,8 @@ export const EditPayment = ({
 
   const [updatePayment, setUpdatePayment] = useState<PAYMENTMETHODT>({
     id: selectPayment?.id || 0,
-    customerId: selectPayment?.customerId?.toString() || "",
+    customerId: selectPayment?.customerId ?? 0,
+    customerName: selectPayment?.customerName || "",
     amount: selectPayment?.amount || "",
     paymentMethod: selectPayment?.paymentMethod || "cash",
     description: selectPayment?.description || "",
@@ -83,7 +86,7 @@ export const EditPayment = ({
     if (selectPayment && allCustomers.length) {
       setUpdatePayment((prev) => ({
         ...prev,
-        customerId: selectPayment.customerId.toString(),
+        customerId: selectPayment.customerId,
       }));
     }
   }, [selectPayment, allCustomers]);

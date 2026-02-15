@@ -6,6 +6,7 @@ type TextareaFieldProps = {
   inputVal: string;
   disabled?: boolean;
   className?: string;
+  readOnly?: boolean;
 };
 
 export const TextareaField = ({
@@ -14,6 +15,7 @@ export const TextareaField = ({
   handlerChange,
   name,
   inputVal,
+  readOnly
 }: TextareaFieldProps) => {
   return (
     <div>
@@ -27,6 +29,7 @@ export const TextareaField = ({
           onChange={handlerChange}
           name={name}
           value={inputVal}
+          readOnly={readOnly}
         />
       </div>
     </div>

@@ -95,28 +95,30 @@ export const AddRejoining = ({
   const [resignations, setResignations] = useState<ResignationT[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch all users for admin
+  
   const getAllUsers = useCallback(async () => {
-    if (!token) return;
+  if (!token) return;
 
-    try {
-      const res = await axios.get<{ users: UserT[] }>(
-        `${BASE_URL}/api/admin/getUsers`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+  try {
+    const res = await axios.get<{ users: UserT[] }>(
+      `${BASE_URL}/api/admin/getUsersWithAcceptedResignation`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
 
-      const filteredUsers = res.data.users
-        .filter((u) => u.loginStatus === "N" && u.role === "user")
-        .map((u) => ({ value: u.id.toString(), label: u.name }));
+    const filteredUsers = res.data.users.map((u) => ({
+      value: u.id.toString(),
+      label: u.name,
+    }));
 
-      setAllUsers(filteredUsers);
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError.response?.data.message || "Failed to fetch users");
-    }
-  }, [token]);
+    setAllUsers(filteredUsers);
+  } catch (error) {
+    const axiosError = error as AxiosError<{ message: string }>;
+    toast.error(axiosError.response?.data.message || "Failed to fetch users");
+  }
+}, [token]);
+
 
   // Fetch lifelines
   const fetchLifeLines = useCallback(async () => {
@@ -175,7 +177,27 @@ export const AddRejoining = ({
     fetchResignations();
   }, [currentUser, getAllUsers, fetchLifeLines, fetchResignations]);
 
-  // Handle form changes
+  // Add this useEffect in AddRejoining.tsx
+
+useEffect(() => {
+  if (!addRejoin.id) return;
+
+  const selectedUserId = Number(addRejoin.id);
+
+  const latestLifeLine = lifeLines
+    .filter((l) => l.id === selectedUserId)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+
+  const lastResignation = resignations.find((r) => r.user_id === selectedUserId);
+
+  setAddRejoin((prev) => ({
+    ...prev,
+    designation: latestLifeLine?.position || "",
+    resignation_date: formatDate(lastResignation?.resignation_date) || "",
+  }));
+}, [addRejoin.id, lifeLines, resignations]);
+
+
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -301,7 +323,7 @@ export const AddRejoining = ({
             )}
 
             <InputField
-              labelName="Current Designation *"
+              labelName="Current Position *"
               type="text"
               name="designation"
               handlerChange={handlerChange}

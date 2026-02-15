@@ -83,7 +83,7 @@ export const UpdateResignation = ({
     let updatedValue = value;
 
     if (name === "note") {
-      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+      updatedValue = value.slice(0, 250);
     }
     setUpdateResignation((prev) => ({ ...prev, [name]: updatedValue }));
   };
@@ -168,7 +168,7 @@ export const UpdateResignation = ({
             />
 
             <InputField
-              labelName="Current Designation *"
+              labelName="Current Position *"
               name="designation"
               type="text"
               value={updateResignation.designation}

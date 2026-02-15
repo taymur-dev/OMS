@@ -8,7 +8,8 @@ type ViewLeaveProps = {
     id: number;
     leaveSubject: string;
     leaveReason: string;
-    date: string;
+    fromDate: string;
+    toDate: string;
     leaveStatus: string;
     status: string;
     name: string;
@@ -51,10 +52,25 @@ export const ViewLeave = ({ setIsOpenModal, data }: ViewLeaveProps) => {
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> Applied Date
+                  <FaCalendarAlt className="text-gray-400" /> From Date
                 </label>
                 <p className="text-gray-800 font-medium">
-                  {new Date(data.date)
+                  {new Date(data.fromDate)
+                    .toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })
+                    .replace(/ /g, "-")}
+                </p>
+              </div>
+
+               <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaCalendarAlt className="text-gray-400" /> To Date
+                </label>
+                <p className="text-gray-800 font-medium">
+                  {new Date(data.toDate)
                     .toLocaleDateString("en-GB", {
                       day: "2-digit",
                       month: "short",

@@ -193,7 +193,7 @@ export const Rejoin = () => {
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
         <div className="overflow-auto px-2">
           <div className="min-w-[900px]">
-            {/* Sticky Table Header - Using grid-cols-7 to match dimensions */}
+            {/* Sticky Table Header - Using grid-cols-7 to match dimension*/}
             <div
               className={`grid ${
                 isAdmin ? "grid-cols-7" : "grid-cols-6"
@@ -202,7 +202,7 @@ export const Rejoin = () => {
             >
               <span>Sr#</span>
               {isAdmin && <span>Employee Name</span>}
-              <span>Designation</span>
+              <span>Current Position</span>
               <span>Resignation</span>
               <span>Rejoin Date</span>
               <span>Status</span>

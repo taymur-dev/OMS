@@ -11,6 +11,8 @@ import { UpdateApplicant } from "../../Components/ApplicantsModal/UpdateApplican
 import { ViewApplicant } from "../../Components/ApplicantsModal/ViewApplicant";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { Loader } from "../../Components/LoaderComponent/Loader";
+import { toast } from "react-toastify";
+
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
@@ -114,6 +116,7 @@ export const Applicants = () => {
         prev.filter((item) => item.id !== selectedApplicantId),
       );
       setTotal((prev) => prev - 1);
+      toast.success("Applicant deleted successfully");
     } catch (error) {
       console.error("Delete failed", error);
     } finally {

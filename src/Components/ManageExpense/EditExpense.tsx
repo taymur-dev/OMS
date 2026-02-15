@@ -71,6 +71,7 @@ export const EditExpense = ({
           expenseName: expense.expenseName,
           expenseCategoryId: expense.expenseCategoryId,
           amount: expense.amount,
+          addedBy: expense.addedBy,
           date: expense.date,
         },
         { headers: { Authorization: `Bearer ${token}` } },

@@ -48,7 +48,7 @@ export const ViewAssignProject = ({
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                   <FaIdBadge className="text-gray-400" /> Employee ID
                 </label>
-                <p className="text-gray-800 font-medium">#{viewProject.id}</p>
+                <p className="text-gray-800 font-medium">#{viewProject.employee_id}</p>
               </div>
             </div>
           </div>

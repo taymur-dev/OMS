@@ -236,7 +236,7 @@ export const Resignation = () => {
             >
               <span>Sr#</span>
               {isAdmin && <span>Employee Name</span>}
-              <span>Designation</span>
+              <span>Current Position</span>
               <span>Resignation Date</span>
               <span>Approval</span>
               <span className="text-center">Actions</span>
@@ -333,7 +333,7 @@ export const Resignation = () => {
           resignationData={{
             employee_name: selectedResignation.employee_name,
             designation: selectedResignation.designation,
-            note: "",
+            note: selectedResignation.note,
             resignation_date: selectedResignation.resignation_date,
             approval_status: selectedResignation.approval_status,
           }}

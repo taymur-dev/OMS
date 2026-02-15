@@ -94,7 +94,7 @@ export const Progress = () => {
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-  toast.error("Progress has been deleted successfully");
+  toast.success("Progress has been deleted successfully");
     
     handleGetAllProgress();
     setIsOpenModal("");

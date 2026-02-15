@@ -251,6 +251,7 @@ export const EmployeeLifeline = () => {
         <AddEmployeeLifeLine
           setModal={() => handleToggleViewModal("")}
           onAdd={handleAddLifeLine}
+          existingLifeLines={lifeLines}
         />
       )}
 

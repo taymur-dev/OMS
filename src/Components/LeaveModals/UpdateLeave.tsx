@@ -17,7 +17,8 @@ type UpdateLEAVET = {
   leaveSubject: string;
   leaveStatus: string;
   leaveReason: string;
-  date: string;
+  fromDate: string;
+  toDate: string;
 };
 
 type UpdateLeaveProps = {
@@ -45,7 +46,8 @@ export const UpdateLeave = ({
 
   const [updateLeave, setUpdateLeave] = useState({
     leaveSubject: "",
-    date: currentDate,
+    fromDate: "",
+    toDate: "",
     leaveReason: "",
     status: "pending",
   });
@@ -54,15 +56,14 @@ export const UpdateLeave = ({
 
   useEffect(() => {
     if (EditLeave) {
-      const dateOnly = EditLeave.date
-        ? new Date(EditLeave.date).toLocaleDateString("sv-SE", {
-            timeZone: "Asia/Karachi",
-          })
-        : currentDate;
-
       setUpdateLeave({
         leaveSubject: EditLeave.leaveSubject || "",
-        date: dateOnly,
+        fromDate: EditLeave.fromDate
+          ? new Date(EditLeave.fromDate).toISOString().split("T")[0]
+          : currentDate,
+        toDate: EditLeave.toDate
+          ? new Date(EditLeave.toDate).toISOString().split("T")[0]
+          : currentDate,
         leaveReason: EditLeave.leaveReason || "",
         status: EditLeave.leaveStatus?.toLowerCase() || "pending",
       });
@@ -95,9 +96,9 @@ export const UpdateLeave = ({
     e.preventDefault();
     if (!EditLeave) return;
 
-    const { leaveSubject, date, leaveReason } = updateLeave;
+    const { leaveSubject, fromDate,  toDate, leaveReason } = updateLeave;
 
-    if (!leaveSubject || !date || !leaveReason) {
+    if (!leaveSubject || !fromDate || !toDate|| !leaveReason) {
       toast.error("Please fill all required fields", {
         toastId: "update-leave-required",
       });
@@ -108,7 +109,8 @@ export const UpdateLeave = ({
 
     try {
       const payload = {
-        date: updateLeave.date,
+        fromDate: updateLeave.fromDate,
+        toDate: updateLeave.toDate,
         leaveStatus: updateLeave.status,
         leaveSubject: updateLeave.leaveSubject,
         leaveReason: updateLeave.leaveReason,
@@ -163,10 +165,18 @@ export const UpdateLeave = ({
             />
 
             <InputField
-              labelName="Date*"
+              labelName="From Date*"
               type="date"
-              name="date"
-              value={updateLeave.date}
+              name="fromDate"
+              value={updateLeave.fromDate}
+              handlerChange={handleChange}
+            />
+
+            <InputField
+              labelName="To Date*"
+              type="date"
+              name="toDate"
+              value={updateLeave.toDate}
               handlerChange={handleChange}
             />
 

@@ -119,7 +119,7 @@ export const UsersDetails = () => {
         { headers: { Authorization: token } },
       );
       handlerGetUsers();
-      toast.error("User deleted successfully");
+      toast.success("User deleted successfully");
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(axiosError?.response?.data?.message);

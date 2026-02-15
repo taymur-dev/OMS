@@ -20,6 +20,14 @@ interface Applicant {
   status: "pending" | "approved" | "rejected";
 }
 
+interface AxiosErrorResponse {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
+
 type UpdateApplicantProps = {
   setModal: () => void;
   applicant?: Applicant;
@@ -72,7 +80,10 @@ export const UpdateApplicant = ({
         fatherName: applicant.fatherName || "",
         email: applicant.email || "",
         applicant_contact: applicant.applicant_contact,
-        applied_date: applicant.applied_date,
+        applied_date: applicant.applied_date
+          ? applicant.applied_date.split("T")[0]
+          : "",
+
         job: applicant.job,
         interviewPhase: applicant.interviewPhase || "",
         applicant_status: applicant.status,
@@ -96,7 +107,7 @@ export const UpdateApplicant = ({
     }
 
     if (name === "email") {
-      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+      updatedValue = value.replace(/\s/g, "").toLowerCase().slice(0, 80);
     }
 
     if (type === "number") {
@@ -142,6 +153,13 @@ export const UpdateApplicant = ({
       });
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return toast.error("Invalid email format (e.g., name@example.com)", {
+        toastId: "add-applicant-email",
+      });
+    }
+
     if (applicant_contact.length !== 11) {
       return toast.error("Contact number must be exactly 11 digits", {
         toastId: "add-applicant-contact",
@@ -161,10 +179,15 @@ export const UpdateApplicant = ({
 
       refreshApplicants();
       setModal();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
-      toast.error("Failed to add applicant", {
-        toastId: "add-applicant-error",
+
+      const err = error as AxiosErrorResponse;
+      const errorMessage =
+        err.response?.data?.message || "Failed to update applicant";
+
+      toast.error(errorMessage, {
+        toastId: "update-applicant-error",
       });
     } finally {
       setLoading(false);
@@ -198,8 +221,24 @@ export const UpdateApplicant = ({
             />
 
             <InputField
-              labelName="Applicant Contact *"
+              labelName="Father Name *"
               type="text"
+              name="fatherName"
+              value={updateApplicant.fatherName}
+              handlerChange={handlerChange}
+            />
+
+            <InputField
+              labelName="Email *"
+              type="email"
+              name="email"
+              value={updateApplicant.email}
+              handlerChange={handlerChange}
+            />
+
+            <InputField
+              labelName="Applicant Contact *"
+              type="number"
               name="applicant_contact"
               value={updateApplicant.applicant_contact}
               handlerChange={handlerChange}
@@ -221,7 +260,15 @@ export const UpdateApplicant = ({
               handlerChange={handlerChange}
             />
 
-            <div className="flex flex-col gap-1 md:col-span-2">
+            <InputField
+              labelName="Interview Phase *"
+              type="text"
+              name="interviewPhase"
+              value={updateApplicant.interviewPhase}
+              handlerChange={handlerChange}
+            />
+
+            <div className="flex flex-col gap-1 md:col-span-1">
               <label className="text-xs font-semibold">
                 Applicant Status *
               </label>

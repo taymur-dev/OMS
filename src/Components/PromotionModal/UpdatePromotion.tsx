@@ -34,12 +34,13 @@ type PromotionFormType = {
   requested_designation: string;
   note: string;
   date: string;
-  approvalStatus: string;
+  approval: string;
 };
 
 const ApprovalOptions: { id: number; value: string; label: string }[] = [
-  { id: 1, label: "Accepted", value: "ACCEPTED" },
-  { id: 2, label: "Rejected", value: "REJECTED" },
+  { id: 1, label: "Pending", value: "PENDING" },
+  { id: 2, label: "Accepted", value: "ACCEPTED" },
+  { id: 3, label: "Rejected", value: "REJECTED" },
 ];
 
 export const UpdatePromotion = ({
@@ -58,20 +59,26 @@ export const UpdatePromotion = ({
     requested_designation: "",
     note: "",
     date: currentDate,
-    approvalStatus: "PENDING",
+    approval: "PENDING",
   });
 
   useEffect(() => {
-    if (!promotionData) return;
-
-    setPromotion({
-      current_designation: promotionData.current_designation,
-      requested_designation: promotionData.requested_designation,
-      note: promotionData.note,
-      date: promotionData.date?.slice(0, 10) || currentDate,
-      approvalStatus: promotionData.approval || "PENDING",
-    });
+    if (promotionData) {
+      setPromotion({
+        current_designation: promotionData.current_designation || "",
+        requested_designation: promotionData.requested_designation || "",
+        note: promotionData.note || "",
+        date: promotionData.date
+          ? promotionData.date.slice(0, 10)
+          : currentDate,
+        approval: promotionData.approval
+          ? promotionData.approval.toUpperCase()
+          : "PENDING",
+      });
+    }
   }, [promotionData]);
+
+  const isAccepted = promotion.approval === "ACCEPTED";
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -79,7 +86,6 @@ export const UpdatePromotion = ({
     >,
   ) => {
     const { name, value } = e.target;
-
     let updatedValue = value;
 
     if (name === "note") {
@@ -95,23 +101,20 @@ export const UpdatePromotion = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const { current_designation, requested_designation, note, date, approval } =
+      promotion;
 
-    const {
-      current_designation,
-      requested_designation,
-      note,
-      date,
-      approvalStatus,
-    } = promotion;
-
-    if (!current_designation || !requested_designation || !note || !date) {
-      return toast.error("Please fill all required fields", {
-        toastId: "update-promotion-validation",
-      });
+    if (
+      !current_designation ||
+      !requested_designation ||
+      !note ||
+      !date ||
+      !approval
+    ) {
+      return toast.error("Please fill all required fields");
     }
 
     setLoading(true);
-
     try {
       const url = isAdmin
         ? `${BASE_URL}/api/admin/updatePromotion/${promotionData.id}`
@@ -119,27 +122,17 @@ export const UpdatePromotion = ({
 
       await axios.put(
         url,
-        {
-          current_designation,
-          requested_designation,
-          note,
-          date,
-          approvalStatus,
-        },
+        { ...promotion },
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
-      toast.success("Promotion updated successfully", {
-        toastId: "update-promotion-success",
-      });
-
+      toast.success("Promotion updated successfully");
       handleRefresh();
       setModal();
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(
         axiosError.response?.data.message || "Failed to update promotion",
-        { toastId: "update-promotion-error" },
       );
     } finally {
       setLoading(false);
@@ -147,12 +140,7 @@ export const UpdatePromotion = ({
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50"
-      onKeyDown={(e) => {
-        if (e.key === "Enter") e.preventDefault();
-      }}
-    >
+    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4 flex items-center justify-center z-50">
       <div className="w-[42rem] bg-white rounded border border-indigo-900">
         <form onSubmit={handleSubmit}>
           <div className="bg-indigo-900 rounded px-6">
@@ -164,21 +152,23 @@ export const UpdatePromotion = ({
             </Title>
           </div>
 
-          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
+          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 py-2 gap-3 mt-2">
             <InputField
-              labelName="Current Designation *"
+              labelName="Current Position *"
               name="current_designation"
               value={promotion.current_designation}
               handlerChange={handleChange}
               type="text"
+              disabled={isAdmin} 
             />
 
             <InputField
-              labelName="Requested Designation *"
+              labelName="Requested Position *"
               name="requested_designation"
               value={promotion.requested_designation}
               handlerChange={handleChange}
               type="text"
+              disabled={isAdmin}
             />
 
             <InputField
@@ -187,6 +177,7 @@ export const UpdatePromotion = ({
               type="date"
               value={promotion.date}
               handlerChange={handleChange}
+              disabled={isAdmin}
             />
 
             <TextareaField
@@ -194,15 +185,17 @@ export const UpdatePromotion = ({
               name="note"
               inputVal={promotion.note}
               handlerChange={handleChange}
+              readOnly={isAdmin}
             />
 
             <div className="md:col-span-2">
               {isAdmin && (
                 <OptionField
-                  labelName="Approval Status"
-                  name="approvalStatus"
-                  value={promotion.approvalStatus}
+                  labelName="Approval Status *"
+                  name="approval"
+                  value={promotion.approval}
                   handlerChange={handleChange}
+                  disabled={isAccepted} 
                   optionData={ApprovalOptions}
                   inital="Select Status"
                 />
@@ -210,7 +203,7 @@ export const UpdatePromotion = ({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-4 py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

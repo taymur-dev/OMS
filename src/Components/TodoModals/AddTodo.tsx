@@ -116,6 +116,39 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
       return;
     }
 
+    if (
+      new Date(addTodo.startDate) > new Date(addTodo.deadline) &&
+      new Date(addTodo.endDate) > new Date(addTodo.deadline)
+    ) {
+      toast.error("Start Date and End Date cannot be later than Deadline", {
+        toastId: "date-validation",
+      });
+      return;
+    }
+
+    if (new Date(addTodo.startDate) > new Date(addTodo.endDate)) {
+      toast.error("Start Date cannot be later than End Date", {
+        toastId: "date-validation",
+      });
+      return;
+    }
+
+    if (new Date(addTodo.startDate) > new Date(addTodo.deadline)) {
+      toast.error("Start Date cannot be later than Deadline", {
+        toastId: "date-validation",
+      });
+      return;
+    }
+
+    if (new Date(addTodo.endDate) > new Date(addTodo.deadline)) {
+      toast.error("End Date cannot be later than Deadline", {
+        toastId: "date-validation",
+      });
+      return;
+    }
+
+    
+
     setLoading(true);
 
     try {
@@ -229,10 +262,7 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
 
           <div className="flex justify-end gap-3 px-4 py-3 rounded bg-indigo-900  border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

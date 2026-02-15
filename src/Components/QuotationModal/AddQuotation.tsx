@@ -4,6 +4,10 @@ import { toast } from "react-toastify";
 
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
+import { LocalButton } from "../CustomButtons/LocalButton";
+import { EditButton } from "../../Components/CustomButtons/EditButton";
+import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+
 import { Title } from "../Title";
 import { InputField } from "../InputFields/InputField";
 import { TextareaField } from "../InputFields/TextareaField";
@@ -33,7 +37,6 @@ type CartItem = {
   description: string;
   QTY: number;
   UnitPrice: number;
-  isEditing?: boolean;
 };
 
 const initialState = {
@@ -52,6 +55,7 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [loading, setLoading] = useState(false);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
 
   const [cart, setCart] = useState<CartItem[]>(() => {
     const storedCart = sessionStorage.getItem("cart");
@@ -126,6 +130,7 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
 
   const addToCart = () => {
     if (!selectedProject) return toast.error("Please select a project");
+
     const qty = Number(addQuotation.QTY);
     const price = Number(addQuotation.UnitPrice);
     const desc = addQuotation.description.trim();
@@ -137,18 +142,39 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
     const project = projects.find((p) => p.id.toString() === selectedProject);
     if (!project) return toast.error("Selected project not found");
 
-    const newItem: CartItem = {
-      id: crypto.randomUUID(),
-      projectId: project.id,
-      projectName: project.projectName,
-      description: desc,
-      QTY: qty,
-      UnitPrice: price,
-      isEditing: false,
-    };
+    if (editingItemId) {
+      // 🔁 UPDATE EXISTING ITEM
+      setCart((prev) =>
+        prev.map((item) =>
+          item.id === editingItemId
+            ? {
+                ...item,
+                projectId: project.id,
+                projectName: project.projectName,
+                description: desc,
+                QTY: qty,
+                UnitPrice: price,
+              }
+            : item,
+        ),
+      );
 
-    setCart((prev) => [newItem, ...prev]);
-    toast.success("Item added to cart");
+      toast.success("Item updated successfully");
+      setEditingItemId(null);
+    } else {
+      // ➕ ADD NEW ITEM
+      const newItem: CartItem = {
+        id: crypto.randomUUID(),
+        projectId: project.id,
+        projectName: project.projectName,
+        description: desc,
+        QTY: qty,
+        UnitPrice: price,
+      };
+
+      setCart((prev) => [newItem, ...prev]);
+      toast.success("Item added to cart");
+    }
 
     setAddQuotation(initialState);
     setSelectedProject("");
@@ -207,9 +233,7 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex px-4 items-center justify-center z-50">
-      {/* Container width adjusted to 42rem to match AddSale, with a flexible height for the cart */}
       <div className="w-[42rem] max-h-[90vh] flex flex-col bg-white rounded border border-indigo-900 shadow-xl overflow-hidden">
-        {/* HEADER: Cleaned up rounded corners and alignment */}
         <div className="bg-indigo-900 px-6 py-0.8">
           <Title
             setModal={setModal}
@@ -219,9 +243,7 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
           </Title>
         </div>
 
-        {/* BODY: Added overflow-y-auto to keep header/footer fixed while scrolling content */}
         <div className="flex-1 overflow-y-auto p-4 space-y-6">
-          {/* Input Section: Top Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold text-black mb-1 block">
@@ -263,21 +285,23 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
           </div>
 
           <div className="flex justify-end">
-            <AddButton
-              label="Add to Cart"
+            <LocalButton
+              loading={loading}
+              label={loading ? "Adding to Cart" : "Add to Cart"}
               handleClick={addToCart}
               disabled={isAddToCartDisabled}
+              variant="primary"
             />
           </div>
 
           {/* CART TABLE */}
           <div className="border rounded-lg overflow-hidden border-indigo-100">
-            <div className="grid grid-cols-6 bg-indigo-900 text-white text-xs font-bold border-b border-indigo-100 text-center">
+            <div className="grid grid-cols-5 bg-indigo-900 text-white text-xs font-bold border-b border-indigo-100 text-center">
               <span className="py-2">Sr</span>
               <span className="py-2 text-left">Project</span>
-              <span className="py-2 text-left">Description</span>
               <span className="py-2">QTY</span>
               <span className="py-2">Price</span>
+              {/* <span className="py-2 text-left">Description</span> */}
               <span className="py-2">Actions</span>
             </div>
 
@@ -290,71 +314,50 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
                 cart.map((item, index) => (
                   <div
                     key={item.id}
-                    className="grid grid-cols-6 text-xs border-b last:border-0 hover:bg-gray-50 items-center text-center py-1"
+                    className="grid grid-cols-5 text-xs border-b last:border-0 hover:bg-gray-50 items-center text-center py-1"
                   >
+                    {/* Sr */}
                     <span className="text-gray-500">{index + 1}</span>
+
+                    {/* Project */}
                     <span className="text-left truncate px-1">
                       {item.projectName}
                     </span>
 
-                    {item.isEditing ? (
-                      <>
-                        <input
-                          type="text"
-                          className="border rounded px-1 mx-1 text-xs"
-                          value={item.description}
-                          onChange={(e) => {
-                            const updatedCart = [...cart];
-                            updatedCart[index].description = e.target.value;
-                            setCart(updatedCart);
-                          }}
-                        />
-                        <input
-                          type="number"
-                          className="border rounded px-1 w-12 mx-auto text-xs"
-                          value={item.QTY}
-                          onChange={(e) => {
-                            const value = Number(e.target.value);
-                            if (value < 0) return;
-                            const updatedCart = [...cart];
-                            updatedCart[index].QTY = value;
-                            setCart(updatedCart);
-                          }}
-                        />
-                        <input
-                          type="number"
-                          className="border rounded px-1 w-16 mx-auto text-xs"
-                          value={item.UnitPrice}
-                          onChange={(e) => {
-                            const value = Number(e.target.value);
-                            if (value < 0) return;
-                            const updatedCart = [...cart];
-                            updatedCart[index].UnitPrice = value;
-                            setCart(updatedCart);
-                          }}
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-left truncate px-1">
-                          {item.description}
-                        </span>
-                        <span>{item.QTY}</span>
-                        <span>{item.UnitPrice}</span>
-                      </>
-                    )}
+                    {/* Description */}
+                    {/* <span className="text-left truncate px-1">
+                      {item.description}
+                    </span> */}
 
-                    <button
-                      className="text-indigo-600 font-semibold hover:text-indigo-800 transition-colors"
-                      onClick={() => {
-                        const updatedCart = [...cart];
-                        updatedCart[index].isEditing =
-                          !updatedCart[index].isEditing;
-                        setCart(updatedCart);
-                      }}
-                    >
-                      {item.isEditing ? "Save" : "Edit"}
-                    </button>
+                    {/* QTY */}
+                    <span>{item.QTY}</span>
+
+                    {/* Price */}
+                    <span>{item.UnitPrice}</span>
+
+                    {/* Actions */}
+                    <span className="flex justify-center gap-2">
+                      <EditButton
+                        handleUpdate={() => {
+                          setSelectedProject(item.projectId);
+                          setAddQuotation({
+                            description: item.description,
+                            QTY: item.QTY.toString(),
+                            UnitPrice: item.UnitPrice.toString(),
+                          });
+                          setEditingItemId(item.id);
+                        }}
+                      />
+
+                      <DeleteButton
+                        handleDelete={() => {
+                          setCart((prev) =>
+                            prev.filter((cartItem) => cartItem.id !== item.id),
+                          );
+                          toast.success("Item deleted from cart");
+                        }}
+                      />
+                    </span>
                   </div>
                 ))
               )}

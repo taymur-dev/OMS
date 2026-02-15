@@ -43,12 +43,18 @@ export const UpdateAsset = ({
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
-  const [updateAsset, setUpdateAsset] = useState({
-    asset_name: assetData.asset_name,
-    category_id: assetData.category_id,
-    description: assetData.description,
-    date: assetData.date,
-  });
+  const formatDate = (dateString: string) => {
+  if (!dateString) return "";
+  return dateString.split("T")[0]; 
+};
+
+const [updateAsset, setUpdateAsset] = useState({
+  asset_name: assetData.asset_name,
+  category_id: assetData.category_id,
+  description: assetData.description,
+  date: formatDate(assetData.date),
+});
+
 
   const [categories, setCategories] = useState<
     { id: number; label: string; value: string }[]

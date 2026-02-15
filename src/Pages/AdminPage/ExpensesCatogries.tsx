@@ -89,7 +89,7 @@ export const ExpensesCatogries = () => {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
-      toast.error("Category has been deleted successfully");
+      toast.success("Category has been deleted successfully");
       handlegetExpenseCategory();
       handleToggleViewModal("");
     } catch (error) {

@@ -219,7 +219,7 @@ return (
                     title="Active"
                   >
                     <BsCheck2 size={18} />
-                    <span className="text-xs">Active</span>
+                    <span className="text-xs">Reactivate</span>
                   </button>
                 </span>
               </div>
@@ -248,6 +248,7 @@ return (
       <AddWithdraw
         setModal={() => setIsOpenModal("")}
         handlegetwithDrawEmployeess={handlegetwithDrawEmployeess}
+        existingWithdrawals={allWithdrawEmployees || []}
       />
     )}
 

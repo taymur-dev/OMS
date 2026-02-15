@@ -8,7 +8,7 @@ import {
 } from "react-icons/fa";
 
 export type PaymentDetailT = {
-  customerId: string;
+  customerId: number;
   amount: string;
   paymentMethod: string;
   description?: string;

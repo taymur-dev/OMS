@@ -3,7 +3,6 @@ import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 import { Title } from "../Title";
-import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import {
   FaCheckCircle,
@@ -40,7 +39,7 @@ export const ViewPromotion = ({
     const fetchHistory = async () => {
       try {
         const res = await axios.get(
-          `${BASE_URL}/api/admin/getPromotionHistory/${promotionData.employee_id}`,
+          `${BASE_URL}/api/getPromotionHistory/${promotionData.employee_id}`,
           { headers: { Authorization: `Bearer ${currentUser?.token}` } },
         );
         const sortedHistory = res.data.sort(
@@ -66,16 +65,7 @@ export const ViewPromotion = ({
     });
   };
 
-  const getStatusStyle = (status: string) => {
-    switch (status.toUpperCase()) {
-      case "ACCEPTED":
-        return "bg-emerald-100 text-emerald-700 border-emerald-200";
-      case "REJECTED":
-        return "bg-rose-100 text-rose-700 border-rose-200";
-      default:
-        return "bg-amber-100 text-amber-700 border-amber-200";
-    }
-  };
+ 
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md px-4 flex items-center justify-center z-50">
@@ -115,12 +105,7 @@ export const ViewPromotion = ({
                 </p>
               </div>
             </div>
-            <div
-              className={`px-4 py-1.5 rounded-full border text-xs font-bold uppercase
-                 tracking-widest ${getStatusStyle(promotionData.approval)}`}
-            >
-              {promotionData.approval}
-            </div>
+            
           </div>
 
           {/* Timeline Section */}
@@ -214,7 +199,6 @@ export const ViewPromotion = ({
         {/* Footer */}
         <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
           <CancelBtn setModal={setModal} />
-          <AddButton label="Update" />
         </div>
       </div>
     </div>

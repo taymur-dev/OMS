@@ -168,10 +168,12 @@ export const Promotion = () => {
         <TableTitle
           tileName="Promotion Request"
           rightElement={
-            <CustomButton
-              handleToggle={() => setIsOpenModal("ADD")}
-              label="+ Add Promotion"
-            />
+            !isAdmin && (
+              <CustomButton
+                handleToggle={() => setIsOpenModal("ADD")}
+                label="+ Add Promotion"
+              />
+            )
           }
         />
 
@@ -221,8 +223,8 @@ export const Promotion = () => {
             >
               <span>Sr#</span>
               {isAdmin && <span>Employee Name</span>}
-              <span>Current Designation</span>
-              <span>Requested Designation</span>
+              <span>Current Position</span>
+              <span>Requested Position</span>
               <span>Approval</span>
               <span className="text-center">Actions</span>
             </div>
@@ -255,14 +257,19 @@ export const Promotion = () => {
                     {getStatusBadge(promotion.approval)}
                   </span>
                   <span className="flex flex-nowrap justify-center gap-1">
-                    <EditButton handleUpdate={() => handleEdit(promotion)} />
+                    {promotion.approval !== "ACCEPTED" && (
+                      <EditButton handleUpdate={() => handleEdit(promotion)} />
+                    )}
+
                     <ViewButton handleView={() => handleView(promotion)} />
-                    <DeleteButton
-                      handleDelete={() => {
-                        setSelectedId(promotion.id);
-                        setIsOpenModal("DELETE");
-                      }}
-                    />
+                    {!isAdmin && (
+                      <DeleteButton
+                        handleDelete={() => {
+                          setSelectedId(promotion.id);
+                          setIsOpenModal("DELETE");
+                        }}
+                      />
+                    )}
                   </span>
                 </div>
               ))

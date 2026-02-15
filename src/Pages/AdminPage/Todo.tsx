@@ -92,7 +92,7 @@ export const Todo = () => {
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      toast.error("Todo has been deleted successfully");
+      toast.success("Todo has been deleted successfully");
 
       await getAllTodos();
       toggleModal("");

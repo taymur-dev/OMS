@@ -26,6 +26,14 @@ type Job = {
   job_title: string;
 };
 
+interface AxiosErrorResponse {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
+
 const currentDate = new Date().toLocaleDateString("en-CA");
 
 const initialState = {
@@ -68,7 +76,7 @@ export const AddApplicant = ({
     }
 
     if (name === "email") {
-      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+      updatedValue = value.replace(/\s/g, "").toLowerCase().slice(0, 80);
     }
 
     if (type === "number") {
@@ -114,6 +122,33 @@ export const AddApplicant = ({
       });
     }
 
+    if (addApplicant.email) {
+      let emailValue = addApplicant.email.replace(/^\s+/, "");
+      emailValue = emailValue.replace(/[^a-zA-Z0-9@._+-]/g, "");
+
+      const [local, domain] = emailValue.split("@");
+
+      if (
+        local?.includes("..") ||
+        local?.startsWith(".") ||
+        (local?.endsWith(".") && !domain)
+      ) {
+        return toast.error("Invalid email format");
+      }
+
+      if (
+        domain?.startsWith(".") ||
+        local?.startsWith("-") ||
+        local?.endsWith("-")
+      ) {
+        return toast.error("Invalid email format");
+      }
+
+      if (domain?.startsWith("-") || domain?.endsWith("-")) {
+        return toast.error("Invalid email format");
+      }
+    }
+
     if (applicant_contact.length !== 11) {
       return toast.error("Contact number must be exactly 11 digits", {
         toastId: "add-applicant-contact",
@@ -138,9 +173,14 @@ export const AddApplicant = ({
 
       refreshApplicants();
       setModal();
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to add applicant", {
+    } catch (error: unknown) {
+      console.error(error);
+
+      const err = error as AxiosErrorResponse;
+      const errorMessage =
+        err.response?.data?.message || "Failed to add applicant";
+
+      toast.error(errorMessage, {
         toastId: "add-applicant-error",
       });
     } finally {
@@ -200,7 +240,7 @@ export const AddApplicant = ({
 
               <InputField
                 labelName="Email *"
-                type="text"
+                type="email"
                 name="email"
                 value={addApplicant.email}
                 handlerChange={handlerChange}
@@ -208,7 +248,7 @@ export const AddApplicant = ({
 
               <InputField
                 labelName="Contact No *"
-                type="text"
+                type="number"
                 name="applicant_contact"
                 value={addApplicant.applicant_contact}
                 handlerChange={(e) => {

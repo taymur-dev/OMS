@@ -83,6 +83,11 @@ export const UpdateProject = ({
     e.preventDefault();
     if (!updateProject) return;
 
+    if (new Date(updateProject.startDate) > new Date(updateProject.endDate)) {
+    toast.error("Start Date cannot be later than End Date", { toastId: "date-error-update" });
+    return;
+  }
+
     setLoading(true);
 
     try {

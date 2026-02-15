@@ -11,6 +11,7 @@ type OptionFieldProps = {
   value: string | number;
   optionData?: option[];
   inital?: string;
+  disabled?: boolean;
 };
 
 export const OptionField = ({
@@ -23,9 +24,7 @@ export const OptionField = ({
 }: OptionFieldProps) => {
   return (
     <div className="flex flex-col ">
-      <label className="text-black text-xs font-semibold">
-        {labelName}
-      </label>
+      <label className="text-black text-xs font-semibold">{labelName}</label>
       <select
         value={value}
         onChange={handlerChange}

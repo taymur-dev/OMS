@@ -18,6 +18,7 @@ const currentDate = today.toLocaleDateString("sv-SE");
 type AddPromotionProps = {
   setModal: () => void;
   handleRefresh: () => void;
+  
 };
 
 type AddPromotionType = {
@@ -26,6 +27,7 @@ type AddPromotionType = {
   requested_designation: string;
   note: string;
   date: string;
+  
 };
 
 type User = {
@@ -115,6 +117,11 @@ export const AddPromotion = ({
 
     if (name === "note") {
       updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+
+    }
+
+     if (name === "current_designation") {
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
     }
 
     if (name === "requested_designation") {
@@ -226,7 +233,7 @@ export const AddPromotion = ({
             )}
 
             <InputField
-              labelName="Current Designation *"
+              labelName="Current Position *"
               type="text"
               name="current_designation"
               handlerChange={handlerChange}
@@ -235,7 +242,7 @@ export const AddPromotion = ({
             />
 
             <InputField
-              labelName="Requested Designation *"
+              labelName="Requested Position *"
               type="text"
               name="requested_designation"
               handlerChange={handlerChange}

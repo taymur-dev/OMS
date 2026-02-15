@@ -220,7 +220,7 @@ export const UpdateRejoining = ({
             )}
 
             <InputField
-              labelName="Current Designation *"
+              labelName="Current Position *"
               type="text"
               name="designation"
               handlerChange={handlerChange}

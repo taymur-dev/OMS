@@ -213,7 +213,7 @@ export const AddResignation = ({
             )}
 
             <InputField
-              labelName="Current Designation*"
+              labelName="Current Position*"
               name="designation"
               value={formData.designation}
               handlerChange={handlerChange}

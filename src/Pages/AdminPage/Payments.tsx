@@ -29,7 +29,7 @@ type PATMENTT = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 type PAYMENTMETHODT = {
   id: number;
   customerName: string;
-  customerId: string;
+  customerId: number;
   amount: string;
   paymentMethod: string;
   description: string;
@@ -83,9 +83,9 @@ export const Payments = () => {
 
   const filteredPayments = useMemo(() => {
     return allPayment.filter((payment) =>
-      payment.customerId.toLowerCase().includes(searchTerm.toLowerCase()),
+      payment.customerId,
     );
-  }, [allPayment, searchTerm]);
+  }, [allPayment]);
 
   const totalPages = Math.ceil(filteredPayments.length / pageSize);
 
@@ -197,7 +197,7 @@ export const Payments = () => {
                  text-sm p-2 hover:bg-gray-50 transition"
                 >
                   <span>{startIndex + index + 1}</span>
-                  <span className="truncate">{payment.customerId}</span>
+                  <span className="truncate">{payment.customerName}</span>
                   <span>{payment.amount}</span>
                   <span>{payment.paymentMethod}</span>
                   <span>

@@ -19,11 +19,21 @@ type UserOption = {
 type WithdrawState = {
   id: string;
   withdrawReason: string;
+  
+};
+
+ type WithdrawEmployeeT = {
+  withdrawalId: number;
+  employeeId: number;
+  name: string;
+  withdrawDate: string;
+  withdrawReason: string;
 };
 
 type AddWithdrawProps = {
   setModal: () => void;
   handlegetwithDrawEmployeess: () => void;
+  existingWithdrawals: WithdrawEmployeeT[];
 };
 
 const initialState: WithdrawState = {
@@ -34,6 +44,7 @@ const initialState: WithdrawState = {
 export const AddWithdraw = ({
   setModal,
   handlegetwithDrawEmployeess,
+  existingWithdrawals
 }: AddWithdrawProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
@@ -91,6 +102,16 @@ export const AddWithdraw = ({
     if (!addWithdraw?.id || !addWithdraw?.withdrawReason) {
       return toast.error("Please provide a reason for withdrawal", {
         toastId: "required-withdraw",
+      });
+    }
+
+    const isAlreadyWithdrawn = existingWithdrawals.some(
+      (emp) => emp.employeeId === Number(addWithdraw.id)
+    );
+
+    if (isAlreadyWithdrawn) {
+      return toast.error("This employee is already in the withdraw list!", {
+        toastId: "duplicate-withdraw",
       });
     }
 

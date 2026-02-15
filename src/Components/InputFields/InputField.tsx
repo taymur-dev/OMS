@@ -9,6 +9,7 @@ type InputFieldProps = {
   disabled?: boolean;
   readOnly?: boolean;
   className?: string;
+  min?: string;
 };
 
 export const InputField = ({
@@ -21,6 +22,7 @@ export const InputField = ({
   value,
   disabled,
   className,
+  readOnly
 }: InputFieldProps) => {
   return (
     <div>
@@ -40,6 +42,7 @@ export const InputField = ({
           name={name}
           value={value}
           disabled={disabled}
+          readOnly={readOnly}
         />
       </div>
     </div>
