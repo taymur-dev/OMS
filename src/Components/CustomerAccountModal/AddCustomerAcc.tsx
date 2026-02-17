@@ -37,11 +37,16 @@ const initialState = {
   customerName: "",
   customerContact: "",
   customerAddress: "",
-  debit: "",
-  credit: "",
+  paymentType: "",
+  amount: "",
   paymentMethod: "",
   paymentDate: currentDate,
 };
+
+const paymentTypes = [
+  { id: 1, label: "Debit", value: "debit" },
+  { id: 2, label: "Credit", value: "credit" },
+];
 
 export const AddCustomerAccount = ({
   setModal,
@@ -111,8 +116,8 @@ export const AddCustomerAccount = ({
       !form.customerName ||
       !form.customerContact ||
       !form.customerAddress ||
-      !form.debit ||
-      !form.credit ||
+      !form.paymentType ||
+      !form.amount ||
       !form.paymentMethod ||
       !form.paymentDate
     ) {
@@ -126,13 +131,10 @@ export const AddCustomerAccount = ({
     try {
       const payload = {
         customerId: Number(form.selectCustomer),
-        customerName: form.customerName,
-        customerContact: form.customerContact,
-        customerAddress: form.customerAddress,
-        debit: Number(form.debit || 0),
-        credit: Number(form.credit || 0),
         paymentMethod: form.paymentMethod,
         paymentDate: form.paymentDate,
+        debit: form.paymentType === "debit" ? Number(form.amount) : 0,
+        credit: form.paymentType === "credit" ? Number(form.amount) : 0,
       };
 
       await axios.post(`${BASE_URL}/api/admin/addCustomerAccount`, payload, {
@@ -199,18 +201,20 @@ export const AddCustomerAccount = ({
               readOnly
             />
 
-            <InputField
-              labelName="Debit *"
-              name="debit"
-              type="number"
-              value={form.debit}
+            <OptionField
+              labelName="Payment Type *"
+              name="paymentType"
+              value={form.paymentType}
               handlerChange={handlerChange}
+              optionData={paymentTypes}
+              inital="Please Select"
             />
+
             <InputField
-              labelName="Credit *"
-              name="credit"
+              labelName="Amount *"
+              name="amount"
               type="number"
-              value={form.credit}
+              value={form.amount}
               handlerChange={handlerChange}
             />
 
@@ -234,10 +238,7 @@ export const AddCustomerAccount = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

@@ -68,7 +68,10 @@ export const ProfileChangePassword = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm"
+      onMouseDown={(e) => e.stopPropagation()}
+    >
       <div className="w-full max-w-lg bg-white rounded shadow-xl border border-indigo-900 overflow-hidden">
         <form onSubmit={handlerSubmitted}>
           {/* Header */}
@@ -108,10 +111,7 @@ export const ProfileChangePassword = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

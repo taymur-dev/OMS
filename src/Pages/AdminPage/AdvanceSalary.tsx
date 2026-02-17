@@ -92,7 +92,7 @@ export const AdvanceSalary = () => {
       });
 
       setAllAdvance(
-        Array.isArray(res.data) ? res.data.sort((a, b) => b.id - a.id) : [],
+        Array.isArray(res.data) ? res.data.sort((a, b) => a.id - b.id) : [],
       );
     } catch (error) {
       console.error("Failed to fetch advance salary:", error);
@@ -147,7 +147,7 @@ export const AdvanceSalary = () => {
 
     if (statusLower === "approved")
       colors = "bg-green-700 text-white border-green-200";
-    if (statusLower === "pending") colors = "bg-orange-700 text-white";
+    if (statusLower === "pending") colors = "bg-orange-500 text-white";
     if (statusLower === "rejected")
       colors = "bg-red-700 text-white border-red-200";
 

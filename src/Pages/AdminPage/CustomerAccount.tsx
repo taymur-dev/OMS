@@ -108,7 +108,7 @@ return (
         rightElement={
           <CustomButton
             handleToggle={() => handleToggleViewModal("ADD")}
-            label="+ Add Account"
+            label="+ Add Payment"
           />
         }
       />

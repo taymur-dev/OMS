@@ -120,6 +120,27 @@ export const AddOverTime = ({
       });
     }
 
+    const validateTime = (time: string) => {
+      const regex = /^(\d{1,2}):([0-5]?\d):([0-5]?\d)$/;
+      const match = time.match(regex);
+
+      if (!match) return false;
+
+      const hours = parseInt(match[1], 10);
+      const minutes = parseInt(match[2], 10);
+      const seconds = parseInt(match[3], 10);
+
+      // hours must be 0-24, minutes 0-59, seconds 0-59
+      if (hours > 24) return false;
+      if (minutes > 59) return false;
+      if (seconds > 59) return false;
+
+      // Reject 00:00:00
+      if (hours === 0 && minutes === 0 && seconds === 0) return false;
+
+      return true;
+    };
+
     setLoading(true);
 
     try {
@@ -136,16 +157,25 @@ export const AddOverTime = ({
         },
       );
 
+      if (!validateTime(addOvertime.time)) {
+        toast.error(
+          "Invalid overtime! Hours: 0-24, Minutes/Seconds: 0-59, cannot be 00:00:00",
+        );
+        setLoading(false);
+        return;
+      }
+
       toast.success("Overtime added successfully");
       refreshOvertime?.();
       setModal();
       setAddOvertime(initialState);
     } catch (err) {
- const axiosError = err as AxiosError<BackendError>;
-  const msg = axiosError.response?.data?.message || "Failed to add overtime";
-  
-  console.error("Add overtime failed:", err);
-  toast.error(msg);
+      const axiosError = err as AxiosError<BackendError>;
+      const msg =
+        axiosError.response?.data?.message || "Failed to add overtime";
+
+      console.error("Add overtime failed:", err);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -216,10 +246,7 @@ export const AddOverTime = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

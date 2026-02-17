@@ -123,17 +123,40 @@ export const UpdateOverTime = ({
   /* ------------------ HANDLERS ------------------ */
   const handleChange = (
     e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      HTMLTextAreaElement | HTMLInputElement | HTMLSelectElement
     >,
   ) => {
     const { name, value } = e.target;
 
     let updatedValue = value;
 
-    if (name === "description") {
+    if (name === "description" && e.isTrusted) {
+      // isTrusted = user input
       updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
     }
+
     setFormData((prev) => ({ ...prev, [name]: updatedValue }));
+  };
+
+  const validateTime = (time: string) => {
+    const regex = /^(\d{1,2}):([0-5]?\d):([0-5]?\d)$/;
+    const match = time.match(regex);
+
+    if (!match) return false;
+
+    const hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+    const seconds = parseInt(match[3], 10);
+
+    // hours must be 0-24, minutes 0-59, seconds 0-59
+    if (hours > 24) return false;
+    if (minutes > 59) return false;
+    if (seconds > 59) return false;
+
+    // Reject 00:00:00
+    if (hours === 0 && minutes === 0 && seconds === 0) return false;
+
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -159,15 +182,24 @@ export const UpdateOverTime = ({
         },
       );
 
+      if (!validateTime(formData.time)) {
+        toast.error(
+          "Invalid overtime! Hours: 0-24, Minutes/Seconds: 0-59, cannot be 00:00:00",
+        );
+        setLoading(false);
+        return;
+      }
+
       toast.success("Overtime updated successfully!");
       await refreshOvertimes();
       setModal();
     } catch (error) {
-  const axiosError = error as AxiosError<BackendError>;
-  const msg = axiosError.response?.data?.message || "Failed to update overtime.";
-  
-  console.error(error);
-  toast.error(msg);
+      const axiosError = error as AxiosError<BackendError>;
+      const msg =
+        axiosError.response?.data?.message || "Failed to update overtime.";
+
+      console.error(error);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -206,7 +238,6 @@ export const UpdateOverTime = ({
               </Title>
             </div>
 
-           
             <div className="mx-2 p-6 grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
               <UserSelect
                 labelName="Employee *"

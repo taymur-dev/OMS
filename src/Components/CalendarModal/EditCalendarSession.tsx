@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
@@ -9,35 +9,54 @@ import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 import { toast } from "react-toastify";
 
-type AddAttendanceProps = {
+type EditCalendarSessionProps = {
   setModal: () => void;
   refreshCalendar: () => void;
+  selectedSession: {
+    id?: number;
+    session_name: string;
+    year: string;
+    month: string;
+  };
 };
 
-const initialState = {
-  session_name: "",
-  startingMonth: new Date(),
-};
-
-export const AddCalendarSession = ({
+export const EditCalendarSession = ({
   setModal,
   refreshCalendar,
-}: AddAttendanceProps) => {
+  selectedSession,
+}: EditCalendarSessionProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
-  const [addCalendar, setAddCalendar] = useState<{
+  const [editCalendar, setEditCalendar] = useState<{
     session_name: string;
     startingMonth: Date | null;
-  }>(initialState);
+  }>({
+    session_name: "",
+    startingMonth: null,
+  });
 
   const [loading, setLoading] = useState(false);
+
+  // Prefill Data
+  useEffect(() => {
+    if (selectedSession) {
+      const monthIndex = new Date(
+        `${selectedSession.month} 1, ${selectedSession.year}`,
+      );
+
+      setEditCalendar({
+        session_name: selectedSession.session_name,
+        startingMonth: monthIndex,
+      });
+    }
+  }, [selectedSession]);
 
   const handlerChange = (e: {
     target: { name: string; value: Date | null };
   }) => {
     const { name, value } = e.target;
-    setAddCalendar((prev) => ({ ...prev, [name]: value }));
+    setEditCalendar((prev) => ({ ...prev, [name]: value }));
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -46,31 +65,34 @@ export const AddCalendarSession = ({
     setLoading(true);
 
     try {
-      if (!addCalendar.session_name.trim()) {
+      if (!editCalendar.session_name.trim()) {
         toast.error("Please enter session name");
         setLoading(false);
         return;
       }
 
-      if (!addCalendar.startingMonth) {
+      if (!editCalendar.startingMonth) {
         toast.error("Please select a month");
+        setLoading(false);
         return;
       }
 
-      const year = addCalendar.startingMonth.getFullYear().toString();
-      const month = addCalendar.startingMonth.toLocaleString("default", {
+      const year = editCalendar.startingMonth
+        .getFullYear()
+        .toString();
+
+      const month = editCalendar.startingMonth.toLocaleString("default", {
         month: "long",
       });
 
       const formattedData = {
-        session_name: addCalendar.session_name.trim(),
+        session_name: editCalendar.session_name.trim(),
         year,
         month,
-        calendarStatus: "Active",
       };
 
-      await axios.post(
-        `${BASE_URL}/api/admin/addCalendarSession`,
+      await axios.put(
+        `${BASE_URL}/api/admin/updateCalendarSession/${selectedSession.id}`,
         formattedData,
         {
           headers: {
@@ -79,19 +101,15 @@ export const AddCalendarSession = ({
         },
       );
 
-      toast.success("Calendar session added successfully");
+      toast.success("Calendar session updated successfully");
       refreshCalendar();
       setModal();
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        if (error.response?.status === 409) {
-          toast.error("Calendar session already exists for this month");
-        } else {
-          toast.error(
-            error.response?.data?.message ||
-              "Something went wrong. Please try again",
-          );
-        }
+        toast.error(
+          error.response?.data?.message ||
+            "Something went wrong. Please try again",
+        );
       } else {
         toast.error("Unexpected error occurred");
       }
@@ -105,7 +123,7 @@ export const AddCalendarSession = ({
   return (
     <>
       <div
-        className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50"
+        className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50"
         onKeyDown={(e) => {
           if (e.key === "Enter") e.preventDefault();
         }}
@@ -117,7 +135,7 @@ export const AddCalendarSession = ({
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
               >
-                ADD CALENDAR SESSION
+                EDIT CALENDAR SESSION
               </Title>
             </div>
 
@@ -131,16 +149,16 @@ export const AddCalendarSession = ({
                   <input
                     type="text"
                     name="session_name"
-                    value={addCalendar.session_name}
+                    value={editCalendar.session_name}
                     onChange={(e) =>
-                      setAddCalendar((prev) => ({
+                      setEditCalendar((prev) => ({
                         ...prev,
                         session_name: e.target.value,
                       }))
                     }
                     placeholder="Enter Session Name"
                     className="border border-gray-300 px-3 py-2.5 rounded-lg w-full text-gray-800 
-              focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                    focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
                   />
                 </div>
 
@@ -150,7 +168,7 @@ export const AddCalendarSession = ({
                     Starting Month *
                   </label>
                   <DatePicker
-                    selected={addCalendar.startingMonth}
+                    selected={editCalendar.startingMonth}
                     onChange={(date: Date | null) =>
                       handlerChange({
                         target: { name: "startingMonth", value: date },
@@ -158,10 +176,8 @@ export const AddCalendarSession = ({
                     }
                     dateFormat="yyyy-MM"
                     showMonthYearPicker
-                    minDate={new Date(2021, 0)}
-                    maxDate={new Date(2030, 11)}
                     className="border border-gray-300 px-3 py-2.5 rounded-lg w-full text-gray-800 
-              focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                    focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
                   />
                 </div>
               </div>
@@ -171,7 +187,7 @@ export const AddCalendarSession = ({
               <CancelBtn setModal={setModal} />
               <AddButton
                 loading={loading}
-                label={loading ? "Saving" : "Save"}
+                label={loading ? "Updating" : "Update"}
               />
             </div>
           </form>

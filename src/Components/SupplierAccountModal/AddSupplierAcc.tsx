@@ -30,6 +30,11 @@ const paymentMethods = [
   { id: 3, label: "Cash", value: "cash" },
 ];
 
+const paymentTypes = [
+  { id: 1, label: "Debit", value: "debit" },
+  { id: 2, label: "Credit", value: "credit" },
+];
+
 const currentDate = new Date().toLocaleDateString("en-CA");
 
 const initialState = {
@@ -37,8 +42,8 @@ const initialState = {
   supplierName: "",
   supplierContact: "",
   supplierAddress: "",
-  debit: "",
-  credit: "",
+  paymentType: "",
+  amount: "",
   paymentMethod: "",
   paymentDate: currentDate,
 };
@@ -113,8 +118,8 @@ export const AddSupplierAccount = ({
       !form.supplierName ||
       !form.supplierContact ||
       !form.supplierAddress ||
-      !form.debit ||
-      !form.credit ||
+      !form.paymentType ||
+      !form.amount ||
       !form.paymentMethod ||
       !form.paymentDate
     ) {
@@ -128,11 +133,8 @@ export const AddSupplierAccount = ({
     try {
       const payload = {
         supplierId: Number(form.selectSupplier),
-        supplierName: form.supplierName,
-        supplierContact: form.supplierContact,
-        supplierAddress: form.supplierAddress,
-        debit: Number(form.debit || 0),
-        credit: Number(form.credit || 0),
+        paymentType: form.paymentType,
+        amount: Number(form.amount),
         paymentMethod: form.paymentMethod,
         paymentDate: form.paymentDate,
       };
@@ -200,20 +202,20 @@ export const AddSupplierAccount = ({
               value={form.supplierAddress}
               readOnly
             />
-
-            <InputField
-              labelName="Debit *"
-              name="debit"
-              type="number"
-              value={form.debit}
+            <OptionField
+              labelName="Payment Type *"
+              name="paymentType"
+              value={form.paymentType}
               handlerChange={handlerChange}
+              optionData={paymentTypes}
+              inital="Please Select"
             />
 
             <InputField
-              labelName="Credit *"
-              name="credit"
+              labelName="Amount *"
+              name="amount"
               type="number"
-              value={form.credit}
+              value={form.amount}
               handlerChange={handlerChange}
             />
 
@@ -237,10 +239,7 @@ export const AddSupplierAccount = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

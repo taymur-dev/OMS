@@ -236,7 +236,7 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
             )}
 
             <InputField
-              labelName="Contact"
+              labelName="Contact *"
               type="number"
               name="contact"
               value={addLoan.contact}
@@ -268,14 +268,14 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
               handlerChange={handleInputChange}
             />
 
-            <InputField
+            {/* <InputField
               labelName="Remaining Amount"
               type="number"
               name="remainingAmount"
               value={addLoan.remainingAmount}
               handlerChange={() => {}}
               readOnly
-            />
+            /> */}
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

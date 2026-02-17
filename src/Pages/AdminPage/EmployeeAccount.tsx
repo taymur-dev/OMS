@@ -131,7 +131,7 @@ export const EmployeeAccount = () => {
           rightElement={
             currentUser?.role === "admin" && (
               <CustomButton
-                label="+ Add Employee Account"
+                label="+ Add Payment"
                 handleToggle={() => handleToggleModal("ADDACCOUNT")}
               />
             )

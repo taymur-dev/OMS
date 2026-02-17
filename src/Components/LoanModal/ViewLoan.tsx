@@ -10,17 +10,27 @@ type ViewLoanProps = {
 export const ViewLoan = ({ setIsOpenModal, viewLoan }: ViewLoanProps) => {
   if (!viewLoan) return null;
 
-  // Calculate totals
   const totals = viewLoan.allLoans.reduce(
     (acc, loan) => {
       acc.loan += Number(loan.loanAmount) || 0;
-      acc.return += Number(loan.return_amount) || 0;
+      acc.return += Number(loan.return_amount) || 0; 
       acc.deduction += Number(loan.deduction) || 0;
-      acc.remaining += Number(loan.remainingAmount) || 0;
+      acc.remaining += Number(loan.remainingAmount) || 0; 
       return acc;
     },
     { loan: 0, return: 0, deduction: 0, remaining: 0 },
   );
+
+  const sortedLoans = [...viewLoan.allLoans].sort((a, b) => {
+    const dateA = new Date(a.applyDate).getTime();
+    const dateB = new Date(b.applyDate).getTime();
+
+    if (dateA === dateB) {
+      return Number(a.id) - Number(b.id); 
+    }
+
+    return dateA - dateB; 
+  });
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
@@ -79,8 +89,9 @@ export const ViewLoan = ({ setIsOpenModal, viewLoan }: ViewLoanProps) => {
                       <th className="px-4 py-2">Remaining</th>
                     </tr>
                   </thead>
+
                   <tbody className="divide-y divide-gray-200">
-                    {viewLoan.allLoans.map((loan, idx) => (
+                    {sortedLoans.map((loan, idx) => (
                       <tr key={loan.id} className="hover:bg-gray-50">
                         <td className="px-4 py-2 ">{idx + 1}</td>
                         <td className="px-4 py-2  font-mono text-xs">

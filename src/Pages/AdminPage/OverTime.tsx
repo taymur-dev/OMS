@@ -29,6 +29,7 @@ type OVERTIMET = {
   name: string;
   date: string;
   totalTime: string;
+  description: string;
   approvalStatus: string;
 };
 
@@ -64,7 +65,10 @@ export const OverTime = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      setAllOvertime(res.data || []);
+      const sortedData = (res.data || []).sort((a: OVERTIMET, b: OVERTIMET) => {
+        return a.id - b.id;
+      });
+      setAllOvertime(sortedData);
     } catch (error) {
       console.error("Error fetching overtime:", error);
       setAllOvertime([]);
@@ -330,7 +334,7 @@ export const OverTime = () => {
             employeeId: selectedOvertime.employee_id,
             time: selectedOvertime.totalTime,
             date: selectedOvertime.date,
-            description: "",
+            description: selectedOvertime.description,
             status: selectedOvertime.approvalStatus,
           }}
           refreshOvertimes={handleGetOvertime}

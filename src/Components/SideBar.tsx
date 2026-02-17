@@ -331,7 +331,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
                 <SubLink to="/salaryCycle" label="Salary Cycle" />
                 <SubLink to="/overTime" label="Over Time" />
                 <SubLink to="/advanceSalary" label="Advance Salary" />
-                <SubLink to="/applyLoan" label="Apply Loan" />
+                <SubLink to="/applyLoan" label="Loan Management" />
                 <SubLink to="/configEmployeeSalaries" label="Config Salaries" />
               </div>
             </AccordionItem>

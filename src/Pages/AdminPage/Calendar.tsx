@@ -1,10 +1,3 @@
-import { Pagination } from "../../Components/Pagination/Pagination";
-import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
-import { useCallback, useEffect, useState } from "react";
-import { AddCalendarSession } from "../../Components/CalendarModal/AddCalendarSession";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
@@ -12,15 +5,31 @@ import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
+import { Pagination } from "../../Components/Pagination/Pagination";
+import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
+import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
+import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
+import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+import { EditButton } from "../../Components/CustomButtons/EditButton";
+import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+import { ViewButton } from "../../Components/CustomButtons/ViewButton";
+import { useCallback, useEffect, useState } from "react";
+import { AddCalendarSession } from "../../Components/CalendarModal/AddCalendarSession";
+import { ActivateCalendarSession } from "../../Components/CalendarModal/ActivateCalendarSession";
+import { EditCalendarSession } from "../../Components/CalendarModal/EditCalendarSession";
+import { ViewCalendarSession } from "../../Components/CalendarModal/ViewCalendarSession";
+import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
-type CALENDART = "ADD" | "";
+type CALENDART = "ADD" | "EDIT" | "VIEW" | "DELETE" | "ACTIVATE" | "";
 
 type CalendarSession = {
-  _id?: string;
+  id?: number;
+  session_name: string;
   year: string;
   month: string;
   calendarStatus?: string;
@@ -36,6 +45,8 @@ export const Calendar = () => {
   const [pageSize, setPageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [calendarList, setCalendarList] = useState<CalendarSession[]>([]);
+  const [selectedSession, setSelectedSession] =
+    useState<CalendarSession | null>(null);
 
   const token = currentUser?.token;
 
@@ -51,18 +62,80 @@ export const Calendar = () => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
 
-  const handleGetAllCalendar = useCallback(async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/admin/getCalendarSession`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setCalendarList(res.data.data || res.data);
-    } catch (error) {
-      console.log(error);
+  const handleGetAllCalendar = useCallback(
+    async (externalData?: CalendarSession[]): Promise<void> => {
+      try {
+        let mappedData: CalendarSession[];
+
+        if (externalData) {
+          mappedData = externalData;
+        } else {
+          const res = await axios.get(
+            `${BASE_URL}/api/admin/getCalendarSession`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
+
+          mappedData = (res.data.data || res.data).map(
+            (item: CalendarSession) => ({
+              id: item.id,
+              session_name: item.session_name,
+              year: item.year,
+              month: item.month,
+              calendarStatus: item.calendarStatus,
+            }),
+          );
+        }
+
+        setCalendarList(mappedData);
+      } catch (error) {
+        console.error("Error fetching calendar sessions:", error);
+      }
+    },
+    [token],
+  );
+
+  const handleDeleteCalendarSession = async () => {
+    if (!selectedSession?.id) {
+      console.error("No session selected or ID missing!");
+      return;
     }
-  }, [token]);
+
+    try {
+      console.log("Deleting session with ID:", selectedSession.id);
+
+      const res = await axios.delete(
+        `${BASE_URL}/api/admin/deleteCalendarSession/${selectedSession.id}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      console.log("Delete response:", res.data);
+
+      // Refresh the table
+      await handleGetAllCalendar();
+
+      // Close the modal
+      handleToggleViewModal("");
+    } catch (error) {
+      console.error("Error deleting session:", error);
+    }
+  };
+
+  const handleClickEditButton = (session: CalendarSession) => {
+    setSelectedSession(session);
+    handleToggleViewModal("EDIT");
+  };
+
+  const handleClickViewButton = (session: CalendarSession) => {
+    setSelectedSession(session);
+    handleToggleViewModal("VIEW");
+  };
+
+  const handleClickDeleteButton = (session: CalendarSession) => {
+    setSelectedSession(session);
+    handleToggleViewModal("DELETE");
+  };
 
   useEffect(() => {
     handleGetAllCalendar();
@@ -74,15 +147,20 @@ export const Calendar = () => {
     }, 1000);
   }, [dispatch, handleGetAllCalendar]);
 
-  const filteredCalendarList = calendarList.filter((item) =>
-    `${item.year} ${item.month}`
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase()),
+  const uniqueSessions = calendarList.reduce<CalendarSession[]>((acc, curr) => {
+    if (!acc.find((s) => s.session_name === curr.session_name)) {
+      acc.push(curr);
+    }
+    return acc;
+  }, []);
+
+  const filteredCalendarList = uniqueSessions.filter((item) =>
+    `${item.session_name}`.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
+  // Paginate
   const startIndex = (pageNo - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-
   const paginatedCalendarList = filteredCalendarList.slice(
     startIndex,
     endIndex,
@@ -130,11 +208,17 @@ export const Calendar = () => {
               <span className="hidden xs:inline">entries</span>
             </div>
 
-            {/* Right Side: Search Input */}
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
+            <div className="flex flex-col items-end">
+              <TableInputField
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+
+              <CustomButton
+                label="Activate Calendar Session"
+                handleToggle={() => handleToggleViewModal("ACTIVATE")}
+              />
+            </div>
           </div>
         </div>
 
@@ -147,10 +231,11 @@ export const Calendar = () => {
              text-sm sticky top-0 z-10 p-2"
             >
               <span>Sr#</span>
-              <span>Year</span>
-              <span>Month</span>
+              <span>Session Name</span>
+              <span>Actions</span>
             </div>
 
+            {/* Table Body */}
             {/* Table Body */}
             {paginatedCalendarList.length === 0 ? (
               <div className="text-gray-800 text-lg text-center py-10">
@@ -159,13 +244,23 @@ export const Calendar = () => {
             ) : (
               paginatedCalendarList.map((item, index) => (
                 <div
-                  key={item._id || index}
+                  key={item.id || index}
                   className="grid grid-cols-3 border-b border-x border-gray-200 text-gray-800 items-center
                  text-sm p-2 hover:bg-gray-50 transition"
                 >
                   <span>{startIndex + index + 1}</span>
-                  <span>{item.year}</span>
-                  <span>{item.month}</span>
+                  <span>{item.session_name}</span>
+                  <span className="flex flex-nowrap gap-1">
+                    <EditButton
+                      handleUpdate={() => handleClickEditButton(item)}
+                    />
+                    <ViewButton
+                      handleView={() => handleClickViewButton(item)}
+                    />
+                    <DeleteButton
+                      handleDelete={() => handleClickDeleteButton(item)}
+                    />
+                  </span>
                 </div>
               ))
             )}
@@ -192,6 +287,37 @@ export const Calendar = () => {
         <AddCalendarSession
           setModal={() => handleToggleViewModal("")}
           refreshCalendar={handleGetAllCalendar}
+        />
+      )}
+
+      {isOpenModal === "EDIT" && selectedSession && (
+        <EditCalendarSession
+          setModal={() => handleToggleViewModal("")}
+          refreshCalendar={handleGetAllCalendar}
+          selectedSession={selectedSession}
+        />
+      )}
+
+      {isOpenModal === "VIEW" && selectedSession && (
+        <ViewCalendarSession
+          setModal={() => handleToggleViewModal("")}
+          selectedSession={selectedSession}
+          allSessions={calendarList}
+        />
+      )}
+
+      {isOpenModal === "DELETE" && (
+        <ConfirmationModal
+          isOpen={() => {}}
+          onClose={() => setIsOpenModal("")}
+          onConfirm={handleDeleteCalendarSession}
+        />
+      )}
+
+      {isOpenModal === "ACTIVATE" && (
+        <ActivateCalendarSession
+          setModal={() => handleToggleViewModal("")}
+          refreshSessions={handleGetAllCalendar}
         />
       )}
 

@@ -26,6 +26,11 @@ type User = {
   loginStatus: string;
 };
 
+const payment_type = [
+  { id: 1, label: "Debit", value: "debit" },
+  { id: 2, label: "Credit", value: "credit" },
+];
+
 const payment_method = [
   { id: 1, label: "EasyPaisa", value: "easyPaisa" },
   { id: 2, label: "Bank Transfer", value: "bankTransfer" },
@@ -39,8 +44,8 @@ const initialState = {
   employee_name: "",
   employeeContact: "",
   employeeEmail: "",
-  debit: "",
-  credit: "",
+  payment_type: "",
+  amount: "",
   payment_method: "",
   payment_date: currentDate,
 };
@@ -112,15 +117,15 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
       employee_name,
       employeeContact,
       employeeEmail,
-      debit,
-      credit,
+      payment_type,
+      amount,
     } = form;
 
     // Validation
     if (
       !selectEmployee ||
-      (!debit && !credit) ||
-      (Number(debit || 0) <= 0 && Number(credit || 0) <= 0) ||
+      !payment_type ||
+      Number(amount) <= 0 ||
       !employee_name?.trim() ||
       !employeeContact?.trim() ||
       !employeeEmail?.trim()
@@ -140,8 +145,8 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
           employee_name: form.employee_name,
           employeeContact: form.employeeContact,
           employeeEmail: form.employeeEmail,
-          debit: Number(form.debit || 0),
-          credit: Number(form.credit || 0),
+          payment_type: form.payment_type,
+          amount: Number(form.amount),
           payment_method: form.payment_method,
           payment_date: form.payment_date,
         },
@@ -207,19 +212,20 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
               readOnly
             />
 
-            <InputField
-              labelName="Debit *"
-              name="debit"
-              type="number"
-              value={form.debit}
+            <OptionField
+              labelName="Payment Type *"
+              name="payment_type"
+              value={form.payment_type}
               handlerChange={handlerChange}
+              optionData={payment_type}
+              inital="Please Select"
             />
 
             <InputField
-              labelName="Credit *"
-              name="credit"
+              labelName="Amount *"
+              name="amount"
               type="number"
-              value={form.credit}
+              value={form.amount}
               handlerChange={handlerChange}
             />
 
@@ -243,10 +249,7 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>
