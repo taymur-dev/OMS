@@ -33,13 +33,15 @@ type LifeLine = {
 };
 
 type ResignationT = {
-  user_id: number;
+  employee_id: number;
   resignation_date: string;
 };
 
 type SelectOption = {
   value: string;
   label: string;
+  designation: string;
+  resignation_date: string;
 };
 
 type AddRejoinState = {
@@ -57,7 +59,7 @@ type LifeLineAPI = {
 };
 
 type ResignationAPI = {
-  user_id: number | string;
+  employee_id: number | string;
   resignation_date: string;
 };
 
@@ -95,30 +97,30 @@ export const AddRejoining = ({
   const [resignations, setResignations] = useState<ResignationT[]>([]);
   const [loading, setLoading] = useState(false);
 
-  
   const getAllUsers = useCallback(async () => {
-  if (!token) return;
+    if (!token) return;
 
-  try {
-    const res = await axios.get<{ users: UserT[] }>(
-      `${BASE_URL}/api/admin/getUsersWithAcceptedResignation`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    );
+    try {
+      const res = await axios.get<{ users: UserT[] }>(
+        `${BASE_URL}/api/admin/getUsersWithAcceptedResignation`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
-    const filteredUsers = res.data.users.map((u) => ({
-      value: u.id.toString(),
-      label: u.name,
-    }));
+      const filteredUsers = res.data.users.map((u) => ({
+        value: u.id.toString(),
+        label: u.name,
+        designation: u.designation,
+        resignation_date: u.resignation_date,
+      }));
 
-    setAllUsers(filteredUsers);
-  } catch (error) {
-    const axiosError = error as AxiosError<{ message: string }>;
-    toast.error(axiosError.response?.data.message || "Failed to fetch users");
-  }
-}, [token]);
-
+      setAllUsers(filteredUsers);
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(axiosError.response?.data.message || "Failed to fetch users");
+    }
+  }, [token]);
 
   // Fetch lifelines
   const fetchLifeLines = useCallback(async () => {
@@ -160,7 +162,7 @@ export const AddRejoining = ({
 
       setResignations(
         Array.isArray(res.data)
-          ? res.data.map((r) => ({ ...r, user_id: Number(r.user_id) }))
+          ? res.data.map((r) => ({ ...r, employee_id: Number(r.employee_id) }))
           : [],
       );
     } catch {
@@ -179,24 +181,19 @@ export const AddRejoining = ({
 
   // Add this useEffect in AddRejoining.tsx
 
-useEffect(() => {
-  if (!addRejoin.id) return;
+  useEffect(() => {
+    if (!addRejoin.id) return;
 
-  const selectedUserId = Number(addRejoin.id);
+    const selectedUser = allUsers.find((u) => u.value === String(addRejoin.id));
 
-  const latestLifeLine = lifeLines
-    .filter((l) => l.id === selectedUserId)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-
-  const lastResignation = resignations.find((r) => r.user_id === selectedUserId);
-
-  setAddRejoin((prev) => ({
-    ...prev,
-    designation: latestLifeLine?.position || "",
-    resignation_date: formatDate(lastResignation?.resignation_date) || "",
-  }));
-}, [addRejoin.id, lifeLines, resignations]);
-
+    if (selectedUser) {
+      setAddRejoin((prev) => ({
+        ...prev,
+        designation: selectedUser.designation || "",
+        resignation_date: formatDate(selectedUser.resignation_date) || "",
+      }));
+    }
+  }, [addRejoin.id, allUsers]);
 
   const handlerChange = (
     e: React.ChangeEvent<
@@ -229,7 +226,7 @@ useEffect(() => {
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
       )[0];
 
-    const resignation = resignations.find((r) => r.user_id === uid);
+    const resignation = resignations.find((r) => r.employee_id === uid);
 
     setAddRejoin({
       id: uid,
@@ -358,10 +355,7 @@ useEffect(() => {
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

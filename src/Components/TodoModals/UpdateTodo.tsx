@@ -108,17 +108,29 @@ export const UpdateTodo = ({
   }, [token]);
 
   useEffect(() => {
-    if (!seleteTodo) return;
+  if (!seleteTodo) return;
 
-    const formatDate = (date?: string) => (date ? date.split("T")[0] : "");
+  
+  const formatDateForInput = (dateStr?: string) => {
+    if (!dateStr) return "";
+    
+    
+    const date = new Date(dateStr);
+    
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+  };
 
-    setTodo({
-      ...seleteTodo,
-      startDate: formatDate(seleteTodo.startDate),
-      endDate: formatDate(seleteTodo.endDate),
-      deadline: formatDate(seleteTodo.deadline),
-    });
-  }, [seleteTodo]);
+  setTodo({
+    ...seleteTodo,
+    startDate: formatDateForInput(seleteTodo.startDate),
+    endDate: formatDateForInput(seleteTodo.endDate),
+    deadline: formatDateForInput(seleteTodo.deadline),
+  });
+}, [seleteTodo]);
 
   useEffect(() => {
     getAllUsers();

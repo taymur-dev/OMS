@@ -68,19 +68,26 @@ export const EditConfigEmpSalary = ({
   const [allUsers, setAllUsers] = useState<SelectOption[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (editData) {
-      setEditConfigEmployee({
-        employee_id: editData.employee_id.toString(),
-        salary_amount: editData.salary_amount?.toString() || "",
-        emp_of_mon_allowance: editData.emp_of_mon_allowance?.toString() || "",
-        transport_allowance: editData.transport_allowance?.toString() || "",
-        medical_allowance: editData.medical_allowance?.toString() || "",
-        total_salary: editData.total_salary?.toString() || "",
-        config_date: editData.config_date?.split("T")[0] || "",
-      });
-    }
-  }, [editData]);
+ useEffect(() => {
+  if (editData) {
+    const dateObj = new Date(editData.config_date);
+    
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    setEditConfigEmployee({
+      employee_id: editData.employee_id.toString(),
+      salary_amount: editData.salary_amount?.toString() || "",
+      emp_of_mon_allowance: editData.emp_of_mon_allowance?.toString() || "",
+      transport_allowance: editData.transport_allowance?.toString() || "",
+      medical_allowance: editData.medical_allowance?.toString() || "",
+      total_salary: editData.total_salary?.toString() || "",
+      config_date: formattedDate, 
+    });
+  }
+}, [editData]);
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,

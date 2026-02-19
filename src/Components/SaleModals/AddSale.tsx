@@ -1,177 +1,326 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
+import { LocalButton } from "../CustomButtons/LocalButton";
+import { EditButton } from "../CustomButtons/EditButton";
+import { DeleteButton } from "../CustomButtons/DeleteButton";
 import { Title } from "../Title";
+import { InputField } from "../InputFields/InputField";
+import { OptionField } from "../InputFields/OptionField";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
-import { OptionField } from "../InputFields/OptionField";
-import { toast } from "react-toastify";
-import { InputField } from "../InputFields/InputField";
 
-type AddAttendanceProps = {
+type AddSaleProps = {
   setModal: () => void;
   handleGetsales: () => void;
 };
 
-type CustomerT = {
-  id: number;
-  customerName: string;
-};
+type CustomerT = { id: number; customerName: string };
 
 type ProjectT = {
   id: number;
   projectName: string;
+  completionStatus: string;
+  projectStatus: string;
 };
 
-const initialState = {
-  customerId: "",
-  projectId: "",
-  saleDate: new Date().toLocaleDateString("sv-SE"),
+type CartItem = {
+  id: string;
+  projectId: number;
+  projectName: string;
+  QTY: number;
+  UnitPrice: number;
 };
 
-export const AddSale = ({ setModal, handleGetsales }: AddAttendanceProps) => {
+export const AddSale = ({ setModal, handleGetsales }: AddSaleProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-
-  const [addSale, setAddSale] = useState(initialState);
-  const [allProjects, setAllProjects] = useState<ProjectT[] | null>(null);
-    const [loading, setLoading] = useState(false);
-
-  const [allCustomers, setAllCustomers] = useState<CustomerT[] | null>(null);
-
   const token = currentUser?.token;
 
-  const handlerChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
-  ) => {
-    const { name, value } = e.target;
-    setAddSale({ ...addSale, [name]: value });
-  };
+  const [allProjects, setAllProjects] = useState<ProjectT[]>([]);
+  const [allCustomers, setAllCustomers] = useState<CustomerT[]>([]);
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [selectedProject, setSelectedProject] = useState("");
+  const [addSaleItem, setAddSaleItem] = useState({ QTY: "1", UnitPrice: "" });
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [saleDate, setSaleDate] = useState(
+    new Date().toLocaleDateString("sv-SE"),
+  );
 
-  const handleGetProjects = useCallback(async () => {
+  const getProjects = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getProjects`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setAllProjects(res.data);
-    } catch (error) {
-      console.log(error);
+      setAllProjects(res.data || []);
+    } catch (err) {
+      console.log(err);
     }
   }, [token]);
 
-  const getAllCustomers = useCallback(async () => {
+  const getCustomers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getAllCustomers`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setAllCustomers(res.data);
-    } catch (error) {
-      console.log(error);
+      setAllCustomers(res.data || []);
+    } catch (err) {
+      console.log(err);
     }
   }, [token]);
 
-  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  useEffect(() => {
+    getProjects();
+    getCustomers();
+  }, [getProjects, getCustomers]);
 
-    if (!addSale.customerId || !addSale.projectId || !addSale.saleDate) {
-      return toast.error("Customer, Project, and Date are required", {
-        toastId: "required-fields",
-      });
+  const isAddToCartDisabled =
+    !selectedProject ||
+    !addSaleItem.QTY ||
+    Number(addSaleItem.QTY) <= 0 ||
+    !addSaleItem.UnitPrice ||
+    Number(addSaleItem.UnitPrice) <= 0;
+
+  const addToCart = () => {
+    if (!selectedProject) return toast.error("Select a project");
+    const project = allProjects.find(
+      (p) => p.id.toString() === selectedProject,
+    );
+    if (!project) return toast.error("Project not found");
+
+    const isDuplicate = cart.find(
+      (item) => item.projectId === project.id && item.id !== editingItemId,
+    );
+
+    if (isDuplicate) {
+      return toast.error("This project is already in the cart");
     }
 
-       setLoading(true);
+    const newItem: CartItem = {
+      id: editingItemId || crypto.randomUUID(),
+      projectId: project.id,
+      projectName: project.projectName,
+      QTY: Number(addSaleItem.QTY),
+      UnitPrice: Number(addSaleItem.UnitPrice),
+    };
 
+    if (editingItemId) {
+      setCart((prev) =>
+        prev.map((item) => (item.id === editingItemId ? newItem : item)),
+      );
+      setEditingItemId(null);
+      toast.success("Item updated");
+    } else {
+      setCart((prev) => [newItem, ...prev]);
+      toast.success("Item added to cart");
+    }
 
+    setAddSaleItem({ QTY: "1", UnitPrice: "" });
+    setSelectedProject("");
+  };
+
+  const subTotal = useMemo(
+    () => cart.reduce((total, item) => total + item.QTY * item.UnitPrice, 0),
+    [cart],
+  );
+  const totalBill = subTotal;
+
+  const submitSale = async () => {
+    if (!selectedCustomer) return toast.error("Select a customer");
+    if (!cart.length) return toast.error("Add at least one project");
+
+    setLoading(true);
     try {
-      await axios.post(`${BASE_URL}/api/admin/addSale`, addSale, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.post(
+        `${BASE_URL}/api/admin/addSale`,
+        {
+          customerId: selectedCustomer,
+          saleDate,
+          items: cart,
+          subTotal,
+          totalBill,
+        },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
       handleGetsales();
-      toast.success("Sale added successfully", { toastId: "success" });
-      setModal();
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        const message = error.response?.data?.message || "Failed to add sale";
-        toast.error(message, { toastId: "add-sale-error" });
-      } else {
-        toast.error("Something went wrong!", { toastId: "add-sale-error" });
-      }
+      toast.success("Sale added successfully");
+      closeModal();
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to add sale");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    handleGetProjects();
-    getAllCustomers();
-  }, [getAllCustomers, handleGetProjects]);
+  const closeModal = () => {
+    setCart([]);
+    setAddSaleItem({ QTY: "1", UnitPrice: "" });
+    setSelectedCustomer("");
+    setSelectedProject("");
+    setEditingItemId(null);
+    setModal();
+  };
 
   return (
-    <div>
-      <div
-        className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50"
-        onKeyDown={(e) => {
-          if (e.key === "Enter") e.preventDefault();
-        }}
-      >
-        <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded border border-indigo-900">
-          <form onSubmit={handlerSubmitted}>
-            <div className="bg-indigo-900 rounded px-6">
-              <Title
-                setModal={setModal}
-                className="text-white text-lg font-semibold"
-              >
-                ADD SALE
-              </Title>
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex px-4 items-center justify-center z-50">
+      <div className="w-[42rem] max-h-[90vh] flex flex-col bg-white rounded border border-indigo-900 shadow-xl overflow-hidden">
+        <div className="bg-indigo-900 px-6 py-0.8">
+          <Title
+            setModal={setModal}
+            className="text-white text-lg font-semibold uppercase tracking-wide"
+          >
+            ADD SALE
+          </Title>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-4">
+            <OptionField
+              labelName="Project *"
+              name="project"
+              value={selectedProject}
+              handlerChange={(e) => setSelectedProject(e.target.value)}
+              optionData={allProjects
+                .filter((p) => p.completionStatus === "Complete")
+                .map((p) => ({
+                  id: p.id,
+                  label: p.projectName,
+                  value: p.id,
+                }))}
+              inital="Select Project"
+            />
+            <InputField
+              labelName="QTY *"
+              type="number"
+              name="QTY"
+              handlerChange={(e) =>
+                setAddSaleItem({ ...addSaleItem, QTY: e.target.value })
+              }
+              value={addSaleItem.QTY}
+              readOnly
+            />
+            <InputField
+              labelName="Price *"
+              type="number"
+              name="UnitPrice"
+              handlerChange={(e) =>
+                setAddSaleItem({ ...addSaleItem, UnitPrice: e.target.value })
+              }
+              value={addSaleItem.UnitPrice}
+            />
+          </div>
+
+          <div className="flex justify-end">
+            <LocalButton
+              loading={loading}
+              label={editingItemId ? "Update Item" : "Add to Cart"}
+              handleClick={addToCart}
+              disabled={isAddToCartDisabled}
+              variant="primary"
+            />
+          </div>
+
+          {/* CART TABLE */}
+          <div className="border rounded-lg overflow-hidden border-indigo-100">
+            <div className="grid grid-cols-5 bg-indigo-900 text-white text-xs font-bold border-b border-indigo-100 text-center">
+              <span className="py-2">Sr</span>
+              <span className="py-2 text-left">Project</span>
+              <span className="py-2">QTY</span>
+              <span className="py-2">Price</span>
+              <span className="py-2">Actions</span>
             </div>
 
-            <div className="mx-2 py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3">
+            <div className="max-h-40 overflow-y-auto">
+              {cart.length === 0 ? (
+                <div className="text-center text-gray-400 p-4 text-xs italic">
+                  No items in cart
+                </div>
+              ) : (
+                cart.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="grid grid-cols-5 text-xs border-b last:border-0 hover:bg-gray-50 items-center text-center py-1"
+                  >
+                    <span className="text-gray-500">{index + 1}</span>
+                    <span className="text-left truncate px-1">
+                      {item.projectName}
+                    </span>
+                    <span>{item.QTY}</span>
+                    <span>{item.UnitPrice}</span>
+                    <span className="flex justify-center gap-2">
+                      <EditButton
+                        handleUpdate={() => {
+                          setSelectedProject(item.projectId.toString());
+                          setAddSaleItem({
+                            QTY: item.QTY.toString(),
+                            UnitPrice: item.UnitPrice.toString(),
+                          });
+                          setEditingItemId(item.id);
+                        }}
+                      />
+                      <DeleteButton
+                        handleDelete={() => {
+                          setCart((prev) =>
+                            prev.filter((i) => i.id !== item.id),
+                          );
+                          toast.success("Item deleted");
+                        }}
+                      />
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* SUMMARY */}
+
+          <div className="py-4 rounded-lg space-y-3">
+            <div>
               <OptionField
                 labelName="Customer *"
-                name="customerId"
-                value={addSale.customerId}
-                handlerChange={handlerChange}
-                optionData={allCustomers?.map((customer) => ({
-                  id: customer.id,
-                  label: customer.customerName,
-                  value: customer.id,
+                name="customer"
+                value={selectedCustomer}
+                handlerChange={(e) => setSelectedCustomer(e.target.value)}
+                optionData={allCustomers.map((c) => ({
+                  id: c.id,
+                  label: c.customerName,
+                  value: c.id,
                 }))}
-                inital="Please Select Customer"
+                inital="Select Customer"
               />
-
-              <OptionField
-                labelName="Projects *"
-                name="projectId"
-                value={addSale.projectId}
-                handlerChange={handlerChange}
-                optionData={allProjects?.map((project) => ({
-                  id: project.id,
-                  label: project.projectName,
-                  value: project.id,
-                }))}
-                inital="Please Select Project"
-              />
-
-              <div className="flex flex-col my-2 md:col-span-2">
-                <label className="text-xs  font-semibold mb-1">Date *</label>
-                <InputField
-                  type="date"
-                  name="saleDate"
-                  value={addSale?.saleDate?.slice(0, 10) ?? ""}
-                  handlerChange={handlerChange}
-                  className="border border-indigo-900 rounded p-1"
-                />
-              </div>
             </div>
 
-            <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
-              <CancelBtn setModal={setModal} />
-              <AddButton
-                loading={loading}
-                label={loading ? "Saving" : "Save"}
+            <div className="grid grid-cols-2 gap-4">
+              <InputField
+                labelName="Date *"
+                type="date"
+                name="saleDate"
+                value={saleDate}
+                handlerChange={(e) => setSaleDate(e.target.value)}
+              />
+              <InputField
+                labelName="Total *"
+                type="number"
+                name="totalBill"
+                value={totalBill}
+                readOnly
               />
             </div>
-          </form>
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-3 px-6 py-3 bg-indigo-900 border-t border-indigo-900">
+          <CancelBtn setModal={closeModal} />
+          <AddButton
+            loading={loading}
+            label={loading ? "Saving" : "Save"}
+            handleClick={submitSale}
+          />
         </div>
       </div>
     </div>

@@ -35,6 +35,7 @@ export type REJOIN_T = {
   designation: string;
   resignation_date: string;
   rejoinRequest_date: string;
+  note: string;
   approval_status: string;
 };
 

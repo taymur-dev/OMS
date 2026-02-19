@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
@@ -63,17 +62,24 @@ export const EditAssignProject = ({
   });
 
   const [allUsers, setAllUsers] = useState<Option[]>([]);
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [allProjects, setAllProjects] = useState<Option[]>([]);
 
   /* ================= PREFILL ================= */
   useEffect(() => {
     if (editData && allUsers.length > 0 && allProjects.length > 0) {
+      const rawDate = new Date(editData.date);
+      const localDate = new Date(
+        rawDate.getTime() - rawDate.getTimezoneOffset() * 60000,
+      )
+        .toISOString()
+        .split("T")[0];
+
       setFormData({
         employee_id: String(editData.employee_id),
         projectId: String(editData.projectId),
-        date: editData.date ? editData.date.split("T")[0] : "",
+        date: localDate,
       });
     }
   }, [editData, allUsers, allProjects]);
@@ -90,7 +96,7 @@ export const EditAssignProject = ({
   const getAllUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const users: Option[] = res.data.users.map(
@@ -139,14 +145,12 @@ export const EditAssignProject = ({
     e.preventDefault();
 
     if (!formData.employee_id || !formData.projectId || !formData.date) {
-    return toast.error(
-      "Employee, Project, and Date are required",
-      { toastId: "required-fields" }
-    );
-  }
+      return toast.error("Employee, Project, and Date are required", {
+        toastId: "required-fields",
+      });
+    }
 
-      setLoading(true);
-
+    setLoading(true);
 
     try {
       await axios.put(
@@ -174,22 +178,23 @@ export const EditAssignProject = ({
         projectId: Number(formData.projectId),
         name: selectedUser?.name || "",
         projectName: selectedProject?.projectName || "",
-        date: formData.date, // 
+        date: formData.date, //
       });
 
       toast.success("Assigned project updated successfully!", {
-      toastId: "update-success",
-    });
+        toastId: "update-success",
+      });
 
       setModal();
     } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      const message = error.response?.data?.message || "Failed to update project!";
-      toast.error(message, { toastId: "update-error" });
-    } else {
-      toast.error("Something went wrong!", { toastId: "update-error" });
-    }
-  }finally {
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message || "Failed to update project!";
+        toast.error(message, { toastId: "update-error" });
+      } else {
+        toast.error("Something went wrong!", { toastId: "update-error" });
+      }
+    } finally {
       setLoading(false);
     }
   };

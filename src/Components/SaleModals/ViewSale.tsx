@@ -1,10 +1,16 @@
 import { Title } from "../Title";
-import { FaRegBuilding, FaUserTie, FaCalendarAlt } from "react-icons/fa";
+import { FaUserTie, FaCalendarAlt } from "react-icons/fa";
+
+export type SaleItemT = {
+  projectName: string;
+  QTY: number;
+  UnitPrice: number;
+};
 
 export type SaleDetailT = {
-  projectName: string;
   customerName: string;
   saleDate: string;
+  items: SaleItemT[];
 };
 
 type ViewSaleProps = {
@@ -26,35 +32,23 @@ export const ViewSale = ({ setIsOpenModal, viewSale }: ViewSaleProps) => {
 
   if (!viewSale) return null;
 
+  const totalBill = viewSale.items.reduce(
+    (acc, item) => acc + item.QTY * item.UnitPrice,
+    0
+  );
+
   return (
-    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
-      <div className="w-full max-w-4xl bg-white rounded overflow-hidden shadow-2xl border border-gray-300">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-50">
+      <div className="w-full max-w-4xl bg-white rounded shadow-2xl border border-gray-300 overflow-hidden">
         {/* Header */}
-        <div className="bg-indigo-900 px-4">
-          <div className="text-white">
-            <Title setModal={setIsOpenModal}>SALE DETAILS</Title>
-          </div>
+        <div className="bg-indigo-900 px-4 py-2">
+          <Title setModal={setIsOpenModal} className="text-white">
+            SALE DETAILS
+          </Title>
         </div>
 
         <div className="p-4 space-y-4">
-          {/* Section 1: Project Information */}
-          <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
-              Project Information
-            </h3>
-            <div className="grid grid-cols-2 gap-y-4 pt-2">
-              <div>
-                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaRegBuilding className="text-gray-400" /> Project Name
-                </label>
-                <p className="text-gray-800 font-medium">
-                  {viewSale.projectName}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Section 2: Customer & Timeline */}
+          {/* Section 1: Customer & Sale Date */}
           <div className="border border-gray-200 rounded-md p-4 relative">
             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
               Customer & Timeline
@@ -78,9 +72,51 @@ export const ViewSale = ({ setIsOpenModal, viewSale }: ViewSaleProps) => {
               </div>
             </div>
           </div>
+
+          {/* Section 2: Sale Items */}
+          <div className="border border-gray-200 rounded-md p-4 relative">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+              Sale Items
+            </h3>
+
+            <div className="overflow-x-auto mt-2">
+              <table className="min-w-full text-xs border border-gray-200">
+                <thead className="bg-indigo-900 text-white">
+                  <tr>
+                    <th className="p-2 text-left">#</th>
+                    <th className="p-2 text-left">Project</th>
+                    <th className="p-2 text-right">QTY</th>
+                    <th className="p-2 text-right">Price</th>
+                    <th className="p-2 text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {viewSale.items.map((item, idx) => (
+                    <tr
+                      key={idx}
+                      className="border-b last:border-0 hover:bg-gray-50"
+                    >
+                      <td className="p-2">{idx + 1}</td>
+                      <td className="p-2">{item.projectName}</td>
+                      <td className="p-2 text-right">{item.QTY}</td>
+                      <td className="p-2 text-right">{item.UnitPrice}</td>
+                      <td className="p-2 text-right">
+                        {item.QTY * item.UnitPrice}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Total Summary */}
+            <div className="text-right mt-2 font-semibold text-sm">
+              Total Bill: {totalBill}
+            </div>
+          </div>
         </div>
 
-        {/* Footer Section */}
+        {/* Footer */}
         <div className="bg-indigo-900 p-3 flex justify-end">
           <button
             onClick={setIsOpenModal}

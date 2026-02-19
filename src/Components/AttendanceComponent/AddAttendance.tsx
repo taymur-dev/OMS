@@ -198,6 +198,17 @@ export const AddAttendance = ({
                 handlerChange={handlerChange}
               />
 
+              <div className="md:col-span-2">
+                <OptionField
+                  labelName="Attendance Status *"
+                  name="attendanceStatus"
+                  value={addUserAttendance.attendanceStatus}
+                  handlerChange={handlerChange}
+                  optionData={reasonLeaveOption}
+                  inital="Please Select Status"
+                />
+              </div>
+
               <InputField
                 labelName="Clock In *"
                 type="time"
@@ -215,17 +226,6 @@ export const AddAttendance = ({
                 handlerChange={handlerChange}
                 disabled={isAbsentOrLeave}
               />
-
-              <div className="md:col-span-2">
-                <OptionField
-                  labelName="Attendance Status *"
-                  name="attendanceStatus"
-                  value={addUserAttendance.attendanceStatus}
-                  handlerChange={handlerChange}
-                  optionData={reasonLeaveOption}
-                  inital="Please Select Status"
-                />
-              </div>
             </div>
 
             <div className="flex justify-end  gap-3 px-6 py-4 bg-indigo-900 rounded">

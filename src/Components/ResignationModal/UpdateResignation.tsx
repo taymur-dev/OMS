@@ -56,11 +56,17 @@ export const UpdateResignation = ({
   useEffect(() => {
     if (!resignationData) return;
 
-    const formattedDate = resignationData.date
-      ? resignationData.date.includes("T")
-        ? resignationData.date.split("T")[0]
-        : resignationData.date
-      : "";
+    const rawDate = resignationData.date;
+    let formattedDate = "";
+
+    if (rawDate) {
+      const d = new Date(rawDate);
+      if (!isNaN(d.getTime())) {
+        formattedDate = d.toLocaleDateString("sv-SE");
+      } else {
+        formattedDate = rawDate.substring(0, 10);
+      }
+    }
 
     setUpdateResignation({
       id: resignationData.id,
@@ -193,7 +199,7 @@ export const UpdateResignation = ({
 
             <div className="flex flex-col md:col-span-2 gap-1">
               <label className="text-sm font-medium text-gray-700">
-                Approval Status*
+                Approval Status *
               </label>
               <select
                 name="approval_status"

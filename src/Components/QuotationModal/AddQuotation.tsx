@@ -11,6 +11,7 @@ import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { Title } from "../Title";
 import { InputField } from "../InputFields/InputField";
 import { TextareaField } from "../InputFields/TextareaField";
+import { OptionField } from "../InputFields/OptionField";
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -28,6 +29,8 @@ type Customer = {
 type Project = {
   id: string;
   projectName: string;
+  completionStatus: string;
+  projectStatus: string;
 };
 
 type CartItem = {
@@ -41,7 +44,7 @@ type CartItem = {
 
 const initialState = {
   description: "",
-  QTY: "",
+  QTY: "1",
   UnitPrice: "",
 };
 
@@ -120,13 +123,20 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
     }));
   };
 
+  const projectOptions = projects
+    .filter((p) => p.completionStatus === "Complete")
+    .map((p) => ({
+      id: Number(p.id),
+      label: p.projectName,
+      value: p.id,
+    }));
+
   const isAddToCartDisabled =
     !selectedProject ||
     !addQuotation.QTY ||
     Number(addQuotation.QTY) <= 0 ||
     !addQuotation.UnitPrice ||
-    Number(addQuotation.UnitPrice) <= 0 ||
-    !addQuotation.description.trim();
+    Number(addQuotation.UnitPrice) <= 0;
 
   const addToCart = () => {
     if (!selectedProject) return toast.error("Please select a project");
@@ -137,13 +147,21 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
 
     if (!qty || qty <= 0) return toast.error("Enter a valid QTY");
     if (!price || price <= 0) return toast.error("Enter a valid Unit Price");
-    if (!desc) return toast.error("Enter a description");
 
     const project = projects.find((p) => p.id.toString() === selectedProject);
     if (!project) return toast.error("Selected project not found");
 
+    // --- DUPLICATION CHECK START ---
+    const isDuplicate = cart.some(
+      (item) => item.projectId === project.id && item.id !== editingItemId,
+    );
+
+    if (isDuplicate) {
+      return toast.error("This project is already in the cart!");
+    }
+    // --- DUPLICATION CHECK END ---
+
     if (editingItemId) {
-      // 🔁 UPDATE EXISTING ITEM
       setCart((prev) =>
         prev.map((item) =>
           item.id === editingItemId
@@ -244,23 +262,16 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-4">
             <div>
-              <label className="text-xs font-semibold text-black mb-1 block">
-                Project *
-              </label>
-              <select
-                className="w-full border border-indigo-900 rounded p-1.5 text-sm focus:ring-1 focus:ring-indigo-900"
+              <OptionField
+                labelName="Project *"
+                name="selectedProject"
                 value={selectedProject}
-                onChange={(e) => setSelectedProject(e.target.value)}
-              >
-                <option value="">Select Project</option>
-                {projects.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.projectName}
-                  </option>
-                ))}
-              </select>
+                handlerChange={(e) => setSelectedProject(e.target.value)}
+                optionData={projectOptions}
+                inital="Select Project"
+              />
             </div>
             <InputField
               labelName="QTY *"
@@ -268,19 +279,14 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
               name="QTY"
               handlerChange={handlerChange}
               value={addQuotation.QTY}
+              readOnly
             />
             <InputField
-              labelName="Unit Price *"
+              labelName="Project Price *"
               type="number"
               name="UnitPrice"
               handlerChange={handlerChange}
               value={addQuotation.UnitPrice}
-            />
-            <TextareaField
-              labelName="Description *"
-              name="description"
-              handlerChange={handlerChange}
-              inputVal={addQuotation.description}
             />
           </div>
 
@@ -365,59 +371,58 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
           </div>
 
           {/* SUMMARY SECTION */}
-          <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+          <div className="py-4 rounded-lg space-y-3">
             <div>
-              <label className="text-xs font-semibold text-gray-700 mb-1 block">
-                Customer*
-              </label>
-              <select
-                className="w-full border border-indigo-900 rounded p-1.5 text-sm"
+              <OptionField
+                labelName="Customer *"
+                name="selectedCustomer"
                 value={selectedCustomer}
-                onChange={(e) => setSelectedCustomer(e.target.value)}
-              >
-                <option value="">Please select customer</option>
-                {customers.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.customerName}
-                  </option>
-                ))}
-              </select>
+                handlerChange={(e) => setSelectedCustomer(e.target.value)}
+                optionData={customers.map((c) => ({
+                  id: Number(c.id),
+                  label: c.customerName,
+                  value: c.id,
+                }))}
+                inital="Please select customer"
+              />
             </div>
 
             <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="text-xs font-semibold text-gray-700 mb-1 block">
-                  Date*
-                </label>
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="w-full border border-indigo-900 rounded p-1.5 text-sm"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-semibold text-gray-700 mb-1 block">
-                  Sub Total
-                </label>
-                <input
-                  type="number"
-                  value={subTotal}
-                  readOnly
-                  className="w-full border rounded p-1.5 text-sm bg-gray-200"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-semibold text-gray-700 mb-1 block">
-                  Total Bill
-                </label>
-                <input
-                  type="number"
-                  value={totalBill}
-                  readOnly
-                  className="w-full border rounded p-1.5 text-sm bg-indigo-100 font-bold"
-                />
-              </div>
+              {/* Date */}
+              <InputField
+                labelName="Date *"
+                type="date"
+                name="date"
+                value={date}
+                handlerChange={(e) => setDate(e.target.value)}
+              />
+
+              {/* Sub Total */}
+              <InputField
+                labelName="Sub Total *"
+                type="number"
+                name="subTotal"
+                value={subTotal}
+                readOnly
+              />
+
+              {/* Total Bill */}
+              <InputField
+                labelName="Total Bill *"
+                type="number"
+                name="totalBill"
+                value={totalBill}
+                readOnly
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Description *"
+                name="description"
+                handlerChange={handlerChange}
+                inputVal={addQuotation.description}
+              />
             </div>
           </div>
         </div>

@@ -69,7 +69,7 @@ export const UpdatePromotion = ({
         requested_designation: promotionData.requested_designation || "",
         note: promotionData.note || "",
         date: promotionData.date
-          ? promotionData.date.slice(0, 10)
+          ? new Date(promotionData.date).toLocaleDateString("sv-SE")
           : currentDate,
         approval: promotionData.approval
           ? promotionData.approval.toUpperCase()
@@ -159,7 +159,7 @@ export const UpdatePromotion = ({
               value={promotion.current_designation}
               handlerChange={handleChange}
               type="text"
-              disabled={isAdmin} 
+              disabled={isAdmin}
             />
 
             <InputField
@@ -195,7 +195,7 @@ export const UpdatePromotion = ({
                   name="approval"
                   value={promotion.approval}
                   handlerChange={handleChange}
-                  disabled={isAccepted} 
+                  disabled={isAccepted}
                   optionData={ApprovalOptions}
                   inital="Select Status"
                 />

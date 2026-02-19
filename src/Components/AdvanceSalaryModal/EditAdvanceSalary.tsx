@@ -55,17 +55,22 @@ export const EditAdvanceSalary = ({
 
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (advanceData) {
-      setUpdateAdvance({
-        employee_id: String(advanceData.employee_id),
-        date: advanceData.date.split("T")[0],
-        amount: String(advanceData.amount),
-        approvalStatus: advanceData.approvalStatus || "Pending",
-        description: advanceData.description || "",
-      });
-    }
-  }, [advanceData]);
+
+useEffect(() => {
+  if (advanceData) {
+    
+    const localDate = new Date(advanceData.date);
+    const formattedDate = localDate.toLocaleDateString("sv-SE"); // Returns YYYY-MM-DD
+
+    setUpdateAdvance({
+      employee_id: String(advanceData.employee_id),
+      date: formattedDate, // Use the YYYY-MM-DD format
+      amount: String(advanceData.amount),
+      approvalStatus: advanceData.approvalStatus || "Pending",
+      description: advanceData.description || "",
+    });
+  }
+}, [advanceData]);
 
   useEffect(() => {
     if (currentUser?.role !== "admin") return;
@@ -134,9 +139,17 @@ export const EditAdvanceSalary = ({
       });
       handleRefresh();
       setModal();
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to update advance salary", { toastId: "failed" });
+    } catch (error: unknown) {
+      console.error("Error updating advance salary:", error);
+
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message || "Failed to update advance salary";
+
+        toast.error(message, { toastId: "error" });
+      } else {
+        toast.error("Something went wrong", { toastId: "error" });
+      }
     } finally {
       setLoading(false);
     }

@@ -56,30 +56,64 @@ export const UpdateAttendance = ({
   const token = currentUser?.token;
 
   const [addUserAttendance, setAddUserAttendance] =
-    useState<UpdateAttendanceT | null>(
-      updatedAttendance
-        ? {
-            ...updatedAttendance,
-            attendanceStatus: updatedAttendance.attendanceStatus.toLowerCase(),
-          }
-        : null,
-    );
+    useState<UpdateAttendanceT | null>(() => {
+      if (!updatedAttendance) return null;
+
+      // Normalize the status to lowercase for comparison
+      const status = updatedAttendance.attendanceStatus?.toLowerCase();
+      const isInactive = status === "absent" || status === "leave";
+
+      return {
+        ...updatedAttendance,
+        attendanceStatus: status || "absent",
+        
+        clockIn:
+          isInactive || updatedAttendance.clockIn === "00:00:00"
+            ? ""
+            : updatedAttendance.clockIn?.substring(0, 5) || "",
+        clockOut:
+          isInactive || updatedAttendance.clockOut === "00:00:00"
+            ? ""
+            : updatedAttendance.clockOut?.substring(0, 5) || "",
+      };
+    });
 
   const [allUsers, setAllUsers] = useState<OptionType[]>([]);
+
+  const formatLocalDate = (dateString: string | undefined) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
-    setAddUserAttendance((prev) =>
-      prev
-        ? { ...prev, [name]: name === "userId" ? Number(value) : value }
-        : prev,
-    );
+    setAddUserAttendance((prev) => {
+      if (!prev) return prev;
+
+      const updatedData = {
+        ...prev,
+        [name]: name === "userId" ? Number(value) : value,
+      };
+
+      if (
+        name === "attendanceStatus" &&
+        (value === "absent" || value === "leave")
+      ) {
+        updatedData.clockIn = "";
+        updatedData.clockOut = "";
+      }
+
+      return updatedData;
+    });
   };
 
   const handlerGetUsers = useCallback(async () => {
-
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
         headers: { Authorization: token },
@@ -90,7 +124,7 @@ export const UpdateAttendance = ({
       toast.error(
         axiosError?.response?.data?.message || "Failed to fetch users",
       );
-    } 
+    }
   }, [token]);
 
   useEffect(() => {
@@ -104,7 +138,7 @@ export const UpdateAttendance = ({
     setLoading(true);
 
     try {
-      const formattedDate = addUserAttendance.date.slice(0, 10);
+      const formattedDate = formatLocalDate(addUserAttendance.date);
       const clockIn =
         addUserAttendance.clockIn.length === 5
           ? `${addUserAttendance.clockIn}:00`
@@ -173,9 +207,21 @@ export const UpdateAttendance = ({
               labelName="Date *"
               type="date"
               name="date"
-              value={addUserAttendance?.date?.slice(0, 10) ?? ""}
+              value={formatLocalDate(addUserAttendance?.date)}
               handlerChange={handlerChange}
             />
+
+            <div className="md:col-span-2">
+              <OptionField
+                labelName="Attendance Status *"
+                name="attendanceStatus"
+                value={addUserAttendance?.attendanceStatus ?? ""}
+                handlerChange={handlerChange}
+                optionData={reasonLeaveOption}
+                inital="Please Select Attendance Status"
+              />
+            </div>
+
             <InputField
               labelName="Clock In *"
               type="time"
@@ -198,17 +244,6 @@ export const UpdateAttendance = ({
                 addUserAttendance?.attendanceStatus === "leave"
               }
             />
-
-            <div className="md:col-span-2">
-              <OptionField
-                labelName="Attendance Status *"
-                name="attendanceStatus"
-                value={addUserAttendance?.attendanceStatus ?? ""}
-                handlerChange={handlerChange}
-                optionData={reasonLeaveOption}
-                inital="Please Select Attendance Status"
-              />
-            </div>
           </div>
 
           <div className="flex justify-end  gap-3 px-6 py-4 bg-indigo-900 rounded">

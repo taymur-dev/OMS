@@ -131,10 +131,12 @@ export const UpdateOverTime = ({
     let updatedValue = value;
 
     if (name === "description" && e.isTrusted) {
-      // isTrusted = user input
       updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
     }
 
+    if (name === "time") {
+      updatedValue = value.replace(/[^0-9:]/g, "").slice(0, 8);
+    }
     setFormData((prev) => ({ ...prev, [name]: updatedValue }));
   };
 

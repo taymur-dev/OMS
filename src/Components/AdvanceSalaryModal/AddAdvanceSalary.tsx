@@ -136,9 +136,17 @@ export const AddAdvanceSalary = ({
       setModal();
       handleRefresh?.();
       setFormData(initialState);
-    } catch (err) {
-      console.error("Error adding advance salary:", err);
-      toast.error("Failed to add advance salary", { toastId: "error" });
+    } catch (error: unknown) {
+      console.error("Error adding advance salary:", error);
+
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message || "Failed to add advance salary";
+
+        toast.error(message, { toastId: "error" });
+      } else {
+        toast.error("Something went wrong", { toastId: "error" });
+      }
     } finally {
       setLoading(false);
     }
@@ -220,10 +228,7 @@ export const AddAdvanceSalary = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

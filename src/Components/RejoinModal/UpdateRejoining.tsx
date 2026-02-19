@@ -42,8 +42,9 @@ type UpdateRejoinState = {
 };
 
 const ApprovalOptions: { id: number; value: string; label: string }[] = [
-  { id: 1, value: "Accepted", label: "Accepted" },
-  { id: 2, value: "Rejected", label: "Rejected" },
+  { id: 1, value: "Pending", label: "Pending" },
+  { id: 2, value: "Accepted", label: "Accepted" },
+  { id: 3, value: "Rejected", label: "Rejected" },
 ];
 
 const formatDate = (dateStr: string) => {
@@ -72,9 +73,20 @@ export const UpdateRejoining = ({
     designation: rejoinData.designation,
     resignation_date: formatDate(rejoinData.resignation_date),
     rejoin_date: formatDate(rejoinData.rejoinRequest_date),
-    note: "",
+    note: rejoinData.note || "",
     approval_status: rejoinData.approval_status || "Pending",
   });
+
+  useEffect(() => {
+    setUpdateData({
+      id: rejoinData.employee_id.toString(),
+      designation: rejoinData.designation,
+      resignation_date: formatDate(rejoinData.resignation_date),
+      rejoin_date: formatDate(rejoinData.rejoinRequest_date),
+      note: rejoinData.note || "",
+      approval_status: rejoinData.approval_status || "Pending",
+    });
+  }, [rejoinData]);
 
   const handlerChange = (
     e: React.ChangeEvent<

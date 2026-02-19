@@ -288,9 +288,9 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           {activeBtns === "Sale" && (
             <AccordionItem isOpen={isOpen}>
               <div className="flex flex-col">
-                <SubLink to="/sales" label="Sales" />
                 <SubLink to="/quotations" label="Quotation" />
-                <SubLink to="/payments" label="Payment" />
+                <SubLink to="/sales" label="Sales" />
+                {/* <SubLink to="/payments" label="Payment" /> */}
               </div>
             </AccordionItem>
           )}

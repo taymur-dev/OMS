@@ -3,12 +3,10 @@ import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
-import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AddSale } from "../../Components/SaleModals/AddSale";
-import { EditSale } from "../../Components/SaleModals/EditSale";
 import { ViewSale } from "../../Components/SaleModals/ViewSale";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import axios from "axios";
@@ -30,6 +28,8 @@ type Sale = {
   customerId: number;
   customerName: string;
   saleDate: string;
+  QTY: number;      
+  UnitPrice: number;
 };
 
 const formatDate = (date: string) =>
@@ -82,10 +82,7 @@ export const Sales = () => {
     }
   }, [dispatch, token]);
 
-  const handleEdit = (sale: Sale) => {
-    setSelectedSale(sale);
-    handleToggleViewModal("EDIT");
-  };
+  
 
   const handleDeleteClick = (id: number) => {
     setCatchId(id);
@@ -193,7 +190,6 @@ export const Sales = () => {
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
         <div className="overflow-auto px-2">
           <div className="min-w-[900px]">
-            {/* Sticky Table Header */}
             <div
               className="grid grid-cols-5 bg-indigo-900 text-white items-center font-semibold
              text-sm sticky top-0 z-10 p-2"
@@ -205,7 +201,6 @@ export const Sales = () => {
               <span className="text-center">Actions</span>
             </div>
 
-            {/* Table Body */}
             {filteredSales.slice((pageNo - 1) * limit, pageNo * limit)
               .length === 0 ? (
               <div className="text-gray-800 text-lg text-center py-10">
@@ -225,7 +220,6 @@ export const Sales = () => {
                     <span className="truncate">{sale.projectName}</span>
                     <span>{formatDate(sale.saleDate)}</span>
                     <span className="flex flex-nowrap justify-center gap-1">
-                      <EditButton handleUpdate={() => handleEdit(sale)} />
                       <ViewButton handleView={() => handleView(sale)} />
                       <DeleteButton
                         handleDelete={() => handleDeleteClick(sale.id)}
@@ -237,7 +231,6 @@ export const Sales = () => {
           </div>
         </div>
 
-        {/* 4) Pagination placed under the table */}
         <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
           <ShowDataNumber
             start={filteredSales.length === 0 ? 0 : (pageNo - 1) * limit + 1}
@@ -252,7 +245,6 @@ export const Sales = () => {
         </div>
       </div>
 
-      {/* --- MODALS SECTION --- */}
       {isOpenModal === "ADD" && (
         <AddSale
           setModal={() => handleToggleViewModal("")}
@@ -260,24 +252,25 @@ export const Sales = () => {
         />
       )}
 
-      {isOpenModal === "EDIT" && selectedSale && (
-        <EditSale
-          setModal={() => handleToggleViewModal("")}
-          seleteSale={selectedSale}
-          handleGetsales={handleGetSales}
-        />
-      )}
+     
 
       {isOpenModal === "VIEW" && selectedSale && (
-        <ViewSale
-          setIsOpenModal={() => handleToggleViewModal("")}
-          viewSale={{
-            projectName: selectedSale.projectName,
-            customerName: selectedSale.customerName,
-            saleDate: selectedSale.saleDate,
-          }}
-        />
-      )}
+  <ViewSale
+    setIsOpenModal={() => handleToggleViewModal("")}
+    viewSale={{
+      customerName: selectedSale.customerName,
+      saleDate: selectedSale.saleDate,
+      items: [
+        {
+          projectName: selectedSale.projectName,
+          QTY: selectedSale.QTY,           
+          UnitPrice: selectedSale.UnitPrice,
+        },
+      ],
+    }}
+  />
+)}
+
 
       {isOpenModal === "DELETE" && (
         <ConfirmationModal

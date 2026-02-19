@@ -160,10 +160,18 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
       setForm(initialState);
       setModal();
       refreshData?.();
-    } catch {
-      toast.error("Failed to save employee account", {
-        toastId: "employee-account-error",
-      });
+    } catch (error: unknown) {
+      console.error("Error occuring while adding amount:", error);
+
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message ||
+          "Failed to add payment in employee acoount";
+
+        toast.error(message, { toastId: "error" });
+      } else {
+        toast.error("Something went wrong", { toastId: "error" });
+      }
     } finally {
       setLoading(false);
     }

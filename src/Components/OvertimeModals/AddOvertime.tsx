@@ -103,6 +103,12 @@ export const AddOverTime = ({
       updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
     }
 
+    if (name === "time") {
+    updatedValue = value
+      .replace(/[^0-9:]/g, "")   
+      .slice(0, 8);              
+  }
+
     setAddOvertime((prev) => ({ ...prev, [name]: updatedValue }));
   };
 

@@ -56,14 +56,18 @@ export const UpdateLeave = ({
 
   useEffect(() => {
     if (EditLeave) {
+      const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString("sv-SE", {
+          timeZone: "Asia/Karachi",
+        });
+      };
+
       setUpdateLeave({
         leaveSubject: EditLeave.leaveSubject || "",
         fromDate: EditLeave.fromDate
-          ? new Date(EditLeave.fromDate).toISOString().split("T")[0]
+          ? formatDate(EditLeave.fromDate)
           : currentDate,
-        toDate: EditLeave.toDate
-          ? new Date(EditLeave.toDate).toISOString().split("T")[0]
-          : currentDate,
+        toDate: EditLeave.toDate ? formatDate(EditLeave.toDate) : currentDate,
         leaveReason: EditLeave.leaveReason || "",
         status: EditLeave.leaveStatus?.toLowerCase() || "pending",
       });
@@ -96,9 +100,9 @@ export const UpdateLeave = ({
     e.preventDefault();
     if (!EditLeave) return;
 
-    const { leaveSubject, fromDate,  toDate, leaveReason } = updateLeave;
+    const { leaveSubject, fromDate, toDate, leaveReason } = updateLeave;
 
-    if (!leaveSubject || !fromDate || !toDate|| !leaveReason) {
+    if (!leaveSubject || !fromDate || !toDate || !leaveReason) {
       toast.error("Please fill all required fields", {
         toastId: "update-leave-required",
       });

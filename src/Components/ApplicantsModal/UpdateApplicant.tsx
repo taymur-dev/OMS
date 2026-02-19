@@ -72,24 +72,32 @@ export const UpdateApplicant = ({
   });
 
   useEffect(() => {
-    if (applicant) {
-      setUpdateApplicant({
-        ...defaultState,
-        id: applicant.id,
-        applicant_name: applicant.applicant_name,
-        fatherName: applicant.fatherName || "",
-        email: applicant.email || "",
-        applicant_contact: applicant.applicant_contact,
-        applied_date: applicant.applied_date
-          ? applicant.applied_date.split("T")[0]
-          : "",
+  if (applicant) {
+    // This helper ensures we get YYYY-MM-DD without timezone shifting
+    const formatDate = (dateInput: string) => {
+      if (!dateInput) return "";
+      const date = new Date(dateInput);
+      const year = date.getFullYear();
+      // getMonth() is 0-indexed, so we add 1
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
 
-        job: applicant.job,
-        interviewPhase: applicant.interviewPhase || "",
-        applicant_status: applicant.status,
-      });
-    }
-  }, [applicant]);
+    setUpdateApplicant({
+      ...defaultState,
+      id: applicant.id,
+      applicant_name: applicant.applicant_name,
+      fatherName: applicant.fatherName || "",
+      email: applicant.email || "",
+      applicant_contact: applicant.applicant_contact,
+      applied_date: formatDate(applicant.applied_date), // Use the helper here
+      job: applicant.job,
+      interviewPhase: applicant.interviewPhase || "",
+      applicant_status: applicant.status,
+    });
+  }
+}, [applicant]);
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
