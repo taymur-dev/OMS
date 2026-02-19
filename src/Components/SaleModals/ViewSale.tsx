@@ -41,7 +41,7 @@ export const ViewSale = ({ setIsOpenModal, viewSale }: ViewSaleProps) => {
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-50">
       <div className="w-full max-w-4xl bg-white rounded shadow-2xl border border-gray-300 overflow-hidden">
         {/* Header */}
-        <div className="bg-indigo-900 px-4 py-2">
+        <div className="bg-indigo-900 px-4">
           <Title setModal={setIsOpenModal} className="text-white">
             SALE DETAILS
           </Title>

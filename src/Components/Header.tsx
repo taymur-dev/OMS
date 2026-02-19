@@ -73,22 +73,26 @@ export const Header = ({ isOpen, toggleSideBar }: IHeaderProps) => {
   return (
     <div className="bg-indigo-900 w-full h-16 px-4 flex items-center relative">
       <div className="flex items-center justify-between w-full">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-5">
+          {/* 1. Wrap the logo in a fixed-width container */}
           {!isOpen && (
             <div
-              className="flex-shrink-0 hidden lg:block animate-fade-in cursor-pointer"
+              className="hidden lg:flex items-center w-48 flex-shrink-0 cursor-pointer"
               onClick={handleLogoClick}
             >
               <img
                 src={headerLogo}
                 alt="logo"
+                // Use w-full and object-contain so it fits inside the 'w-48' parent
                 className="w-32 h-auto object-contain"
               />
             </div>
           )}
+
+          {/* 2. Remove the dynamic margin-left and let Flexbox do the work */}
           <button
             onClick={toggleSideBar}
-            className={`p-2 rounded-full text-white hover:bg-white/20 transition-all ${isOpen ? "ml-1" : "lg:ml-[85px]"}`}
+            className="p-2 rounded-full text-white hover:bg-white/20 transition-all ml-1"
           >
             <RxHamburgerMenu size={20} />
           </button>
