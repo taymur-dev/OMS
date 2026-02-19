@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+
 import { useAppSelector } from "../redux/Hooks";
 
 interface LeaveNotification {
@@ -6,19 +7,23 @@ interface LeaveNotification {
   name: string;
   leaveStatus: string;
   leaveSubject: string;
-  date: string;
+  fromDate: string;
+  toDate: string;
 }
 
 interface NotificationDropdownProps {
   notifications: LeaveNotification[];
+
   onClose: () => void;
 }
 
 const NotificationDropdown = ({
   notifications,
+
   onClose,
 }: NotificationDropdownProps) => {
   const navigate = useNavigate();
+
   const { currentUser } = useAppSelector((state) => state?.officeState);
 
   const handleViewAll = () => {
@@ -36,18 +41,30 @@ const NotificationDropdown = ({
   return (
     <>
       <div className="fixed inset-0 z-40" onClick={onClose}></div>
+
       <div
         className="
+
     fixed md:absolute
+
     top-4 md:top-full
+
     left-1/2 md:left-auto
+
     right-auto md:right-0
+
     -translate-x-1/2 md:translate-x-0
+
     mt-0 md:mt-2
+
     w-[90%] sm:w-80
+
     bg-white rounded-lg shadow-xl
+
     border border-gray-200
+
     z-50 overflow-hidden
+
   "
       >
         <div className="bg-indigo-900 p-3">
@@ -68,6 +85,7 @@ const NotificationDropdown = ({
               >
                 <div className="flex justify-between items-start">
                   <p className="text-xs font-bold text-gray-800">{item.name}</p>
+
                   <span
                     className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
                       item.leaveStatus === "Approved"
@@ -80,11 +98,18 @@ const NotificationDropdown = ({
                     {item.leaveStatus}
                   </span>
                 </div>
+
                 <p className="text-xs text-gray-600 mt-1 truncate">
                   {item.leaveSubject}
                 </p>
+
                 <p className="text-[10px] text-gray-400 mt-1">
-                  {new Date(item.date).toLocaleDateString()}
+                  {(() => {
+                    const from = item.fromDate.split("T")[0];
+                    const to = item.toDate.split("T")[0];
+
+                    return from === to ? from : `${from} - ${to}`;
+                  })()}
                 </p>
               </div>
             ))
