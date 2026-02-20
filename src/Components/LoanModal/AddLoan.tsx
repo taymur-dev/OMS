@@ -83,6 +83,12 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
       updatedValue = value.replace(/\D/g, "").slice(0, 12);
     }
 
+    if (name === "loanAmount" || name === "deduction") {
+      const onlyNumbers = value.replace(/[^0-9]/g, "");
+
+      updatedValue = onlyNumbers.replace(/^0+(?=\d)/, "");
+    }
+
     setAddLoan((prev) => ({ ...prev, [name]: updatedValue }));
   };
 
@@ -280,10 +286,7 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>
