@@ -1,6 +1,6 @@
 import loginAvatar from "../assets/Avatar.png";
 import { RxHamburgerMenu } from "react-icons/rx";
-import headerLogo from "../assets/technic.png";
+import headerLogo from "../assets/technic mentors.png";
 import { CiBellOn } from "react-icons/ci";
 import React, { useState, useEffect, useCallback } from "react";
 import { useAppSelector } from "../redux/Hooks";
@@ -84,7 +84,7 @@ export const Header = ({ isOpen, toggleSideBar }: IHeaderProps) => {
                 src={headerLogo}
                 alt="logo"
                 // Use w-full and object-contain so it fits inside the 'w-48' parent
-                className="w-32 h-auto object-contain"
+                className="w-49 h-auto object-contain"
               />
             </div>
           )}
