@@ -369,8 +369,8 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           {activeBtns === "Recuritment" && (
             <AccordionItem isOpen={isOpen}>
               <div className="flex flex-col">
-                <SubLink to="/applicants" label="Applicants" />
                 <SubLink to="/job" label="Jobs" />
+                <SubLink to="/applicants" label="Applicants" />
               </div>
             </AccordionItem>
           )}
