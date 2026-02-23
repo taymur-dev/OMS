@@ -196,12 +196,14 @@ export const UpdateLeave = ({
               />
             )}
 
-            <TextareaField
-              labelName="Leave Reason*"
-              name="leaveReason"
-              inputVal={updateLeave.leaveReason}
-              handlerChange={handleChange}
-            />
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Leave Reason*"
+                name="leaveReason"
+                inputVal={updateLeave.leaveReason}
+                handlerChange={handleChange}
+              />
+            </div>
           </div>
 
           {/* Footer */}

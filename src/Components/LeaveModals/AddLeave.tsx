@@ -214,13 +214,14 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
               value={addLeave.toDate}
               handlerChange={handlerChange}
             />
-
-            <TextareaField
-              labelName="Leave Reason *"
-              name="leaveReason"
-              inputVal={addLeave.leaveReason}
-              handlerChange={handlerChange}
-            />
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Leave Reason *"
+                name="leaveReason"
+                inputVal={addLeave.leaveReason}
+                handlerChange={handlerChange}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 rounded px-4 py-3 bg-indigo-900 border-t border-indigo-900">
