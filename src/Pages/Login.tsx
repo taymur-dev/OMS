@@ -91,8 +91,7 @@ export const Login = () => {
 
   return (
     <div
-      className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden bg-gradient-to-br
-     from-indigo-500 via-indigo-900 to-indigo-600"
+      className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden bg-indigo-900"
     >
       <div
         className="absolute -bottom-10 -left-16 w-60 h-60 bg-slate-200/20 rounded-full

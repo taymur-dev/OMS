@@ -1,8 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
+
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
@@ -19,7 +18,6 @@ import {
 } from "../../redux/NavigationSlice";
 
 import { BASE_URL } from "../../Content/URL";
-import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
@@ -41,7 +39,7 @@ type EmployeeAccountRow = {
   contact: string;
 };
 
-export const EmployeeAccount = () => {
+export const EmployeeAccount = ({ triggerModal }: { triggerModal: number }) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
@@ -111,6 +109,12 @@ export const EmployeeAccount = () => {
     fetchEmployees();
   }, [fetchEmployees]);
 
+  useEffect(() => {
+      if (triggerModal > 0) {
+        setIsOpenModal("ADDACCOUNT");
+      }
+    }, [triggerModal]);
+
   const filteredEmployees = employees.filter((emp) =>
     emp.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
@@ -123,33 +127,15 @@ export const EmployeeAccount = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add Button as rightElement */}
-        <TableTitle
-          tileName="Employee Accounts List"
-          rightElement={
-            currentUser?.role === "admin" && (
-              <CustomButton
-                label="+ Add Payment"
-                handleToggle={() => handleToggleModal("ADDACCOUNT")}
-              />
-            )
-          }
-        />
+    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
+     
 
-        <hr className="border border-b border-gray-200" />
 
         {/* Top Stats Bar & Filter Row aligned to UsersDetails style */}
         <div className="p-2">
           <div className="flex flex-col gap-2">
-            {/* Total Count Display */}
-            <div className="text-gray-800 text-sm">
-              Total Employees :{" "}
-              <span className="ml-1 text-xl text-indigo-900 font-semibold">
-                [{filteredEmployees.length}]
-              </span>
-            </div>
+           
 
             <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
               {/* Left Side: Show entries */}
@@ -184,7 +170,7 @@ export const EmployeeAccount = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[700px]">
             {/* Sticky Table Header */}
             <div
@@ -269,10 +255,7 @@ export const EmployeeAccount = () => {
         />
       )}
 
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
+     
     </div>
   );
 };

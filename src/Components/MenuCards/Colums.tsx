@@ -1,8 +1,8 @@
-import { 
-  BiBriefcaseAlt2, 
-  BiFolderPlus,       // Icon for "New"
-  BiLoaderCircle,     // Icon for "Working"
-  BiCheckCircle       // Icon for "Complete"
+import {
+  BiBriefcaseAlt2,
+  BiFolderPlus,
+  BiLoaderCircle,
+  BiCheckCircle,
 } from "react-icons/bi";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 
@@ -12,7 +12,7 @@ type projectT = {
   projectName: string;
   completionStatus: string;
 };
-type columDataT = { colum: columT; allProject: projectT[] | undefined }
+type columDataT = { colum: columT; allProject: projectT[] | undefined };
 
 const columnHeaderStyles = (id: string) => {
   switch (id) {
@@ -27,13 +27,14 @@ const columnHeaderStyles = (id: string) => {
   }
 };
 
-// Helper to render the status icon instead of the arrow
 const StatusIcon = ({ status }: { status: string }) => {
   switch (status) {
     case "New":
       return <BiFolderPlus className="text-base text-blue-500" />;
     case "Working":
-      return <BiLoaderCircle className="text-base text-amber-500 animate-spin-slow" />;
+      return (
+        <BiLoaderCircle className="text-base text-amber-500 animate-spin-slow" />
+      );
     case "Complete":
       return <BiCheckCircle className="text-base text-emerald-500" />;
     default:
@@ -41,7 +42,13 @@ const StatusIcon = ({ status }: { status: string }) => {
   }
 };
 
-const ProjectCard = ({ project, index }: { project: projectT; index: number }) => {
+const ProjectCard = ({
+  project,
+  index,
+}: {
+  project: projectT;
+  index: number;
+}) => {
   return (
     <Draggable draggableId={String(project.id)} index={index}>
       {(provided, snapshot) => (
@@ -76,9 +83,13 @@ const ProjectCard = ({ project, index }: { project: projectT; index: number }) =
 
 export const Columns = ({ colum, allProject }: columDataT) => {
   return (
-    <div className="w-full h-full min-h-[400px] rounded-lg border border-indigo-900 flex flex-col overflow-hidden bg-gray-100/50">
-      <div className={`p-3 flex items-center justify-between border-b ${columnHeaderStyles(colum.id)}`}>
-        <h2 className="text-[11px] font-bold uppercase tracking-wider">{colum.title}</h2>
+    <div className="w-full h-full min-h-[400px] rounded-lg border border-indigo-900 flex flex-col overflow-y bg-gray-100/50">
+      <div
+        className={`p-3 flex items-center justify-between border-b ${columnHeaderStyles(colum.id)}`}
+      >
+        <h2 className="text-[11px] font-bold uppercase tracking-wider">
+          {colum.title}
+        </h2>
         <span className="bg-white/20 px-2 py-0.5 rounded-full text-[12px] font-bold">
           {allProject?.length || 0}
         </span>
@@ -89,9 +100,13 @@ export const Columns = ({ colum, allProject }: columDataT) => {
           <div
             {...provided.droppableProps}
             ref={provided.innerRef}
-            className={`flex-1 p-2 space-y-2 transition-colors duration-200 ${
-              snapshot.isDraggingOver ? "bg-indigo-50/50" : ""
-            }`}
+            className={`
+        flex-1 p-2 space-y-2
+        overflow-y-auto
+        max-h-[350px]   /* adjust if needed */
+        transition-colors duration-200
+        ${snapshot.isDraggingOver ? "bg-indigo-50/50" : ""}
+      `}
           >
             {allProject?.map((project, index) => (
               <ProjectCard key={project.id} project={project} index={index} />

@@ -5,8 +5,7 @@ import { toast } from "react-toastify";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
@@ -15,7 +14,6 @@ import { Loader } from "../../Components/LoaderComponent/Loader";
 import { AddSupplier } from "../../Components/SupplierModal/AddSupplier";
 import { UpdateSupplier } from "../../Components/SupplierModal/UpdateSupplier";
 import { ViewSupplierModal } from "../../Components/SupplierModal/ViewSupplier";
-import { Footer } from "../../Components/Footer";
 
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
@@ -36,7 +34,7 @@ interface Supplier {
   supplierAddress: string;
 }
 
-export const Suppliers = () => {
+export const Suppliers = ({ triggerAdd }: { triggerAdd: number }) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
@@ -119,6 +117,12 @@ export const Suppliers = () => {
     return () => clearTimeout(timer);
   }, [dispatch, handleGetAllSupplier]);
 
+    useEffect(() => {
+      if (triggerAdd && triggerAdd > 0) {
+        setIsOpenModal("ADD");
+      }
+    }, [triggerAdd]);
+
   const filteredSuppliers = suppliers.filter((item) =>
     item.supplierName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
@@ -137,20 +141,9 @@ export const Suppliers = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
+    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
         {/* 1 & 3) Table Title with Add Supplier button as the rightElement */}
-        <TableTitle
-          tileName="Supplier"
-          rightElement={
-            <CustomButton
-              handleToggle={() => handleToggleViewModal("ADD")}
-              label="+ Add Supplier"
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
 
         {/* Top Bar / Filter Row */}
         <div className="p-2">
@@ -183,7 +176,7 @@ export const Suppliers = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[900px]">
             {/* Sticky Table Header - Using grid-cols-6 to match the 6 columns below */}
             <div
@@ -292,11 +285,6 @@ export const Suppliers = () => {
           message="Are you sure you want to delete this Supplier?"
         />
       )}
-
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
     </div>
   );
 };

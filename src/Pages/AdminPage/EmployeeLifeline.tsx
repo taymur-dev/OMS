@@ -2,8 +2,7 @@ import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
@@ -22,11 +21,12 @@ import {
 } from "../../redux/NavigationSlice";
 
 import { Loader } from "../../Components/LoaderComponent/Loader";
-import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
 type LoanT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
+
+
 
 type LifeLine = {
   id: number;
@@ -37,7 +37,7 @@ type LifeLine = {
   date: string;
 };
 
-export const EmployeeLifeline = () => {
+export const EmployeeLifeline = ({ triggerAdd }: { triggerAdd: number }) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
 
@@ -106,6 +106,12 @@ export const EmployeeLifeline = () => {
     fetchLifelines();
   }, [fetchLifelines]);
 
+   useEffect(() => {
+    if (triggerAdd > 0) {
+      setIsOpenModal("ADD");
+    }
+  }, [triggerAdd]);
+
   const filteredLifeLines = lifeLines.filter((item) => {
     const name = item.employeeName?.toLowerCase() || "";
     const contact = item.contact?.toLowerCase() || "";
@@ -126,23 +132,14 @@ export const EmployeeLifeline = () => {
 
   if (loader) return <Loader />;
 
+ 
+
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
         <Toaster position="top-center" reverseOrder={false} />
 
-        {/* 1 & 3) Table Title with Add Button - Aligned with UsersDetails */}
-        <TableTitle
-          tileName="Employee LifeLine"
-          rightElement={
-            <CustomButton
-              label="+ Add Employee"
-              handleToggle={() => handleToggleViewModal("ADD")}
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
+       
 
         {/* Control Bar: Show entries and Search */}
         <div className="p-2">
@@ -175,7 +172,7 @@ export const EmployeeLifeline = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[900px]">
             {/* Sticky Table Header */}
             <div
@@ -262,10 +259,7 @@ export const EmployeeLifeline = () => {
         />
       )}
 
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
+      
     </div>
   );
 };

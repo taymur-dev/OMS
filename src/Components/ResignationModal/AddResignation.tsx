@@ -220,28 +220,29 @@ export const AddResignation = ({
               readOnly
             />
 
-            <InputField
-              labelName="Resignation Date*"
-              type="date"
-              name="resignation_date"
-              value={formData.resignation_date}
-              handlerChange={handlerChange}
-            />
-
-            <TextareaField
-              labelName="Note*"
-              name="note"
-              inputVal={formData.note}
-              handlerChange={handlerChange}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Resignation Date*"
+                type="date"
+                name="resignation_date"
+                value={formData.resignation_date}
+                handlerChange={handlerChange}
+              />
+            </div>
+            
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Note*"
+                name="note"
+                inputVal={formData.note}
+                handlerChange={handlerChange}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

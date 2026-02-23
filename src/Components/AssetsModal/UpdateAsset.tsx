@@ -44,17 +44,16 @@ export const UpdateAsset = ({
   const token = currentUser?.token;
 
   const formatDate = (dateString: string) => {
-  if (!dateString) return "";
-  return dateString.split("T")[0]; 
-};
+    if (!dateString) return "";
+    return dateString.split("T")[0];
+  };
 
-const [updateAsset, setUpdateAsset] = useState({
-  asset_name: assetData.asset_name,
-  category_id: assetData.category_id,
-  description: assetData.description,
-  date: formatDate(assetData.date),
-});
-
+  const [updateAsset, setUpdateAsset] = useState({
+    asset_name: assetData.asset_name,
+    category_id: assetData.category_id,
+    description: assetData.description,
+    date: formatDate(assetData.date),
+  });
 
   const [categories, setCategories] = useState<
     { id: number; label: string; value: string }[]
@@ -210,20 +209,24 @@ const [updateAsset, setUpdateAsset] = useState({
                 handlerChange={handlerChange}
               />
 
-              <InputField
-                labelName="Created Date *"
-                type="date"
-                name="date"
-                value={updateAsset.date}
-                handlerChange={handlerChange}
-              />
+              <div className="md:col-span-2">
+                <InputField
+                  labelName="Created Date *"
+                  type="date"
+                  name="date"
+                  value={updateAsset.date}
+                  handlerChange={handlerChange}
+                />
+              </div>
 
-              <TextareaField
-                labelName="Description *"
-                name="description"
-                inputVal={updateAsset.description}
-                handlerChange={handlerChange}
-              />
+              <div className="md:col-span-2">
+                <TextareaField
+                  labelName="Description *"
+                  name="description"
+                  inputVal={updateAsset.description}
+                  handlerChange={handlerChange}
+                />
+              </div>
             </div>
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

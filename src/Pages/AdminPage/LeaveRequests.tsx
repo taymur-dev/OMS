@@ -1,5 +1,3 @@
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
@@ -19,7 +17,6 @@ import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
@@ -27,7 +24,7 @@ type ADDLEAVET = {
   id: number;
   leaveSubject: string;
   leaveReason: string;
-  fromDate: string; 
+  fromDate: string;
   toDate: string;
   leaveStatus: string;
   status: string;
@@ -36,7 +33,7 @@ type ADDLEAVET = {
 
 type ISOPENMODALT = "ADDLEAVE" | "VIEW" | "UPDATE" | "DELETE" | "";
 
-export const LeaveRequests = () => {
+export const LeaveRequests = ({ triggerAdd }: { triggerAdd: number }) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
   const { loader } = useAppSelector((state) => state.NavigateState);
@@ -118,6 +115,12 @@ export const LeaveRequests = () => {
     handleGetAllLeaves();
   }, [handleGetAllLeaves]);
 
+  useEffect(() => {
+    if (triggerAdd && triggerAdd > 0) {
+      setIsOpenModal("ADDLEAVE");
+    }
+  }, [triggerAdd]);
+
   const handleToggleViewModal = (active: ISOPENMODALT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
@@ -189,21 +192,8 @@ export const LeaveRequests = () => {
   };
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add Leave button as the rightElement */}
-        <TableTitle
-          tileName="Leave"
-          rightElement={
-            <CustomButton
-              label="+ Add Leave"
-              handleToggle={() => handleToggleViewModal("ADDLEAVE")}
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
-
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
             {/* Left Side: Show entries */}
@@ -234,7 +224,7 @@ export const LeaveRequests = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[900px]">
             {/* Sticky Table Header */}
             <div
@@ -367,11 +357,6 @@ export const LeaveRequests = () => {
           message="Are you sure you want to delete this leave?"
         />
       )}
-
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
     </div>
   );
 };

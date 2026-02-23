@@ -9,8 +9,7 @@ import {
 } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
+
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
@@ -21,7 +20,6 @@ import { ViewAttendance } from "../../Components/AttendanceComponent/ViewAttenda
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
-import { Footer } from "../../Components/Footer";
 
 import { BASE_URL } from "../../Content/URL";
 
@@ -45,7 +43,7 @@ export type AttendanceT = {
   workingHours: string;
 };
 
-export const UserAttendance = () => {
+export const UserAttendance = ({ triggerAdd }: { triggerAdd: number }) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
@@ -107,6 +105,12 @@ export const UserAttendance = () => {
     setPageNo(1);
   }, [searchTerm, selectedValue]);
 
+  useEffect(() => {
+    if (triggerAdd && triggerAdd > 0 && isAdmin) {
+      setIsOpenModal("ADDATTENDANCE");
+    }
+  }, [triggerAdd, isAdmin]);
+
   const filteredAttendance = useMemo(() => {
     return allAttendance.filter(
       (att) =>
@@ -141,22 +145,11 @@ export const UserAttendance = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
         {/* 1 & 3) Table Title with Add Attendance button */}
-        <TableTitle
-          tileName="User Attendance"
-          rightElement={
-            isAdmin && (
-              <CustomButton
-                label="+ Add Attendance"
-                handleToggle={() => setIsOpenModal("ADDATTENDANCE")}
-              />
-            )
-          }
-        />
+      
 
-        <hr className="border border-b border-gray-200" />
 
         {/* Filter and Search Section */}
         <div className="p-2">
@@ -189,7 +182,7 @@ export const UserAttendance = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[900px]">
             {/* Sticky Table Header */}
             <div
@@ -312,10 +305,7 @@ export const UserAttendance = () => {
         />
       )}
 
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
+      
     </div>
   );
 };

@@ -1,8 +1,7 @@
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
@@ -20,9 +19,8 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { BASE_URL } from "../../Content/URL";
-import { Footer } from "../../Components/Footer";
 
-type ModalT = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
+type ModalT = "ADD" | "EDIT" | "DELETE" | "VIEW" |  "";
 type Job = {
   id: number;
   job_title: string;
@@ -33,7 +31,7 @@ type Job = {
 
 const pageSizes = [5, 10, 20, 50];
 
-export const Jobs = () => {
+export const Jobs = ({ triggerRecruit }: {  triggerRecruit: number }) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
 
@@ -80,6 +78,12 @@ export const Jobs = () => {
     getJobs();
   }, [getJobs]);
 
+   useEffect(() => {
+      if (triggerRecruit > 0) {
+        setIsOpenModal("ADD");
+      }
+    }, [triggerRecruit]);
+
   const filteredJobs = useMemo(() => {
     return jobs
       .filter((job) =>
@@ -96,20 +100,10 @@ export const Jobs = () => {
  
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add Job button */}
-        <TableTitle
-          tileName="Jobs"
-          rightElement={
-            <CustomButton
-              handleToggle={() => handleToggleModal("ADD")}
-              label="+ Add Job"
-            />
-          }
-        />
+    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
+       
 
-        <hr className="border border-b border-gray-200" />
 
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
@@ -144,7 +138,7 @@ export const Jobs = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[600px]">
             {/* Sticky Table Header */}
             <div
@@ -247,10 +241,7 @@ export const Jobs = () => {
         />
       )}
 
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
+     
     </div>
   );
 };

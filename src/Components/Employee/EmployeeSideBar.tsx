@@ -1,8 +1,7 @@
-import { AccordionItem } from "../Accordion/AccordionItem";
 import { SideBarButton } from "../SideBarComponent/SideBarButton";
 import { BiArrowBack } from "react-icons/bi";
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FaMoneyCheck, FaUserSlash } from "react-icons/fa";
 import { PiFingerprintDuotone } from "react-icons/pi";
 import { GoProjectRoadmap } from "react-icons/go";
@@ -19,15 +18,21 @@ type SideBarProps = {
 };
 
 type TActivButton =
-  | "Dashboard" | "Attendance" | "Projects" | "Progress" | "Todo"
-  | "Payroll" | "Leave" | "Salary" | "Dynamic" | "Reports";
+  | "Dashboard"
+  | "Attendance"
+  | "Assigned Projects"
+  | "Progress"
+  | "Todo"
+  | "Payroll"
+  | "Leave"
+  | "Salary"
+  | "Dynamic"
+  | "Reports";
 
 export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   const [activeBtns, setActiveBtns] = useState<TActivButton | "">("");
   const [isHoverable, setIsHoverable] = useState(false);
-  const [isBlurred, setIsBlurred] = useState(false); 
-
-  const { pathname } = useLocation();
+  const [isBlurred, setIsBlurred] = useState(false);
 
   useEffect(() => {
     const checkModal = () => {
@@ -37,7 +42,10 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
     };
 
     const observer = new MutationObserver(checkModal);
-    observer.observe(document.body, { attributes: true, attributeFilter: ["class", "style"] });
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ["class", "style"],
+    });
     return () => observer.disconnect();
   }, []);
 
@@ -60,7 +68,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   // Centralized click handler
   const handleItemClick = (btn: TActivButton, hasSubmenu: boolean = false) => {
     setActiveBtns((prev) => (prev === btn ? "" : btn));
-    
+
     // Close sidebar on mobile if it's a direct link (no submenu)
     if (!hasSubmenu && window.innerWidth < 768) {
       setIsOpen?.(false);
@@ -70,27 +78,6 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   useEffect(() => {
     setActiveBtns("Dashboard");
   }, []);
-
-  const SubLink = ({ to, label, badge }: { to: string; label: string; badge?: number; }) => {
-    const isActive = pathname === to;
-    return (
-      <Link
-        to={to}
-        // Always close on mobile when a sub-link is clicked
-        onClick={() => window.innerWidth < 768 && setIsOpen?.(false)}
-        className={`flex justify-between items-center w-full px-4 py-2 mb-1 rounded-md text-sm font-bold transition-all duration-200 ${
-          isActive ? "bg-white text-indigo-900" : "bg-transparent text-black font-normal"
-        }`}
-      >
-        <span>{label}</span>
-        {badge !== undefined && badge > 0 && (
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-900 text-white">
-            {badge}
-          </span>
-        )}
-      </Link>
-    );
-  };
 
   return (
     <>
@@ -123,7 +110,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             />
           </Link>
 
-          <Link to="/users/markAttendance" className="block">
+          <Link to="/users/attendance" className="block">
             <SideBarButton
               isOpen={isOpen}
               icon={<PiFingerprintDuotone size={20} />}
@@ -147,7 +134,6 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             />
           </Link>
 
-
           <Link to="/users/progress" className="block">
             <SideBarButton
               isOpen={isOpen}
@@ -160,17 +146,15 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             />
           </Link>
 
-         
-
           <Link to="/users/assignedprojects" className="block">
             <SideBarButton
               isOpen={isOpen}
               icon={<GoProjectRoadmap size={20} />}
               title="Assigned Projects"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => handleItemClick("Projects")}
+              handlerClick={() => handleItemClick("Assigned Projects")}
               activeBtns={activeBtns}
-              activeBtn="Projects"
+              activeBtn="Assigned Projects"
             />
           </Link>
 
@@ -198,64 +182,41 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             />
           </Link>
 
-          
+          <Link to="/user/payroll" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<CiCreditCard1 size={20} />}
+              title="Payroll"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => handleItemClick("Payroll")}
+              activeBtns={activeBtns}
+              activeBtn="Payroll"
+            />
+          </Link>
 
-           <SideBarButton
-            isOpen={isOpen}
-            icon={<CiCreditCard1 size={20} />}
-            title="Payroll"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => handleItemClick("Payroll", true)} // Has submenu
-            activeBtns={activeBtns}
-            activeBtn="Payroll"
-          />
-          {activeBtns === "Payroll" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/user/overTime" label="Over Time" />
-                <SubLink to="/user/advanceSalary" label="Advance Salary" />
-                <SubLink to="/user/applyLoan" label="Apply Loan" />
-              </div>
-            </AccordionItem>
-          )}
+          <Link to="/user/dynamics" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<RiUserCommunityLine size={20} />}
+              title="Dynamics"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => handleItemClick("Dynamic")}
+              activeBtns={activeBtns}
+              activeBtn="Dynamics"
+            />
+          </Link>
 
-          <SideBarButton
-            isOpen={isOpen}
-            icon={<RiUserCommunityLine size={20} />}
-            title="Dynamic"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => handleItemClick("Dynamic", true)} // Has submenu
-            activeBtns={activeBtns}
-            activeBtn="Dynamic"
-          />
-          {activeBtns === "Dynamic" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/user/promotion" label="Promotion Request" />
-                <SubLink to="/user/resignation" label="Resignation Request" />
-                <SubLink to="/user/rejoin" label="Rejoin Request" />
-              </div>
-            </AccordionItem>
-          )}
-
-          <SideBarButton
-            isOpen={isOpen}
-            icon={<HiOutlineDocumentReport size={20} />}
-            title="Reports"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => handleItemClick("Reports", true)} // Has submenu
-            activeBtns={activeBtns}
-            activeBtn="Reports"
-          />
-          {activeBtns === "Reports" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/users/progressReports" label="Progress Report" />
-                <SubLink to="/users/attendanceReports" label="Attendance Report" />
-                <SubLink to="/users/taskReports" label="Task Report" />
-              </div>
-            </AccordionItem>
-          )}
+          <Link to="/user/reports" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<HiOutlineDocumentReport size={20} />}
+              title="Reports"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => handleItemClick("Reports")}
+              activeBtns={activeBtns}
+              activeBtn="Reports"
+            />
+          </Link>
         </nav>
       </div>
 

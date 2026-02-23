@@ -1,4 +1,3 @@
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
@@ -35,8 +34,6 @@ import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
-import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
@@ -52,7 +49,7 @@ type AllcustomerT = {
   companyAddress: string;
 };
 
-export const CustomerDetail = () => {
+export const CustomerDetail = ({ triggerAdd }: { triggerAdd: number }) => {
   const [isOpenModal, setIsOpenModal] = useState<ModalT | "">("");
   const [allCustomers, setAllCustomers] = useState<AllcustomerT[]>([]);
   const [customerDetail, setCustomerDetail] = useState<AllcustomerT | null>(
@@ -69,10 +66,6 @@ export const CustomerDetail = () => {
 
   const { loader } = useAppSelector((state) => state?.NavigateState);
   const dispatch = useAppDispatch();
-
-  const handleToggleModal = (Y: ModalT) => {
-    setIsOpenModal((prev) => (prev === Y ? "" : Y));
-  };
 
   const handleGetAllCustomers = useCallback(async () => {
     try {
@@ -140,6 +133,12 @@ export const CustomerDetail = () => {
     handleGetAllCustomers();
   }, [dispatch, handleGetAllCustomers]);
 
+    useEffect(() => {
+    if (triggerAdd && triggerAdd > 0) {
+      setIsOpenModal("ADD");
+    }
+  }, [triggerAdd]);
+
   if (loader) return <Loader />;
 
   const filteredCustomers = allCustomers.filter((customer) => {
@@ -161,20 +160,10 @@ export const CustomerDetail = () => {
   const paginatedCustomers = filteredCustomers.slice(startIndex, endIndex);
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
+    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
         {/* 1 & 3) Table Title with Add Customer button as the rightElement */}
-        <TableTitle
-          tileName="Customer"
-          rightElement={
-            <CustomButton
-              handleToggle={() => handleToggleModal("ADD")}
-              label="+ Add Customer"
-            />
-          }
-        />
 
-        <hr className="border border-b border-gray-200" />
 
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
@@ -206,7 +195,7 @@ export const CustomerDetail = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[900px]">
             {/* Sticky Table Header - Grid 7 aligned with UserDetails */}
             <div
@@ -306,10 +295,7 @@ export const CustomerDetail = () => {
         />
       )}
 
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
+      
     </div>
   );
 };

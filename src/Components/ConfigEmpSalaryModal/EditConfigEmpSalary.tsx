@@ -68,26 +68,26 @@ export const EditConfigEmpSalary = ({
   const [allUsers, setAllUsers] = useState<SelectOption[]>([]);
   const [loading, setLoading] = useState(false);
 
- useEffect(() => {
-  if (editData) {
-    const dateObj = new Date(editData.config_date);
-    
-    const year = dateObj.getFullYear();
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-    const day = String(dateObj.getDate()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
+  useEffect(() => {
+    if (editData) {
+      const dateObj = new Date(editData.config_date);
 
-    setEditConfigEmployee({
-      employee_id: editData.employee_id.toString(),
-      salary_amount: editData.salary_amount?.toString() || "",
-      emp_of_mon_allowance: editData.emp_of_mon_allowance?.toString() || "",
-      transport_allowance: editData.transport_allowance?.toString() || "",
-      medical_allowance: editData.medical_allowance?.toString() || "",
-      total_salary: editData.total_salary?.toString() || "",
-      config_date: formattedDate, 
-    });
-  }
-}, [editData]);
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      const formattedDate = `${year}-${month}-${day}`;
+
+      setEditConfigEmployee({
+        employee_id: editData.employee_id.toString(),
+        salary_amount: editData.salary_amount?.toString() || "",
+        emp_of_mon_allowance: editData.emp_of_mon_allowance?.toString() || "",
+        transport_allowance: editData.transport_allowance?.toString() || "",
+        medical_allowance: editData.medical_allowance?.toString() || "",
+        total_salary: editData.total_salary?.toString() || "",
+        config_date: formattedDate,
+      });
+    }
+  }, [editData]);
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -280,15 +280,21 @@ export const EditConfigEmpSalary = ({
               disabled
             />
 
-            <div className="md:col-span-2">
-              <InputField
-                labelName="Date *"
-                name="config_date"
-                type="date"
-                handlerChange={handlerChange}
-                value={editConfigEmployee.config_date}
-              />
-            </div>
+            <InputField
+              labelName="Date *"
+              name="config_date"
+              type="date"
+              handlerChange={handlerChange}
+              value={editConfigEmployee.config_date}
+            />
+
+            <InputField
+              labelName="Date *"
+              name="config_date"
+              type="date"
+              handlerChange={handlerChange}
+              value={editConfigEmployee.config_date}
+            />
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

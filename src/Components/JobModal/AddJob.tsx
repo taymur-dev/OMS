@@ -27,7 +27,11 @@ const initialState: AddJobState = {
   description: "",
 };
 
-export const AddJob = ({ setModal, refreshJobs , existingJobs }: AddJobsProps) => {
+export const AddJob = ({
+  setModal,
+  refreshJobs,
+  existingJobs,
+}: AddJobsProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
@@ -61,9 +65,10 @@ export const AddJob = ({ setModal, refreshJobs , existingJobs }: AddJobsProps) =
         toastId: "add-job-validation",
       });
     }
-    
+
     const isDuplicate = existingJobs.some(
-      (job) => job.job_title.toLowerCase() === addJob.job_title.trim().toLowerCase()
+      (job) =>
+        job.job_title.toLowerCase() === addJob.job_title.trim().toLowerCase(),
     );
 
     if (isDuplicate) {
@@ -112,28 +117,29 @@ export const AddJob = ({ setModal, refreshJobs , existingJobs }: AddJobsProps) =
           </div>
 
           <div className="mx-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
-            <InputField
-              labelName="Job Title *"
-              type="text"
-              name="job_title"
-              value={addJob.job_title}
-              handlerChange={handlerChange}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Job Title *"
+                type="text"
+                name="job_title"
+                value={addJob.job_title}
+                handlerChange={handlerChange}
+              />
+            </div>
 
-            <TextareaField
-              labelName="Job Description *"
-              name="description"
-              inputVal={addJob.description}
-              handlerChange={handlerChange}
-            />
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Job Description *"
+                name="description"
+                inputVal={addJob.description}
+                handlerChange={handlerChange}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

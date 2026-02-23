@@ -82,9 +82,11 @@ export const AddProject = ({
     setLoading(true);
 
     if (new Date(addProject.startDate) > new Date(addProject.endDate)) {
-    toast.error("Start Date cannot be later than End Date", { toastId: "date-error" });
-    return;
-  }
+      toast.error("Start Date cannot be later than End Date", {
+        toastId: "date-error",
+      });
+      return;
+    }
 
     try {
       const res = await axios.post(
@@ -180,35 +182,36 @@ export const AddProject = ({
               handlerChange={handlerChange}
             />
 
-            <TextareaField
-              labelName="Project Description"
-              name="description"
-              handlerChange={handlerChange}
-              inputVal={addProject.description}
-              className="col-span-1 md:col-span-2"
-            />
+            <div className="md:col-span-2">
+              <OptionField
+                labelName="Completion Status *"
+                name="completionStatus"
+                value={addProject.completionStatus}
+                handlerChange={handlerChange}
+                optionData={[
+                  { id: 1, label: "New", value: "New" },
+                  { id: 2, label: "Working", value: "Working" },
+                  { id: 3, label: "Complete", value: "Complete" },
+                ]}
+                inital="Select Status"
+              />
+            </div>
 
-            <OptionField
-              labelName="Completion Status *"
-              name="completionStatus"
-              value={addProject.completionStatus}
-              handlerChange={handlerChange}
-              optionData={[
-                { id: 1, label: "New", value: "New" },
-                { id: 2, label: "Working", value: "Working" },
-                { id: 3, label: "Complete", value: "Complete" },
-              ]}
-              inital="Select Status"
-            />
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Project Description"
+                name="description"
+                handlerChange={handlerChange}
+                inputVal={addProject.description}
+                className="col-span-1 md:col-span-2"
+              />
+            </div>
           </div>
 
           {/* Footer */}
           <div className="flex justify-end gap-3 px-6 py-4 bg-indigo-900 border-t border-indigo-900 rounded">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

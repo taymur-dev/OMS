@@ -19,10 +19,9 @@ type UserOption = {
 type WithdrawState = {
   id: string;
   withdrawReason: string;
-  
 };
 
- type WithdrawEmployeeT = {
+type WithdrawEmployeeT = {
   withdrawalId: number;
   employeeId: number;
   name: string;
@@ -44,7 +43,7 @@ const initialState: WithdrawState = {
 export const AddWithdraw = ({
   setModal,
   handlegetwithDrawEmployeess,
-  existingWithdrawals
+  existingWithdrawals,
 }: AddWithdrawProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
@@ -106,7 +105,7 @@ export const AddWithdraw = ({
     }
 
     const isAlreadyWithdrawn = existingWithdrawals.some(
-      (emp) => emp.employeeId === Number(addWithdraw.id)
+      (emp) => emp.employeeId === Number(addWithdraw.id),
     );
 
     if (isAlreadyWithdrawn) {
@@ -161,28 +160,29 @@ export const AddWithdraw = ({
             </Title>
           </div>
           <div className="mx-2 grid grid-cols-1 py-5 sm:grid-cols-2  md:grid-cols-2 gap-3">
-            <UserSelect
-              labelName="Select Employee *"
-              name="id"
-              value={addWithdraw.id}
-              handlerChange={handlerChange}
-              optionData={allUsers}
-            />
+            <div className="md:col-span-2">
+              <UserSelect
+                labelName="Select Employee *"
+                name="id"
+                value={addWithdraw.id}
+                handlerChange={handlerChange}
+                optionData={allUsers}
+              />
+            </div>
 
-            <TextareaField
-              labelName="Withdraw Reason *"
-              name="withdrawReason"
-              inputVal={addWithdraw.withdrawReason}
-              handlerChange={handlerChange}
-            />
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Withdraw Reason *"
+                name="withdrawReason"
+                inputVal={addWithdraw.withdrawReason}
+                handlerChange={handlerChange}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

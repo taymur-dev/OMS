@@ -182,20 +182,15 @@ export const UpdateResignation = ({
               disabled
             />
 
-            <InputField
-              labelName="Date *"
-              name="resignation_date"
-              type="date"
-              value={updateResignation.resignation_date}
-              handlerChange={handleChange}
-            />
-
-            <TextareaField
-              labelName="Note *"
-              name="note"
-              inputVal={updateResignation.note}
-              handlerChange={handleChange}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Date *"
+                name="resignation_date"
+                type="date"
+                value={updateResignation.resignation_date}
+                handlerChange={handleChange}
+              />
+            </div>
 
             <div className="flex flex-col md:col-span-2 gap-1">
               <label className="text-sm font-medium text-gray-700">
@@ -211,6 +206,15 @@ export const UpdateResignation = ({
                 <option value="ACCEPTED">ACCEPTED</option>
                 <option value="REJECTED">REJECTED</option>
               </select>
+            </div>
+
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Note *"
+                name="note"
+                inputVal={updateResignation.note}
+                handlerChange={handleChange}
+              />
             </div>
           </div>
 

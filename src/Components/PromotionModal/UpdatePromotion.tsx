@@ -171,22 +171,16 @@ export const UpdatePromotion = ({
               disabled={isAdmin}
             />
 
-            <InputField
-              labelName="Date *"
-              name="date"
-              type="date"
-              value={promotion.date}
-              handlerChange={handleChange}
-              disabled={isAdmin}
-            />
-
-            <TextareaField
-              labelName="Note *"
-              name="note"
-              inputVal={promotion.note}
-              handlerChange={handleChange}
-              readOnly={isAdmin}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Date *"
+                name="date"
+                type="date"
+                value={promotion.date}
+                handlerChange={handleChange}
+                disabled={isAdmin}
+              />
+            </div>
 
             <div className="md:col-span-2">
               {isAdmin && (
@@ -200,6 +194,16 @@ export const UpdatePromotion = ({
                   inital="Select Status"
                 />
               )}
+            </div>
+
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Note *"
+                name="note"
+                inputVal={promotion.note}
+                handlerChange={handleChange}
+                readOnly={isAdmin}
+              />
             </div>
           </div>
 

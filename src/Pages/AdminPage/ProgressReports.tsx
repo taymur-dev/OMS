@@ -1,17 +1,15 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { InputField } from "../../Components/InputFields/InputField";
 import { OptionField } from "../../Components/InputFields/OptionField";
 import { Loader } from "../../Components/LoaderComponent/Loader";
-import { Footer } from "../../Components/Footer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPrint } from "@fortawesome/free-solid-svg-icons";
 
-import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks"
 import {
   navigationStart,
   navigationSuccess,
@@ -174,11 +172,9 @@ export const ProgressReports = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        <TableTitle tileName="Progress Report" />
+    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
 
-        <hr className="border border-b border-gray-200" />
 
         {/* --- FILTER SECTION (Aligned with Sales Report) --- */}
         <div className="p-2 bg-white">
@@ -217,7 +213,8 @@ export const ProgressReports = () => {
             <div className="flex gap-2 flex-grow lg:flex-grow-0 min-w-full lg:min-w-fit">
               <button
                 onClick={handleSearch}
-                className="bg-indigo-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center justify-center whitespace-nowrap hover:bg-indigo-800 transition"
+                className="bg-indigo-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center
+                 justify-center whitespace-nowrap hover:bg-indigo-800 transition"
               >
                 <FontAwesomeIcon icon={faSearch} className="mr-2" />
                 Search
@@ -225,7 +222,8 @@ export const ProgressReports = () => {
 
               <button
                 onClick={printDiv}
-                className="bg-blue-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center justify-center whitespace-nowrap hover:bg-blue-800 transition"
+                className="bg-blue-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center justify-center
+                 whitespace-nowrap hover:bg-blue-800 transition"
               >
                 <FontAwesomeIcon icon={faPrint} className="mr-2" />
                 Print
@@ -250,7 +248,7 @@ export const ProgressReports = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div id="myDiv" className="min-w-[800px]">
             {/* Sticky Table Header */}
             <div className="grid grid-cols-4 bg-indigo-900 text-white items-center font-semibold text-sm sticky top-0 z-10 p-2">
@@ -302,9 +300,7 @@ export const ProgressReports = () => {
         </div>
       </div>
 
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
+     
     </div>
   );
 };

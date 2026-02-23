@@ -1,8 +1,7 @@
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
@@ -14,7 +13,6 @@ import { ViewAdvanceSalary } from "../../Components/AdvanceSalaryModal/ViewAdvan
 
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { Footer } from "../../Components/Footer";
 
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
@@ -38,7 +36,7 @@ export type AdvanceSalaryType = {
   description: string;
 };
 
-export const AdvanceSalary = () => {
+export const AdvanceSalary = ({ triggerModal }: { triggerModal: number }) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
   const dispatch = useAppDispatch();
@@ -127,6 +125,12 @@ export const AdvanceSalary = () => {
     setTimeout(() => dispatch(navigationSuccess("ADVANCE SALARY")), 500);
   }, [dispatch, handleGetAllAdvance]);
 
+  useEffect(() => {
+    if (triggerModal > 0) {
+      setIsOpenModal("ADD");
+    }
+  }, [triggerModal]);
+
   if (loader) return <Loader />;
 
   const filteredAdvance = allAdvance.filter(
@@ -161,20 +165,8 @@ export const AdvanceSalary = () => {
   };
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        <TableTitle
-          tileName="Advance Salary"
-          rightElement={
-            <CustomButton
-              handleToggle={() => handleToggleViewModal("ADD")}
-              label="+ Advance Salary"
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
-
+    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col bg-white">
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
             <div className="text-sm flex items-center">
@@ -205,7 +197,7 @@ export const AdvanceSalary = () => {
           </div>
         </div>
 
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[900px]">
             <div
               className={`grid ${
@@ -313,10 +305,6 @@ export const AdvanceSalary = () => {
           onConfirm={handleDeleteAdvance}
         />
       )}
-
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
     </div>
   );
 };

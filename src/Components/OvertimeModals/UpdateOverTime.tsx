@@ -135,7 +135,15 @@ export const UpdateOverTime = ({
     }
 
     if (name === "time") {
-      updatedValue = value.replace(/[^0-9:]/g, "").slice(0, 8);
+      let cleaned = value.replace(/[^0-9]/g, "");
+
+      if (cleaned.length > 6) cleaned = cleaned.slice(0, 6);
+
+      const hours = cleaned.slice(0, 2);
+      const minutes = cleaned.slice(2, 4);
+      const seconds = cleaned.slice(4, 6);
+
+      updatedValue = [hours, minutes, seconds].filter(Boolean).join(":");
     }
     setFormData((prev) => ({ ...prev, [name]: updatedValue }));
   };

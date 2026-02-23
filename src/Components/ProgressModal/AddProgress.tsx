@@ -138,54 +138,54 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (
-    !addProgress.employee_id ||
-    !addProgress.projectId ||
-    !addProgress.date ||
-    !addProgress.note
-  ) {
-    return toast.error("Please fill all required fields", {
-      toastId: "required-fields",
-    });
-  }
-
-  setLoading(true);
-
-  try {
-    await axios.post(
-      `${BASE_URL}/api/admin/addProgress`,
-      { ...addProgress, projectId: Number(addProgress.projectId) },
-      { headers: { Authorization: `Bearer ${token}` } },
-    );
-    toast.success("Progress added successfully!", {
-      toastId: "add-progress-success",
-    });
-
-    handleRefresh();
-    setModal();
-    setAddProgress(initialState);
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      const message =
-        error.response?.data?.message || "Failed to add progress";
-      
-      if (error.response?.status === 409) {
-        toast.error(message, { 
-          toastId: "duplicate-progress-error",
-          autoClose: 8000 
-        });
-      } else {
-        toast.error(message, { toastId: "add-progress-error" });
-      }
-    } else {
-      toast.error("Something went wrong!", { toastId: "add-progress-error" });
+    if (
+      !addProgress.employee_id ||
+      !addProgress.projectId ||
+      !addProgress.date ||
+      !addProgress.note
+    ) {
+      return toast.error("Please fill all required fields", {
+        toastId: "required-fields",
+      });
     }
-  } finally {
-    setLoading(false);
-  }
-};
+
+    setLoading(true);
+
+    try {
+      await axios.post(
+        `${BASE_URL}/api/admin/addProgress`,
+        { ...addProgress, projectId: Number(addProgress.projectId) },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      toast.success("Progress added successfully!", {
+        toastId: "add-progress-success",
+      });
+
+      handleRefresh();
+      setModal();
+      setAddProgress(initialState);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message || "Failed to add progress";
+
+        if (error.response?.status === 409) {
+          toast.error(message, {
+            toastId: "duplicate-progress-error",
+            autoClose: 8000,
+          });
+        } else {
+          toast.error(message, { toastId: "add-progress-error" });
+        }
+      } else {
+        toast.error("Something went wrong!", { toastId: "add-progress-error" });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const userOptions = isAdmin
     ? allUsers
@@ -252,28 +252,29 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
               }
             />
 
-            <InputField
-              labelName="Date*"
-              name="date"
-              type="date"
-              handlerChange={handlerChange}
-              value={addProgress.date}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Date*"
+                name="date"
+                type="date"
+                handlerChange={handlerChange}
+                value={addProgress.date}
+              />
+            </div>
 
-            <TextareaField
-              labelName="Note*"
-              name="note"
-              handlerChange={handlerChange}
-              inputVal={addProgress.note}
-            />
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Note*"
+                name="note"
+                handlerChange={handlerChange}
+                inputVal={addProgress.note}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

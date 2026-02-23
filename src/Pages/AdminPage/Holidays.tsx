@@ -2,8 +2,6 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import { Pagination } from "../../Components/Pagination/Pagination";
@@ -25,7 +23,6 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { BASE_URL } from "../../Content/URL";
-import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
@@ -38,7 +35,7 @@ interface HOLIDAYSTATET {
   toDate: string;
 }
 
-export const Holidays = () => {
+export const Holidays = ({ triggerModal }: { triggerModal: number }) => {
   const dispatch = useAppDispatch();
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
@@ -149,23 +146,17 @@ export const Holidays = () => {
     setTimeout(() => dispatch(navigationSuccess("holidays")), 1000);
   }, [dispatch, handleGetAllHolidays]);
 
+  useEffect(() => {
+    if (triggerModal > 0) {
+      setIsOpenModal("ADDHOLIDAY");
+    }
+  }, [triggerModal]);
+
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        <TableTitle
-          tileName="Configure Holidays"
-          rightElement={
-            <CustomButton
-              handleToggle={() => handleToggleViewModal("ADDHOLIDAY")}
-              label="+ Add Holiday"
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
-
+    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col bg-white">
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
             <div className="text-sm flex items-center">
@@ -286,10 +277,6 @@ export const Holidays = () => {
           onConfirm={handleDeleteHoliday}
         />
       )}
-
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
     </div>
   );
 };

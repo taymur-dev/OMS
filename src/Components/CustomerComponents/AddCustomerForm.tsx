@@ -181,20 +181,25 @@ export const AddCustomer = ({
               handlerChange={handlerChange}
               value={customerData.customerContact}
             />
-            <InputField
-              labelName="Company Name *"
-              type="text"
-              name="companyName"
-              handlerChange={handlerChange}
-              value={customerData.companyName}
-            />
 
-            <TextareaField
-              labelName="Customer Address *"
-              name="customerAddress"
-              handlerChange={handlerChange}
-              inputVal={customerData.customerAddress}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Company Name *"
+                type="text"
+                name="companyName"
+                handlerChange={handlerChange}
+                value={customerData.companyName}
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Customer Address *"
+                name="customerAddress"
+                handlerChange={handlerChange}
+                inputVal={customerData.customerAddress}
+              />
+            </div>
 
             <div className="md:col-span-2">
               <TextareaField
@@ -209,10 +214,7 @@ export const AddCustomer = ({
           {/* Footer */}
           <div className="flex justify-end items-center gap-3 px-6 py-4 bg-indigo-900 rounded">
             <CancelBtn setModal={setIsOpenModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

@@ -2,11 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
@@ -16,7 +14,6 @@ import { EditAttendanceRule } from "../../Components/AttendanceRuleModal/EditAtt
 import { ViewAttendanceRule } from "../../Components/AttendanceRuleModal/ViewAttendanceRule";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { Loader } from "../../Components/LoaderComponent/Loader";
-import { Footer } from "../../Components/Footer";
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
@@ -38,7 +35,7 @@ export type ALLCONFIGT = {
   halfLeave: string;
 };
 
-export const AttendanceRule = () => {
+export const AttendanceRule = ({ triggerModal }: { triggerModal: number }) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
   const token = useAppSelector((state) => state.officeState.currentUser?.token);
@@ -75,6 +72,12 @@ export const AttendanceRule = () => {
   useEffect(() => {
     handleGetAllTimeConfig();
   }, [handleGetAllTimeConfig]);
+
+    useEffect(() => {
+      if (triggerModal > 0) {
+        setIsOpenModal("ADD");
+      }
+    }, [triggerModal]);
 
   const handleDeleteAttendanceRule = async () => {
     try {
@@ -140,21 +143,9 @@ export const AttendanceRule = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        <TableTitle
-          tileName="Attendance Rules"
-          rightElement={
-            allConfig.length === 0 && (
-              <CustomButton
-                label="+ Add Rule"
-                handleToggle={() => handleToggleViewModal("ADD")}
-              />
-            )
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
+    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
+     
 
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
@@ -183,7 +174,7 @@ export const AttendanceRule = () => {
           </div>
         </div>
 
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[800px]">
             <div
               className="grid grid-cols-[0.5fr_1fr_1fr_1.2fr_1.2fr_1.2fr_1fr] bg-indigo-900 text-white
@@ -277,9 +268,7 @@ export const AttendanceRule = () => {
         />
       )}
 
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
+     
     </div>
   );
 };

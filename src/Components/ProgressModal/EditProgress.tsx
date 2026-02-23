@@ -240,20 +240,24 @@ export const EditProgress = ({
               inital="Please Select Project"
             />
 
-            <InputField
-              labelName="Date*"
-              name="date"
-              type="date"
-              handlerChange={handlerChange}
-              value={updateProgress.date}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Date*"
+                name="date"
+                type="date"
+                handlerChange={handlerChange}
+                value={updateProgress.date}
+              />
+            </div>
 
-            <TextareaField
-              labelName="Note*"
-              name="note"
-              handlerChange={handlerChange}
-              inputVal={updateProgress.note}
-            />
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Note*"
+                name="note"
+                handlerChange={handlerChange}
+                inputVal={updateProgress.note}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

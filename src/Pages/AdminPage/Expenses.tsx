@@ -1,8 +1,7 @@
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
@@ -19,7 +18,6 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
-import { Footer } from "../../Components/Footer";
 
 type EXPENSET = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
@@ -36,7 +34,7 @@ type allExpenseT = {
   addedBy: string;
 };
 
-export const Expenses = () => {
+export const Expenses = ({ triggerModal }: { triggerModal: number }) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
@@ -78,6 +76,12 @@ export const Expenses = () => {
   }, [getAllExpenses]);
 
   useEffect(() => {
+    if (triggerModal > 0) {
+      setIsOpenModal("ADD");
+    }
+  }, [triggerModal]);
+
+  useEffect(() => {
     document.title = "(OMS) EXPENSE";
     dispatch(navigationStart());
     setTimeout(() => dispatch(navigationSuccess("EXPENSE")), 1000);
@@ -107,20 +111,8 @@ export const Expenses = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add Expense button as the rightElement */}
-        <TableTitle
-          tileName="Manage Expenses"
-          rightElement={
-            <CustomButton
-              handleToggle={() => handleToggleViewModal("ADD")}
-              label="+ Add Expense"
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
+    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
 
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
@@ -154,7 +146,7 @@ export const Expenses = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[900px]">
             {/* Sticky Table Header */}
             <div
@@ -277,11 +269,6 @@ export const Expenses = () => {
           }}
         />
       )}
-
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
     </div>
   );
 };

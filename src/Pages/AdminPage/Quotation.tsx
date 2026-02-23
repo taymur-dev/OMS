@@ -1,8 +1,7 @@
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 
 import { useEffect, useState, useCallback } from "react";
@@ -36,7 +35,7 @@ type QuotationItem = {
 
 type QuotationT = "ADD" | "VIEW" | "DELETE" | "";
 
-export const Quotation = () => {
+export const Quotation = ({ triggerModal }: { triggerModal: number }) => {
   const dispatch = useAppDispatch();
 
   const { loader } = useAppSelector((state) => state.NavigateState);
@@ -49,11 +48,8 @@ export const Quotation = () => {
   const [selectedValue, setSelectedValue] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
 
-
   const [selectedQuotation, setSelectedQuotation] =
     useState<QuotationItem | null>(null);
-
-    
 
   const [quotations, setQuotations] = useState<QuotationItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -119,24 +115,17 @@ export const Quotation = () => {
     }
   }, [token, handleGetQuotations]);
 
+  useEffect(() => {
+    if (triggerModal > 0) {
+      setIsOpenModal("ADD");
+    }
+  }, [triggerModal]);
+
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1) Table Title with Add Quotation button */}
-        <TableTitle
-          tileName="Quotation"
-          rightElement={
-            <CustomButton
-              handleToggle={() => handleToggleViewModal("ADD")}
-              label="+ Add Quotation"
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
-
+    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col bg-white">
         {/* 2) Filter Section (Entries & Search) */}
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
@@ -168,7 +157,7 @@ export const Quotation = () => {
         </div>
 
         {/* 3) MIDDLE SECTION (Scrollable Table) */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto ">
           <div className="min-w-[700px]">
             {/* Sticky Table Header */}
             <div
@@ -237,8 +226,6 @@ export const Quotation = () => {
           onAdded={handleGetQuotations}
         />
       )}
-
-      
 
       {isOpenModal === "VIEW" && selectedQuotation && (
         <ViewQuotation

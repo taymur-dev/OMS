@@ -1,8 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
@@ -23,7 +21,6 @@ import {
 } from "../../redux/NavigationSlice";
 
 import { BASE_URL } from "../../Content/URL";
-import { Footer } from "../../Components/Footer";
 
 type CONFIGT = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
@@ -43,7 +40,7 @@ interface Salary {
 
 const numbers = [10, 25, 50, 100];
 
-export const ConfigEmpSalary = () => {
+export const ConfigEmpSalary = ({ triggerModal }: { triggerModal: number }) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
 
@@ -79,6 +76,12 @@ export const ConfigEmpSalary = () => {
   }, [setPageNo]);
 
   useEffect(() => {
+    if (triggerModal > 0) {
+      setIsOpenModal("ADD");
+    }
+  }, [triggerModal]);
+
+  useEffect(() => {
     document.title = "(OMS) CONFIG SALARY";
     dispatch(navigationStart());
     setTimeout(() => {
@@ -108,21 +111,8 @@ export const ConfigEmpSalary = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add Button aligned like UsersDetails */}
-        <TableTitle
-          tileName="Salaries"
-          rightElement={
-            <CustomButton
-              handleToggle={() => handleToggleViewModal("ADD")}
-              label="+ Add Salaries"
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
-
+    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
         {/* Top Bar / Filter Row */}
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
@@ -154,7 +144,7 @@ export const ConfigEmpSalary = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[900px]">
             {/* Sticky Table Header */}
             <div
@@ -295,11 +285,6 @@ export const ConfigEmpSalary = () => {
           onConfirm={handleDeleteSalary}
         />
       )}
-
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
     </div>
   );
 };

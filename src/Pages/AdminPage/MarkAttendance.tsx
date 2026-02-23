@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from "react";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
   FaClock,
@@ -20,7 +19,6 @@ import {
 import axios, { AxiosError } from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { toast } from "react-toastify";
-import { Footer } from "../../Components/Footer";
 
 type AttendanceT = {
   clockIn: string | null;
@@ -60,7 +58,7 @@ const StatusBadge = ({ status }: { status: string }) => {
   );
 };
 
-export const MarkAttendance = () => {
+export const MarkAttendance = ({ triggerMark }: { triggerMark: number }) => {
   const dispatch = useAppDispatch();
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
@@ -119,20 +117,26 @@ export const MarkAttendance = () => {
     [token],
   );
 
-  const handleMarkAttendance = async (id: string | undefined) => {
-    try {
-      const res = await axios.post(
-        `${BASE_URL}/api/admin/markAttendance/${id}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      toast.success(res.data.message);
-      getAttendance(id);
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError?.response?.data?.message || "Something went wrong");
-    }
-  };
+  // 2. FIX: Wrap handleMarkAttendance in useCallback
+  const handleMarkAttendance = useCallback(
+    async (id: string | undefined) => {
+      try {
+        const res = await axios.post(
+          `${BASE_URL}/api/admin/markAttendance/${id}`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+        toast.success(res.data.message);
+        getAttendance(id); // This is safe because getAttendance is also memoized
+      } catch (error) {
+        const axiosError = error as AxiosError<{ message: string }>;
+        toast.error(
+          axiosError?.response?.data?.message || "Something went wrong",
+        );
+      }
+    },
+    [token, getAttendance],
+  );
 
   useEffect(() => {
     document.title = "(OMS) ATTENDANCE";
@@ -158,6 +162,12 @@ export const MarkAttendance = () => {
     getAttendance(userId);
   }, [getAttendance, userId]);
 
+  useEffect(() => {
+    if (triggerMark && triggerMark > 0 && userId) {
+      handleMarkAttendance(userId);
+    }
+  }, [triggerMark, userId, handleMarkAttendance]);
+
   if (loader) return <Loader />;
 
   const isHoliday = attendanceTime?.attendanceStatus === "Holiday";
@@ -169,10 +179,8 @@ export const MarkAttendance = () => {
   );
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray-100 overflow-hidden">
+    <div className="flex flex-col flex-grow bg-gray-100 overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        <TableTitle tileName="Attendance" />
-        <hr className="border border-b border-gray-200" />
 
         <div className="p-4">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
@@ -191,7 +199,7 @@ export const MarkAttendance = () => {
           </div>
         </div>
 
-        <div className="overflow-auto px-4 flex-grow">
+        <div className="overflow-auto  flex-grow">
           <div className="bg-gray-50 rounded-lg border border-gray-200 p-6 text-center">
             {isHoliday ? (
               <div className="py-10 flex flex-col items-center gap-4">
@@ -281,9 +289,7 @@ export const MarkAttendance = () => {
           </div>
         </div>
 
-        <div className="mt-auto border-t border-gray-200">
-          <Footer />
-        </div>
+       
       </div>
     </div>
   );

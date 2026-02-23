@@ -1,5 +1,3 @@
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
@@ -19,7 +17,6 @@ import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
@@ -35,7 +32,7 @@ type OVERTIMET = {
 
 type MODALT = "ADD" | "VIEW" | "UPDATE" | "DELETE" | "";
 
-export const OverTime = () => {
+export const OverTime = ({ triggerModal }: { triggerModal: number }) => {
   const dispatch = useAppDispatch();
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
@@ -108,6 +105,12 @@ export const OverTime = () => {
     handleGetOvertime();
   }, [handleGetOvertime]);
 
+  useEffect(() => {
+    if (triggerModal > 0) {
+      setIsOpenModal("ADD");
+    }
+  }, [triggerModal]);
+
   const filteredOvertime = useMemo(() => {
     return allOvertime.filter(
       (o) =>
@@ -166,21 +169,8 @@ export const OverTime = () => {
   };
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add button as the rightElement */}
-        <TableTitle
-          tileName="Over Time"
-          rightElement={
-            <CustomButton
-              label="+ Add Time"
-              handleToggle={() => setIsOpenModal("ADD")}
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
-
+    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
             {/* Left Side: Show entries */}
@@ -356,11 +346,6 @@ export const OverTime = () => {
           message="Are you sure you want to delete this overtime record?"
         />
       )}
-
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
     </div>
   );
 };

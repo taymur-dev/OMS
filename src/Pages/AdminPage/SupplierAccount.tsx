@@ -1,8 +1,7 @@
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 
@@ -18,7 +17,6 @@ import {
 
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
@@ -31,7 +29,7 @@ type Supplier = {
   supplierAddress: string;
 };
 
-export const SupplierAccount = () => {
+export const SupplierAccount = ({ triggerModal }: { triggerModal: number }) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
 
@@ -90,6 +88,12 @@ export const SupplierAccount = () => {
   }, [fetchSupplierAccounts]);
 
   useEffect(() => {
+      if (triggerModal > 0) {
+        setIsOpenModal("ADD");
+      }
+    }, [triggerModal]);
+
+  useEffect(() => {
     document.title = "(OMS) Supplier Account";
     dispatch(navigationStart());
     const timer = setTimeout(() => {
@@ -101,20 +105,9 @@ export const SupplierAccount = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
+    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add Button */}
-        <TableTitle
-          tileName="Supplier Accounts"
-          rightElement={
-            <CustomButton
-              handleToggle={() => handleToggleViewModal("ADD")}
-              label="+ Add Payment"
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
+        
 
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
@@ -146,7 +139,7 @@ export const SupplierAccount = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[900px]">
             {/* Sticky Table Header - Using grid-cols-5 to match your data fields */}
             <div
@@ -223,10 +216,7 @@ export const SupplierAccount = () => {
         />
       )}
 
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
+     
     </div>
   );
 };

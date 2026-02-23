@@ -147,8 +147,6 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
       return;
     }
 
-    
-
     setLoading(true);
 
     try {
@@ -244,20 +242,25 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
               value={addTodo.endDate}
               handlerChange={handleChange}
             />
-            <InputField
-              labelName="Deadline *"
-              name="deadline"
-              type="date"
-              value={addTodo.deadline}
-              handlerChange={handleChange}
-            />
 
-            <TextareaField
-              labelName="Note *"
-              name="note"
-              inputVal={addTodo.note}
-              handlerChange={handleChange}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Deadline *"
+                name="deadline"
+                type="date"
+                value={addTodo.deadline}
+                handlerChange={handleChange}
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Note *"
+                name="note"
+                inputVal={addTodo.note}
+                handlerChange={handleChange}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 py-3 rounded bg-indigo-900  border-t border-indigo-900">

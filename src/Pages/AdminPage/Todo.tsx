@@ -1,8 +1,7 @@
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
@@ -21,14 +20,13 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
-import { Footer } from "../../Components/Footer";
 
 type ALLTODOT = TodoType;
 type TODOT = "Add" | "Edit" | "Delete" | "";
 
 const numbers = [10, 25, 50];
 
-export const Todo = () => {
+export const Todo = ({ triggerModal }: { triggerModal: number }) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
@@ -116,6 +114,12 @@ export const Todo = () => {
     }, 1000);
   }, [dispatch, getAllTodos]);
 
+   useEffect(() => {
+      if (triggerModal > 0) {
+        setModalType("Add");
+      }
+    }, [triggerModal]);
+
   const filteredTodos = useMemo(() => {
     return allTodos.filter(
       (todo) =>
@@ -134,20 +138,10 @@ export const Todo = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add Todo button as the rightElement */}
-        <TableTitle
-          tileName="Todo's"
-          rightElement={
-            <CustomButton
-              handleToggle={() => toggleModal("Add")}
-              label="+ Add Todo"
-            />
-          }
-        />
+    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col bg-white">
+       
 
-        <hr className="border border-b border-gray-200" />
 
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
@@ -182,7 +176,7 @@ export const Todo = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[900px]">
             {/* Sticky Table Header */}
             <div
@@ -325,10 +319,7 @@ export const Todo = () => {
         />
       )}
 
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
+      
     </div>
   );
 };

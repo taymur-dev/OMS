@@ -4,15 +4,13 @@ import axios, { AxiosError } from "axios";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import { AddAssetCategory } from "../../Components/AssestCategoryModal/AddAssetCategory";
 import { UpdateAssetCategory } from "../../Components/AssestCategoryModal/UpdateAssetCategory";
-import { Footer } from "../../Components/Footer";
 import { toast } from "react-toastify";
 
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
@@ -32,7 +30,7 @@ interface AssetCategoryItem {
   category_status?: string;
 }
 
-export const AssetCategory = () => {
+export const AssetCategory = ({ triggerModal }: { triggerModal: number }) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
   const dispatch = useAppDispatch();
@@ -125,6 +123,12 @@ export const AssetCategory = () => {
     setPageNo(1);
   }, [searchTerm]);
 
+  useEffect(() => {
+    if (triggerModal > 0) {
+      setIsOpenModal("ADD");
+    }
+  }, [triggerModal]);
+
   if (loader) return <Loader />;
 
   const filteredCategories = categories.filter(
@@ -139,20 +143,8 @@ export const AssetCategory = () => {
   const paginatedCategories = filteredCategories.slice(startIndex, endIndex);
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        <TableTitle
-          tileName="Assets Category"
-          rightElement={
-            <CustomButton
-              handleToggle={() => handleToggleViewModal("ADD")}
-              label="+ Add Category"
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
-
+    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
             <div className="text-sm flex items-center">
@@ -182,7 +174,7 @@ export const AssetCategory = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[600px]">
             {/* Sticky Table Header - Grid cols adjusted for Category */}
             <div
@@ -273,11 +265,6 @@ export const AssetCategory = () => {
           message="Are you sure you want to delete this Category?"
         />
       )}
-
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
     </div>
   );
 };

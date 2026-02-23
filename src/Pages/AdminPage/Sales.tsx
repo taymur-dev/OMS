@@ -1,8 +1,7 @@
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -17,7 +16,6 @@ import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
-import { Footer } from "../../Components/Footer";
 
 type SALET = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
@@ -28,7 +26,7 @@ type Sale = {
   customerId: number;
   customerName: string;
   saleDate: string;
-  QTY: number;      
+  QTY: number;
   UnitPrice: number;
 };
 
@@ -43,7 +41,7 @@ const formatDate = (date: string) =>
 
 const pageSizes = [10, 25, 50, 100];
 
-export const Sales = () => {
+export const Sales = ({ triggerModal }: { triggerModal: number }) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
@@ -81,8 +79,6 @@ export const Sales = () => {
       dispatch(navigationSuccess("SALE"));
     }
   }, [dispatch, token]);
-
-  
 
   const handleDeleteClick = (id: number) => {
     setCatchId(id);
@@ -123,6 +119,12 @@ export const Sales = () => {
     handleGetSales();
   }, [handleGetSales]);
 
+  useEffect(() => {
+    if (triggerModal > 0) {
+      setIsOpenModal("ADD");
+    }
+  }, [triggerModal]);
+
   const filteredSales = useMemo(() => {
     return allSales
       .filter(
@@ -140,21 +142,8 @@ export const Sales = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add Sale button */}
-        <TableTitle
-          tileName="Sale"
-          rightElement={
-            <CustomButton
-              handleToggle={() => handleToggleViewModal("ADD")}
-              label="+ Add Sale"
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
-
+    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
             {/* Left Side: Show entries */}
@@ -188,7 +177,7 @@ export const Sales = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[900px]">
             <div
               className="grid grid-cols-5 bg-indigo-900 text-white items-center font-semibold
@@ -252,25 +241,22 @@ export const Sales = () => {
         />
       )}
 
-     
-
       {isOpenModal === "VIEW" && selectedSale && (
-  <ViewSale
-    setIsOpenModal={() => handleToggleViewModal("")}
-    viewSale={{
-      customerName: selectedSale.customerName,
-      saleDate: selectedSale.saleDate,
-      items: [
-        {
-          projectName: selectedSale.projectName,
-          QTY: selectedSale.QTY,           
-          UnitPrice: selectedSale.UnitPrice,
-        },
-      ],
-    }}
-  />
-)}
-
+        <ViewSale
+          setIsOpenModal={() => handleToggleViewModal("")}
+          viewSale={{
+            customerName: selectedSale.customerName,
+            saleDate: selectedSale.saleDate,
+            items: [
+              {
+                projectName: selectedSale.projectName,
+                QTY: selectedSale.QTY,
+                UnitPrice: selectedSale.UnitPrice,
+              },
+            ],
+          }}
+        />
+      )}
 
       {isOpenModal === "DELETE" && (
         <ConfirmationModal
@@ -280,11 +266,6 @@ export const Sales = () => {
           message="Are you sure you want to delete this sale?"
         />
       )}
-
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
     </div>
   );
 };

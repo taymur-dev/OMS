@@ -4,8 +4,7 @@ import axios from "axios";
 import { ShowDataNumber } from "../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../Components/Pagination/Pagination";
 import { TableInputField } from "../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../Components/TableLayoutComponents/TableTitle";
+
 import { EditButton } from "../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../Components/CustomButtons/ViewButton";
@@ -20,9 +19,7 @@ import { Loader } from "../Components/LoaderComponent/Loader";
 import { BASE_URL } from "../Content/URL";
 import { useAppDispatch, useAppSelector } from "../redux/Hooks";
 import { navigationStart, navigationSuccess } from "../redux/NavigationSlice";
-import { Footer } from "../Components/Footer";
 import { toast } from "react-toastify";
-
 
 const numbers = [5, 10, 15, 20];
 
@@ -38,7 +35,7 @@ export type ALLPROGRESST = {
   note: string;
 };
 
-export const Progress = () => {
+export const Progress = ({ triggerModal }: { triggerModal: number }) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
@@ -86,23 +83,22 @@ export const Progress = () => {
   }, [token, currentUser]);
 
   const handleDeleteProgress = async () => {
-  if (!selectedId || !token) return;
+    if (!selectedId || !token) return;
 
-  try {
-    await axios.patch(
-      `${BASE_URL}/api/admin/deleteProgress/${selectedId}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    try {
+      await axios.patch(`${BASE_URL}/api/admin/deleteProgress/${selectedId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-  toast.success("Progress has been deleted successfully");
-    
-    handleGetAllProgress();
-    setIsOpenModal("");
-    setSelectedId(null);
-  } catch (error) {
-    console.error("Failed to delete progress:", error);
-  }
-};
+      toast.success("Progress has been deleted successfully");
+
+      handleGetAllProgress();
+      setIsOpenModal("");
+      setSelectedId(null);
+    } catch (error) {
+      console.error("Failed to delete progress:", error);
+    }
+  };
 
   const handleEdit = (row: ALLPROGRESST) => {
     setSelectedProgress(row);
@@ -138,23 +134,17 @@ export const Progress = () => {
     setTimeout(() => dispatch(navigationSuccess("progress")), 500);
   }, [dispatch, handleGetAllProgress]);
 
+  useEffect(() => {
+    if (triggerModal > 0) {
+      setIsOpenModal("ADD");
+    }
+  }, [triggerModal]);
+
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add Progress button as the rightElement */}
-        <TableTitle
-          tileName="Progress"
-          rightElement={
-            <CustomButton
-              handleToggle={() => setIsOpenModal("ADD")}
-              label="+ Add Progress"
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
+    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
 
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
@@ -189,7 +179,7 @@ export const Progress = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[900px]">
             {/* Sticky Table Header */}
             <div
@@ -294,11 +284,6 @@ export const Progress = () => {
           onConfirm={handleDeleteProgress}
         />
       )}
-
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
     </div>
   );
 };

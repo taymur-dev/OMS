@@ -4,8 +4,7 @@ import axios from "axios";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
@@ -15,7 +14,6 @@ import { UpdateRejoining } from "../../Components/RejoinModal/UpdateRejoining";
 import { ViewRejoin } from "../../Components/RejoinModal/ViewRejoin";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { Loader } from "../../Components/LoaderComponent/Loader";
-import { Footer } from "../../Components/Footer";
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
@@ -39,7 +37,7 @@ export type REJOIN_T = {
   approval_status: string;
 };
 
-export const Rejoin = () => {
+export const Rejoin = ({ triggerModal }: { triggerModal: number }) => {
   const dispatch = useAppDispatch();
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
@@ -125,6 +123,12 @@ export const Rejoin = () => {
     setTimeout(() => dispatch(navigationSuccess("REJOIN")), 500);
   }, [dispatch, handleGetRejoinRequests]);
 
+  useEffect(() => {
+    if (triggerModal > 0) {
+      setIsOpenModal("ADD");
+    }
+  }, [triggerModal]);
+
   if (loader) return <Loader />;
 
   const getStatusStyles = (status: string) => {
@@ -139,21 +143,8 @@ export const Rejoin = () => {
   };
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add Button as the rightElement */}
-        <TableTitle
-          tileName="Rejoining"
-          rightElement={
-            <CustomButton
-              label="+ Add Rejoin"
-              handleToggle={() => setIsOpenModal("ADD")}
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
-
+    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
         {/* Stats and Filter Section */}
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
@@ -192,7 +183,7 @@ export const Rejoin = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[900px]">
             {/* Sticky Table Header - Using grid-cols-7 to match dimension*/}
             <div
@@ -318,11 +309,6 @@ export const Rejoin = () => {
           viewRejoin={selectedRejoin}
         />
       )}
-
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
     </div>
   );
 };

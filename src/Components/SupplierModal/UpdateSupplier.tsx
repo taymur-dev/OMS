@@ -154,19 +154,25 @@ export const UpdateSupplier = ({
               handlerChange={handlerChange}
               value={updateSupplier.supplierEmail}
             />
-            <InputField
-              labelName="Supplier Contact *"
-              type="text"
-              name="supplierContact"
-              handlerChange={handlerChange}
-              value={updateSupplier.supplierContact}
-            />
-            <TextareaField
-              labelName="Supplier Address *"
-              name="supplierAddress"
-              handlerChange={handlerChange}
-              inputVal={updateSupplier.supplierAddress}
-            />
+
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Supplier Contact *"
+                type="text"
+                name="supplierContact"
+                handlerChange={handlerChange}
+                value={updateSupplier.supplierContact}
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Supplier Address *"
+                name="supplierAddress"
+                handlerChange={handlerChange}
+                inputVal={updateSupplier.supplierAddress}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 py-3 bg-indigo-900 border-t border-indigo-900">

@@ -194,20 +194,25 @@ export const UpdateCustomer = ({
               handlerChange={handlerChange}
               value={customerData?.customerContact || ""}
             />
-            <InputField
-              labelName="Company Name *"
-              type="text"
-              name="companyName"
-              handlerChange={handlerChange}
-              value={customerData?.companyName || ""}
-            />
 
-            <TextareaField
-              labelName="Customer Address *"
-              name="customerAddress"
-              handlerChange={handlerChange}
-              inputVal={customerData?.customerAddress || ""}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Company Name *"
+                type="text"
+                name="companyName"
+                handlerChange={handlerChange}
+                value={customerData?.companyName || ""}
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Customer Address *"
+                name="customerAddress"
+                handlerChange={handlerChange}
+                inputVal={customerData?.customerAddress || ""}
+              />
+            </div>
 
             <div className="col-span-1 sm:col-span-2">
               <TextareaField
@@ -222,7 +227,10 @@ export const UpdateCustomer = ({
           {/* Footer */}
           <div className="flex justify-end gap-3 px-4 py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setIsOpenModal} />
-            <AddButton loading={loading} label={loading ? "Updating" : "Update"}  />
+            <AddButton
+              loading={loading}
+              label={loading ? "Updating" : "Update"}
+            />
           </div>
         </form>
       </div>

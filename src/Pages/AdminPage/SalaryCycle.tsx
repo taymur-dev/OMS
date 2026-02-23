@@ -1,8 +1,7 @@
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 import { useCallback, useEffect, useState } from "react";
 import { AddSalaryCycle } from "../../Components/SalaryCycleModal/AddSalaryCycle";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
@@ -13,8 +12,7 @@ import {
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-import { Footer } from "../../Components/Footer";
-import { Play } from "lucide-react";
+
 
 const numbers = [10, 25, 50, 100];
 
@@ -27,7 +25,7 @@ type CalendarSession = {
   calendarStatus?: string;
 };
 
-export const SalaryCycle = () => {
+export const SalaryCycle = ({ triggerModal }: { triggerModal: number }) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
 
@@ -78,6 +76,12 @@ export const SalaryCycle = () => {
     }, 1000);
   }, [dispatch, handleGetCalendarSession]);
 
+   useEffect(() => {
+      if (triggerModal > 0) {
+        setIsOpenModal("RUN");
+      }
+    }, [triggerModal]);
+
   const filteredList = calendarList.filter((item) =>
     `${item.year} ${item.month}`
       .toLowerCase()
@@ -91,28 +95,9 @@ export const SalaryCycle = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        <TableTitle
-          tileName="Salary Cycle List"
-          rightElement={
-            <div className="flex gap-2">
-              <CustomButton
-                handleToggle={() => {
-                  handleToggleViewModal("RUN");
-                }}
-                label={
-                  <span className="flex items-center gap-2">
-                    <Play size={16} fill="currentColor" />
-                    Run Cycle
-                  </span>
-                }
-              />
-            </div>
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
+    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
+       
 
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
@@ -147,7 +132,7 @@ export const SalaryCycle = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[600px]">
             {/* Sticky Table Header */}
             <div
@@ -215,10 +200,7 @@ export const SalaryCycle = () => {
         />
       )}
 
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
+     
     </div>
   );
 };

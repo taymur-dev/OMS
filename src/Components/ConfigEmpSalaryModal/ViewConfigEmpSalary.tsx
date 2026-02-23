@@ -137,6 +137,22 @@ export const ViewConfigEmpSalary = ({
                       .replace(/ /g, "-")}
                   </p>
                 </div>
+
+                <div>
+                  <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                    <FaCalendarAlt className="text-gray-400" /> With Effect from
+                    Date
+                  </label>
+                  <p className="text-gray-800 font-medium">
+                    {new Date(viewSalary.date)
+                      .toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
+                      .replace(/ /g, "-")}
+                  </p>
+                </div>
               </div>
             </div>
           )}

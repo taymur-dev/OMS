@@ -160,26 +160,26 @@ export const AddAssignProject = ({
           </div>
 
           <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2  gap-3 py-5">
-            <UserSelect
-              labelName="Employees *"
-              name="userId"
-              value={addProject.userId}
-              handlerChange={handlerChange}
-              optionData={allUsers}
-            />
+              <UserSelect
+                labelName="Employees *"
+                name="userId"
+                value={addProject.userId}
+                handlerChange={handlerChange}
+                optionData={allUsers}
+              />
 
-            <OptionField
-              labelName="Project *"
-              name="projectId"
-              handlerChange={handlerChange}
-              value={addProject.projectId}
-              optionData={allProjects?.map((project) => ({
-                id: project.id,
-                label: project.projectName,
-                value: project.id,
-              }))}
-              inital="Please Select Project"
-            />
+              <OptionField
+                labelName="Project *"
+                name="projectId"
+                handlerChange={handlerChange}
+                value={addProject.projectId}
+                optionData={allProjects?.map((project) => ({
+                  id: project.id,
+                  label: project.projectName,
+                  value: project.id,
+                }))}
+                inital="Please Select Project"
+              />
 
             <div className="flex flex-col md:col-span-2">
               <label className="text-sm font-medium text-black  ">Date *</label>
@@ -195,10 +195,7 @@ export const AddAssignProject = ({
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

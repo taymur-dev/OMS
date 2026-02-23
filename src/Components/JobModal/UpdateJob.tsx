@@ -132,20 +132,24 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({
           </div>
 
           <div className="mx-4 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
-            <InputField
-              labelName="Job Title *"
-              type="text"
-              name="job_title"
-              value={formData.job_title}
-              handlerChange={handleChange}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Job Title *"
+                type="text"
+                name="job_title"
+                value={formData.job_title}
+                handlerChange={handleChange}
+              />
+            </div>
 
-            <TextareaField
-              labelName="Job Description *"
-              name="description"
-              inputVal={formData.description}
-              handlerChange={handleChange}
-            />
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Job Description *"
+                name="description"
+                inputVal={formData.description}
+                handlerChange={handleChange}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

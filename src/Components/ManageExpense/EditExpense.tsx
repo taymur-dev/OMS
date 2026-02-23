@@ -80,17 +80,17 @@ export const EditExpense = ({
       setModal();
       handleRefresh();
     } catch (err) {
-    if (axios.isAxiosError(err)) {
-      const message = (err.response?.data as { message: string })?.message;
-      if (err.response?.status === 409) {
-        toast.error(message || "Duplicate entry found");
+      if (axios.isAxiosError(err)) {
+        const message = (err.response?.data as { message: string })?.message;
+        if (err.response?.status === 409) {
+          toast.error(message || "Duplicate entry found");
+        } else {
+          toast.error("Failed to update expense");
+        }
       } else {
-        toast.error("Failed to update expense");
+        toast.error("An unexpected error occurred");
       }
-    } else {
-      toast.error("An unexpected error occurred");
     }
-  }
   };
 
   useEffect(() => {
@@ -153,14 +153,15 @@ export const EditExpense = ({
               handlerChange={handlerChange}
               value={expense?.addedBy ?? ""}
             />
-
-            <InputField
-              labelName="Date *"
-              name="date"
-              type="date"
-              handlerChange={handlerChange}
-              value={expense?.date?.slice(0, 10) ?? ""}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Date *"
+                name="date"
+                type="date"
+                handlerChange={handlerChange}
+                value={expense?.date?.slice(0, 10) ?? ""}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

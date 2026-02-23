@@ -257,21 +257,25 @@ export const UpdateRejoining = ({
               value={updateData.rejoin_date}
             />
 
-            <TextareaField
-              labelName="Note *"
-              handlerChange={handlerChange}
-              name="note"
-              inputVal={updateData.note}
-            />
+            <div className="md:col-span-2">
+              <OptionField
+                labelName="Approval Status"
+                name="approval_status"
+                handlerChange={handlerChange}
+                value={updateData.approval_status}
+                optionData={ApprovalOptions}
+                inital="Select Status"
+              />
+            </div>
 
-            <OptionField
-              labelName="Approval Status"
-              name="approval_status"
-              handlerChange={handlerChange}
-              value={updateData.approval_status}
-              optionData={ApprovalOptions}
-              inital="Select Status"
-            />
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Note *"
+                handlerChange={handlerChange}
+                name="note"
+                inputVal={updateData.note}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

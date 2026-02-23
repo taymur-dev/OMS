@@ -84,9 +84,11 @@ export const UpdateProject = ({
     if (!updateProject) return;
 
     if (new Date(updateProject.startDate) > new Date(updateProject.endDate)) {
-    toast.error("Start Date cannot be later than End Date", { toastId: "date-error-update" });
-    return;
-  }
+      toast.error("Start Date cannot be later than End Date", {
+        toastId: "date-error-update",
+      });
+      return;
+    }
 
     setLoading(true);
 
@@ -182,25 +184,29 @@ export const UpdateProject = ({
               handlerChange={handlerChange}
             />
 
-            <TextareaField
-              labelName="Project Description"
-              name="description"
-              handlerChange={handlerChange}
-              inputVal={updateProject?.description ?? ""}
-            />
+            <div className="md:col-span-2">
+              <OptionField
+                labelName="Completion Status *"
+                name="completionStatus"
+                value={updateProject?.completionStatus ?? "New"}
+                handlerChange={handlerChange}
+                optionData={[
+                  { id: 1, label: "New", value: "New" },
+                  { id: 2, label: "Working", value: "Working" },
+                  { id: 3, label: "Complete", value: "Complete" },
+                ]}
+                inital="Select Status"
+              />
+            </div>
 
-            <OptionField
-              labelName="Completion Status *"
-              name="completionStatus"
-              value={updateProject?.completionStatus ?? "New"}
-              handlerChange={handlerChange}
-              optionData={[
-                { id: 1, label: "New", value: "New" },
-                { id: 2, label: "Working", value: "Working" },
-                { id: 3, label: "Complete", value: "Complete" },
-              ]}
-              inital="Select Status"
-            />
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Project Description"
+                name="description"
+                handlerChange={handlerChange}
+                inputVal={updateProject?.description ?? ""}
+              />
+            </div>
           </div>
 
           {/* Footer */}

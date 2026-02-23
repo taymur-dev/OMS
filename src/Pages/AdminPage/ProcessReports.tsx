@@ -3,14 +3,12 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPrint } from "@fortawesome/free-solid-svg-icons";
 
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { InputField } from "../../Components/InputFields/InputField";
 import { OptionField } from "../../Components/InputFields/OptionField";
 import { Loader } from "../../Components/LoaderComponent/Loader";
-import { Footer } from "../../Components/Footer";
 
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
@@ -183,11 +181,9 @@ export const ProcessReports = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray-100 overflow-hidden">
+    <div className="flex flex-col flex-grow  bg-gray-100 overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        <TableTitle tileName="Task Report" />
 
-        <hr className="border border-b border-gray-200" />
 
         {/* --- FILTER SECTION (Updated to match Sales Report dimensions) --- */}
         <div className="p-2 bg-white">
@@ -261,7 +257,7 @@ export const ProcessReports = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div id="myDiv" className="min-w-[800px]">
             {/* Sticky Table Header */}
             <div
@@ -323,9 +319,7 @@ export const ProcessReports = () => {
         </div>
       </div>
 
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
+      
     </div>
   );
 };

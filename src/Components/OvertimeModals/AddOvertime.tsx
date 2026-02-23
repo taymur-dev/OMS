@@ -104,10 +104,16 @@ export const AddOverTime = ({
     }
 
     if (name === "time") {
-    updatedValue = value
-      .replace(/[^0-9:]/g, "")   
-      .slice(0, 8);              
-  }
+      let cleaned = value.replace(/[^0-9]/g, "");
+
+      if (cleaned.length > 6) cleaned = cleaned.slice(0, 6);
+
+      const hours = cleaned.slice(0, 2);
+      const minutes = cleaned.slice(2, 4);
+      const seconds = cleaned.slice(4, 6);
+
+      updatedValue = [hours, minutes, seconds].filter(Boolean).join(":");
+    }
 
     setAddOvertime((prev) => ({ ...prev, [name]: updatedValue }));
   };
@@ -234,20 +240,22 @@ export const AddOverTime = ({
               value={addOvertime.date}
               handlerChange={handlerChange}
             />
-
-            <InputField
-              labelName="Overtime (HH:MM:SS) *"
-              name="time"
-              value={addOvertime.time}
-              handlerChange={handlerChange}
-            />
-
-            <TextareaField
-              labelName="Description *"
-              name="description"
-              inputVal={addOvertime.description}
-              handlerChange={handlerChange}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Overtime (HH:MM:SS) *"
+                name="time"
+                value={addOvertime.time}
+                handlerChange={handlerChange}
+              />
+            </div>
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Description *"
+                name="description"
+                inputVal={addOvertime.description}
+                handlerChange={handlerChange}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">

@@ -1,6 +1,4 @@
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { useEffect, useState, useCallback } from "react";
 import { AddUser } from "../../Components/UserComponent/AddUser";
 import axios, { AxiosError } from "axios";
@@ -21,7 +19,6 @@ import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
-import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
@@ -39,7 +36,7 @@ type UserType = {
   loginStatus: string;
 };
 
-export const UsersDetails = () => {
+export const UsersDetails = ({ triggerAdd }: { triggerAdd: number }) => {
   const [catchId, setCatchId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [allUsers, setAllUsers] = useState<UserType[]>([]);
@@ -77,6 +74,12 @@ export const UsersDetails = () => {
     document.title = "(OMS)ALL USERS";
     handlerGetUsers();
   }, [handlerGetUsers]);
+
+  useEffect(() => {
+    if (triggerAdd && triggerAdd > 0) {
+      setModalTypeTooPen("ADD");
+    }
+  }, [triggerAdd]);
 
   if (loader) return <Loader />;
 
@@ -147,21 +150,8 @@ export const UsersDetails = () => {
   };
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add User button as the rightElement */}
-        <TableTitle
-          tileName="User"
-          rightElement={
-            <CustomButton
-              handleToggle={() => setModalTypeTooPen("ADD")}
-              label="+ Add User"
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
-
+    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col bg-white">
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
             {/* Left Side: Show entries */}
@@ -192,7 +182,7 @@ export const UsersDetails = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[900px]">
             {/* Sticky Table Header */}
             <div
@@ -321,11 +311,6 @@ export const UsersDetails = () => {
           onConfirm={() => handleDeleteUser(catchId)}
         />
       )}
-
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
     </div>
   );
 };

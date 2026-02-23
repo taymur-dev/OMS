@@ -1,8 +1,7 @@
 import { ShowDataNumber } from "../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../Components/Pagination/Pagination";
 import { TableInputField } from "../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../Components/TableLayoutComponents/TableTitle";
+
 import { useAppDispatch, useAppSelector } from "../redux/Hooks";
 import { useEffect, useState, useCallback } from "react";
 import { navigationStart, navigationSuccess } from "../redux/NavigationSlice";
@@ -15,8 +14,6 @@ import { DeleteButton } from "../Components/CustomButtons/DeleteButton";
 import axios from "axios";
 import { BASE_URL } from "../Content/URL";
 import { toast } from "react-toastify";
-import { Footer } from "../Components/Footer";
-
 
 type TPROJECTCATEGORY = "ADDCATEGORY" | "EDITCATEGORY" | "DELETECATEGORY" | "";
 
@@ -27,7 +24,7 @@ type CATEGORYT = {
 
 const numbers = [5, 10, 15, 20];
 
-export const ProjectsCatogries = () => {
+export const ProjectsCatogries = ({ triggerModal }: { triggerModal: number }) => {
   const { loader } = useAppSelector((state) => state?.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
@@ -66,6 +63,12 @@ export const ProjectsCatogries = () => {
     setPageNo(1);
   }, [searchTerm]);
 
+   useEffect(() => {
+      if (triggerModal > 0) {
+        setIsOpenModal("ADDCATEGORY");
+      }
+    }, [triggerModal]);
+
   const filteredCategories = allCategories.filter((cat) =>
     cat.categoryName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
@@ -81,10 +84,6 @@ export const ProjectsCatogries = () => {
   const handleChangeShowData = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedValue(Number(e.target.value));
     setPageNo(1);
-  };
-
-  const handleToggleViewModal = (active: TPROJECTCATEGORY) => {
-    setIsOpenModal(active);
   };
 
   const handleSelectCategory = (data: CATEGORYT) => {
@@ -113,23 +112,9 @@ export const ProjectsCatogries = () => {
 
   if (loader) return <Loader />;
 
-  
-
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add Category button as the rightElement */}
-        <TableTitle
-          tileName="Project Category"
-          rightElement={
-            <CustomButton
-              label="+ Add Category"
-              handleToggle={() => handleToggleViewModal("ADDCATEGORY")}
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
+    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col bg-white">
 
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
@@ -164,7 +149,7 @@ export const ProjectsCatogries = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[600px]">
             {/* Sticky Table Header */}
             <div
@@ -248,11 +233,6 @@ export const ProjectsCatogries = () => {
           onConfirm={handleDeleteCategory}
         />
       )}
-
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
     </div>
   );
 };

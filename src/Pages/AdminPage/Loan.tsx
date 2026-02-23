@@ -4,8 +4,7 @@ import axios from "axios";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 
 import { AddLoan } from "../../Components/LoanModal/AddLoan";
@@ -18,7 +17,6 @@ import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
-import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
@@ -41,7 +39,7 @@ export type UserLoanSummary = ALLLOANT & {
   allLoans: ALLLOANT[];
 };
 
-export const Loan = () => {
+export const Loan = ({ triggerModal }: { triggerModal: number }) => {
   const dispatch = useAppDispatch();
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
@@ -135,23 +133,18 @@ export const Loan = () => {
     setTimeout(() => dispatch(navigationSuccess("loan")), 500);
   }, [dispatch, handleGetAllLoans]);
 
+   useEffect(() => {
+      if (triggerModal > 0) {
+        setIsOpenModal("ADD");
+      }
+    }, [triggerModal]);
+
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add Loan button */}
-        <TableTitle
-          tileName="Loan"
-          rightElement={
-            <CustomButton
-              handleToggle={() => setIsOpenModal("ADD")}
-              label="+ Add Loan"
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
+    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
+        
 
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
@@ -186,7 +179,7 @@ export const Loan = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[900px]">
             {/* Sticky Table Header - Adjusted to 7 columns to match UserDetails dimensions */}
             <div
@@ -266,10 +259,7 @@ export const Loan = () => {
         />
       )}
 
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
+    
     </div>
   );
 };

@@ -108,29 +108,27 @@ export const UpdateTodo = ({
   }, [token]);
 
   useEffect(() => {
-  if (!seleteTodo) return;
+    if (!seleteTodo) return;
 
-  
-  const formatDateForInput = (dateStr?: string) => {
-    if (!dateStr) return "";
-    
-    
-    const date = new Date(dateStr);
-    
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    
-    return `${year}-${month}-${day}`;
-  };
+    const formatDateForInput = (dateStr?: string) => {
+      if (!dateStr) return "";
 
-  setTodo({
-    ...seleteTodo,
-    startDate: formatDateForInput(seleteTodo.startDate),
-    endDate: formatDateForInput(seleteTodo.endDate),
-    deadline: formatDateForInput(seleteTodo.deadline),
-  });
-}, [seleteTodo]);
+      const date = new Date(dateStr);
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    };
+
+    setTodo({
+      ...seleteTodo,
+      startDate: formatDateForInput(seleteTodo.startDate),
+      endDate: formatDateForInput(seleteTodo.endDate),
+      deadline: formatDateForInput(seleteTodo.deadline),
+    });
+  }, [seleteTodo]);
 
   useEffect(() => {
     getAllUsers();
@@ -284,14 +282,15 @@ export const UpdateTodo = ({
               value={todo?.deadline}
             />
 
-            <OptionField
-              labelName="Completion Status"
-              name="completionStatus"
-              value={todo?.completionStatus || ""}
-              handlerChange={handlerChange}
-              optionData={StatusOptions}
-              inital="Select Completion Status"
-            />
+              <OptionField
+                labelName="Completion Status"
+                name="completionStatus"
+                value={todo?.completionStatus || ""}
+                handlerChange={handlerChange}
+                optionData={StatusOptions}
+                inital="Select Completion Status"
+              />
+
             <div className="md:col-span-2">
               <TextareaField
                 labelName="Note *"

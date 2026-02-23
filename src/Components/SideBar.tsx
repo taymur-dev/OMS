@@ -1,8 +1,7 @@
-import { AccordionItem } from "./Accordion/AccordionItem";
 import { SideBarButton } from "./SideBarComponent/SideBarButton";
 import { BiArrowBack } from "react-icons/bi";
-import { useCallback, useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { FaUserFriends, FaUserCog } from "react-icons/fa";
 import { PiFingerprintDuotone } from "react-icons/pi";
 import { GoProjectRoadmap } from "react-icons/go";
@@ -15,9 +14,6 @@ import { HiOutlineDocumentReport } from "react-icons/hi";
 import { MdOutlineDashboard } from "react-icons/md";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { RiUserCommunityLine } from "react-icons/ri";
-import { useAppSelector } from "../redux/Hooks";
-import { BASE_URL } from "../Content/URL";
-import axios from "axios";
 
 type SideBarProps = {
   isOpen: boolean;
@@ -28,15 +24,15 @@ type TActivButton =
   | "Dashboard"
   | "People"
   | "Attendance"
-  | "Employee"
+  | "Human Resources"
   | "Projects"
   | "Performance"
-  | "Sale"
-  | "manageExpense"
+  | "Sales"
+  | "Expenses"
   | "Chat"
-  | "payroll"
+  | "Payroll"
   | "Assets Management"
-  | "Recuritment"
+  | "Talent Acquisition"
   | "Dynamic"
   | "Accounts"
   | "Reports"
@@ -44,13 +40,8 @@ type TActivButton =
 
 export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   const [activeBtns, setActiveBtns] = useState<TActivButton | "">("");
-  const [allTodos, setAllTodos] = useState([]);
   const [isHoverable, setIsHoverable] = useState(false);
   const [isBlurred, setIsBlurred] = useState(false);
-
-  const { currentUser } = useAppSelector((state) => state?.officeState);
-  const token = currentUser?.token;
-  const { pathname } = useLocation();
 
   useEffect(() => {
     const checkModal = () => {
@@ -92,53 +83,9 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
     setActiveBtns((prev) => (prev === activeBtn ? "" : activeBtn));
   };
 
-  const getAllTodos = useCallback(async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/admin/getTodos`, {
-        headers: { Authorization: `Bearer: ${token}` },
-      });
-      setAllTodos(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  }, [token]);
-
   useEffect(() => {
     setActiveBtns("Dashboard");
   }, []);
-
-  useEffect(() => {
-    getAllTodos();
-  }, [getAllTodos]);
-
-  const SubLink = ({
-    to,
-    label,
-    badge,
-  }: {
-    to: string;
-    label: string;
-    badge?: number;
-  }) => {
-    const isActive = pathname === to;
-    return (
-      <Link
-        to={to}
-        onClick={() => window.innerWidth < 768 && setIsOpen?.(false)}
-        className={`
-          flex justify-between items-center w-full px-4 py-2 mb-1 rounded-md text-sm font-bold transition-all duration-200
-          ${isActive ? "bg-white text-indigo-900 text-bold" : "bg-transparent text-black font-normal"}
-        `}
-      >
-        <span>{label}</span>
-        {badge !== undefined && badge > 0 && (
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-900 text-white">
-            {badge}
-          </span>
-        )}
-      </Link>
-    );
-  };
 
   return (
     <>
@@ -178,245 +125,206 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           </Link>
 
           {/* People */}
-          <SideBarButton
-            isOpen={isOpen}
-            icon={<FaUserFriends size={20} />}
-            title="People"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("People")}
-            activeBtns={activeBtns}
-            activeBtn="People"
-          />
-          {activeBtns === "People" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/users" label="Users" />
-                <SubLink to="/customers" label="Customers" />
-                <SubLink to="/supplier" label="Suppliers" />
-              </div>
-            </AccordionItem>
-          )}
+
+          <Link to="/people" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<FaUserFriends size={20} />}
+              title="People"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => {
+                toggleButtonActive("People");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
+              activeBtns={activeBtns}
+              activeBtn="People"
+            />
+          </Link>
 
           {/* Attendance */}
-          <SideBarButton
-            isOpen={isOpen}
-            icon={<PiFingerprintDuotone size={20} />}
-            title="Attendance"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("Attendance")}
-            activeBtns={activeBtns}
-            activeBtn="Attendance"
-          />
-          {activeBtns === "Attendance" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/markAttendance" label="Mark Attendance" />
-                <SubLink to="/usersAttendance" label="User Attendance" />
-                <SubLink to="/leaveRequests" label="Leave Request" />
-              </div>
-            </AccordionItem>
-          )}
 
-          {/* Employee */}
-          <SideBarButton
-            isOpen={isOpen}
-            icon={<FaUserCog size={20} />}
-            title="Human Resources"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("Employee")}
-            activeBtns={activeBtns}
-            activeBtn="Employee"
-          />
-          {activeBtns === "Employee" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/employeeLifeline" label="Employee Lifeline" />
-                <SubLink to="/employeeWithdraw" label="Employee Withdraw" />
-              </div>
-            </AccordionItem>
-          )}
+          <Link to="/attendance" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<PiFingerprintDuotone size={20} />}
+              title="Attendance"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => {
+                toggleButtonActive("Attendance");
+                // Add this line:
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
+              activeBtns={activeBtns}
+              activeBtn="Attendance"
+            />
+          </Link>
 
-          {/* Projects */}
-          <SideBarButton
-            isOpen={isOpen}
-            icon={<GoProjectRoadmap size={20} />}
-            title="Projects"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("Projects")}
-            activeBtns={activeBtns}
-            activeBtn="Projects"
-          />
-          {activeBtns === "Projects" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/projectCatogries" label="Project Categories" />
-                <SubLink to="/projects" label="Projects List" />
-                <SubLink to="/assignprojects" label="Assign Project" />
-              </div>
-            </AccordionItem>
-          )}
+          {/* Human Resources */}
 
-          {/* Performance */}
-          <SideBarButton
-            isOpen={isOpen}
-            icon={<LuListTodo size={20} />}
-            title="Performance"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("Performance")}
-            activeBtns={activeBtns}
-            activeBtn="Performance"
-          />
-          {activeBtns === "Performance" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/todo" label="Todo" badge={allTodos.length} />
-                <SubLink to="/progress" label="Progress" />
-              </div>
-            </AccordionItem>
-          )}
-
-          {/* Sale */}
-          <SideBarButton
-            isOpen={isOpen}
-            icon={<CiCalculator2 size={20} />}
-            title="Sales"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("Sale")}
-            activeBtns={activeBtns}
-            activeBtn="Sale"
-          />
-          {activeBtns === "Sale" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/quotations" label="Quotation" />
-                <SubLink to="/sales" label="Sales" />
-                {/* <SubLink to="/payments" label="Payment" /> */}
-              </div>
-            </AccordionItem>
-          )}
-
-          {/* Manage Expense */}
-          <SideBarButton
-            isOpen={isOpen}
-            icon={<LiaProjectDiagramSolid size={20} />}
-            title="Expenses"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("manageExpense")}
-            activeBtns={activeBtns}
-            activeBtn="manageExpense"
-          />
-          {activeBtns === "manageExpense" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/expensesCatogries" label="Expense Category" />
-                <SubLink to="/expenses" label="Expense" />
-              </div>
-            </AccordionItem>
-          )}
-
-          {/* Payroll */}
-          <SideBarButton
-            isOpen={isOpen}
-            icon={<CiCreditCard1 size={20} />}
-            title="Payroll"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("payroll")}
-            activeBtns={activeBtns}
-            activeBtn="payroll"
-          />
-          {activeBtns === "payroll" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/calendar" label="Calendar" />
-                <SubLink to="/salaryCycle" label="Salary Cycle" />
-                <SubLink to="/overTime" label="Over Time" />
-                <SubLink to="/advanceSalary" label="Advance Salary" />
-                <SubLink to="/applyLoan" label="Loan Management" />
-                <SubLink to="/configEmployeeSalaries" label="Config Salaries" />
-              </div>
-            </AccordionItem>
-          )}
-
-          {/* Assets */}
-          <SideBarButton
-            isOpen={isOpen}
-            icon={<CiCreditCard1 size={20} />}
-            title="Assets"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("Assets Management")}
-            activeBtns={activeBtns}
-            activeBtn="Assets Management"
-          />
-          {activeBtns === "Assets Management" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/assetsCategory" label="Asset Category" />
-                <SubLink to="/assets" label="Assets" />
-              </div>
-            </AccordionItem>
-          )}
+          <Link to="/human-resources" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<FaUserCog size={20} />}
+              title="Human Resources"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => {
+                toggleButtonActive("Human Resources");
+                // Add this line:
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
+              activeBtns={activeBtns}
+              activeBtn="Human Resources"
+            />
+          </Link>
 
           {/* Recruitment */}
-          <SideBarButton
-            isOpen={isOpen}
-            icon={<HiOutlinePencilSquare size={20} />}
-            title="Recruitment"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("Recuritment")}
-            activeBtns={activeBtns}
-            activeBtn="Recuritment"
-          />
-          {activeBtns === "Recuritment" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/job" label="Jobs" />
-                <SubLink to="/applicants" label="Applicants" />
-              </div>
-            </AccordionItem>
-          )}
+          <Link to="/talent-acquisition" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<HiOutlinePencilSquare size={20} />}
+              title="Talent Acquisition"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => {
+                toggleButtonActive("Talent Acquisition");
+                // Add this line:
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
+              activeBtns={activeBtns}
+              activeBtn="Talent Acquisition"
+            />
+          </Link>
+
+          {/* Projects */}
+          <Link to="/projects" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<GoProjectRoadmap size={20} />}
+              title="Projects"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => {
+                toggleButtonActive("Projects");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
+              activeBtns={activeBtns}
+              activeBtn="Projects"
+            />
+          </Link>
+
+          {/* Performance */}
+          <Link to="/performance" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<LuListTodo size={20} />}
+              title="Performance"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => {
+                toggleButtonActive("Performance");
+                // Add this line:
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
+              activeBtns={activeBtns}
+              activeBtn="Performance"
+            />
+          </Link>
+
+          {/* Sale */}
+          <Link to="/sales" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<CiCalculator2 size={20} />}
+              title="Sales"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => {
+                toggleButtonActive("Sales");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
+              activeBtns={activeBtns}
+              activeBtn="Sales"
+            />
+          </Link>
+
+          {/* Manage Expense */}
+          <Link to="/expenses" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<LiaProjectDiagramSolid size={20} />}
+              title="Expenses"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => {
+                toggleButtonActive("Expenses");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
+              activeBtns={activeBtns}
+              activeBtn="Expenses"
+            />
+          </Link>
+
+          {/* Payroll */}
+          <Link to="/payroll" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<CiCreditCard1 size={20} />}
+              title="Payroll"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => {
+                toggleButtonActive("Payroll");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
+              activeBtns={activeBtns}
+              activeBtn="Payroll"
+            />
+          </Link>
+
+          {/* Assets */}
+          <Link to="/assets" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<CiCreditCard1 size={20} />}
+              title="Assets"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => {
+                toggleButtonActive("Assets Management");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
+              activeBtns={activeBtns}
+              activeBtn="Assets"
+            />
+          </Link>
 
           {/* Dynamic */}
-          <SideBarButton
-            isOpen={isOpen}
-            icon={<RiUserCommunityLine size={20} />}
-            title="Dynamic"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("Dynamic")}
-            activeBtns={activeBtns}
-            activeBtn="Dynamic"
-          />
-          {activeBtns === "Dynamic" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/promotion" label="Promotion" />
-                <SubLink to="/resignation" label="Resignation" />
-                <SubLink to="/rejoin" label="Rejoin" />
-              </div>
-            </AccordionItem>
-          )}
+          <Link to="/dynamics" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<RiUserCommunityLine size={20} />}
+              title="Dynamics"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => {
+                toggleButtonActive("Dynamic");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
+              activeBtns={activeBtns}
+              activeBtn="Dynamics"
+            />
+          </Link>
 
           {/* Accounts */}
-          <SideBarButton
-            isOpen={isOpen}
-            icon={<CgCalculator size={20} />}
-            title="Accounts"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("Accounts")}
-            activeBtns={activeBtns}
-            activeBtn="Accounts"
-          />
-          {activeBtns === "Accounts" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/employeeAccount" label="Employee Account" />
-                <SubLink to="/customerAccount" label="Customer Account" />
-                <SubLink to="/supplierAccount" label="Supplier Account" />
-              </div>
-            </AccordionItem>
-          )}
+          <Link to="/accounts" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<CgCalculator size={20} />}
+              title="Accounts"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => {
+                toggleButtonActive("Accounts");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
+              activeBtns={activeBtns}
+              activeBtn="Accounts"
+            />
+          </Link>
 
           {/* Reports */}
-          <SideBarButton
+          {/* <SideBarButton
             isOpen={isOpen}
             icon={<HiOutlineDocumentReport size={20} />}
             title="Reports"
@@ -436,26 +344,39 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
                 <SubLink to="/expenseReports" label="Expense Report" />
               </div>
             </AccordionItem>
-          )}
+          )} */}
+
+          <Link to="/reports" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<HiOutlineDocumentReport size={20} />}
+              title="Reports"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => {
+                toggleButtonActive("Reports");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
+              activeBtns={activeBtns}
+              activeBtn="Reports"
+            />
+          </Link>
 
           {/* Configure Time */}
-          <SideBarButton
-            isOpen={isOpen}
-            icon={<AiOutlineFieldTime size={20} />}
-            title="Configuration"
-            arrowIcon={<BiArrowBack />}
-            handlerClick={() => toggleButtonActive("Configuration")}
-            activeBtns={activeBtns}
-            activeBtn="Configuration"
-          />
-          {activeBtns === "Configuration" && (
-            <AccordionItem isOpen={isOpen}>
-              <div className="flex flex-col">
-                <SubLink to="/attendanceRules" label="Attendance Rules" />
-                <SubLink to="/holidays" label="Configure Holidays" />
-              </div>
-            </AccordionItem>
-          )}
+
+          <Link to="/configuration" className="block">
+            <SideBarButton
+              isOpen={isOpen}
+              icon={<AiOutlineFieldTime size={20} />}
+              title="Configuration"
+              arrowIcon={<BiArrowBack />}
+              handlerClick={() => {
+                toggleButtonActive("Configuration");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
+              activeBtns={activeBtns}
+              activeBtn="Configuration"
+            />
+          </Link>
         </nav>
       </div>
 

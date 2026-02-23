@@ -9,7 +9,7 @@ import { Pagination } from "../../Components/Pagination/Pagination";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
@@ -21,7 +21,6 @@ import { ViewCalendarSession } from "../../Components/CalendarModal/ViewCalendar
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 
 import { Loader } from "../../Components/LoaderComponent/Loader";
-import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
@@ -35,7 +34,7 @@ type CalendarSession = {
   calendarStatus?: string;
 };
 
-export const Calendar = () => {
+export const Calendar = ({ triggerModal }: { triggerModal: number }) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
@@ -147,6 +146,12 @@ export const Calendar = () => {
     }, 1000);
   }, [dispatch, handleGetAllCalendar]);
 
+   useEffect(() => {
+      if (triggerModal > 0) {
+        setIsOpenModal("ADD");
+      }
+    }, [triggerModal]);
+
   const uniqueSessions = calendarList.reduce<CalendarSession[]>((acc, curr) => {
     if (!acc.find((s) => s.session_name === curr.session_name)) {
       acc.push(curr);
@@ -169,23 +174,12 @@ export const Calendar = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        {/* 1 & 3) Table Title with Add Button as the rightElement */}
-        <TableTitle
-          tileName="Calendar List"
-          rightElement={
-            <CustomButton
-              handleToggle={() => handleToggleViewModal("ADD")}
-              label="+ Add Calendar Session"
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
+    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
+      
 
         <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
+          <div className="flex flex-row items-center justify-between text-gray-800">
             {/* Left Side: Show entries */}
             <div className="text-sm flex items-center">
               <span>Show</span>
@@ -208,7 +202,7 @@ export const Calendar = () => {
               <span className="hidden xs:inline">entries</span>
             </div>
 
-            <div className="flex flex-col items-end">
+            <div className="flex flex-col items-end gap-2">
               <TableInputField
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
@@ -223,7 +217,7 @@ export const Calendar = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[500px]">
             {/* Sticky Table Header */}
             <div
@@ -321,10 +315,7 @@ export const Calendar = () => {
         />
       )}
 
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
+    
     </div>
   );
 };

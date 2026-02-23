@@ -240,23 +240,26 @@ export const AddConfigEmpSalary = ({
               disabled
             />
 
-            <div className="md:col-span-2">
-              <InputField
-                labelName="Date *"
-                name="config_date"
-                type="date"
-                handlerChange={handlerChange}
-                value={addConfigEmployee.config_date}
-              />
-            </div>
+            <InputField
+              labelName="Date *"
+              name="config_date"
+              type="date"
+              handlerChange={handlerChange}
+              value={addConfigEmployee.config_date}
+            />
+
+            <InputField
+              labelName="With Effect from Date *"
+              name="config_date"
+              type="date"
+              handlerChange={handlerChange}
+              value={addConfigEmployee.config_date}
+            />
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

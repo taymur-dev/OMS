@@ -30,11 +30,11 @@ const NotificationDropdown = ({
     onClose();
 
     if (currentUser?.role?.toLowerCase() === "admin") {
-      navigate("/leaveRequests");
+      navigate("/attendance");
     }
 
     if (currentUser?.role?.toLowerCase() === "user") {
-      navigate("users/leaveRequests");
+      navigate("/users/leaveRequests");
     }
   };
 

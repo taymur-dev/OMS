@@ -2,14 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { InputField } from "../../Components/InputFields/InputField";
 import { OptionField } from "../../Components/InputFields/OptionField";
 import { Loader } from "../../Components/LoaderComponent/Loader";
-import { Footer } from "../../Components/Footer";
 
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
@@ -175,11 +173,9 @@ export const ExpenseReports = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        <TableTitle tileName="Expense Report" />
+    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
 
-        <hr className="border border-b border-gray-200" />
 
         {/* --- FILTER SECTION (Matched to Sales Report Dimensions) --- */}
         <div className="p-2 bg-white">
@@ -218,7 +214,8 @@ export const ExpenseReports = () => {
             <div className="flex gap-2 flex-grow lg:flex-grow-0 min-w-full lg:min-w-fit">
               <button
                 onClick={handleSearch}
-                className="bg-indigo-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center justify-center whitespace-nowrap"
+                className="bg-indigo-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center
+                 justify-center whitespace-nowrap"
               >
                 <FontAwesomeIcon icon={faSearch} className="mr-2" />
                 Search
@@ -226,7 +223,8 @@ export const ExpenseReports = () => {
 
               <button
                 onClick={printDiv}
-                className="bg-blue-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center justify-center whitespace-nowrap"
+                className="bg-blue-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center 
+                justify-center whitespace-nowrap"
               >
                 <FontAwesomeIcon icon={faPrint} className="mr-2" />
                 Print
@@ -252,7 +250,7 @@ export const ExpenseReports = () => {
         </div>
 
         {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div id="myDiv" className="min-w-[800px]">
             {/* Sticky Table Header - Using grid-cols-5 for Expense Fields */}
             <div className="grid grid-cols-5 bg-indigo-900 text-white items-center font-semibold text-sm sticky top-0 z-10 p-2">
@@ -308,9 +306,7 @@ export const ExpenseReports = () => {
         </div>
       </div>
 
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
+      
     </div>
   );
 };

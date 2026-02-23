@@ -1,8 +1,7 @@
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
+
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
@@ -13,7 +12,6 @@ import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import { toast } from "react-toastify";
 
-
 import { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
@@ -22,7 +20,6 @@ import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
-import { Footer } from "../../Components/Footer";
 
 type ApplicantT = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
@@ -37,7 +34,7 @@ export interface Applicant {
 
 const pageSizes = [10, 25, 50, 100];
 
-export const Applicants = () => {
+export const Applicants = ({ triggerRecruit }: { triggerRecruit: number }) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
 
@@ -88,6 +85,12 @@ export const Applicants = () => {
   }, [fetchApplicants]);
 
   useEffect(() => {
+    if (triggerRecruit > 0) {
+      setIsOpenModal("ADD");
+    }
+  }, [triggerRecruit]);
+
+  useEffect(() => {
     document.title = "(OMS) APPLICATION";
   }, []);
 
@@ -128,20 +131,8 @@ export const Applicants = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-2 rounded-lg bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        <TableTitle
-          tileName="Applicants"
-          rightElement={
-            <CustomButton
-              handleToggle={() => handleToggleViewModal("ADD")}
-              label="+ Add Applicant"
-            />
-          }
-        />
-
-        <hr className="border border-b border-gray-200" />
-
+    <div className="flex flex-col flex-grow p-2 bg-gray overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col  bg-white">
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
             <div className="text-sm flex items-center">
@@ -172,7 +163,7 @@ export const Applicants = () => {
           </div>
         </div>
 
-        <div className="overflow-auto px-2">
+        <div className="overflow-auto">
           <div className="min-w-[900px]">
             <div
               className="grid grid-cols-7 bg-indigo-900 text-white items-center font-semibold
@@ -293,10 +284,6 @@ export const Applicants = () => {
           setModal={() => handleToggleViewModal("")}
         />
       )}
-
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
     </div>
   );
 };

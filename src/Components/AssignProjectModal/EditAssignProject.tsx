@@ -224,21 +224,21 @@ export const EditAssignProject = ({
           </div>
 
           <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3 py-4">
-            <UserSelect
-              labelName="Employees *"
-              name="employee_id"
-              value={formData.employee_id}
-              handlerChange={handlerChange}
-              optionData={allUsers}
-            />
+              <UserSelect
+                labelName="Employees *"
+                name="employee_id"
+                value={formData.employee_id}
+                handlerChange={handlerChange}
+                optionData={allUsers}
+              />
 
-            <OptionField
-              labelName="Project *"
-              name="projectId"
-              value={formData.projectId}
-              handlerChange={handlerChange}
-              optionData={allProjects}
-            />
+              <OptionField
+                labelName="Project *"
+                name="projectId"
+                value={formData.projectId}
+                handlerChange={handlerChange}
+                optionData={allProjects}
+              />
 
             {/* 🔥 Date Input */}
             <div className="flex flex-col mb-3 md:col-span-2">

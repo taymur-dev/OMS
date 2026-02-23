@@ -154,27 +154,29 @@ export const AddSupplier = ({
               value={supplierData.supplierEmail}
             />
 
-            <InputField
-              labelName="Supplier Contact *"
-              type="text"
-              name="supplierContact"
-              handlerChange={handlerChange}
-              value={supplierData.supplierContact}
-            />
-            <TextareaField
-              labelName="Supplier Address *"
-              name="supplierAddress"
-              handlerChange={handlerChange}
-              inputVal={supplierData.supplierAddress}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Supplier Contact *"
+                type="text"
+                name="supplierContact"
+                handlerChange={handlerChange}
+                value={supplierData.supplierContact}
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Supplier Address *"
+                name="supplierAddress"
+                handlerChange={handlerChange}
+                inputVal={supplierData.supplierAddress}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end items-center gap-3 px-2 py-2 bg-indigo-900 rounded">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>
