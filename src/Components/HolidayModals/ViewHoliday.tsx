@@ -46,7 +46,7 @@ export const ViewHoliday = ({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-y-4 pt-2">
               <div className="col-span-1">
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUmbrellaBeach className="text-gray-400" /> Holiday Name
+                  <FaUmbrellaBeach className="text-green-400" /> Holiday Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewHoliday.holiday}
@@ -55,7 +55,7 @@ export const ViewHoliday = ({
 
               <div className="col-span-1">
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> From Date
+                  <FaCalendarAlt className="text-blue-400" /> From Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {formatDate(viewHoliday.fromDate)}
@@ -64,7 +64,7 @@ export const ViewHoliday = ({
 
               <div className="col-span-1">
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaArrowRight className="text-gray-400 text-[8px]" /> To Date
+                  <FaArrowRight className="text-orange-400 text-[8px]" /> To Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {formatDate(viewHoliday.toDate)}
