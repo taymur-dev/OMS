@@ -17,7 +17,6 @@ import {
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
@@ -234,10 +233,7 @@ export const Quotation = ({ triggerModal }: { triggerModal: number }) => {
         />
       )}
 
-      {/* --- FOOTER SECTION --- */}
-      <div className="border border-t-5 border-gray-200">
-        <Footer />
-      </div>
+      
     </div>
   );
 };
