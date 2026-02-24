@@ -38,7 +38,7 @@ export const ViewAssignProject = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> Employee Name
+                  <FaUser className="text-blue-400" /> Employee Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewProject.name || "N/A"}
@@ -46,7 +46,7 @@ export const ViewAssignProject = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaIdBadge className="text-gray-400" /> Employee ID
+                  <FaIdBadge className="text-green-400" /> Employee ID
                 </label>
                 <p className="text-gray-800 font-medium">#{viewProject.employee_id}</p>
               </div>
@@ -61,7 +61,7 @@ export const ViewAssignProject = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaProjectDiagram className="text-gray-400" /> Project Name
+                  <FaProjectDiagram className="text-red-400" /> Project Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewProject.projectName || "N/A"}
@@ -69,7 +69,7 @@ export const ViewAssignProject = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaBriefcase className="text-gray-400" /> Status
+                  <FaBriefcase className="text-purple-400" /> Status
                 </label>
                 <p className="text-gray-800 font-medium">
                   {/* Fallback to Active if no status exists in your type */}
@@ -87,7 +87,7 @@ export const ViewAssignProject = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarCheck className="text-gray-400" /> Assigned Date
+                  <FaCalendarCheck className="text-yellow-400" /> Assigned Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewProject.date

@@ -17,7 +17,6 @@ import axios, { AxiosError } from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { ViewReasonWithDraw } from "../../Components/WithdrawModal/ViewReasonWithDraw";
 import { toast } from "react-toastify";
-import { Footer } from "../../Components/Footer";
 
 const numbers = [10, 25, 50, 100];
 
@@ -262,10 +261,6 @@ export const EmployeeWithdraw = ({ triggerAdd }: { triggerAdd: number }) => {
         />
       )}
 
-      {/* --- FOOTER SECTION --- */}
-      <div className="mt-auto border-t border-gray-200">
-        <Footer />
-      </div>
     </div>
   );
 };

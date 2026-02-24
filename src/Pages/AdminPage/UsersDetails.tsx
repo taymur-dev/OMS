@@ -151,7 +151,7 @@ export const UsersDetails = ({ triggerAdd }: { triggerAdd: number }) => {
 
   return (
     <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col bg-white">
+      <div className="min-h-200 w-full flex flex-col bg-white">
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
             {/* Left Side: Show entries */}

@@ -45,7 +45,7 @@ export const ViewApplicant = ({ setModal, applicant }: ViewApplicantProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> Applicant Name
+                  <FaUser className="text-blue-400" /> Applicant Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {applicant.applicant_name}
@@ -54,7 +54,7 @@ export const ViewApplicant = ({ setModal, applicant }: ViewApplicantProps) => {
 
                <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> Father Name
+                  <FaUser className="text-green-400" /> Father Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {applicant.fatherName}
@@ -63,7 +63,7 @@ export const ViewApplicant = ({ setModal, applicant }: ViewApplicantProps) => {
 
                <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> Email
+                  <FaUser className="text-red-400" /> Email
                 </label>
                 <p className="text-gray-800 font-medium">
                   {applicant.email}
@@ -72,7 +72,7 @@ export const ViewApplicant = ({ setModal, applicant }: ViewApplicantProps) => {
 
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaPhoneAlt className="text-gray-400" /> Contact Number
+                  <FaPhoneAlt className="text-purple-400" /> Contact Number
                 </label>
                 <p className="text-gray-800 font-medium">
                   {applicant.applicant_contact}
@@ -89,13 +89,13 @@ export const ViewApplicant = ({ setModal, applicant }: ViewApplicantProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaBriefcase className="text-gray-400" /> Applied Position
+                  <FaBriefcase className="text-orange-400" /> Applied Position
                 </label>
                 <p className="text-gray-800 font-medium">{applicant.job}</p>
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> Applied Date
+                  <FaCalendarAlt className="text-yellow-400" /> Applied Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {applicant.applied_date?.slice(0, 10)}
@@ -111,7 +111,7 @@ export const ViewApplicant = ({ setModal, applicant }: ViewApplicantProps) => {
             </h3>
             <div className="pt-2">
               <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase mb-1">
-                <FaCheckCircle className="text-gray-400" /> Application Status
+                <FaCheckCircle className="text-pink-400" /> Application Status
               </label>
               <span
                 className={`inline-block px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide

@@ -46,13 +46,13 @@ export const ViewLeave = ({ setIsOpenModal, data }: ViewLeaveProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> Employee Name
+                  <FaUser className="text-blue-400" /> Employee Name
                 </label>
                 <p className="text-gray-800 font-medium">{data.name}</p>
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> From Date
+                  <FaCalendarAlt className="text-green-400" /> From Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {new Date(data.fromDate)
@@ -67,7 +67,7 @@ export const ViewLeave = ({ setIsOpenModal, data }: ViewLeaveProps) => {
 
                <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> To Date
+                  <FaCalendarAlt className="text-yellow-400" /> To Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {new Date(data.toDate)
@@ -90,13 +90,13 @@ export const ViewLeave = ({ setIsOpenModal, data }: ViewLeaveProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaFileAlt className="text-gray-400" /> Subject
+                  <FaFileAlt className="text-red-400" /> Subject
                 </label>
                 <p className="text-gray-800 font-medium">{data.leaveSubject}</p>
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaInfoCircle className="text-gray-400" /> Status
+                  <FaInfoCircle className="text-orange-400" /> Status
                 </label>
                 <p
                   className={`font-bold uppercase text-xs mt-1 ${statusColor}`}
@@ -114,7 +114,7 @@ export const ViewLeave = ({ setIsOpenModal, data }: ViewLeaveProps) => {
             </h3>
             <div className="pt-2">
               <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase mb-1">
-                <HiOutlineDocumentText className="text-gray-400 text-sm" />{" "}
+                <HiOutlineDocumentText className="text-purple-800 text-sm" />{" "}
                 Detailed Reason
               </label>
               <div className="bg-gray-50 p-3 rounded border border-gray-100 min-h-[80px] max-h-40 overflow-y-auto">

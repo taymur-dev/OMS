@@ -7,10 +7,10 @@ import { ProgressReports } from "./ProgressReports";
 import { AttendanceReports } from "./AttendanceReports";
 import { ProcessReports } from "./ProcessReports";
 
-type TabType = "PROGRESS_REPORT" | "ATTENDANCE_REPORT" | "TASK_REPORT" | "";
+type TabType = "ATTENDANCE_REPORT" | "PROGRESS_REPORT" | "TASK_REPORT" | "";
 
 export const UserReports = () => {
-  const [activeTab, setActiveTab] = useState<TabType>("PROGRESS_REPORT");
+  const [activeTab, setActiveTab] = useState<TabType>("ATTENDANCE_REPORT");
 
   return (
     <div className="flex flex-col flex-grow shadow-lg p-1 sm:p-2 rounded-lg bg-gray-100 overflow-hidden">
@@ -20,6 +20,19 @@ export const UserReports = () => {
 
         {/* Tab Navigation */}
         <div className="flex items-center gap-1 px-2 sm:px-4  bg-white border-b border-gray-300">
+          <button
+            onClick={() => setActiveTab("ATTENDANCE_REPORT")}
+            className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-2 sm:px-6 py-2.5 
+              text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
+                activeTab === "ATTENDANCE_REPORT"
+                  ? "bg-indigo-900 text-white shadow-md"
+                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+              }`}
+          >
+            <CreditCard size={16} />
+            <span>Attendance</span>
+          </button>
+
           <button
             onClick={() => setActiveTab("PROGRESS_REPORT")}
             className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-2 sm:px-6 
@@ -45,26 +58,13 @@ export const UserReports = () => {
             <ClipboardList size={16} />
             <span>Task Reports</span>
           </button>
-
-          <button
-            onClick={() => setActiveTab("ATTENDANCE_REPORT")}
-            className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-2 sm:px-6 py-2.5 
-              text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-                activeTab === "ATTENDANCE_REPORT"
-                  ? "bg-indigo-900 text-white shadow-md"
-                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-              }`}
-          >
-            <CreditCard size={16} />
-            <span>Attendance</span>
-          </button>
         </div>
 
         {/* Content Area */}
         <div className="flex-grow p-2 sm:p-4 overflow-auto">
+          {activeTab === "ATTENDANCE_REPORT" && <AttendanceReports />}
           {activeTab === "PROGRESS_REPORT" && <ProgressReports />}
           {activeTab === "TASK_REPORT" && <ProcessReports />}
-          {activeTab === "ATTENDANCE_REPORT" && <AttendanceReports />}
         </div>
       </div>
 

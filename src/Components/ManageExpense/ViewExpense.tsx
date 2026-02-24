@@ -46,7 +46,7 @@ export const ViewExpense = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaTag className="text-gray-400" />
+                  <FaTag className="text-red-400" />
                   Expense Category
                 </label>
                 <p className="text-gray-800 font-medium">
@@ -55,7 +55,7 @@ export const ViewExpense = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaFileInvoiceDollar className="text-gray-400" /> Expense Name
+                  <FaFileInvoiceDollar className="text-green-400" /> Expense Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewExpense.expenseName}
@@ -64,7 +64,7 @@ export const ViewExpense = ({
 
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaFileInvoiceDollar className="text-gray-400" /> Added By
+                  <FaFileInvoiceDollar className="text-yellow-400" /> Added By
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewExpense.addedBy}
@@ -81,7 +81,7 @@ export const ViewExpense = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaMoneyBillWave className="text-gray-400" /> Amount
+                  <FaMoneyBillWave className="text-blue-400" /> Amount
                 </label>
                 <p className="text-indigo-700 font-bold text-lg">
                   ${Number(viewExpense.amount).toLocaleString()}
@@ -98,7 +98,7 @@ export const ViewExpense = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> Transaction Date
+                  <FaCalendarAlt className="text-orange-400" /> Transaction Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {new Date(viewExpense.date)

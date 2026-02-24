@@ -41,7 +41,7 @@ export const ViewResignation = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> Employee Name
+                  <FaUser className="text-blue-400" /> Employee Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {resignationData.employee_name}
@@ -49,7 +49,7 @@ export const ViewResignation = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaBriefcase className="text-gray-400" />Current Position
+                  <FaBriefcase className="text-green-400" />Current Position
                 </label>
                 <p className="text-gray-800 font-medium">
                   {resignationData.designation}
@@ -66,7 +66,7 @@ export const ViewResignation = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> Resignation Date
+                  <FaCalendarAlt className="text-yellow-400" /> Resignation Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {new Date(resignationData.resignation_date)
@@ -80,7 +80,7 @@ export const ViewResignation = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCheckCircle className="text-gray-400" /> Approval Status
+                  <FaCheckCircle className="text-orange-400" /> Approval Status
                 </label>
                 <p
                   className={`font-bold ${
@@ -102,7 +102,7 @@ export const ViewResignation = ({
             </h3>
             <div className="pt-2">
               <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                <FaStickyNote className="text-gray-400" /> Resignation Note
+                <FaStickyNote className="text-purple-400" /> Resignation Note
               </label>
               <p className="text-gray-800 font-medium mt-1 leading-relaxed">
                 {resignationData.note || "No additional notes provided."}

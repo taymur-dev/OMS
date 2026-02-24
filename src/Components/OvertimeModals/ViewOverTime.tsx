@@ -5,7 +5,6 @@ import {
   FaCheckCircle,
   FaInfoCircle,
 } from "react-icons/fa";
-import profilePicture from "../../assets/vector.png";
 
 type OVERTIMET = {
   id: number;
@@ -34,15 +33,11 @@ export const ViewOverTimeModal = ({ setModal, data }: ViewOvertimeProps) => {
         <div className="p-4 space-y-4">
           {/* Profile Header */}
           <div className="flex items-center space-x-4 pb-2">
-            <img
-              src={profilePicture}
-              alt="Profile"
-              className="w-16 h-16 rounded-full border-2 border-indigo-100 shadow-sm"
-            />
+           
             <div>
               <h2 className="text-xl font-bold text-indigo-900">{data.name}</h2>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                Employee Resource
+              <p className="text-xs font-bold text-black uppercase tracking-widest">
+                Employee
               </p>
             </div>
           </div>
@@ -55,7 +50,7 @@ export const ViewOverTimeModal = ({ setModal, data }: ViewOvertimeProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> Date
+                  <FaCalendarAlt className="text-red-400" /> Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {new Date(data.date)
@@ -69,7 +64,7 @@ export const ViewOverTimeModal = ({ setModal, data }: ViewOvertimeProps) => {
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaClock className="text-gray-400" /> Overtime Duration
+                  <FaClock className="text-green-400" /> Overtime Duration
                 </label>
                 <p className="text-gray-800 font-medium">{data.totalTime}</p>
               </div>
@@ -84,7 +79,7 @@ export const ViewOverTimeModal = ({ setModal, data }: ViewOvertimeProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCheckCircle className="text-gray-400" /> Approval Status
+                  <FaCheckCircle className="text-yellow-400" /> Approval Status
                 </label>
                 <span
                   className={`inline-block mt-1 px-3 py-0.5 rounded-full text-xs font-bold uppercase ${
@@ -98,7 +93,7 @@ export const ViewOverTimeModal = ({ setModal, data }: ViewOvertimeProps) => {
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaInfoCircle className="text-gray-400" /> Request ID
+                  <FaInfoCircle className="text-blue-400" /> Request ID
                 </label>
                 <p className="text-gray-800 font-medium">#OT-{data.id}</p>
               </div>

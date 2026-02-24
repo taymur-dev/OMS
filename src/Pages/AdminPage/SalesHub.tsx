@@ -5,21 +5,30 @@ import { Quotation } from "./Quotation";
 import { Sales } from "./Sales";
 import { useAppSelector } from "../../redux/Hooks";
 import { FileText, ShoppingCart } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { Footer } from "../../Components/Footer";
 
 // Define Tab Types
 type TabType = "QUOTATION" | "SALE";
 
 export const SalesHub = () => {
-  const [activeTab, setActiveTab] = useState<TabType>("QUOTATION");
   const { currentUser } = useAppSelector((state) => state.officeState);
   const isAdmin = currentUser?.role === "admin";
+
+  const [searchParams] = useSearchParams();
+  const tabFromURL = searchParams.get("tab") as TabType | null;
+
+  const [activeTab, setActiveTab] = useState<TabType>(
+    tabFromURL === "QUOTATION" || tabFromURL === "SALE"
+      ? tabFromURL
+      : "QUOTATION",
+  );
 
   // Trigger state for Add buttons
   const [triggerModal, setTriggerModal] = useState<{
     tab: TabType;
     count: number;
-  }>({ tab: "QUOTATION", count: 0 });
+  }>({ tab: "SALE", count: 0 });
 
   const handleActionClick = (tab: TabType) => {
     setTriggerModal((prev) => ({
@@ -90,6 +99,7 @@ export const SalesHub = () => {
               }
             />
           )}
+
           {activeTab === "SALE" && (
             <Sales
               triggerModal={

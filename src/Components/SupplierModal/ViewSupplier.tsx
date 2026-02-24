@@ -42,7 +42,7 @@ export const ViewSupplierModal = ({ setModal, supplier }: ModalTProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaIndustry className="text-gray-400" /> Supplier Name
+                  <FaIndustry className="text-blue-400" /> Supplier Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {supplier.supplierName}
@@ -50,7 +50,7 @@ export const ViewSupplierModal = ({ setModal, supplier }: ModalTProps) => {
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaIdBadge className="text-gray-400" /> Supplier ID
+                  <FaIdBadge className="text-orange-400" /> Supplier ID
                 </label>
                 <p className="text-gray-800 font-medium">
                   #{supplier.supplierId}
@@ -67,7 +67,7 @@ export const ViewSupplierModal = ({ setModal, supplier }: ModalTProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaEnvelope className="text-gray-400" /> Email Address
+                  <FaEnvelope className="text-green-400" /> Email Address
                 </label>
                 <p className="text-gray-800 font-medium">
                   {supplier.supplierEmail}
@@ -75,7 +75,7 @@ export const ViewSupplierModal = ({ setModal, supplier }: ModalTProps) => {
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaPhone className="text-gray-400" /> Contact Number
+                  <FaPhone className="text-red-400" /> Contact Number
                 </label>
                 <p className="text-gray-800 font-medium">
                   {supplier.supplierContact}
@@ -92,7 +92,7 @@ export const ViewSupplierModal = ({ setModal, supplier }: ModalTProps) => {
             <div className="grid grid-cols-1 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaMapMarkerAlt className="text-gray-400" /> Business Address
+                  <FaMapMarkerAlt className="text-purple-800" /> Business Address
                 </label>
                 <p className="text-gray-800 font-medium break-words">
                   {supplier.supplierAddress || "No address provided"}

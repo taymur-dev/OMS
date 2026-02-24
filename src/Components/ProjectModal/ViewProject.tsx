@@ -46,7 +46,7 @@ export const ViewProject = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaProjectDiagram className="text-gray-400" /> Project Name
+                  <FaProjectDiagram className="text-yellow-400" /> Project Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewProject.projectName}
@@ -54,7 +54,7 @@ export const ViewProject = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaTag className="text-gray-400" /> Category
+                  <FaTag className="text-pink-400" /> Category
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewProject.projectCategory}
@@ -71,7 +71,7 @@ export const ViewProject = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> Start Date
+                  <FaCalendarAlt className="text-green-400" /> Start Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {new Date(viewProject.startDate)
@@ -85,7 +85,7 @@ export const ViewProject = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarCheck className="text-gray-400" /> End Date
+                  <FaCalendarCheck className="text-red-400" /> End Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {new Date(viewProject.endDate)
@@ -107,7 +107,7 @@ export const ViewProject = ({
             </h3>
             <div className="pt-2">
               <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                <FaAlignLeft className="text-gray-400" /> Description
+                <FaAlignLeft className="text-blue-400" /> Description
               </label>
               <p className="text-gray-800 font-medium mt-1 leading-relaxed">
                 {viewProject.description || "No description provided."}

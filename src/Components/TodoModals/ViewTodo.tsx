@@ -47,7 +47,7 @@ export const ViewTodo = ({ setIsOpenModal, viewTodo }: ViewTodoProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> Employee ID
+                  <FaUser className="text-pink-400" /> Employee ID
                 </label>
 
                 <p className="text-gray-800 font-medium">
@@ -56,7 +56,7 @@ export const ViewTodo = ({ setIsOpenModal, viewTodo }: ViewTodoProps) => {
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaTasks className="text-gray-400" /> Task Title
+                  <FaTasks className="text-green-400" /> Task Title
                 </label>
                 <p className="text-gray-800 font-medium">{viewTodo.task}</p>
               </div>
@@ -70,7 +70,7 @@ export const ViewTodo = ({ setIsOpenModal, viewTodo }: ViewTodoProps) => {
             </h3>
             <div className="pt-2">
               <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                <FaStickyNote className="text-gray-400" /> Note Content
+                <FaStickyNote className="text-red-400" /> Note Content
               </label>
               <p className="text-gray-800 font-medium mt-1">
                 {viewTodo.note || "No additional notes provided."}
@@ -86,7 +86,7 @@ export const ViewTodo = ({ setIsOpenModal, viewTodo }: ViewTodoProps) => {
             <div className="grid grid-cols-3 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> Start Date
+                  <FaCalendarAlt className="text-blue-400" /> Start Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {formatDate(viewTodo.startDate)}
@@ -94,7 +94,7 @@ export const ViewTodo = ({ setIsOpenModal, viewTodo }: ViewTodoProps) => {
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaHourglassEnd className="text-gray-400" /> End Date
+                  <FaHourglassEnd className="text-orange-400" /> End Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {formatDate(viewTodo.endDate)}
@@ -102,7 +102,7 @@ export const ViewTodo = ({ setIsOpenModal, viewTodo }: ViewTodoProps) => {
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaClock className="text-gray-400" /> Deadline
+                  <FaClock className="text-orange-400" /> Deadline
                 </label>
                 <p className="text-red-600 font-bold">
                   {formatDate(viewTodo.deadline)}
@@ -111,7 +111,7 @@ export const ViewTodo = ({ setIsOpenModal, viewTodo }: ViewTodoProps) => {
 
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaClipboardList className="text-gray-400" /> Completion
+                  <FaClipboardList className="text-green-400" /> Completion
                   Status
                 </label>
                 <p className="text-red-600 font-bold">

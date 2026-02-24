@@ -49,7 +49,7 @@ export const ViewRejoin = ({ setIsOpenModal, viewRejoin }: ViewRejoinProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> Employee Name
+                  <FaUser className="text-blue-400" /> Employee Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewRejoin.employee_name || "N/A"}
@@ -57,7 +57,7 @@ export const ViewRejoin = ({ setIsOpenModal, viewRejoin }: ViewRejoinProps) => {
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaBriefcase className="text-gray-400" />Current Position
+                  <FaBriefcase className="text-green-400" />Current Position
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewRejoin.designation || "N/A"}
@@ -74,7 +74,7 @@ export const ViewRejoin = ({ setIsOpenModal, viewRejoin }: ViewRejoinProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarTimes className="text-gray-400" /> Resignation Date
+                  <FaCalendarTimes className="text-red-400" /> Resignation Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {formatDate(viewRejoin.resignation_date)}
@@ -82,7 +82,7 @@ export const ViewRejoin = ({ setIsOpenModal, viewRejoin }: ViewRejoinProps) => {
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarCheck className="text-gray-400" /> Rejoin Date
+                  <FaCalendarCheck className="text-orange-400" /> Rejoin Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {formatDate(viewRejoin.rejoinRequest_date)}
@@ -99,7 +99,7 @@ export const ViewRejoin = ({ setIsOpenModal, viewRejoin }: ViewRejoinProps) => {
             <div className="grid grid-cols-1 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaInfoCircle className="text-gray-400" /> Approval Status
+                  <FaInfoCircle className="text-yellow-400" /> Approval Status
                 </label>
                 <p
                   className={`font-bold ${

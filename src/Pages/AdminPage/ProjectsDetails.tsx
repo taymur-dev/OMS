@@ -145,7 +145,7 @@ export const ProjectsDetails = ({ triggerModal }: { triggerModal: number }) => {
 
   return (
     <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
+      <div className="min-h-2 w-full flex flex-col  bg-white">
       
 
 

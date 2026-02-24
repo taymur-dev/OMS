@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 
@@ -7,12 +7,21 @@ import { CustomerDetail } from "./CustomerDetail";
 import { Suppliers } from "./Suppliers";
 
 import { Users, UserRound, Truck } from "lucide-react";
+
+import { useSearchParams } from "react-router-dom";
 import { Footer } from "../../Components/Footer";
 
 type TabType = "USERS" | "CUSTOMERS" | "SUPPLIERS";
 
 export const People = () => {
-  const [activeTab, setActiveTab] = useState<TabType>("USERS");
+  const [searchParams] = useSearchParams();
+  const tabFromURL = searchParams.get("tab") as TabType | null;
+
+  const [activeTab, setActiveTab] = useState<TabType>(
+    tabFromURL === "CUSTOMERS" || tabFromURL === "SUPPLIERS"
+      ? tabFromURL
+      : "USERS",
+  );
 
   // Trigger state (same pattern as AttendanceHub)
   const [triggerModal, setTriggerModal] = useState<{
@@ -26,6 +35,18 @@ export const People = () => {
       count: prev.tab === tab ? prev.count + 1 : 1,
     }));
   };
+
+
+  useEffect(() => {
+  if (
+    tabFromURL === "USERS" ||
+    tabFromURL === "CUSTOMERS" ||
+    tabFromURL === "SUPPLIERS"
+  ) {
+    setActiveTab(tabFromURL);
+  }
+}, [tabFromURL]);
+
 
   return (
     <div className="flex flex-col flex-grow shadow-lg p-1 sm:p-2 rounded-lg bg-gray-100 overflow-hidden">

@@ -54,7 +54,7 @@ export const ViewAttendance = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> User Name
+                  <FaUser className="text-blue-400" /> User Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewAttendance.name}
@@ -62,7 +62,7 @@ export const ViewAttendance = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaTag className="text-gray-400" /> Role
+                  <FaTag className="text-orange-400" /> Role
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewAttendance.role}
@@ -79,7 +79,7 @@ export const ViewAttendance = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> Date
+                  <FaCalendarAlt className="text-green-400" /> Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {new Date(viewAttendance.date)
@@ -93,7 +93,7 @@ export const ViewAttendance = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaClipboardCheck className="text-gray-400" /> Day
+                  <FaClipboardCheck className="text-red-400" /> Day
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewAttendance.day}
@@ -110,7 +110,7 @@ export const ViewAttendance = ({
             <div className="grid grid-cols-3 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaClock className="text-gray-400" /> Clock In
+                  <FaClock className="text-purple-800" /> Clock In
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewAttendance.clockIn || "--:--"}
@@ -118,7 +118,7 @@ export const ViewAttendance = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaClock className="text-gray-400" /> Clock Out
+                  <FaClock className="text-red-400" /> Clock Out
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewAttendance.clockOut || "--:--"}
@@ -126,7 +126,7 @@ export const ViewAttendance = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaHistory className="text-gray-400" /> Total Hours
+                  <FaHistory className="text-yellow-400" /> Total Hours
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewAttendance.workingHours || "00:00"}

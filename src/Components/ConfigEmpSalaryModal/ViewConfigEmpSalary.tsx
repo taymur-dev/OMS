@@ -49,7 +49,7 @@ export const ViewConfigEmpSalary = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> Employee Name
+                  <FaUser className="text-blue-400" /> Employee Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewSalary.employeeName}
@@ -57,7 +57,7 @@ export const ViewConfigEmpSalary = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaMoneyBillWave className="text-gray-400" /> Base Salary
+                  <FaMoneyBillWave className="text-green-400" /> Base Salary
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewSalary.employeeSalary}
@@ -75,7 +75,7 @@ export const ViewConfigEmpSalary = ({
               {viewSalary.empMonthAllowance && (
                 <div>
                   <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                    <FaHome className="text-gray-400" /> House Rent
+                    <FaHome className="text-red-400" /> House Rent
                   </label>
                   <p className="text-gray-800 font-medium">
                     {viewSalary.empMonthAllowance}
@@ -85,7 +85,7 @@ export const ViewConfigEmpSalary = ({
               {viewSalary.transportAllowance && (
                 <div>
                   <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                    <FaCarSide className="text-gray-400" /> Transport Allowance
+                    <FaCarSide className="text-purple-400" /> Transport Allowance
                   </label>
                   <p className="text-gray-800 font-medium">
                     {viewSalary.transportAllowance}
@@ -95,7 +95,7 @@ export const ViewConfigEmpSalary = ({
               {viewSalary.medicalAllowance && (
                 <div>
                   <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                    <FaPlusSquare className="text-gray-400" /> Medical Allowance
+                    <FaPlusSquare className="text-yellow-400" /> Medical Allowance
                   </label>
                   <p className="text-gray-800 font-medium">
                     {viewSalary.medicalAllowance}
@@ -105,7 +105,7 @@ export const ViewConfigEmpSalary = ({
               {viewSalary.totalSalary && (
                 <div>
                   <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                    <FaWallet className="text-gray-400" /> Total Salary
+                    <FaWallet className="text-red-400" /> Total Salary
                   </label>
                   <p className="text-indigo-700 font-bold">
                     {viewSalary.totalSalary}
@@ -124,7 +124,7 @@ export const ViewConfigEmpSalary = ({
               <div className="grid grid-cols-2 gap-y-4 pt-2">
                 <div>
                   <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                    <FaCalendarAlt className="text-gray-400" /> Configuration
+                    <FaCalendarAlt className="text-orange-400" /> Configuration
                     Date
                   </label>
                   <p className="text-gray-800 font-medium">
@@ -140,7 +140,7 @@ export const ViewConfigEmpSalary = ({
 
                 <div>
                   <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                    <FaCalendarAlt className="text-gray-400" /> With Effect from
+                    <FaCalendarAlt className="text-blue-400" /> With Effect from
                     Date
                   </label>
                   <p className="text-gray-800 font-medium">

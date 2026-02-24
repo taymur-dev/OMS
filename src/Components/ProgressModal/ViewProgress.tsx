@@ -38,7 +38,7 @@ export const ViewProgress = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> Employee Name
+                  <FaUser className="text-blue-400" /> Employee Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewProgress.employeeName || "N/A"}
@@ -46,7 +46,7 @@ export const ViewProgress = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaProjectDiagram className="text-gray-400" /> Project
+                  <FaProjectDiagram className="text-red-400" /> Project
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewProgress.projectName || "N/A"}
@@ -63,7 +63,7 @@ export const ViewProgress = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> Submission Date
+                  <FaCalendarAlt className="text-green-400" /> Submission Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {new Date(viewProgress.date)
@@ -77,7 +77,7 @@ export const ViewProgress = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaTasks className="text-gray-400" /> Progress Type
+                  <FaTasks className="text-yellow-400" /> Progress Type
                 </label>
                 <p className="text-gray-800 font-medium">Daily Update</p>
               </div>
@@ -91,7 +91,7 @@ export const ViewProgress = ({
             </h3>
             <div className="pt-2">
               <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                <FaStickyNote className="text-gray-400" /> Detailed Note
+                <FaStickyNote className="text-purple-400" /> Detailed Note
               </label>
               <p className="text-gray-800 font-medium mt-1 leading-relaxed">
                 {viewProgress.note || "No additional notes provided."}

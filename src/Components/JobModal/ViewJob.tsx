@@ -37,7 +37,7 @@ export const ViewJob = ({ setIsOpenModal, viewJob }: ViewJobProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaBriefcase className="text-gray-400" /> Job Title
+                  <FaBriefcase className="text-blue-400" /> Job Title
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewJob.job_title}
@@ -54,7 +54,7 @@ export const ViewJob = ({ setIsOpenModal, viewJob }: ViewJobProps) => {
             </h3>
             <div className="pt-2">
               <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase mb-1">
-                <FaAlignLeft className="text-gray-400" /> Details
+                <FaAlignLeft className="text-red-400" /> Details
               </label>
               <p className="text-gray-800 font-medium leading-relaxed">
                 {viewJob.description}

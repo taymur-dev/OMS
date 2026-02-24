@@ -56,7 +56,7 @@ export const ViewSale = ({ setIsOpenModal, viewSale }: ViewSaleProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUserTie className="text-gray-400" /> Customer Name
+                  <FaUserTie className="text-blue-400" /> Customer Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewSale.customerName}
@@ -64,7 +64,7 @@ export const ViewSale = ({ setIsOpenModal, viewSale }: ViewSaleProps) => {
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> Sale Date
+                  <FaCalendarAlt className="text-orange-400" /> Sale Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {formatDate(viewSale.saleDate)}

@@ -45,7 +45,7 @@ export const ViewAdvanceSalary = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> Employee Name
+                  <FaUser className="text-blue-400" /> Employee Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewAdvance.employee_name}
@@ -53,7 +53,7 @@ export const ViewAdvanceSalary = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> Request Date
+                  <FaCalendarAlt className="text-orange-400" /> Request Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {new Date(viewAdvance.date)
@@ -75,7 +75,7 @@ export const ViewAdvanceSalary = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaMoneyBillWave className="text-gray-400" /> Amount
+                  <FaMoneyBillWave className="text-red-400" /> Amount
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewAdvance.amount.toLocaleString()}
@@ -83,7 +83,7 @@ export const ViewAdvanceSalary = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCheckCircle className="text-gray-400" /> Approval Status
+                  <FaCheckCircle className="text-green-400" /> Approval Status
                 </label>
                 <p
                   className={`font-bold ${
@@ -105,7 +105,7 @@ export const ViewAdvanceSalary = ({
             <div className="grid grid-cols-1 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaAlignLeft className="text-gray-400" /> Description
+                  <FaAlignLeft className="text-yellow-400" /> Description
                 </label>
                 <p className="text-gray-800 font-medium italic">
                   {viewAdvance.description || "No description provided."}

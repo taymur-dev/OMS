@@ -46,7 +46,7 @@ export const CustomerViewModal = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> Customer Name
+                  <FaUser className="text-blue-400" /> Customer Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {customerDetail.customerName}
@@ -63,7 +63,7 @@ export const CustomerViewModal = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaPhoneAlt className="text-gray-400" /> Contact Number
+                  <FaPhoneAlt className="text-green-400" /> Contact Number
                 </label>
                 <p className="text-gray-800 font-medium">
                   {customerDetail.customerContact}
@@ -71,7 +71,7 @@ export const CustomerViewModal = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaMapMarkerAlt className="text-gray-400" /> Personal Address
+                  <FaMapMarkerAlt className="text-yellow-400" /> Personal Address
                 </label>
                 <p className="text-gray-800 font-medium break-words">
                   {customerDetail.customerAddress}
@@ -88,7 +88,7 @@ export const CustomerViewModal = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaBuilding className="text-gray-400" /> Company Name
+                  <FaBuilding className="text-red-400" /> Company Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {customerDetail.companyName}
@@ -96,7 +96,7 @@ export const CustomerViewModal = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaMapMarkerAlt className="text-gray-400" /> Company Address
+                  <FaMapMarkerAlt className="text-purple-400" /> Company Address
                 </label>
                 <p className="text-gray-800 font-medium break-words">
                   {customerDetail.companyAddress}

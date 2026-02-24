@@ -35,7 +35,7 @@ export const ViewAsset = ({ setIsOpenModal, viewAsset }: ViewAssetProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaBox className="text-gray-400" /> Asset Name
+                  <FaBox className="text-blue-400" /> Asset Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewAsset.asset_name}
@@ -43,7 +43,7 @@ export const ViewAsset = ({ setIsOpenModal, viewAsset }: ViewAssetProps) => {
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaTag className="text-gray-400" /> Category
+                  <FaTag className="text-green-400" /> Category
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewAsset.category_name}
@@ -60,7 +60,7 @@ export const ViewAsset = ({ setIsOpenModal, viewAsset }: ViewAssetProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> Date Added
+                  <FaCalendarAlt className="text-red-400" /> Date Added
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewAsset.date
@@ -84,7 +84,7 @@ export const ViewAsset = ({ setIsOpenModal, viewAsset }: ViewAssetProps) => {
             </h3>
             <div className="pt-2">
               <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                <FaFileAlt className="text-gray-400" /> Description
+                <FaFileAlt className="text-yellow-400" /> Description
               </label>
               <p className="text-gray-800 font-medium mt-1 leading-relaxed">
                 {viewAsset.description || "No description provided."}

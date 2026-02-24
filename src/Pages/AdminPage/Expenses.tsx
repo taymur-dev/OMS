@@ -113,7 +113,6 @@ export const Expenses = ({ triggerModal }: { triggerModal: number }) => {
   return (
     <div className="flex flex-col flex-grow bg-gray overflow-hidden">
       <div className="min-h-screen w-full flex flex-col  bg-white">
-
         <div className="p-2">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
             {/* Left Side: Show entries */}
@@ -154,8 +153,8 @@ export const Expenses = ({ triggerModal }: { triggerModal: number }) => {
              text-sm sticky top-0 z-10 p-2"
             >
               <span>Sr#</span>
-              <span>Expense Name</span>
               <span>Category</span>
+              <span>Expense Name</span>
               <span>Amount</span>
               <span className="text-center">Actions</span>
             </div>
@@ -174,8 +173,8 @@ export const Expenses = ({ triggerModal }: { triggerModal: number }) => {
                    text-sm p-2 hover:bg-gray-50 transition"
                   >
                     <span>{(pageNo - 1) * limit + index + 1}</span>
-                    <span className="truncate">{expense.expenseName}</span>
                     <span className="truncate">{expense.categoryName}</span>
+                    <span className="truncate">{expense.expenseName}</span>
                     <span className="font-medium">
                       {expense.amount.toLocaleString()}
                     </span>

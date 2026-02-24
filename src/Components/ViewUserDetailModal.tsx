@@ -48,7 +48,7 @@ export const ViewUserDetailModal = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> User Name
+                  <FaUser className="text-blue-400" /> User Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewUserDetail.name}
@@ -56,7 +56,7 @@ export const ViewUserDetailModal = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaTag className="text-gray-400" /> Role
+                  <FaTag className="text-green-400" /> Role
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewUserDetail.role}
@@ -73,7 +73,7 @@ export const ViewUserDetailModal = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaEnvelope className="text-gray-400" /> Email Address
+                  <FaEnvelope className="text-yellow-400" /> Email Address
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewUserDetail.email}
@@ -81,7 +81,7 @@ export const ViewUserDetailModal = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaIdCard className="text-gray-400" /> CNIC / ID
+                  <FaIdCard className="text-orange-400" /> CNIC / ID
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewUserDetail.cnic}
@@ -98,7 +98,7 @@ export const ViewUserDetailModal = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaMapMarkerAlt className="text-gray-400" /> Address
+                  <FaMapMarkerAlt className="text-red-400" /> Address
                 </label>
                 <p className="text-gray-800 font-medium break-words">
                   {viewUserDetail.address || "N/A"}
@@ -106,7 +106,7 @@ export const ViewUserDetailModal = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-gray-400" /> Joined Date
+                  <FaCalendarAlt className="text-purple-400" /> Joined Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {new Date(viewUserDetail.date)

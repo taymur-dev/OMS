@@ -299,7 +299,10 @@ export const MainContent = () => {
   return (
     <div className="w-full h-full overflow-y-auto p-4 md:p-6 space-y-5 bg-gray-50">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <div onClick={() => navigate("/users")} className="cursor-pointer">
+        <div
+          onClick={() => navigate("/people?tab=USERS")}
+          className="cursor-pointer"
+        >
           <Card
             titleName="Users"
             totalUser="Total Users"
@@ -319,7 +322,10 @@ export const MainContent = () => {
           />
         </div>
 
-        <div onClick={() => navigate("/todo")} className="cursor-pointer">
+        <div
+          onClick={() => navigate("/performance")}
+          className="cursor-pointer"
+        >
           <Card
             titleName="Todo's"
             totalUser="Active Todo's"
@@ -330,9 +336,10 @@ export const MainContent = () => {
         </div>
 
         <div
-          onClick={() => navigate("/expensesCatogries")}
+          onClick={() => navigate("/expenses?tab=CATEGORY")}
           className="cursor-pointer"
         >
+          {" "}
           <Card
             titleName="Expense Categories"
             totalUser="Total Categories"
@@ -352,7 +359,10 @@ export const MainContent = () => {
           />
         </div>
 
-        <div onClick={() => navigate("/sales")} className="cursor-pointer">
+        <div
+          onClick={() => navigate("/sales?tab=SALE")}
+          className="cursor-pointer"
+        >
           <Card
             titleName="Sales"
             totalUser="Total Sales Count"
@@ -362,7 +372,10 @@ export const MainContent = () => {
           />
         </div>
 
-        <div onClick={() => navigate("/customers")} className="cursor-pointer">
+        <div
+          onClick={() => navigate("/people?tab=CUSTOMERS")}
+          className="cursor-pointer"
+        >
           <Card
             titleName="Total Customers"
             totalUser="Registered Customers"
