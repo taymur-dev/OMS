@@ -38,13 +38,13 @@ export const HumanResources = () => {
             <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
               {activeTab === "LIFELINE" && (
                 <CustomButton
-                  label="Add Employee Lifeline"
+                  label="Add Lifeline"
                   handleToggle={() => handleAddClick("LIFELINE")}
                 />
               )}
               {activeTab === "WITHDRAW" && (
                 <CustomButton
-                  label="Add Employee Withdraw"
+                  label="Add Withdraw"
                   handleToggle={() => handleAddClick("WITHDRAW")}
                 />
               )}
@@ -97,7 +97,7 @@ export const HumanResources = () => {
         </div>
 
         {/* 3) Content Area */}
-        <div className="flex-grow p-2 sm:p-4 overflow-auto">
+        <div className="flex-grow p-1 sm:p-4 overflow-auto">
           {activeTab === "LIFELINE" ? (
             <EmployeeLifeline
               triggerAdd={

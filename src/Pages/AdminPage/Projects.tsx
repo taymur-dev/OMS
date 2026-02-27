@@ -1,19 +1,25 @@
 import { useState } from "react";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
+import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
+
 import { ProjectsDetails } from "./ProjectsDetails";
 import { ProjectsCatogries } from "../ProjectsCategories";
 import { AssignProjects } from "./AssignProjects";
 import { useAppSelector } from "../../redux/Hooks";
-import { FolderKanban, Layers, UserPlus } from "lucide-react";
 import { Footer } from "../../Components/Footer";
 
-type TabType = "CATEGORY" | "DETAILS" | "ASSIGN" | "";
+type TabType = "CATEGORY" | "DETAILS" | "ASSIGN";
+const entriesOptions = [5, 10, 15, 20, 30];
 
 export const Projects = () => {
-  const [activeTab, setActiveTab] = useState<TabType>("DETAILS");
   const { currentUser } = useAppSelector((state) => state.officeState);
   const isAdmin = currentUser?.role === "admin";
+
+  // Lifted states for Search and Pagination UI consistency
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedValue, setSelectedValue] = useState(10);
+  const [activeTab, setActiveTab] = useState<TabType>("DETAILS");
 
   const [triggerModal, setTriggerModal] = useState<{
     tab: TabType;
@@ -28,30 +34,31 @@ export const Projects = () => {
   };
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-1 sm:p-2 rounded-lg bg-gray-100 overflow-hidden">
+    <div className="flex flex-col flex-grow shadow-lg p-0.5 sm:p-0.5 rounded-lg bg-gray-100 overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white rounded-md">
-        {/* Header */}
+        
+        {/* 1. Header Section */}
         <TableTitle
           tileName="Projects"
           rightElement={
             <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
               {activeTab === "DETAILS" && isAdmin && (
                 <CustomButton
-                  label="+ Projects"
+                  label="Add Projects"
                   handleToggle={() => handleActionClick("DETAILS")}
                 />
               )}
 
               {activeTab === "CATEGORY" && isAdmin && (
                 <CustomButton
-                  label="+ Categories"
+                  label="Add Categories"
                   handleToggle={() => handleActionClick("CATEGORY")}
                 />
               )}
 
               {activeTab === "ASSIGN" && (
                 <CustomButton
-                  label="+ Assign"
+                  label="Assign"
                   handleToggle={() => handleActionClick("ASSIGN")}
                 />
               )}
@@ -59,78 +66,79 @@ export const Projects = () => {
           }
         />
 
-        {/* Tab Navigation */}
-        <div className="flex flex-wrap lg:flex-nowrap items-center gap-1 px-2 sm:px-4  bg-white border-b border-gray-300">
-          {isAdmin && (
-            <button
-              onClick={() => setActiveTab("DETAILS")}
-              className={`flex items-center justify-center gap-2 flex-1 lg:flex-none px-2 sm:px-6 py-2.5
-               text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-                 activeTab === "DETAILS"
-                   ? "bg-indigo-900 text-white shadow-md"
-                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-               }`}
-            >
-              <FolderKanban size={16} className="sm:w-4 sm:h-4" />
-              <span className="truncate">Projects</span>
-              <span className="hidden sm:inline">Details</span>
-            </button>
-          )}
+        {/* 2. Sub-Header: Tabs, Search, and Page Size (The People.tsx UI) */}
+        <div className="px-4 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
+          
+          {/* Tab Navigation */}
+          <div className="flex w-full sm:w-auto p-1 bg-[#F1F5F9] rounded-xl border border-gray-200">
+            {(["DETAILS", "CATEGORY", "ASSIGN"] as TabType[]).map((tab) => {
+              // Hide admin-only tabs if user isn't admin
+              if (!isAdmin && (tab === "DETAILS" || tab === "CATEGORY")) return null;
 
-          {isAdmin && (
-            <button
-              onClick={() => setActiveTab("CATEGORY")}
-              className={`flex items-center justify-center gap-2 flex-1 lg:flex-none px-2 sm:px-6 py-2.5
-               text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-                 activeTab === "CATEGORY"
-                   ? "bg-indigo-900 text-white shadow-md"
-                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-               }`}
-            >
-              <Layers size={16} className="sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Project</span>
-              <span className="truncate"> Categories</span>
-            </button>
-          )}
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 text-sm font-bold transition-all duration-200 rounded-lg ${
+                    activeTab === tab
+                      ? "bg-white text-[#334155] shadow-sm"
+                      : "text-[#64748B] hover:text-[#334155]"
+                  }`}
+                >
+                  {tab === "DETAILS" ? "Details" : tab === "CATEGORY" ? "Categories" : "Assign"}
+                </button>
+              );
+            })}
+          </div>
 
-          <button
-            onClick={() => setActiveTab("ASSIGN")}
-            className={`flex items-center justify-center gap-2 flex-1 lg:flex-none px-2 sm:px-6 py-2.5
-               text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-                 activeTab === "ASSIGN"
-                   ? "bg-indigo-900 text-white shadow-md"
-                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-               }`}
-          >
-            <UserPlus size={16} className="sm:w-4 sm:h-4" />
-            <span className="truncate">Assign</span>
-            <span className="hidden sm:inline">Projects</span>
-          </button>
+          {/* Search and Entries Select */}
+          <div className="flex items-center flex-grow justify-end gap-3 max-w-2xl">
+            <div className="flex-grow">
+              <TableInputField
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+            </div>
+
+            <div className="flex items-center border border-gray-200 rounded-lg px-3 py-3 bg-white shadow-sm min-w-[140px]">
+              <select
+                value={selectedValue}
+                onChange={(e) => setSelectedValue(Number(e.target.value))}
+                className="bg-transparent outline-none text-sm font-medium text-gray-700 cursor-pointer w-full"
+              >
+                {entriesOptions.map((num) => (
+                  <option key={num} value={num}>
+                    {num} per page
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
-        {/* Content Area */}
-        <div className="flex-grow p-2 sm:p-4 overflow-auto">
+        {/* 3. Content Area */}
+        <div className="flex-grow p-1 sm:p-4 overflow-auto">
           {activeTab === "DETAILS" && isAdmin && (
             <ProjectsDetails
-              triggerModal={
-                triggerModal.tab === "DETAILS" ? triggerModal.count : 0
-              }
+              triggerModal={triggerModal.tab === "DETAILS" ? triggerModal.count : 0}
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
             />
           )}
 
           {activeTab === "CATEGORY" && isAdmin && (
             <ProjectsCatogries
-              triggerModal={
-                triggerModal.tab === "CATEGORY" ? triggerModal.count : 0
-              }
+              triggerModal={triggerModal.tab === "CATEGORY" ? triggerModal.count : 0}
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
             />
           )}
 
           {activeTab === "ASSIGN" && (
             <AssignProjects
-              triggerModal={
-                triggerModal.tab === "ASSIGN" ? triggerModal.count : 0
-              }
+              triggerModal={triggerModal.tab === "ASSIGN" ? triggerModal.count : 0}
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
             />
           )}
         </div>

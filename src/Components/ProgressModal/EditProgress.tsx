@@ -200,14 +200,14 @@ export const EditProgress = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
-      <div className="w-[42rem] max-h-[28rem] bg-white mx-auto rounded border border-indigo-900">
+      <div className="w-[42rem] max-h-[28rem] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form
           onSubmit={handlerSubmitted}
           onKeyDown={(e) => {
             if (e.key === "Enter") e.preventDefault();
           }}
         >
-          <div className="bg-indigo-900 rounded px-6">
+          <div className="bg-white rounded-xl border-t-5 border-blue-400">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -217,15 +217,17 @@ export const EditProgress = ({
           </div>
 
           <div className="mx-2  py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3">
-            {currentUser?.role === "admin" && (
-              <UserSelect
-                labelName="Employees*"
-                name="employee_id"
-                value={updateProgress.employee_id}
-                handlerChange={handlerChange}
-                optionData={userOptions}
-              />
-            )}
+            <div className="md:col-span-2">
+              {currentUser?.role === "admin" && (
+                <UserSelect
+                  labelName="Employees*"
+                  name="employee_id"
+                  value={updateProgress.employee_id}
+                  handlerChange={handlerChange}
+                  optionData={userOptions}
+                />
+              )}
+            </div>
 
             <OptionField
               labelName="Project*"
@@ -240,15 +242,13 @@ export const EditProgress = ({
               inital="Please Select Project"
             />
 
-            <div className="md:col-span-2">
-              <InputField
-                labelName="Date*"
-                name="date"
-                type="date"
-                handlerChange={handlerChange}
-                value={updateProgress.date}
-              />
-            </div>
+            <InputField
+              labelName="Date*"
+              name="date"
+              type="date"
+              handlerChange={handlerChange}
+              value={updateProgress.date}
+            />
 
             <div className="md:col-span-2">
               <TextareaField
@@ -260,7 +260,7 @@ export const EditProgress = ({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

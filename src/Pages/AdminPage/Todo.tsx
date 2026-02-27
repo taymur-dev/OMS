@@ -1,17 +1,18 @@
+import { useCallback, useEffect, useState, useMemo } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { RiInboxArchiveLine } from "react-icons/ri";
+
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
-import { useCallback, useEffect, useState, useMemo } from "react";
 import { AddTodo } from "../../Components/TodoModals/AddTodo";
 import { UpdateTodo, TodoType } from "../../Components/TodoModals/UpdateTodo";
 import { ViewTodo } from "../../Components/TodoModals/ViewTodo";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
-import axios from "axios";
-import { toast } from "react-toastify";
+import { Loader } from "../../Components/LoaderComponent/Loader";
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
@@ -19,14 +20,21 @@ import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
-import { Loader } from "../../Components/LoaderComponent/Loader";
 
 type ALLTODOT = TodoType;
 type TODOT = "Add" | "Edit" | "Delete" | "";
 
-const numbers = [10, 25, 50];
+interface TodoProps {
+  triggerModal: number;
+  externalSearch: string;
+  externalPageSize: number;
+}
 
-export const Todo = ({ triggerModal }: { triggerModal: number }) => {
+export const Todo = ({
+  triggerModal,
+  externalSearch,
+  externalPageSize,
+}: TodoProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
@@ -35,22 +43,11 @@ export const Todo = ({ triggerModal }: { triggerModal: number }) => {
   const [selectedTodo, setSelectedTodo] = useState<ALLTODOT | null>(null);
   const [modalType, setModalType] = useState<TODOT>("");
   const [catchId, setCatchId] = useState<number | null>(null);
+  const [pageNo, setPageNo] = useState(1);
+  const [viewTodo, setViewTodo] = useState<ALLTODOT | null>(null);
 
   const token = currentUser?.token;
   const id = currentUser?.userId;
-
-  const [pageNo, setPageNo] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [viewTodo, setViewTodo] = useState<ALLTODOT | null>(null);
-
-  const handleIncrementPageButton = () => setPageNo((prev) => prev + 1);
-  const handleDecrementPageButton = () =>
-    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
-
-  const toggleModal = (type: TODOT) => {
-    setModalType((prev) => (prev === type ? "" : type));
-  };
 
   const getAllTodos = useCallback(async () => {
     try {
@@ -68,258 +65,223 @@ export const Todo = ({ triggerModal }: { triggerModal: number }) => {
       );
       setAllTodos(sortedTodos);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }, [token, currentUser?.role, id]);
 
-  const handleClickEditButton = (todo: ALLTODOT) => {
-    setSelectedTodo(todo);
-    toggleModal("Edit");
-  };
-
-  const handleClickDeleteButton = (id: number) => {
-    setCatchId(id);
-    toggleModal("Delete");
-  };
-
-  const handleDeleteTodo = async () => {
-    if (!catchId) return;
-    try {
-      await axios.patch(
-        `${BASE_URL}/api/admin/deleteTodo/${catchId}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      toast.success("Todo has been deleted successfully");
-
-      await getAllTodos();
-      toggleModal("");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleUpdateTodo = (updatedTodo: TodoType) => {
-    setAllTodos((prev) =>
-      prev.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo)),
-    );
-  };
-
   useEffect(() => {
     getAllTodos();
-    document.title = "(OMS)ALL Todos";
+    document.title = "(OMS) ALL Todos";
     dispatch(navigationStart());
-    setTimeout(() => {
-      dispatch(navigationSuccess("TODOS"));
-    }, 1000);
+    setTimeout(() => dispatch(navigationSuccess("TODOS")), 500);
   }, [dispatch, getAllTodos]);
 
-   useEffect(() => {
-      if (triggerModal > 0) {
-        setModalType("Add");
-      }
-    }, [triggerModal]);
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
+
+  useEffect(() => {
+    if (triggerModal > 0) setModalType("Add");
+  }, [triggerModal]);
 
   const filteredTodos = useMemo(() => {
     return allTodos.filter(
       (todo) =>
-        todo.task.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        todo.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        todo.employee_id?.toString().includes(searchTerm),
+        todo.task.toLowerCase().includes(externalSearch.toLowerCase()) ||
+        todo.employeeName
+          ?.toLowerCase()
+          .includes(externalSearch.toLowerCase()) ||
+        todo.completionStatus
+          ?.toLowerCase()
+          .includes(externalSearch.toLowerCase()),
     );
-  }, [allTodos, searchTerm]);
+  }, [allTodos, externalSearch]);
 
-  const paginatedTodos = useMemo(() => {
-    const startIndex = (pageNo - 1) * rowsPerPage;
-    const endIndex = startIndex + rowsPerPage;
-    return filteredTodos.slice(startIndex, endIndex);
-  }, [filteredTodos, pageNo, rowsPerPage]);
+  const totalNum = filteredTodos.length;
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const endIndex = startIndex + externalPageSize;
+  const paginatedTodos = filteredTodos.slice(startIndex, endIndex);
+
+  const handleIncrementPageButton = () => {
+    if (pageNo < Math.ceil(totalNum / externalPageSize))
+      setPageNo((prev) => prev + 1);
+  };
+  const handleDecrementPageButton = () => {
+    if (pageNo > 1) setPageNo((prev) => prev - 1);
+  };
+
+  const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return "-";
+    return new Date(dateString)
+      .toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })
+      .replace(/ /g, "-");
+  };
 
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col bg-white">
-       
-
-
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            {/* Left Side: Show entries */}
-            <div className="text-sm flex items-center">
-              <span>Show</span>
-              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                <select
-                  value={rowsPerPage}
-                  onChange={(e) => {
-                    setRowsPerPage(Number(e.target.value));
-                    setPageNo(1);
-                  }}
-                  className="bg-transparent outline-none py-1 cursor-pointer"
-                >
-                  {numbers.map((num, index) => (
-                    <option key={index} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      <div className="overflow-auto px-3 sm:px-0">
+        <div className="min-w-[1000px]">
+          {/* Header Section aligned with UsersDetails */}
+          <div className="px-0.5 pt-0.5">
+            <div className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm">
+              <span className="text-left">Sr#</span>
+              <span className="text-left">
+                {currentUser?.role === "admin" ? "User" : "Task ID"}
               </span>
-              <span className="hidden xs:inline">entries</span>
+              <span className="text-left">Task Detail</span>
+              <span className="text-left">Start</span>
+              <span className="text-left">End</span>
+              <span className="text-left">Deadline</span>
+              <span className="text-left">Status</span>
+              <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
-
-            {/* Right Side: Search Input */}
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
           </div>
-        </div>
 
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto">
-          <div className="min-w-[900px]">
-            {/* Sticky Table Header */}
-            <div
-              className="grid grid-cols-8 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
-            >
-              <span>Sr#</span>
-              {/* Logic maintained: showing Employee only if admin, but keeping grid alignment */}
-              <span>{currentUser?.role === "admin" ? "user" : ""}</span>
-              <span>Tasks</span>
-              <span>Start Date</span>
-              <span>End Date</span>
-              <span>Deadline</span>
-              <span>Completion Status</span>
-              <span className="text-center">Actions</span>
-            </div>
-
-            {/* Table Body */}
+          {/* Body Section */}
+          <div className="px-0.5 sm:px-1 py-2">
             {paginatedTodos.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
-                No records available at the moment!
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">No tasks available!</p>
               </div>
             ) : (
-              paginatedTodos.map((todo, index) => {
-                const startDate = todo.startDate
-                  ? new Date(todo.startDate)
-                      .toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })
-                      .replace(/ /g, "-")
-                  : "-";
-                const endDate = todo.endDate
-                  ? new Date(todo.endDate)
-                      .toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })
-                      .replace(/ /g, "-")
-                  : "-";
-                const deadline = todo.deadline
-                  ? new Date(todo.deadline)
-                      .toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })
-                      .replace(/ /g, "-")
-                  : "-";
-
-                return (
+              <div className="flex flex-col gap-2">
+                {paginatedTodos.map((todo, index) => (
                   <div
                     key={todo.id}
-                    className="grid grid-cols-8 border-b border-x border-gray-200 text-gray-800 items-center
-                     text-sm p-2 hover:bg-gray-50 transition"
+                    className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_1fr_1fr_auto] items-center px-3 py-2 gap-3 text-sm bg-white
+                     border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
-                    <span>{(pageNo - 1) * rowsPerPage + index + 1}</span>
-                    <span className="truncate">
-                      {currentUser?.role === "admin"
-                        ? (todo.employeeName ?? "-")
-                        : ""}
+                    {/* Sr# */}
+                    <span className="text-gray-500 font-medium">
+                      {startIndex + index + 1}
                     </span>
-                    <span className="truncate">{todo.task}</span>
-                    <span>{startDate}</span>
-                    <span>{endDate}</span>
-                    <span>{deadline}</span>
-                    <span>
+
+                    {/* User Info (Admin) or ID */}
+                    <div className="flex items-center gap-3 overflow-hidden">
+                      <span className="truncate  text-gray-800 text-sm">
+                        {currentUser?.role === "admin"
+                          ? todo.employeeName || "Unassigned"
+                          : `#${todo.id}`}
+                      </span>
+                    </div>
+
+                    {/* Task Detail */}
+                    <div className="text-gray-600 truncate" title={todo.task}>
+                      {todo.task}
+                    </div>
+
+                    {/* Start/End Dates */}
+                    <div className="flex flex-col text-xs text-gray-600">
+                      <span>{formatDate(todo.startDate)}</span>
+                    </div>
+
+                    <div
+                      className="text-gray-600 truncate"
+                      title={todo.endDate}
+                    >
+                      {formatDate(todo.endDate)}
+                    </div>
+
+                    {/* Deadline & Status Badge */}
+                    <div className="flex flex-col gap-1">
+                      <span className="text-gray-600">
+                        {formatDate(todo.deadline)}
+                      </span>
+                    </div>
+
+                    <div>
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        className={`px-2 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider ${
                           todo.completionStatus === "Completed"
-                            ? "bg-green-700 text-white"
+                            ? "bg-green-100 text-green-600 border border-green-200"
                             : todo.completionStatus === "Defer"
-                              ? "bg-blue-700 text-white"
-                              : "bg-orange-500 text-white"
+                              ? "bg-blue-100 text-blue-600 border border-blue-200"
+                              :"bg-orange-100 text-orange-600 border border-orange-200"
                         }`}
                       >
                         {todo.completionStatus || "Pending"}
                       </span>
-                    </span>
-                    <span className="flex flex-nowrap justify-center gap-1">
-                      <EditButton
-                        handleUpdate={() => handleClickEditButton(todo)}
-                      />
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center justify-end gap-1 w-[140px]">
                       <ViewButton handleView={() => setViewTodo(todo)} />
-                      <DeleteButton
-                        handleDelete={() => handleClickDeleteButton(todo.id)}
+                      <EditButton
+                        handleUpdate={() => {
+                          setSelectedTodo(todo);
+                          setModalType("Edit");
+                        }}
                       />
-                    </span>
+                      <DeleteButton
+                        handleDelete={() => {
+                          setCatchId(todo.id);
+                          setModalType("Delete");
+                        }}
+                      />
+                    </div>
                   </div>
-                );
-              })
+                ))}
+              </div>
             )}
           </div>
         </div>
-
-        {/* 4) Pagination placed under the table */}
-        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
-          <ShowDataNumber
-            start={
-              filteredTodos.length === 0 ? 0 : (pageNo - 1) * rowsPerPage + 1
-            }
-            end={Math.min(pageNo * rowsPerPage, filteredTodos.length)}
-            total={filteredTodos.length}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={handleDecrementPageButton}
-            handleIncrementPageButton={handleIncrementPageButton}
-          />
-        </div>
       </div>
 
-      {/* --- MODALS SECTION --- */}
-      {modalType === "Add" && (
-        <AddTodo setModal={() => toggleModal("")} getAllTodos={getAllTodos} />
-      )}
+      {/* Pagination Bar */}
+      <div className="flex flex-row items-center justify-between p-1">
+        <ShowDataNumber
+          start={totalNum === 0 ? 0 : startIndex + 1}
+          end={Math.min(endIndex, totalNum)}
+          total={totalNum}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
+      </div>
 
+      {/* Modals */}
+      {modalType === "Add" && (
+        <AddTodo setModal={() => setModalType("")} getAllTodos={getAllTodos} />
+      )}
       {modalType === "Edit" && selectedTodo && (
         <UpdateTodo
-          setModal={() => toggleModal("")}
+          setModal={() => setModalType("")}
           seleteTodo={selectedTodo}
-          onUpdate={handleUpdateTodo}
+          onUpdate={getAllTodos}
         />
       )}
-
       {viewTodo && (
         <ViewTodo
           setIsOpenModal={() => setViewTodo(null)}
           viewTodo={viewTodo}
         />
       )}
-
       {modalType === "Delete" && (
         <ConfirmationModal
-          isOpen={() => toggleModal("Delete")}
-          onClose={() => toggleModal("")}
-          onConfirm={handleDeleteTodo}
+          isOpen={() => setModalType("Delete")}
+          onClose={() => setModalType("")}
+          onConfirm={async () => {
+            if (!catchId) return;
+            await axios.patch(
+              `${BASE_URL}/api/admin/deleteTodo/${catchId}`,
+              {},
+              { headers: { Authorization: `Bearer ${token}` } },
+            );
+            toast.success("Deleted successfully");
+            getAllTodos();
+            setModalType("");
+          }}
         />
       )}
-
-      
     </div>
   );
 };

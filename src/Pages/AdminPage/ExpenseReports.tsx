@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { InputField } from "../../Components/InputFields/InputField";
@@ -17,6 +16,7 @@ import {
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPrint } from "@fortawesome/free-solid-svg-icons";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 type ExpenseT = {
   id: number;
@@ -32,7 +32,15 @@ type CategoryT = {
   categoryName: string;
 };
 
-export const ExpenseReports = () => {
+interface ExpenseReportsProps {
+  externalSearch: string;
+  externalPageSize: number;
+}
+
+export const ExpenseReports = ({
+  externalSearch,
+  externalPageSize,
+}: ExpenseReportsProps) => {
   const { currentUser } = useAppSelector((s) => s.officeState);
   const { loader } = useAppSelector((s) => s.NavigateState);
   const dispatch = useAppDispatch();
@@ -41,9 +49,7 @@ export const ExpenseReports = () => {
   const today = new Date().toLocaleDateString("sv-SE");
 
   // State
-  const [selectedValue] = useState(10);
   const [pageNo, setPageNo] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
   const [expenses, setExpenses] = useState<ExpenseT[]>([]);
   const [categories, setCategories] = useState<CategoryT[]>([]);
 
@@ -115,7 +121,7 @@ export const ExpenseReports = () => {
       .print-container { width: 100%; padding: 0; }
       .print-header { text-align: center; }
       .print-header h1 { font-size: 25pt; font-weight: bold; }
-      .print-header h2 { font-size: 20pt; font-weight: normal; }
+      .print-header h2 { font-size: 20pt; font-normal; }
       .date-range { text-align: left; font-size: 14pt; display: flex; justify-content: space-between; }
       table { width: 100%; border-collapse: collapse; border: 2px solid #000; }
       thead { background-color: #ccc; color: #000; }
@@ -151,6 +157,11 @@ export const ExpenseReports = () => {
     getExpenseCategories();
   }, [getExpenses, getExpenseCategories]);
 
+  // Reset page on search
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
+
   const filteredExpenses = useMemo(() => {
     return expenses
       .filter(
@@ -166,147 +177,154 @@ export const ExpenseReports = () => {
       .filter((e) =>
         `${e.expenseName} ${e.categoryName}`
           .toLowerCase()
-          .includes(searchTerm.toLowerCase()),
+          .includes(externalSearch.toLowerCase()),
       );
-  }, [expenses, appliedFilters, searchTerm]);
+  }, [expenses, appliedFilters, externalSearch]);
+
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const paginatedExpenses = filteredExpenses.slice(
+    startIndex,
+    startIndex + externalPageSize,
+  );
 
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
-
-
-        {/* --- FILTER SECTION (Matched to Sales Report Dimensions) --- */}
-        <div className="p-2 bg-white">
-          <div className="flex flex-wrap items-end gap-4">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow min-w-[300px]">
-              <InputField
-                labelName="From"
-                type="date"
-                value={reportData.startDate}
-                handlerChange={handleChange}
-                name="startDate"
-              />
-              <InputField
-                labelName="To"
-                type="date"
-                value={reportData.endDate}
-                handlerChange={handleChange}
-                name="endDate"
-              />
-
-              <OptionField
-                labelName="Category"
-                name="expenseCategoryId"
-                value={reportData.expenseCategoryId}
-                optionData={categories.map((c) => ({
-                  id: c.id,
-                  label: c.categoryName,
-                  value: c.id,
-                }))}
-                inital="All Categories"
-                handlerChange={handleChange}
-              />
-            </div>
-
-            {/* Buttons Container: Wraps and goes full-width on smaller screens */}
-            <div className="flex gap-2 flex-grow lg:flex-grow-0 min-w-full lg:min-w-fit">
-              <button
-                onClick={handleSearch}
-                className="bg-indigo-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center
-                 justify-center whitespace-nowrap"
-              >
-                <FontAwesomeIcon icon={faSearch} className="mr-2" />
-                Search
-              </button>
-
-              <button
-                onClick={printDiv}
-                className="bg-blue-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center 
-                justify-center whitespace-nowrap"
-              >
-                <FontAwesomeIcon icon={faPrint} className="mr-2" />
-                Print
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* --- SUB-HEADER SECTION (Search & Info) --- */}
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            <div className="text-sm font-bold text-gray-600">
-              From:{" "}
-              <span className="text-black">{appliedFilters.startDate}</span> To:{" "}
-              <span className="text-black">{appliedFilters.endDate}</span>
-            </div>
-
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      {/* --- FILTER SECTION --- */}
+      <div className="p-3 bg-white border-b border-gray-100">
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow">
+            <InputField
+              labelName="From"
+              type="date"
+              value={reportData.startDate}
+              handlerChange={handleChange}
+              name="startDate"
+            />
+            <InputField
+              labelName="To"
+              type="date"
+              value={reportData.endDate}
+              handlerChange={handleChange}
+              name="endDate"
+            />
+            <OptionField
+              labelName="Category"
+              name="expenseCategoryId"
+              value={reportData.expenseCategoryId}
+              optionData={categories.map((c) => ({
+                id: c.id,
+                label: c.categoryName,
+                value: c.id,
+              }))}
+              inital="All Categories"
+              handlerChange={handleChange}
             />
           </div>
-        </div>
 
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto">
-          <div id="myDiv" className="min-w-[800px]">
-            {/* Sticky Table Header - Using grid-cols-5 for Expense Fields */}
-            <div className="grid grid-cols-5 bg-indigo-900 text-white items-center font-semibold text-sm sticky top-0 z-10 p-2">
-              <span>Sr#</span>
-              <span>Category</span>
-              <span>Expense</span>
-              <span>Amount</span>
-              <span>Date</span>
-            </div>
-
-            {/* Table Body */}
-            {filteredExpenses.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10 border-x border-b border-gray-200">
-                No records available at the moment!
-              </div>
-            ) : (
-              filteredExpenses
-                .slice((pageNo - 1) * selectedValue, pageNo * selectedValue)
-                .map((e, index) => (
-                  <div
-                    key={e.id}
-                    className="grid grid-cols-5 border-b border-x border-gray-200 text-gray-800 items-center text-sm p-2 hover:bg-gray-50 transition"
-                  >
-                    <span>{(pageNo - 1) * selectedValue + index + 1}</span>
-                    <span className="truncate">{e.categoryName}</span>
-                    <span className="truncate">{e.expenseName}</span>
-                    <span>{e.amount}</span>
-                    <span>{e.date}</span>
-                  </div>
-                ))
-            )}
+          <div className="flex gap-2 w-full lg:w-auto">
+            <button
+              onClick={handleSearch}
+              className="bg-slate-700 text-white px-6 py-3 rounded-lg shadow-sm flex-1 lg:flex-none 
+            flex items-center justify-center transition-colors"
+            >
+              <FontAwesomeIcon icon={faSearch} className="mr-2" />
+              Search
+            </button>
+            <button
+              onClick={printDiv}
+              className="bg-blue-400 text-white px-6 py-3 rounded-lg shadow-sm flex-1 lg:flex-none 
+            flex items-center justify-center transition-colors"
+            >
+              <FontAwesomeIcon icon={faPrint} className="mr-2" />
+              Print
+            </button>
           </div>
-        </div>
-
-        {/* --- PAGINATION SECTION --- */}
-        <div className="flex flex-row items-center justify-between p-2">
-          <ShowDataNumber
-            start={
-              filteredExpenses.length === 0
-                ? 0
-                : (pageNo - 1) * selectedValue + 1
-            }
-            end={Math.min(pageNo * selectedValue, filteredExpenses.length)}
-            total={filteredExpenses.length}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={() =>
-              setPageNo((p) => Math.max(p - 1, 1))
-            }
-            handleIncrementPageButton={() => setPageNo((p) => p + 1)}
-          />
         </div>
       </div>
 
-      
+      {/* --- TABLE CONTENT AREA --- */}
+      <div className="overflow-auto px-3">
+        <div className="min-w-[1000px]">
+          {/* Header Row - Aligned with UsersDetails */}
+          <div className="pt-3">
+            <div className="grid grid-cols-[60px_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-4 py-3 shadow-sm">
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Category</span>
+              <span className="text-left">Expense Name</span>
+              <span className="text-left">Amount</span>
+              <span className="text-left pr-10">Date</span>
+            </div>
+          </div>
+
+          {/* Body Rows */}
+          <div className="py-2">
+            {paginatedExpenses.length === 0 ? (
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">
+                  No records available at the moment!
+                </p>
+                <p className="text-sm">
+                  Try adjusting your filters or date range.
+                </p>
+              </div>
+            ) : (
+              <div id="myDiv" className="flex flex-col gap-2">
+                {paginatedExpenses.map((e, index) => (
+                  <div
+                    key={e.id}
+                    className="grid grid-cols-[60px_1fr_1fr_1fr_auto] items-center px-4 py-3 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
+                  >
+                    <span className="text-gray-500 font-medium">
+                      {startIndex + index + 1}
+                    </span>
+
+                    {/* Category - Icons Removed */}
+                    <div className="text-gray-700 truncate">
+                      {e.categoryName}
+                    </div>
+
+                    {/* Expense Name - Icons Removed */}
+                    <div className="text-gray-800  truncate">
+                      {e.expenseName}
+                    </div>
+
+                    {/* Amount - Icons Removed */}
+                    <div className="text-gray-700 truncate">
+                      {e.amount.toLocaleString()}
+                    </div>
+
+                    {/* Date - Icons Removed */}
+                    <div className="text-gray-600 truncate">{e.date}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* --- PAGINATION SECTION --- */}
+      <div className="mt-auto flex flex-row items-center justify-between p-3 border-t border-gray-100 bg-white">
+        <ShowDataNumber
+          start={filteredExpenses.length === 0 ? 0 : startIndex + 1}
+          end={Math.min(startIndex + externalPageSize, filteredExpenses.length)}
+          total={filteredExpenses.length}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+          handleIncrementPageButton={() => {
+            if (
+              pageNo < Math.ceil(filteredExpenses.length / externalPageSize)
+            ) {
+              setPageNo((p) => p + 1);
+            }
+          }}
+        />
+      </div>
     </div>
   );
 };

@@ -29,9 +29,9 @@ export const CustomerViewModal = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
-      <div className="w-full max-w-4xl bg-white rounded overflow-hidden shadow-2xl border border-gray-300">
+      <div className="w-full max-w-4xl overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         {/* Header */}
-        <div className="bg-indigo-900 rounded px-4">
+        <div className="bg-white rounded-xl  border-t-5 border-blue-400">
           <div className="text-white">
             <Title setModal={setIsOpenModal}>CUSTOMER DETAILS</Title>
           </div>
@@ -40,13 +40,13 @@ export const CustomerViewModal = ({
         <div className="p-4 space-y-4">
           {/* Section 1: Basic Information */}
           <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-500 uppercase tracking-wider">
               Basic Information
             </h3>
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-blue-400" /> Customer Name
+                  <FaUser className="text-gray-400" /> Customer Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {customerDetail.customerName}
@@ -57,13 +57,13 @@ export const CustomerViewModal = ({
 
           {/* Section 2: Contact Details */}
           <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-500 uppercase tracking-wider">
               Contact & Location
             </h3>
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaPhoneAlt className="text-green-400" /> Contact Number
+                  <FaPhoneAlt className="text-gray-400" /> Contact Number
                 </label>
                 <p className="text-gray-800 font-medium">
                   {customerDetail.customerContact}
@@ -71,7 +71,7 @@ export const CustomerViewModal = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaMapMarkerAlt className="text-yellow-400" /> Personal Address
+                  <FaMapMarkerAlt className="text-gray-400" /> Personal Address
                 </label>
                 <p className="text-gray-800 font-medium break-words">
                   {customerDetail.customerAddress}
@@ -82,13 +82,13 @@ export const CustomerViewModal = ({
 
           {/* Section 3: Company Details */}
           <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-500 uppercase tracking-wider">
               Company Information
             </h3>
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaBuilding className="text-red-400" /> Company Name
+                  <FaBuilding className="text-gray-400" /> Company Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {customerDetail.companyName}
@@ -96,7 +96,7 @@ export const CustomerViewModal = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaMapMarkerAlt className="text-purple-400" /> Company Address
+                  <FaMapMarkerAlt className="text-gray-400" /> Company Address
                 </label>
                 <p className="text-gray-800 font-medium break-words">
                   {customerDetail.companyAddress}
@@ -107,7 +107,7 @@ export const CustomerViewModal = ({
         </div>
 
         {/* Footer Section */}
-        <div className="bg-indigo-900 p-3 flex justify-end">
+        <div className="bg-white p-3 flex justify-end">
           <button
             onClick={setIsOpenModal}
             className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-1 px-8 rounded shadow-sm transition-colors"

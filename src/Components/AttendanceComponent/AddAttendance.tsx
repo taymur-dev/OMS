@@ -165,14 +165,14 @@ export const AddAttendance = ({
   return (
     <div>
       <div className="fixed inset-0  bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50">
-        <div className="w-[42rem] max-h-[28rem]  bg-white mx-auto rounded border  border-indigo-900 ">
+        <div className="w-[42rem] max-h-[28rem]  overflow-y-auto bg-white mx-auto rounded-xl shadow-xl ">
           <form
             onSubmit={handlerSubmitted}
             onKeyDown={(e) => {
               if (e.key === "Enter") e.preventDefault();
             }}
           >
-            <div className="bg-indigo-900 rounded px-6">
+            <div className="bg-white rounded-xl border-t-5 border-blue-400">
               <Title
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
@@ -228,7 +228,7 @@ export const AddAttendance = ({
               />
             </div>
 
-            <div className="flex justify-end  gap-3 px-6 py-4 bg-indigo-900 rounded">
+            <div className="flex justify-end  gap-3 px-6 py-4 bg-white rounded-xl">
               <CancelBtn setModal={setModal} />
               <AddButton
                 loading={loading}

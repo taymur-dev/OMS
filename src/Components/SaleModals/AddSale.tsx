@@ -167,8 +167,8 @@ export const AddSale = ({ setModal, handleGetsales }: AddSaleProps) => {
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex px-4 items-center justify-center z-50">
-      <div className="w-[42rem] max-h-[90vh] flex flex-col bg-white rounded border border-indigo-900 shadow-xl overflow-hidden">
-        <div className="bg-indigo-900 px-6 py-0.8">
+      <div className="w-[42rem] max-h-[90vh] flex flex-col overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
+        <div className="bg-white rounded-xl border-t-5 border-blue-400">
           <Title
             setModal={setModal}
             className="text-white text-lg font-semibold uppercase tracking-wide"
@@ -225,8 +225,8 @@ export const AddSale = ({ setModal, handleGetsales }: AddSaleProps) => {
           </div>
 
           {/* CART TABLE */}
-          <div className="border rounded-lg overflow-hidden border-indigo-100">
-            <div className="grid grid-cols-5 bg-indigo-900 text-white text-xs font-bold border-b border-indigo-100 text-center">
+          <div className="border rounded-lg overflow-hidden border-blue-100">
+            <div className="grid grid-cols-5 bg-blue-400 text-white text-xs font-bold border-b border-blue-100 text-center">
               <span className="py-2">Sr</span>
               <span className="py-2 text-left">Project</span>
               <span className="py-2">QTY</span>
@@ -314,7 +314,7 @@ export const AddSale = ({ setModal, handleGetsales }: AddSaleProps) => {
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 px-6 py-3 bg-indigo-900 border-t border-indigo-900">
+        <div className="flex justify-end gap-3 px-6 py-3 bg-white">
           <CancelBtn setModal={closeModal} />
           <AddButton
             loading={loading}

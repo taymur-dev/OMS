@@ -140,7 +140,7 @@ export const UpdateLeave = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center px-4 justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-3xl bg-white rounded border border-indigo-900 overflow-auto shadow-lg">
+      <div className="w-full max-w-3xl overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form
           onSubmit={handleSubmit}
           className="flex flex-col"
@@ -149,7 +149,7 @@ export const UpdateLeave = ({
           }}
         >
           {/* Header */}
-          <div className="bg-indigo-900 rounded px-6">
+          <div className="bg-white rounded-xl border-t-5 border-blue-400">
             <Title
               setModal={setModal}
               className="text-white text-xl font-semibold"
@@ -207,7 +207,7 @@ export const UpdateLeave = ({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 px-6 py-2 bg-indigo-900 rounded border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-6 py-2 bg-white rounded ">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={submitting}

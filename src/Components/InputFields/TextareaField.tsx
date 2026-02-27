@@ -15,16 +15,16 @@ export const TextareaField = ({
   handlerChange,
   name,
   inputVal,
-  readOnly
+  readOnly,
 }: TextareaFieldProps) => {
   return (
     <div>
       <div className="flex flex-col">
-        <label className="text-black text-xs font-semibold">
+        <label className="text-gray-600 text-xs font-semibold">
           {labelName}
         </label>
         <textarea
-          className="rounded bg-white text-gray-800 border-1 border-indigo-900 px-2   rounded-lg"
+          className="rounded bg-white text-black shadow border-1 border-gray-200 px-2   rounded-lg"
           placeholder={placeHolder}
           onChange={handlerChange}
           name={name}

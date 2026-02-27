@@ -33,10 +33,10 @@ const Card = ({
       className={`
         flex flex-col items-center justify-center
         rounded-[12px] md:rounded-[24px] 
-        p-4  /* Increased padding for better visibility */
+        p-4
         border border-blue-400 hover:border-gray-100 shadow-sm
         transition-all duration-300 hover:shadow-md hover:-translate-y-1
-        w-full min-w-[100px] aspect-square
+        w-full min-w-[100px] 
         overflow-hidden
         ${style || "bg-white text-slate-800"} /* Fallback to white bg if no style */
       `}

@@ -66,7 +66,7 @@ export const UpdateAttendance = ({
       return {
         ...updatedAttendance,
         attendanceStatus: status || "absent",
-        
+
         clockIn:
           isInactive || updatedAttendance.clockIn === "00:00:00"
             ? ""
@@ -179,14 +179,14 @@ export const UpdateAttendance = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50">
-      <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded border border-indigo-900">
+      <div className="w-[42rem] max-h-[29rem] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form
           onSubmit={handlerSubmitted}
           onKeyDown={(e) => {
             if (e.key === "Enter") e.preventDefault();
           }}
         >
-          <div className="bg-indigo-900 rounded px-6">
+          <div className="bg-white rounded-xl border-t-5 border-blue-400">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -246,7 +246,7 @@ export const UpdateAttendance = ({
             />
           </div>
 
-          <div className="flex justify-end  gap-3 px-6 py-4 bg-indigo-900 rounded">
+          <div className="flex justify-end  gap-3 px-6 py-4 bg-white rounded">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

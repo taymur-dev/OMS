@@ -1,20 +1,25 @@
 import { useState } from "react";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
+import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { Promotion } from "./Promotion";
 import { Resignation } from "./Resignation";
 import { Rejoin } from "./Rejoin";
 import { useAppSelector } from "../../redux/Hooks";
-import { ArrowUpCircle, LogOut, RotateCcw } from "lucide-react";
 import { Footer } from "../../Components/Footer";
 
 // Define Tab Types
 type TabType = "PROMOTION" | "RESIGNATION" | "REJOIN";
+const entriesOptions = [5, 10, 15, 20, 30];
 
 export const Propulsive = () => {
   const [activeTab, setActiveTab] = useState<TabType>("PROMOTION");
   const { currentUser } = useAppSelector((state) => state.officeState);
   const isAdmin = currentUser?.role === "admin";
+
+  // Lifted states for Search and Pagination
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedValue, setSelectedValue] = useState(10);
 
   // Trigger state for Add buttons
   const [triggerModal, setTriggerModal] = useState<{
@@ -32,28 +37,28 @@ export const Propulsive = () => {
   return (
     <div className="flex flex-col flex-grow shadow-lg p-1 sm:p-2 rounded-lg bg-gray-100 overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white rounded-md">
-        {/* Table Title with Add buttons */}
+        {/* 1. Main Title Section */}
         <TableTitle
           tileName="Dynamics"
           rightElement={
             <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
               {!isAdmin && activeTab === "PROMOTION" && (
                 <CustomButton
-                  label="+ Promotion"
+                  label="Add Promotion"
                   handleToggle={() => handleActionClick("PROMOTION")}
                 />
               )}
 
               {activeTab === "RESIGNATION" && (
                 <CustomButton
-                  label="+ Resignation"
+                  label="Add Resignation"
                   handleToggle={() => handleActionClick("RESIGNATION")}
                 />
               )}
 
               {activeTab === "REJOIN" && (
                 <CustomButton
-                  label="+ Rejoining"
+                  label="Add Rejoining"
                   handleToggle={() => handleActionClick("REJOIN")}
                 />
               )}
@@ -61,58 +66,61 @@ export const Propulsive = () => {
           }
         />
 
-        {/* Tab Navigation */}
-        <div className="flex flex-wrap lg:flex-nowrap items-center gap-1 px-2 sm:px-4  bg-white border-b border-gray-300">
-          <button
-            onClick={() => setActiveTab("PROMOTION")}
-            className={`flex items-center justify-center gap-2 flex-1 lg:flex-none px-2 sm:px-6 py-2.5
-               text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-                 activeTab === "PROMOTION"
-                   ? "bg-indigo-900 text-white shadow-md"
-                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-               }`}
-          >
-            <ArrowUpCircle size={16} className="sm:w-4 sm:h-4" />
-            <span className="truncate">Promotion</span>
-            <span className="hidden sm:inline"> Requests</span>
-          </button>
+        {/* 2. Controls Section (Tabs + Search + Page Size) */}
+        <div className="px-4 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
+          {/* Tab Navigation Pill Style */}
+          <div className="flex w-full lg:w-auto p-1 bg-[#F1F5F9] rounded-xl border border-gray-200">
+            {(["PROMOTION", "RESIGNATION", "REJOIN"] as TabType[]).map(
+              (tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`flex-1 lg:flex-none px-4 sm:px-6 py-2 text-sm font-bold transition-all duration-200 rounded-lg ${
+                    activeTab === tab
+                      ? "bg-white text-[#334155] shadow-sm"
+                      : "text-[#64748B] hover:text-[#334155]"
+                  }`}
+                >
+                  {tab.charAt(0) + tab.slice(1).toLowerCase()}
+                </button>
+              ),
+            )}
+          </div>
 
-          <button
-            onClick={() => setActiveTab("RESIGNATION")}
-            className={`flex items-center justify-center gap-2 flex-1 lg:flex-none px-2 sm:px-6 py-2.5
-               text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-                 activeTab === "RESIGNATION"
-                   ? "bg-indigo-900 text-white shadow-md"
-                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-               }`}
-          >
-            <LogOut size={16} className="sm:w-4 sm:h-4" />
-            <span className="truncate">Resignation</span>
-            <span className="hidden sm:inline"> Requests</span>
-          </button>
+          {/* Search and Pagination Controls */}
+          <div className="flex items-center flex-grow justify-end gap-3 max-w-2xl">
+            <div className="flex-grow">
+              <TableInputField
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+            </div>
 
-          <button
-            onClick={() => setActiveTab("REJOIN")}
-            className={`flex items-center justify-center gap-2 flex-1 lg:flex-none px-2 sm:px-6 py-2.5
-               text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-                 activeTab === "REJOIN"
-                   ? "bg-indigo-900 text-white shadow-md"
-                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-               }`}
-          >
-            <RotateCcw size={16} className="sm:w-4 sm:h-4" />
-            <span className="truncate">Rejoin</span>
-            <span className="hidden sm:inline"> Requests</span>
-          </button>
+            <div className="flex items-center border border-gray-200 rounded-lg px-3 py-3 bg-white shadow-sm min-w-[140px]">
+              <select
+                value={selectedValue}
+                onChange={(e) => setSelectedValue(Number(e.target.value))}
+                className="bg-transparent outline-none text-sm font-medium text-gray-700 cursor-pointer w-full"
+              >
+                {entriesOptions.map((num) => (
+                  <option key={num} value={num}>
+                    {num} per page
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
-        {/* Content Area */}
+        {/* 3. Content Area */}
         <div className="flex-grow p-2 sm:p-4 overflow-auto">
           {activeTab === "PROMOTION" && (
             <Promotion
               triggerModal={
                 triggerModal.tab === "PROMOTION" ? triggerModal.count : 0
               }
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
             />
           )}
 
@@ -121,6 +129,8 @@ export const Propulsive = () => {
               triggerModal={
                 triggerModal.tab === "RESIGNATION" ? triggerModal.count : 0
               }
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
             />
           )}
 
@@ -129,6 +139,8 @@ export const Propulsive = () => {
               triggerModal={
                 triggerModal.tab === "REJOIN" ? triggerModal.count : 0
               }
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
             />
           )}
         </div>

@@ -69,9 +69,9 @@ export const ViewPromotion = ({
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md px-4 flex items-center justify-center z-50">
-      <div className="w-full max-w-2xl bg-white rounded overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
+      <div className="w-full max-w-2xl  flex flex-col max-h-[85vh] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         {/* Header */}
-        <div className="bg-indigo-900 rounded px-6">
+        <div className="bg-white rounded-xl border-t-5 border-blue-400">
           <Title
             setModal={setModal}
             className="text-white text-lg font-semibold"
@@ -88,8 +88,8 @@ export const ViewPromotion = ({
           >
             <div className="flex items-center gap-4">
               <div
-                className="h-14 w-14 bg-indigo-100 rounded-full flex items-center justify-center
-               text-indigo-600 shadow-inner"
+                className="h-14 w-14 bg-blue-100 rounded-full flex items-center justify-center
+               text-blue-600 shadow-inner"
               >
                 <FaUserTie size={24} />
               </div>
@@ -99,7 +99,7 @@ export const ViewPromotion = ({
                 </h2>
                 <p className="text-sm font-medium text-slate-500">
                   Employee ID:{" "}
-                  <span className="text-indigo-600">
+                  <span className="text-blue-600">
                     #{promotionData.employee_id}
                   </span>
                 </p>
@@ -151,7 +151,7 @@ export const ViewPromotion = ({
                       className={`p-5 rounded-xl border transition-all duration-300 shadow-sm hover:shadow-md 
                       ${
                         h.date === promotionData.date
-                          ? "bg-indigo-50/50 border-indigo-200 ring-2 ring-indigo-50"
+                          ? "bg-blue-50/50 border-blue-200 ring-2 ring-blue-50"
                           : "bg-white border-slate-200"
                       }`}
                     >
@@ -171,7 +171,7 @@ export const ViewPromotion = ({
                         <FaArrowRight className="text-slate-400 text-xs" />
 
                         {/* New Designation */}
-                        <div className="bg-indigo-100 px-3 py-1 rounded text-indigo-700 text-sm font-bold shadow-sm">
+                        <div className="bg-blue-100 px-3 py-1 rounded text-blue-700 text-sm font-bold shadow-sm">
                           {h.requested_designation}
                         </div>
                       </div>
@@ -197,7 +197,7 @@ export const ViewPromotion = ({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
+        <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
           <CancelBtn setModal={setModal} />
         </div>
       </div>

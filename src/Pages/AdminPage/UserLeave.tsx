@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
+import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { LeaveRequests } from "../AdminPage/LeaveRequests";
-import { FileText } from "lucide-react";
 import { Footer } from "../../Components/Footer";
 
-type TabType = "LEAVE" | "";
+type TabType = "LEAVE";
+const entriesOptions = [5, 10, 15, 20, 30];
 
 export const UserLeave = () => {
-  const [activeTab, setActiveTab] = useState<TabType>("LEAVE");
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedValue, setSelectedValue] = useState(10);
 
   const [triggerModal, setTriggerModal] = useState<{
     tab: TabType;
@@ -16,50 +19,63 @@ export const UserLeave = () => {
   }>({ tab: "LEAVE", count: 0 });
 
   const handleActionClick = (tab: TabType) => {
-    setActiveTab(tab);
-    setTriggerModal((prev) => ({ tab, count: prev.count + 1 }));
+    setTriggerModal((prev) => ({
+      tab,
+      count: prev.tab === tab ? prev.count + 1 : 1,
+    }));
   };
 
   return (
     <div className="flex flex-col flex-grow shadow-lg p-1 sm:p-2 rounded-lg bg-gray-100 overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white rounded-md">
-        {/* Header */}
+        {/* 1. Main Title Section */}
         <TableTitle
           tileName="Apply Leave"
           rightElement={
             <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
               <CustomButton
-                label="+ Leave"
+                label="Add Leave"
                 handleToggle={() => handleActionClick("LEAVE")}
               />
             </div>
           }
         />
 
-        {/* Tabs */}
-        <div className="flex items-center gap-1 px-2 sm:px-4  bg-white border-b border-gray-300">
-          <button
-            onClick={() => setActiveTab("LEAVE")}
-            className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-2 sm:px-6 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-              activeTab === "LEAVE"
-                ? "bg-indigo-900 text-white shadow-md"
-                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-            }`}
-          >
-            <FileText size={16} />
-            <span>Leave Requests</span>
-          </button>
+        {/* 2. Filters Section (Pill Removed) */}
+        <div className="px-4 py-4 border-b border-gray-100 flex flex-wrap items-center justify-end gap-4">
+          
+          {/* Search and Entries Filters */}
+          <div className="flex items-center flex-grow justify-end gap-3 max-w-2xl">
+            <div className="flex-grow">
+              <TableInputField
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+            </div>
+
+            <div className="flex items-center border border-gray-200 rounded-lg px-3 py-3 bg-white shadow-sm min-w-[140px]">
+              <select
+                value={selectedValue}
+                onChange={(e) => setSelectedValue(Number(e.target.value))}
+                className="bg-transparent outline-none text-sm font-medium text-gray-700 cursor-pointer w-full"
+              >
+                {entriesOptions.map((num) => (
+                  <option key={num} value={num}>
+                    {num} per page
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
-        {/* Content */}
+        {/* 3. Content Area */}
         <div className="flex-grow p-2 sm:p-4 overflow-auto">
-          {activeTab === "LEAVE" && (
-            <LeaveRequests
-              triggerAdd={triggerModal.tab === "LEAVE" ? triggerModal.count : 0}
-              externalSearch="" // Pass an empty string or a state variable
-              externalPageSize={10} // Pass a default number or a state variable
-            />
-          )}
+          <LeaveRequests
+            triggerAdd={triggerModal.tab === "LEAVE" ? triggerModal.count : 0}
+            externalSearch={searchTerm}
+            externalPageSize={selectedValue}
+          />
         </div>
       </div>
 

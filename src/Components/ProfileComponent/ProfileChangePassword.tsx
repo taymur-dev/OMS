@@ -72,10 +72,10 @@ export const ProfileChangePassword = ({
       className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm"
       onMouseDown={(e) => e.stopPropagation()}
     >
-      <div className="w-full max-w-lg bg-white rounded shadow-xl border border-indigo-900 overflow-hidden">
+      <div className="w-full max-w-lg overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form onSubmit={handlerSubmitted}>
           {/* Header */}
-          <div className="bg-indigo-900 px-6">
+          <div className="bg-white rounded-xl border-t-5 border-blue-400">
             <Title
               setModal={setModal}
               className="text-white text-xl font-semibold"
@@ -109,7 +109,7 @@ export const ProfileChangePassword = ({
             )}
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>

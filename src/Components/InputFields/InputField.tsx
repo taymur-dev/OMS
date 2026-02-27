@@ -29,8 +29,8 @@ export const InputField = ({
   icon,
 }: InputFieldProps) => {
   return (
-    <div className="flex flex-col gap-1">
-      <label className="text-gray-600 text-xs font-semibold uppercase">
+    <div className="flex flex-col">
+      <label className="text-gray-600 text-xs font-semibold">
         {labelName}
       </label>
 

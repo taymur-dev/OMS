@@ -1,29 +1,26 @@
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-
-import { ShowDataNumber } from "../Components/Pagination/ShowDataNumber";
-import { Pagination } from "../Components/Pagination/Pagination";
-import { TableInputField } from "../Components/TableLayoutComponents/TableInputField";
-
-import { EditButton } from "../Components/CustomButtons/EditButton";
-import { DeleteButton } from "../Components/CustomButtons/DeleteButton";
-import { ViewButton } from "../Components/CustomButtons/ViewButton";
-
-import { AddProgress } from "../Components/ProgressModal/AddProgress";
-import { EditProgress } from "../Components/ProgressModal/EditProgress";
-import { ViewProgress } from "../Components/ProgressModal/ViewProgress";
-
-import { ConfirmationModal } from "../Components/Modal/ComfirmationModal";
-import { Loader } from "../Components/LoaderComponent/Loader";
-
-import { BASE_URL } from "../Content/URL";
 import { useAppDispatch, useAppSelector } from "../redux/Hooks";
 import { navigationStart, navigationSuccess } from "../redux/NavigationSlice";
 import { toast } from "react-toastify";
 
-const numbers = [5, 10, 15, 20];
+// Components
+import { Pagination } from "../Components/Pagination/Pagination";
+import { ShowDataNumber } from "../Components/Pagination/ShowDataNumber";
+import { EditButton } from "../Components/CustomButtons/EditButton";
+import { DeleteButton } from "../Components/CustomButtons/DeleteButton";
+import { ViewButton } from "../Components/CustomButtons/ViewButton";
+import { Loader } from "../Components/LoaderComponent/Loader";
 
-type PROGRESST = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
+// Modals
+import { AddProgress } from "../Components/ProgressModal/AddProgress";
+import { EditProgress } from "../Components/ProgressModal/EditProgress";
+import { ViewProgress } from "../Components/ProgressModal/ViewProgress";
+import { ConfirmationModal } from "../Components/Modal/ComfirmationModal";
+
+// Icons & Utils
+import { BASE_URL } from "../Content/URL";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 export type ALLPROGRESST = {
   id: number;
@@ -35,32 +32,39 @@ export type ALLPROGRESST = {
   note: string;
 };
 
-export const Progress = ({ triggerModal }: { triggerModal: number }) => {
+interface ProgressProps {
+  triggerModal: number;
+  externalSearch: string;
+  externalPageSize: number;
+}
+
+export const Progress = ({
+  triggerModal,
+  externalSearch,
+  externalPageSize,
+}: ProgressProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
   const token = currentUser?.token;
 
   const [allProgress, setAllProgress] = useState<ALLPROGRESST[]>([]);
-  const [isOpenModal, setIsOpenModal] = useState<PROGRESST>("");
+  const [isOpenModal, setIsOpenModal] = useState<
+    "ADD" | "EDIT" | "DELETE" | ""
+  >("");
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
   const [viewProgressData, setViewProgressData] = useState<ALLPROGRESST | null>(
     null,
   );
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedProgress, setSelectedProgress] = useState<ALLPROGRESST | null>(
     null,
   );
-
   const [pageNo, setPageNo] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedValue, setSelectedValue] = useState(10);
 
   const handleGetAllProgress = useCallback(async () => {
     if (!token || !currentUser) return;
-
     try {
       const url =
         currentUser.role === "admin"
@@ -68,13 +72,11 @@ export const Progress = ({ triggerModal }: { triggerModal: number }) => {
           : `${BASE_URL}/api/user/getMyProgress`;
 
       const res = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${currentUser?.token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       setAllProgress(
-        Array.isArray(res.data) ? res.data.sort((a, b) => a.id - b.id) : [],
+        Array.isArray(res.data) ? res.data.sort((a, b) => b.id - a.id) : [],
       );
     } catch (error) {
       console.error("Failed to fetch progress:", error);
@@ -82,179 +84,170 @@ export const Progress = ({ triggerModal }: { triggerModal: number }) => {
     }
   }, [token, currentUser]);
 
-  const handleDeleteProgress = async () => {
-    if (!selectedId || !token) return;
-
-    try {
-      await axios.patch(`${BASE_URL}/api/admin/deleteProgress/${selectedId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      toast.success("Progress has been deleted successfully");
-
-      handleGetAllProgress();
-      setIsOpenModal("");
-      setSelectedId(null);
-    } catch (error) {
-      console.error("Failed to delete progress:", error);
-    }
-  };
-
-  const handleEdit = (row: ALLPROGRESST) => {
-    setSelectedProgress(row);
-    setIsOpenModal("EDIT");
-  };
-
-  const handleView = (row: ALLPROGRESST) => {
-    setViewProgressData(row);
-    setIsViewModalOpen(true);
-  };
-
-  const handleChangeShowData = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedValue(Number(e.target.value));
-    setPageNo(1);
-  };
-
-  const filteredProgress = allProgress.filter(
-    (p) =>
-      p.employeeName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.projectName?.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
-
-  const totalItems = filteredProgress.length;
-  const startIndex = (pageNo - 1) * selectedValue;
-  const endIndex = Math.min(startIndex + selectedValue, totalItems);
-  const paginatedProgress = filteredProgress.slice(startIndex, endIndex);
-
   useEffect(() => {
     handleGetAllProgress();
     document.title = "(OMS) PROGRESS";
-
     dispatch(navigationStart());
     setTimeout(() => dispatch(navigationSuccess("progress")), 500);
   }, [dispatch, handleGetAllProgress]);
 
+  // Sync with external triggers and reset page on search
   useEffect(() => {
-    if (triggerModal > 0) {
-      setIsOpenModal("ADD");
-    }
+    if (triggerModal > 0) setIsOpenModal("ADD");
   }, [triggerModal]);
+
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
 
   if (loader) return <Loader />;
 
+  // Logic for filtering and pagination
+  const filteredProgress = allProgress.filter(
+    (p) =>
+      p.employeeName?.toLowerCase().includes(externalSearch.toLowerCase()) ||
+      p.projectName?.toLowerCase().includes(externalSearch.toLowerCase()) ||
+      p.note?.toLowerCase().includes(externalSearch.toLowerCase()),
+  );
+
+  const totalItems = filteredProgress.length;
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const endIndex = startIndex + externalPageSize;
+  const paginatedProgress = filteredProgress.slice(startIndex, endIndex);
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString)
+      .toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })
+      .replace(/ /g, "-");
+  };
+
+  const handleDeleteProgress = async () => {
+    if (!selectedId || !token) return;
+    try {
+      await axios.patch(
+        `${BASE_URL}/api/admin/deleteProgress/${selectedId}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      toast.success("Progress deleted successfully");
+      handleGetAllProgress();
+      setIsOpenModal("");
+    } catch (error) {
+      console.log(error);
+
+      toast.error("Failed to delete progress");
+    }
+  };
+
   return (
-    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
-
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            {/* Left Side: Show entries */}
-            <div className="text-sm flex items-center">
-              <span>Show</span>
-              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                <select
-                  value={selectedValue}
-                  onChange={handleChangeShowData}
-                  className="bg-transparent outline-none py-1 cursor-pointer"
-                >
-                  {numbers.map((num, index) => (
-                    <option key={index} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-              </span>
-              <span className="hidden xs:inline">entries</span>
-            </div>
-
-            {/* Right Side: Search Input */}
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={(term) => {
-                setSearchTerm(term);
-                setPageNo(1);
-              }}
-            />
-          </div>
-        </div>
-
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto">
-          <div className="min-w-[900px]">
-            {/* Sticky Table Header */}
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      <div className="overflow-auto px-3 sm:px-0">
+        <div className="min-w-[900px]">
+          {/* HEADER SECTION - Matches UsersDetails */}
+          <div className="px-0.5 pt-0.5">
             <div
-              className={`grid ${currentUser?.role === "admin" ? "grid-cols-5" : "grid-cols-4"} 
-            bg-indigo-900 text-white items-center font-semibold text-sm sticky top-0 z-10 p-2`}
+              className={`grid ${currentUser?.role === "admin" ? "grid-cols-[60px_1.5fr_1fr_1fr_auto]" : "grid-cols-[60px_1.5fr_1fr_auto]"} 
+              bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm`}
             >
               <span>Sr#</span>
               {currentUser?.role === "admin" && <span>Employee</span>}
-              <span>Project</span>
-              <span>Date</span>
-              <span className="text-center">Actions</span>
+              <span>Project Name</span>
+              <span>Submission Date</span>
+              <span className="text-right pr-10">Actions</span>
             </div>
+          </div>
 
-            {/* Table Body */}
+          {/* BODY SECTION */}
+          <div className="px-0.5 py-2">
             {paginatedProgress.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
-                No records available at the moment!
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">
+                  No progress records found!
+                </p>
               </div>
             ) : (
-              paginatedProgress.map((item, index) => (
-                <div
-                  key={item.id}
-                  className={`grid ${currentUser?.role === "admin" ? "grid-cols-5" : "grid-cols-4"} 
-                border-b border-x border-gray-200 text-gray-800 items-center text-sm p-2 hover:bg-gray-50 transition`}
-                >
-                  <span>{startIndex + index + 1}</span>
-                  {currentUser?.role === "admin" && (
-                    <span className="truncate">{item.employeeName}</span>
-                  )}
-                  <span className="truncate">{item.projectName}</span>
-                  <span>
-                    {new Date(item.date)
-                      .toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })
-                      .replace(/ /g, "-")}
-                  </span>
-                  <span className="flex flex-nowrap justify-center gap-1">
-                    <EditButton handleUpdate={() => handleEdit(item)} />
-                    <ViewButton handleView={() => handleView(item)} />
-                    <DeleteButton
-                      handleDelete={() => {
-                        setSelectedId(item.id);
-                        setIsOpenModal("DELETE");
-                      }}
-                    />
-                  </span>
-                </div>
-              ))
+              <div className="flex flex-col gap-2">
+                {paginatedProgress.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className={`grid ${
+                      currentUser?.role === "admin"
+                        ? "grid-cols-[60px_1.5fr_1fr_1fr_auto]"
+                        : "grid-cols-[60px_1.5fr_1fr_auto]"
+                    } 
+                    items-center p-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30
+                     transition-colors shadow-sm`}
+                  >
+                    <span className="pl-4 text-gray-500 font-medium">
+                      {startIndex + index + 1}
+                    </span>
+
+                    {currentUser?.role === "admin" && (
+                      <div className="flex items-center gap-2   text-gray-700">
+                        {item.employeeName}
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <span className="truncate">{item.projectName}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <span>{formatDate(item.date)}</span>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-1 pr-2">
+                      <ViewButton
+                        handleView={() => {
+                          setViewProgressData(item);
+                          setIsViewModalOpen(true);
+                        }}
+                      />
+                      <EditButton
+                        handleUpdate={() => {
+                          setSelectedProgress(item);
+                          setIsOpenModal("EDIT");
+                        }}
+                      />
+                      <DeleteButton
+                        handleDelete={() => {
+                          setSelectedId(item.id);
+                          setIsOpenModal("DELETE");
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
-
-        {/* 4) Pagination placed under the table */}
-        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
-          <ShowDataNumber
-            start={totalItems === 0 ? 0 : startIndex + 1}
-            end={Math.min(endIndex, totalItems)}
-            total={totalItems}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={() =>
-              setPageNo((p) => Math.max(p - 1, 1))
-            }
-            handleIncrementPageButton={() =>
-              pageNo * selectedValue < totalItems && setPageNo((p) => p + 1)
-            }
-          />
-        </div>
       </div>
 
-      {/* --- MODALS SECTION --- */}
+      {/* FOOTER SECTION - Pagination */}
+      <div className="flex flex-row items-center justify-between p-2">
+        <ShowDataNumber
+          start={totalItems === 0 ? 0 : startIndex + 1}
+          end={Math.min(endIndex, totalItems)}
+          total={totalItems}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+          handleIncrementPageButton={() =>
+            endIndex < totalItems && setPageNo((p) => p + 1)
+          }
+        />
+      </div>
+
+      {/* MODALS */}
       {isOpenModal === "ADD" && (
         <AddProgress
           setModal={() => setIsOpenModal("")}

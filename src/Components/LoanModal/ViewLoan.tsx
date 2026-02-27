@@ -34,9 +34,9 @@ export const ViewLoan = ({ setIsOpenModal, viewLoan }: ViewLoanProps) => {
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
-      <div className="w-full max-w-4xl bg-white rounded overflow-hidden shadow-2xl border border-gray-300">
+      <div className="w-full max-w-4xl overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         {/* Header Section */}
-        <div className="bg-indigo-900 rounded px-4">
+        <div className="bg-white rounded-xl border-t-5 border-blue-400">
           <div className="text-white">
             <Title setModal={setIsOpenModal}>VIEW LOAN DETAILS</Title>
           </div>
@@ -45,7 +45,7 @@ export const ViewLoan = ({ setIsOpenModal, viewLoan }: ViewLoanProps) => {
         <div className="p-4 space-y-4">
           {/* Section 1: Borrower Information */}
           <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Borrower Information
             </h3>
             <div className="grid grid-cols-2 gap-y-4 pt-2">
@@ -70,20 +70,20 @@ export const ViewLoan = ({ setIsOpenModal, viewLoan }: ViewLoanProps) => {
 
           {/* Section 2: Loan Transaction History */}
           <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Transaction History
             </h3>
             <div className="mt-2 overflow-hidden rounded border border-gray-200">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
-                  <thead className="bg-indigo-900 text-white text-[11px] uppercase tracking-wider">
+                  <thead className="bg-blue-400 text-white text-[11px] uppercase tracking-wider">
                     <tr>
-                      <th className="px-4 py-2  border-indigo-800">Sr#</th>
-                      <th className="px-4 py-2  border-indigo-800">Ref No</th>
-                      <th className="px-4 py-2  border-indigo-800">Date</th>
-                      <th className="px-4 py-2  border-indigo-800">Loan</th>
-                      <th className="px-4 py-2  border-indigo-800">Return</th>
-                      <th className="px-4 py-2  border-indigo-800">
+                      <th className="px-4 py-2  border-blue-400">Sr#</th>
+                      <th className="px-4 py-2  border-blue-400">Ref No</th>
+                      <th className="px-4 py-2  border-blue-400">Date</th>
+                      <th className="px-4 py-2  border-blue-400">Loan</th>
+                      <th className="px-4 py-2  border-blue-400">Return</th>
+                      <th className="px-4 py-2  border-blue-400">
                         Deduction
                       </th>
                       <th className="px-4 py-2">Remaining</th>
@@ -140,7 +140,7 @@ export const ViewLoan = ({ setIsOpenModal, viewLoan }: ViewLoanProps) => {
                       <td className="px-4 py-2  text-red-600">
                         {totals.deduction}
                       </td>
-                      <td className="px-4 py-2 text-indigo-900">
+                      <td className="px-4 py-2 text-blue-900">
                         {totals.remaining}
                       </td>
                     </tr>
@@ -152,7 +152,7 @@ export const ViewLoan = ({ setIsOpenModal, viewLoan }: ViewLoanProps) => {
         </div>
 
         {/* Footer Section */}
-        <div className="bg-indigo-900 p-3 flex justify-end">
+        <div className="bg-white p-3 flex justify-end">
           <button
             onClick={setIsOpenModal}
             className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-1 px-8 rounded shadow-sm transition-colors"

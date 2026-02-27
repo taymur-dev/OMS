@@ -159,7 +159,7 @@ export const UpdateCustomer = ({
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex px-4 items-center justify-center z-50">
-      <div className="w-[42rem] max-h-[50rem] bg-white rounded border border-indigo-900 shadow-lg overflow-hidden">
+      <div className="w-[42rem] max-h-[50rem] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form
           onSubmit={(e) => handlerSubmitted(e, customerData?.id ?? null)}
           className="flex flex-col h-full"
@@ -168,7 +168,7 @@ export const UpdateCustomer = ({
           }}
         >
           {/* Header */}
-          <div className="bg-indigo-900 rounded px-6">
+          <div className="bg-white rounded-xl border-t-5 border-blue-400">
             <Title
               setModal={setIsOpenModal}
               className="text-white text-lg font-semibold"
@@ -225,7 +225,7 @@ export const UpdateCustomer = ({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 px-4 py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-4 py-3 bg-white">
             <CancelBtn setModal={setIsOpenModal} />
             <AddButton
               loading={loading}

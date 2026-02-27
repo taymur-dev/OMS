@@ -16,13 +16,7 @@ import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-import {
-  RiCalendarLine,
-  RiFileTextLine,
-  RiUserFill,
-  RiInboxArchiveLine,
-  RiTimeLine,
-} from "react-icons/ri";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 type ADDLEAVET = {
   id: number;
@@ -141,7 +135,7 @@ export const LeaveRequests = ({
       case "approved":
         return (
           <span
-            className={`${baseClasses} bg-green-800 text-white border-green-200`}
+            className={`${baseClasses} bg-green-200 text-green-800 border-green-600`}
           >
             Approved
           </span>
@@ -149,7 +143,7 @@ export const LeaveRequests = ({
       case "rejected":
         return (
           <span
-            className={`${baseClasses} bg-red-800 text-white border-red-200`}
+            className={`${baseClasses} bg-red-200 text-red-700 border-red-600`}
           >
             Rejected
           </span>
@@ -157,7 +151,7 @@ export const LeaveRequests = ({
       case "pending":
         return (
           <span
-            className={`${baseClasses} bg-orange-500 text-white border-orange-200`}
+            className={`${baseClasses} bg-orange-200 text-orange-700 border-orange-600`}
           >
             Pending
           </span>
@@ -185,26 +179,31 @@ export const LeaveRequests = ({
 
   return (
     <div className="flex flex-col flex-grow bg-white overflow-hidden">
-      <div className="overflow-auto">
+      <div className="overflow-auto px-3 sm:px-0">
         <div className="min-w-[1000px]">
-          {/* Header UI mimicking UsersDetails */}
-          <div className="px-4 pt-0.5">
+          {/* Header UI aligned with UsersDetails */}
+          <div className="px-0.5 pt-0.5">
             <div
-              className={`grid ${currentUser?.role === "admin" ? "grid-cols-[60px_1.2fr_1.2fr_1fr_1fr_0.8fr_auto]" : "grid-cols-[60px_1.5fr_1fr_1fr_1fr_auto]"} 
-              bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm`}
+              className={`grid ${
+                currentUser?.role === "admin"
+                  ? "grid-cols-[60px_1.2fr_1fr_1fr_0.8fr_auto]"
+                  : "grid-cols-[60px_1.5fr_1fr_1fr_1fr_auto]"
+              } bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm`}
             >
-              <span>Sr#</span>
-              {currentUser?.role === "admin" && <span>Employee</span>}
-              <span>Subject</span>
-              <span>From Date</span>
-              <span>To Date</span>
-              <span>Status</span>
-              <span className="text-right pr-10">Actions</span>
+              <span className="text-left">Sr#</span>
+              {currentUser?.role === "admin" && (
+                <span className="text-left">Employee</span>
+              )}
+              {/* <span className="text-left">Subject</span> */}
+              <span className="text-left">From Date</span>
+              <span className="text-left">To Date</span>
+              <span className="text-left">Status</span>
+              <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
           </div>
 
           {/* Body UI */}
-          <div className="px-4 py-2">
+          <div className="px-0.5 py-2">
             {paginatedLeaves.length === 0 ? (
               <div className="bg-gray-50 rounded-lg border-2 border p-12 flex flex-col items-center justify-center text-gray-400">
                 <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
@@ -217,51 +216,51 @@ export const LeaveRequests = ({
                 {paginatedLeaves.map((leave, index) => (
                   <div
                     key={leave.id}
-                    className={`grid ${currentUser?.role === "admin" ? "grid-cols-[60px_1.2fr_1.2fr_1fr_1fr_0.8fr_auto]" : "grid-cols-[60px_1.5fr_1fr_1fr_1fr_auto]"} 
-                    items-center p-1 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm`}
+                    className={`grid ${
+                      currentUser?.role === "admin"
+                        ? "grid-cols-[60px_1.2fr_1fr_1fr_0.8fr_auto]"
+                        : "grid-cols-[60px_1.5fr_1fr_1fr_1fr_auto]"
+                    } items-center px-3 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30
+                     transition-colors shadow-sm`}
                   >
-                    <span className="text-gray-500 font-medium px-2">
+                    {/* Serial Number */}
+                    <span className="text-gray-500 font-medium">
                       {startIndex + index + 1}
                     </span>
 
+                    {/* Employee Info (Admin Only) - No Icons */}
                     {currentUser?.role === "admin" && (
                       <div className="flex items-center gap-3 overflow-hidden">
-                        <div className="h-9 w-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
-                          <RiUserFill size={18} />
+                        
+
+                        <div className="flex flex-col min-w-0">
+                          <span className="truncate text-gray-800 text-sm">
+                            {leave.name}
+                          </span>
                         </div>
-                        <span className="truncate font-semibold text-gray-800">
-                          {leave.name}
-                        </span>
                       </div>
                     )}
 
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <RiFileTextLine
-                        className="text-green-400 flex-shrink-0"
-                        size={14}
-                      />
-                      <span className="truncate">{leave.leaveSubject}</span>
+                    {/* Subject - No Icons */}
+                    {/* <div className="text-gray-800 truncate">
+                      {leave.leaveSubject}
+                    </div> */}
+
+                    {/* From Date - No Icons */}
+                    <div className="text-gray-800 truncate">
+                      {formatDate(leave.fromDate)}
                     </div>
 
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <RiCalendarLine
-                        className="text-blue-400 flex-shrink-0"
-                        size={14}
-                      />
-                      <span>{formatDate(leave.fromDate)}</span>
+                    {/* To Date - No Icons */}
+                    <div className="text-gray-800 truncate">
+                      {formatDate(leave.toDate)}
                     </div>
 
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <RiTimeLine
-                        className="text-orange-400 flex-shrink-0"
-                        size={14}
-                      />
-                      <span>{formatDate(leave.toDate)}</span>
-                    </div>
-
+                    {/* Status */}
                     <div>{getStatusBadge(leave.leaveStatus)}</div>
 
-                    <div className="flex items-center justify-end gap-1 pr-2">
+                    {/* Actions - Aligned with UsersDetails width */}
+                    <div className="flex items-center justify-end gap-1 w-[140px]">
                       <ViewButton
                         handleView={() => {
                           setViewLeave(leave);
@@ -294,8 +293,8 @@ export const LeaveRequests = ({
         </div>
       </div>
 
-      {/* Pagination UI mimicking UsersDetails */}
-      <div className="flex flex-row items-center justify-between py-4 px-4">
+      {/* Pagination UI */}
+      <div className="flex flex-row items-center justify-between p-1">
         <ShowDataNumber
           start={filteredLeaves.length === 0 ? 0 : startIndex + 1}
           end={Math.min(startIndex + externalPageSize, filteredLeaves.length)}

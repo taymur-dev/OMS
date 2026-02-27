@@ -5,10 +5,6 @@ import {
   FaUserShield,
   FaCheckCircle,
   FaExclamationTriangle,
-  FaSignInAlt,
-  FaSignOutAlt,
-  FaHourglassHalf,
-  FaCalendarAlt,
 } from "react-icons/fa";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import {
@@ -198,7 +194,7 @@ export const MarkAttendance = ({ triggerMark }: { triggerMark: number }) => {
         </div>
 
         <div className="overflow-auto  flex-grow">
-          <div className="bg-gray-50 rounded-lg border border-gray-200 p-6 text-center">
+          <div className="bg-gray-50 rounded-lg border border-blue-200 hover:border-white p-6 text-center">
             {isHoliday ? (
               <div className="py-10 flex flex-col items-center gap-4">
                 <StatusBadge status="Holiday 🎉" />
@@ -248,19 +244,15 @@ export const MarkAttendance = ({ triggerMark }: { triggerMark: number }) => {
                   </div>
                   <div className="grid grid-cols-5 border-b border-x border-gray-200 items-center text-sm p-3 bg-white">
                     <span className="text-green-500 flex items-center justify-center gap-2">
-                      <FaSignInAlt className="opacity-70" />
                       {attendanceTime.clockIn}
                     </span>
-                    <span className="text-orange-500 flex items-center justify-center gap-2">
-                      <FaSignOutAlt className="opacity-70" />
+                    <span className="text-gray-500 flex items-center justify-center gap-2">
                       {attendanceTime.clockOut}
                     </span>
-                    <span className="text-yellow-800 flex items-center justify-center gap-2">
-                      <FaHourglassHalf className="opacity-70" />
+                    <span className="text-gray-400 flex items-center justify-center gap-2">
                       {attendanceTime.workingHours}
                     </span>
-                    <span className="text-purple-500 flex items-center justify-center gap-2">
-                      <FaCalendarAlt className="opacity-70" />
+                    <span className="text-gray-500 flex items-center justify-center gap-2">
                       {new Date(attendanceTime.date)
                         .toLocaleDateString("en-GB", {
                           day: "2-digit",

@@ -152,9 +152,9 @@ export const UpdateResignation = ({
         if (e.key === "Enter") e.preventDefault();
       }}
     >
-      <div className="w-[42rem] bg-white rounded border border-indigo-900">
+      <div className="w-[42rem] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form onSubmit={handleSubmit}>
-          <div className="bg-indigo-900 rounded px-6">
+          <div className="bg-white rounded-xl border-t-5 border-blue-400">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -200,7 +200,7 @@ export const UpdateResignation = ({
                 name="approval_status"
                 value={updateResignation.approval_status}
                 onChange={handleChange}
-                className="border border-black rounded-lg py-2 w-full focus:outline-indigo-600"
+                className="border border-gray-200 shadow rounded-lg py-2 w-full focus:outline-blue-400"
               >
                 <option value="PENDING">PENDING</option>
                 <option value="ACCEPTED">ACCEPTED</option>
@@ -218,7 +218,7 @@ export const UpdateResignation = ({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

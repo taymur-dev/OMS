@@ -1,21 +1,26 @@
 import { useState } from "react";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
+import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { Todo } from "./Todo";
 import { Progress } from "../Progress";
 import { useAppSelector } from "../../redux/Hooks";
-import { CheckSquare, TrendingUp } from "lucide-react";
 import { Footer } from "../../Components/Footer";
 
 // Define Tab Types
 type TabType = "TODO" | "PROGRESS";
+const entriesOptions = [5, 10, 15, 20, 30];
 
 export const PerformanceHub = () => {
   const [activeTab, setActiveTab] = useState<TabType>("TODO");
   const { currentUser } = useAppSelector((state) => state.officeState);
   const isAdmin = currentUser?.role === "admin";
 
-  // Trigger state for Add buttons (same logic as SalesHub)
+  // UI States synced with People.tsx
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedValue, setSelectedValue] = useState(10);
+
+  // Trigger state for Add buttons
   const [triggerModal, setTriggerModal] = useState<{
     tab: TabType;
     count: number;
@@ -29,22 +34,23 @@ export const PerformanceHub = () => {
   };
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-1 sm:p-2 rounded-lg bg-gray-100 overflow-hidden">
+    <div className="flex flex-col flex-grow shadow-lg p-1 sm:p-1 rounded-lg bg-gray-100 overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white rounded-md">
-        {/* Title + Add Button */}
+        
+        {/* 1. Title + Add Button Section */}
         <TableTitle
           tileName="Performance"
           rightElement={
             <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
               {isAdmin && activeTab === "TODO" && (
                 <CustomButton
-                  label="+ Todo"
+                  label="Add Todo"
                   handleToggle={() => handleActionClick("TODO")}
                 />
               )}
               {isAdmin && activeTab === "PROGRESS" && (
                 <CustomButton
-                  label="+ Progress"
+                  label="Add Progress"
                   handleToggle={() => handleActionClick("PROGRESS")}
                 />
               )}
@@ -52,52 +58,65 @@ export const PerformanceHub = () => {
           }
         />
 
-        {/* Tabs */}
-        <div className="flex items-center gap-1 px-2 sm:px-4  bg-white border-b border-gray-300">
-          <button
-            onClick={() => setActiveTab("TODO")}
-            className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-2 sm:px-6 py-2.5
-               text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-                 activeTab === "TODO"
-                   ? "bg-indigo-900 text-white shadow-md"
-                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-               }`}
-          >
-            <CheckSquare size={16} />
-            <span>Todo</span>
-          </button>
+        {/* 2. Controls Section (Tabs, Search, Pagination) */}
+        <div className="px-4 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
+          {/* Pill Styled Tabs */}
+          <div className="flex w-full sm:w-auto p-1 bg-[#F1F5F9] rounded-xl border border-gray-200">
+            {(["TODO", "PROGRESS"] as TabType[]).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 text-sm font-bold transition-all duration-200 rounded-lg ${
+                  activeTab === tab
+                    ? "bg-white text-[#334155] shadow-sm"
+                    : "text-[#64748B] hover:text-[#334155]"
+                }`}
+              >
+                {tab === "TODO" ? "Todo" : "Progress"}
+              </button>
+            ))}
+          </div>
 
-          <button
-            onClick={() => setActiveTab("PROGRESS")}
-            className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-2 sm:px-6 py-2.5
-               text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-                 activeTab === "PROGRESS"
-                   ? "bg-indigo-900 text-white shadow-md"
-                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-               }`}
-          >
-            <TrendingUp size={16} />
-            <span>Progress</span>
-          </button>
+          {/* Search and Entries Select */}
+          <div className="flex items-center flex-grow justify-end gap-3 max-w-2xl">
+            <div className="flex-grow">
+              <TableInputField
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+            </div>
+
+            <div className="flex items-center border border-gray-200 rounded-lg px-1 py-3 bg-white shadow-sm min-w-[140px]">
+              <select
+                value={selectedValue}
+                onChange={(e) => setSelectedValue(Number(e.target.value))}
+                className="bg-transparent outline-none text-sm font-medium text-gray-700 cursor-pointer w-full"
+              >
+                {entriesOptions.map((num) => (
+                  <option key={num} value={num}>
+                    {num} per page
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
-        {/* Content Area */}
-        <div className="flex-grow p-2 sm:p-4 overflow-auto">
+        {/* 3. Content Area */}
+        <div className="flex-grow sm:p-4 overflow-auto">
           {activeTab === "TODO" && (
             <Todo
-              triggerModal={
-                triggerModal.tab === "TODO" ? triggerModal.count : 0
-              }
+              triggerModal={triggerModal.tab === "TODO" ? triggerModal.count : 0}
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
             />
           )}
 
           {activeTab === "PROGRESS" && (
             <Progress
-              triggerModal={
-                triggerModal.tab === "PROGRESS"
-                  ? triggerModal.count
-                  : 0
-              }
+              triggerModal={triggerModal.tab === "PROGRESS" ? triggerModal.count : 0}
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
             />
           )}
         </div>

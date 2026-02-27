@@ -1,8 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 
-
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
@@ -18,10 +16,7 @@ import {
 } from "../../redux/NavigationSlice";
 
 import { BASE_URL } from "../../Content/URL";
-
-const numbers = [10, 25, 50, 100];
-
-type EMPLOYEEACCOUNTT = "ADDACCOUNT" | "VIEW" | "";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 type ApiUser = {
   id: number;
@@ -30,6 +25,7 @@ type ApiUser = {
   contact: string;
   loginStatus: "Y" | "N";
   role: "user" | "admin";
+  image?: string;
 };
 
 type EmployeeAccountRow = {
@@ -37,27 +33,36 @@ type EmployeeAccountRow = {
   name: string;
   email: string;
   contact: string;
+  image?: string;
 };
 
-export const EmployeeAccount = ({ triggerModal }: { triggerModal: number }) => {
+interface EmployeeAccountProps {
+  triggerModal: number;
+  externalSearch: string;
+  externalPageSize: number;
+}
+
+export const EmployeeAccount = ({
+  triggerModal,
+  externalSearch,
+  externalPageSize,
+}: EmployeeAccountProps) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
   const dispatch = useAppDispatch();
 
-  const [isOpenModal, setIsOpenModal] = useState<EMPLOYEEACCOUNTT>("");
+  const [isOpenModal, setIsOpenModal] = useState<"ADDACCOUNT" | "VIEW" | "">(
+    "",
+  );
   const [employees, setEmployees] = useState<EmployeeAccountRow[]>([]);
   const [selectedEmployee, setSelectedEmployee] =
     useState<EmployeeAccountRow | null>(null);
 
   const [pageNo, setPageNo] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const [searchTerm, setSearchTerm] = useState("");
 
-  const isAdmin = currentUser?.role === "admin";
-
-  const handleToggleModal = (active: EMPLOYEEACCOUNTT) => {
+  const handleToggleModal = (active: "ADDACCOUNT" | "VIEW" | "") => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
 
@@ -65,11 +70,9 @@ export const EmployeeAccount = ({ triggerModal }: { triggerModal: number }) => {
     if (!currentUser) return;
 
     try {
-      setEmployees([]);
-
       if (currentUser.role === "admin") {
         const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: token },
         });
 
         const mapped: EmployeeAccountRow[] = (res.data.users as ApiUser[])
@@ -79,6 +82,7 @@ export const EmployeeAccount = ({ triggerModal }: { triggerModal: number }) => {
             name: u.name,
             email: u.email,
             contact: u.contact,
+            image: u.image,
           }));
 
         setEmployees(mapped);
@@ -110,137 +114,124 @@ export const EmployeeAccount = ({ triggerModal }: { triggerModal: number }) => {
   }, [fetchEmployees]);
 
   useEffect(() => {
-      if (triggerModal > 0) {
-        setIsOpenModal("ADDACCOUNT");
-      }
-    }, [triggerModal]);
+    if (triggerModal > 0) {
+      setIsOpenModal("ADDACCOUNT");
+    }
+  }, [triggerModal]);
 
-  const filteredEmployees = employees.filter((emp) =>
-    emp.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  // Reset page on search/limit change
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
+
+  const filteredEmployees = employees.filter(
+    (emp) =>
+      emp.name.toLowerCase().includes(externalSearch.toLowerCase()) ||
+      emp.email.toLowerCase().includes(externalSearch.toLowerCase()),
   );
 
+  const startIndex = (pageNo - 1) * externalPageSize;
   const paginatedEmployees = filteredEmployees.slice(
-    (pageNo - 1) * limit,
-    pageNo * limit,
+    startIndex,
+    startIndex + externalPageSize,
   );
 
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
-     
-
-
-        {/* Top Stats Bar & Filter Row aligned to UsersDetails style */}
-        <div className="p-2">
-          <div className="flex flex-col gap-2">
-           
-
-            <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-              {/* Left Side: Show entries */}
-              <div className="text-sm flex items-center">
-                <span>Show</span>
-                <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                  <select
-                    value={limit}
-                    onChange={(e) => {
-                      setLimit(Number(e.target.value));
-                      setPageNo(1);
-                    }}
-                    className="bg-transparent outline-none py-1 cursor-pointer"
-                  >
-                    {numbers.map((num) => (
-                      <option key={num} value={num}>
-                        {num}
-                      </option>
-                    ))}
-                  </select>
-                </span>
-                <span className="hidden xs:inline">entries</span>
-              </div>
-
-              {/* Right Side: Search Input */}
-              <TableInputField
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-              />
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      <div className="overflow-auto px-3 sm:px-0">
+        {/* Width increased to 1000px to match UsersDetails for the extra columns */}
+        <div className="min-w-[1000px]">
+          {/* Header aligned with UsersDetails grid */}
+          <div className="px-0.5 pt-0.5">
+            <div
+              className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_auto] 
+            bg-blue-400 text-white rounded-lg items-center font-bold
+            text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
+            >
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Name</span>
+              <span className="text-left">Email</span>
+              <span className="text-left">Contact</span>
+              <span className="text-left">Role</span>
+              <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
           </div>
-        </div>
 
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto">
-          <div className="min-w-[700px]">
-            {/* Sticky Table Header */}
-            <div
-              className={`grid ${
-                isAdmin ? "grid-cols-5" : "grid-cols-4"
-              } bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2`}
-            >
-              <span>Sr#</span>
-              {isAdmin && <span>Name</span>}
-              <span>Email</span>
-              <span>Contact</span>
-              <span className="text-center">Actions</span>
-            </div>
-
-            {/* Table Body */}
+          <div className="px-0.5 sm:px-1 py-2">
             {paginatedEmployees.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
-                No records available at the moment!
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">No records available!</p>
               </div>
             ) : (
-              paginatedEmployees.map((emp, idx) => (
-                <div
-                  key={emp.id}
-                  className={`grid ${
-                    isAdmin ? "grid-cols-5" : "grid-cols-4"
-                  } border-b border-x border-gray-200 text-gray-800 items-center
-                 text-sm p-2 hover:bg-gray-50 transition`}
-                >
-                  <span>{(pageNo - 1) * limit + idx + 1}</span>
-                  {isAdmin && <span className="truncate">{emp.name}</span>}
-                  <span className="truncate">{emp.email}</span>
-                  <span>{emp.contact}</span>
-                  <span className="flex flex-nowrap justify-center gap-1">
-                    <ViewButton
-                      handleView={() => {
-                        setSelectedEmployee(emp);
-                        handleToggleModal("VIEW");
-                      }}
-                    />
-                  </span>
-                </div>
-              ))
+              <div className="flex flex-col gap-2">
+                {paginatedEmployees.map((emp, idx) => (
+                  <div
+                    key={emp.id}
+                    className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_auto]
+                  items-center px-3 py-2 gap-3 text-sm bg-white 
+                  border border-gray-100 rounded-lg 
+                  hover:bg-blue-50/30 transition-colors shadow-sm"
+                  >
+                    <span className="text-gray-500 font-medium">
+                      {startIndex + idx + 1}
+                    </span>
+
+                    {/* Profile Section - Icons Removed */}
+                    <div className="flex flex-col min-w-0">
+                      <span className="truncate text-gray-800 text-sm">
+                        {emp.name}
+                      </span>
+                    </div>
+
+                    <div className="text-gray-600 truncate">{emp.email}</div>
+
+                    <div className="text-gray-600 truncate">{emp.contact}</div>
+                    <div className="text-gray-600 truncate">Employee</div>
+
+                    {/* Action Buttons aligned with UsersDetails width */}
+                    <div className="flex items-center justify-end gap-1 w-[140px] pr-5">
+                      <ViewButton
+                        handleView={() => {
+                          setSelectedEmployee(emp);
+                          handleToggleModal("VIEW");
+                        }}
+                      />
+                      {/* Note: Added placeholder spacing to maintain alignment if 
+                        EmployeeAccount only uses ViewButton while UsersDetails has three. */}
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
-
-        {/* 4) Pagination placed under the table */}
-        <div className="flex flex-row gap-2 items-center justify-between p-2">
-          <ShowDataNumber
-            start={
-              paginatedEmployees.length === 0 ? 0 : (pageNo - 1) * limit + 1
-            }
-            end={Math.min(pageNo * limit, filteredEmployees.length)}
-            total={filteredEmployees.length}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={() =>
-              setPageNo((p) => (p > 1 ? p - 1 : 1))
-            }
-            handleIncrementPageButton={() =>
-              pageNo * limit < filteredEmployees.length &&
-              setPageNo((p) => p + 1)
-            }
-          />
-        </div>
       </div>
 
-      {/* --- MODALS SECTION --- */}
+      {/* Pagination Footer */}
+      <div className="flex flex-row items-center justify-between p-1">
+        <ShowDataNumber
+          start={filteredEmployees.length === 0 ? 0 : startIndex + 1}
+          end={Math.min(
+            startIndex + externalPageSize,
+            filteredEmployees.length,
+          )}
+          total={filteredEmployees.length}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={() => setPageNo((p) => Math.max(1, p - 1))}
+          handleIncrementPageButton={() => {
+            if (startIndex + externalPageSize < filteredEmployees.length) {
+              setPageNo((p) => p + 1);
+            }
+          }}
+        />
+      </div>
+
+      {/* Modals */}
       {isOpenModal === "ADDACCOUNT" && (
         <AddEmployeeAccount
           setModal={() => handleToggleModal("")}
@@ -254,8 +245,6 @@ export const EmployeeAccount = ({ triggerModal }: { triggerModal: number }) => {
           employee={selectedEmployee}
         />
       )}
-
-     
     </div>
   );
 };

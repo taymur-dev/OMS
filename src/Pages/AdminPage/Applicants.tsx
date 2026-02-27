@@ -18,11 +18,7 @@ import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
-import { Briefcase, Calendar, Archive } from "lucide-react";
-
-import { RiUserFill } from "react-icons/ri";
-
-import { RiCloseCircleLine , RiCheckboxCircleLine , RiTimerLine } from "react-icons/ri";
+import { Archive } from "lucide-react";
 
 type ApplicantT = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
@@ -142,22 +138,26 @@ export const Applicants = ({
 
   return (
     <div className="flex flex-col flex-grow bg-white overflow-hidden">
-      <div className="overflow-auto">
+      <div className="overflow-auto px-3 sm:px-0">
         <div className="min-w-[1000px]">
-          {/* Header Row */}
-          <div className="px-4 pt-0.5">
-            <div className="grid grid-cols-[60px_1.5fr_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm">
-              <span>Sr#</span>
-              <span>Name & Contact</span>
-              <span>Job Role</span>
-              <span>Status</span>
-              <span>Date Applied</span>
-              <span className="text-right pr-10">Actions</span>
+          {/* Header Row - Aligned with UsersDetails grid and padding */}
+          <div className="px-0.5 pt-0.5">
+            <div
+              className="grid grid-cols-[60px_1.5fr_1fr_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg
+           items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
+            >
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Name</span>
+              <span className="text-left">Contact</span>
+              <span className="text-left">Job Role</span>
+              <span className="text-left">Status</span>
+              <span className="text-left">Date Applied</span>
+              <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
           </div>
 
           {/* Data Rows */}
-          <div className="px-4 py-2">
+          <div className="px-0.5 sm:px-1 py-2">
             {paginatedApplicants.length === 0 ? (
               <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
                 <Archive size={48} className="mb-3 text-gray-300" />
@@ -169,77 +169,49 @@ export const Applicants = ({
                 {paginatedApplicants.map((item, index) => (
                   <div
                     key={item.id}
-                    className="grid grid-cols-[60px_1.5fr_1fr_1fr_1fr_auto] items-center p-1 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
+                    className="grid grid-cols-[60px_1.5fr_1fr_1fr_1fr_1fr_auto] items-center px-3 py-2 gap-3 text-sm bg-white
+                   border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
-                    <span className="text-gray-500 font-medium pl-2">
+                    <span className="text-gray-500 font-medium">
                       {startIndex + index + 1}
                     </span>
 
-                    <div className="flex items-center gap-3 overflow-hidden">
-                      <div className="h-10 w-10 rounded-full bg-blue-400 flex items-center justify-center text-white flex-shrink-0 shadow-sm">
-                        <RiUserFill size={20} />
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className="truncate font-semibold text-gray-800">
-                          {item.applicant_name}
-                        </span>
-
-                        <span className="truncate font-sm text-gray-400">{item.applicant_contact}</span>
-                      </div>
+                    <div className="text-gray-800 font-bold truncate">
+                      {item.applicant_name}
+                    </div>
+                    <div className="text-gray-600 truncate">
+                      {item.applicant_contact}
                     </div>
 
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Briefcase className="text-yellow-400" size={14} />
-                      <span className="truncate">{item.job}</span>
-                    </div>
+                    {/* Job Role - Icons removed */}
+                    <div className="text-gray-600 truncate">{item.job}</div>
 
-                    <div className="flex items-center gap-2 text-gray-600">
-                      {/* Dynamic Icon based on status */}
-                      {item.status === "approved" ? (
-                        <RiCheckboxCircleLine
-                          className="text-green-500 flex-shrink-0"
-                          size={16}
-                        />
-                      ) : item.status === "pending" ? (
-                        <RiTimerLine
-                          className="text-orange-500 flex-shrink-0"
-                          size={16}
-                        />
-                      ) : (
-                        <RiCloseCircleLine
-                          className="text-red-500 flex-shrink-0"
-                          size={16}
-                        />
-                      )}
-
+                    {/* Status - Icons removed, kept colored text for readability */}
+                    <div className="flex  items-center">
                       <span
-                        className={`text-[10px] font-bold uppercase tracking-wider ${
+                        className={`text-[15px] font-bold tracking-wider ${
                           item.status === "approved"
-                            ? "text-green-500"
+                            ? "bg-green-100 text-green-600 rounded-xl px-2 border border-green-200"
                             : item.status === "pending"
-                              ? "text-orange-500"
-                              : "text-red-500"
+                              ? "bg-orange-100 text-orange-600 border rounded-xl px-2 border-orange-200"
+                              : "bg-red-100 text-red-600 border rounded-xl px-2 border-red-200"
                         }`}
                       >
                         {item.status}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Calendar className="text-blue-400" size={14} />
-                      <span>
-                        {new Date(item.applied_date).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          },
-                        )}
-                      </span>
+                    {/* Date - Icons removed */}
+                    <div className="text-gray-600 truncate">
+                      {new Date(item.applied_date).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
                     </div>
 
-                    <div className="flex items-center justify-end gap-1 pr-2">
+                    {/* Actions - Width matched to UsersDetails */}
+                    <div className="flex items-center justify-end gap-1 w-[140px]">
                       <ViewButton
                         handleView={() => {
                           setSelectedApplicant(item);
@@ -268,7 +240,7 @@ export const Applicants = ({
       </div>
 
       {/* Pagination Footer */}
-      <div className="flex flex-row items-center justify-between py-4">
+      <div className="flex flex-row items-center justify-between p-1">
         <ShowDataNumber
           start={totalNum === 0 ? 0 : startIndex + 1}
           end={Math.min(endIndex, totalNum)}

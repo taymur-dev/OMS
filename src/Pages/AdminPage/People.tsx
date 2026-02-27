@@ -50,11 +50,11 @@ export const People = () => {
   }, [tabFromURL]);
 
   return (
-    <div className="flex flex-col flex-grow shadow-lg p-1 sm:p-2 rounded-lg bg-gray-100 overflow-hidden">
+    <div className="flex flex-col flex-grow shadow-lg p-1 sm:p-1 rounded-lg bg-gray-100 overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white rounded-md">
         {/* 1. Main Title Section */}
         <TableTitle
-          tileName="People Management"
+          tileName="People"
           rightElement={
             <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
               {activeTab === "USERS" && (
@@ -104,7 +104,7 @@ export const People = () => {
               />
             </div>
 
-            <div className="flex items-center border border-gray-200 rounded-lg px-3 py-3 bg-white shadow-sm min-w-[140px]">
+            <div className="flex items-center border border-gray-200 rounded-lg px-1 py-3 bg-white shadow-sm min-w-[140px]">
               <select
                 value={selectedValue}
                 onChange={(e) => setSelectedValue(Number(e.target.value))}
@@ -121,7 +121,7 @@ export const People = () => {
         </div>
 
         {/* 3. Content Area */}
-        <div className="flex-grow p-2 sm:p-4 overflow-auto">
+        <div className="flex-grow  sm:p-4 overflow-auto">
           {activeTab === "USERS" && (
             <UsersDetails
               triggerAdd={triggerModal.tab === "USERS" ? triggerModal.count : 0}

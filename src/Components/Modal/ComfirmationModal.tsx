@@ -28,9 +28,9 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       />
 
       {/* Modal Card */}
-      <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-indigo-900">
-        {/* Header - Indigo-900 */}
-        <div className="flex items-center justify-between px-6 py-4 bg-indigo-900">
+      <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-blue-400">
+        {/* Header - blue-400 */}
+        <div className="flex items-center justify-between px-6 py-4 bg-blue-400">
           <h2 className="text-lg font-semibold text-white tracking-wide">
             {title}
           </h2>
@@ -52,11 +52,11 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           </div>
         </div>
 
-        {/* Footer - Indigo-900 */}
-        <div className="flex items-center justify-end gap-3 px-6 py-4 bg-indigo-900">
+        {/* Footer - blue-400 */}
+        <div className="flex items-center justify-end gap-3 px-6 py-4 bg-blue-400">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-indigo-900 bg-white rounded-lg transition-colors"
+            className="px-4 py-2 text-sm font-medium text-black bg-white rounded-lg transition-colors"
           >
             Cancel
           </button>

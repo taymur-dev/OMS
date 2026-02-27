@@ -22,12 +22,7 @@ import {
 import { BASE_URL } from "../../Content/URL";
 
 // Icons to match UsersDetails style
-import {
-  RiPhoneLine,
-  RiMapPinLine,
-  RiInboxArchiveLine,
-  RiUserFill,
-} from "react-icons/ri";
+import { RiUserFill } from "react-icons/ri";
 
 interface Supplier {
   supplierId: number;
@@ -144,49 +139,48 @@ export const Suppliers = ({
 
   return (
     <div className="flex flex-col flex-grow bg-white overflow-hidden">
-      <div className="overflow-auto">
+      <div className="overflow-auto px-3 sm:px-0">
         <div className="min-w-[1000px]">
           {/* Header Row */}
-          <div className="px-4 pt-0.5">
+          <div className="px-0.5 pt-0.5">
             <div
-              className="grid grid-cols-[60px_1.5fr_1fr_1.5fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold
-    text-xs  tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
+              className="grid grid-cols-[60px_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold
+            text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
-              <span>Sr#</span>
-              <span>Name & Email</span>
-              <span>Contact</span>
-              <span>Address</span>
-              <span className="text-right pr-10">Actions</span>
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Name & Email</span>
+              <span className="text-left">Contact</span>
+              <span className="text-left">Address</span>
+              <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
           </div>
 
           {/* Table Body */}
-          <div className="px-4 py-2">
+          <div className="px-0.5 sm:px-1 py-2">
             {paginatedData.length === 0 ? (
-              <div className="bg-gray-50 rounded-lg border-2 border p-12 flex flex-col items-center justify-center text-gray-400">
-                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
-                <p className="text-lg font-medium">No records available!</p>
-                <p className="text-sm">Try adjusting your search or filters.</p>
+              <div className="text-center py-10 text-gray-500">
+                No records available!
               </div>
             ) : (
               <div className="flex flex-col gap-2">
                 {paginatedData.map((item, index) => (
                   <div
                     key={item.supplierId}
-                    className="grid grid-cols-[60px_1.5fr_1fr_1.5fr_auto] items-center p-1 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
+                    className="grid grid-cols-[60px_1fr_1fr_1fr_auto] items-center px-3 py-0.5 gap-3 text-sm bg-white 
+                  border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
                     {/* Sr# */}
                     <span className="text-gray-500 font-medium">
                       {startIndex + index + 1}
                     </span>
 
-                    {/* Name with Avatar placeholder */}
+                    {/* Name & Email (Icons removed) */}
                     <div className="flex items-center gap-3 overflow-hidden">
                       <div
                         className="h-10 w-10 rounded-full bg-blue-400 flex items-center justify-center
-               text-white flex-shrink-0 overflow-hidden border-2 border-gray-100 shadow-sm"
+                                                     text-white flex-shrink-0 overflow-hidden border-2 border-gray-100 shadow-sm"
                       >
-                        <RiUserFill size={28} />
+                        <RiUserFill size={20} />
                       </div>
 
                       <div className="flex flex-col min-w-0">
@@ -200,25 +194,17 @@ export const Suppliers = ({
                     </div>
 
                     {/* Contact */}
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <RiPhoneLine
-                        className="text-purple-700 flex-shrink-0"
-                        size={14}
-                      />
-                      <span>{item.supplierContact}</span>
+                    <div className="text-gray-600 truncate">
+                      {item.supplierContact}
                     </div>
 
                     {/* Address */}
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <RiMapPinLine
-                        className="text-orange-400 flex-shrink-0"
-                        size={14}
-                      />
-                      <span className="truncate">{item.supplierAddress}</span>
+                    <div className="text-gray-600 truncate">
+                      {item.supplierAddress}
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center justify-end gap-1 pr-2">
+                    <div className="flex items-center justify-end gap-1 w-[140px]">
                       <ViewButton
                         handleView={() => {
                           setSelectedSupplier(item);
@@ -247,7 +233,7 @@ export const Suppliers = ({
       </div>
 
       {/* Pagination Section */}
-      <div className="flex flex-row items-center justify-between py-4">
+      <div className="flex flex-row items-center justify-between p-1">
         <ShowDataNumber
           start={totalNum === 0 ? 0 : startIndex + 1}
           end={Math.min(endIndex, totalNum)}

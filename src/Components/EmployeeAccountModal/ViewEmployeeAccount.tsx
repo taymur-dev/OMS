@@ -76,9 +76,9 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
-      <div className="w-full max-w-6xl bg-white rounded overflow-hidden shadow-2xl border border-gray-300">
+      <div className="w-full max-w-6xl overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         {/* Header */}
-        <div className="bg-indigo-900 rounded px-4">
+        <div className="bg-white rounded-xl border-t-5 border-blue-400">
           <div className="text-white">
             <Title setModal={setModal}>EMPLOYEE ACCOUNT DETAILS</Title>
           </div>
@@ -87,7 +87,7 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
         <div className="p-4 space-y-6">
           {/* Section 1: Employee Basic Info */}
           <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Employee Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-y-4 pt-2">
@@ -114,7 +114,7 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
 
           {/* Section 2: Account History Table */}
           <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               <span className="flex items-center gap-1">
                 <FaHistory /> Transaction History
               </span>
@@ -123,21 +123,21 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
             <div className="overflow-x-auto mt-2 max-h-[50vh]">
               <table className="w-full text-left border-collapse min-w-[900px]">
                 <thead className="sticky top-0 z-50">
-                  <tr className="bg-indigo-900 text-white text-[11px] ">
-                    <th className="p-2 border-indigo-800">Sr#</th>
-                    <th className="p-2 border-indigo-800">Ref No</th>
-                    <th className="p-2 border-indigo-800 text-right">Debit</th>
-                    <th className="p-2 border-indigo-800 text-right">Credit</th>
-                    <th className="p-2 border-indigo-800 text-right">
+                  <tr className="bg-blue-400 text-white text-[11px] ">
+                    <th className="p-2 border-blue-400">Sr#</th>
+                    <th className="p-2 border-blue-400">Ref No</th>
+                    <th className="p-2 border-blue-400 text-right">Debit</th>
+                    <th className="p-2 border-blue-400 text-right">Credit</th>
+                    <th className="p-2 border-blue-400 text-right">
                       Balance
                     </th>
-                    <th className="p-2 border-indigo-800 text-right">
+                    <th className="p-2 border-blue-400 text-right">
                       Prev Balance
                     </th>
-                    <th className="p-2 border-indigo-800 text-right">
+                    <th className="p-2 border-blue-400 text-right">
                       Net Balance
                     </th>
-                    <th className="p-2 border-indigo-800">Method</th>
+                    <th className="p-2 border-blue-400">Method</th>
                     <th className="p-2">Date</th>
                   </tr>
                 </thead>
@@ -171,17 +171,17 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
                           <td className="p-2 text-gray-800">
                             {acc.refNo || "-"}
                           </td>
-                          <td className="p-2 text-right text-blue-600 font-medium">
+                          <td className="p-2 text-right text-green-400 font-medium">
                             {acc.debit || 0}
                           </td>
-                          <td className="p-2 text-right text-orange-600 font-medium">
+                          <td className="p-2 text-right text-red-400 font-medium">
                             {acc.credit || 0}
                           </td>
 
                           <td className="p-2 text-right font-medium">
                             {rowBalance.toLocaleString()}
                           </td>
-                          <td className="p-2 text-right text-gray-500">
+                          <td className="p-2 text-right text-yellow-500">
                             {currentPrevBalance.toLocaleString()}
                           </td>
                           <td
@@ -210,7 +210,7 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
         </div>
 
         {/* Footer Section */}
-        <div className="bg-indigo-900 p-3 flex justify-end">
+        <div className="bg-white p-3 flex justify-end">
           <button
             onClick={setModal}
             className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-1 px-8 rounded shadow-sm transition-colors"

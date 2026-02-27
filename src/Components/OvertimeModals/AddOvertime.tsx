@@ -211,9 +211,9 @@ export const AddOverTime = ({
         if (e.key === "Enter") e.preventDefault();
       }}
     >
-      <div className="w-[42rem] bg-white rounded border border-indigo-900">
+      <div className="w-[42rem] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form onSubmit={handlerSubmitted}>
-          <div className="bg-indigo-900 rounded px-6">
+          <div className="bg-white rounded-xl border-t-5 border-blue-400">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -223,15 +223,17 @@ export const AddOverTime = ({
           </div>
 
           <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-5 space-y-2">
-            {isAdmin && (
-              <UserSelect
-                labelName="Employee *"
-                name="employee_id"
-                value={addOvertime.employee_id}
-                handlerChange={handlerChange}
-                optionData={userOptions}
-              />
-            )}
+            <div className="md:col-span-2">
+              {isAdmin && (
+                <UserSelect
+                  labelName="Employee *"
+                  name="employee_id"
+                  value={addOvertime.employee_id}
+                  handlerChange={handlerChange}
+                  optionData={userOptions}
+                />
+              )}
+            </div>
 
             <InputField
               labelName="Date *"
@@ -240,14 +242,14 @@ export const AddOverTime = ({
               value={addOvertime.date}
               handlerChange={handlerChange}
             />
-            <div className="md:col-span-2">
-              <InputField
-                labelName="Overtime (HH:MM:SS) *"
-                name="time"
-                value={addOvertime.time}
-                handlerChange={handlerChange}
-              />
-            </div>
+
+            <InputField
+              labelName="Overtime (HH:MM:SS) *"
+              name="time"
+              value={addOvertime.time}
+              handlerChange={handlerChange}
+            />
+
             <div className="md:col-span-2">
               <TextareaField
                 labelName="Description *"
@@ -258,7 +260,7 @@ export const AddOverTime = ({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>

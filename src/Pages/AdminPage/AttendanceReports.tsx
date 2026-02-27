@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { InputField } from "../../Components/InputFields/InputField";
@@ -14,6 +13,7 @@ import {
 import { BASE_URL } from "../../Content/URL";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPrint } from "@fortawesome/free-solid-svg-icons";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 type UserType = {
   id: number;
@@ -33,7 +33,15 @@ type AttendanceT = {
   attendanceStatus: string;
 };
 
-export const AttendanceReports = () => {
+interface AttendanceReportsProps {
+  externalSearch: string;
+  externalPageSize: number;
+}
+
+export const AttendanceReports = ({
+  externalSearch,
+  externalPageSize,
+}: AttendanceReportsProps) => {
   const dispatch = useAppDispatch();
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
@@ -41,7 +49,6 @@ export const AttendanceReports = () => {
   const isAdmin = currentUser?.role === "admin";
 
   const currentDate = new Date().toLocaleDateString("sv-SE");
-  const itemsPerPage = 10; // Fixed to match SalesReport logic
 
   const [reportData, setReportData] = useState({
     startDate: currentDate,
@@ -58,7 +65,6 @@ export const AttendanceReports = () => {
   const [attendance, setAttendance] = useState<AttendanceT[]>([]);
   const [users, setUsers] = useState<UserType[]>([]);
   const [pageNo, setPageNo] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
 
   /* ================= FETCH DATA ================= */
   const getAttendanceReport = useCallback(async () => {
@@ -113,8 +119,10 @@ export const AttendanceReports = () => {
   const filteredAttendance = useMemo(() => {
     return attendance.filter((item) => {
       const matchesSearch =
-        item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.attendanceStatus?.toLowerCase().includes(searchTerm.toLowerCase());
+        item.name?.toLowerCase().includes(externalSearch.toLowerCase()) ||
+        item.attendanceStatus
+          ?.toLowerCase()
+          .includes(externalSearch.toLowerCase());
 
       const matchesUser = appliedFilters.userId
         ? item.userId === Number(appliedFilters.userId)
@@ -126,13 +134,17 @@ export const AttendanceReports = () => {
 
       return matchesSearch && matchesUser && inDateRange;
     });
-  }, [attendance, searchTerm, appliedFilters]);
+  }, [attendance, externalSearch, appliedFilters]);
 
   /* ================= PAGINATION ================= */
-  const startIndex = (pageNo - 1) * itemsPerPage;
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
+
+  const startIndex = (pageNo - 1) * externalPageSize;
   const paginatedData = filteredAttendance.slice(
     startIndex,
-    startIndex + itemsPerPage,
+    startIndex + externalPageSize,
   );
 
   /* ================= HANDLERS ================= */
@@ -190,152 +202,171 @@ export const AttendanceReports = () => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
-
-
-        {/* --- FILTER SECTION --- */}
-        <div className="p-2 bg-white">
-          <div className="flex flex-wrap items-end gap-4">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow min-w-[300px]">
-              <InputField
-                labelName="From"
-                type="date"
-                value={reportData.startDate}
-                handlerChange={handleChange}
-                name="startDate"
-              />
-              <InputField
-                labelName="To"
-                type="date"
-                value={reportData.endDate}
-                handlerChange={handleChange}
-                name="endDate"
-              />
-
-              {isAdmin ? (
-                <OptionField
-                  labelName="User"
-                  name="userId"
-                  value={reportData.userId}
-                  optionData={users.map((u) => ({
-                    id: u.id,
-                    label: u.name,
-                    value: u.id,
-                  }))}
-                  inital="Select User"
-                  handlerChange={handleChange}
-                />
-              ) : (
-                /* Keeps the grid alignment even if not admin */
-                <div className="hidden sm:block"></div>
-              )}
-            </div>
-
-            {/* Buttons Container: Wraps and goes full width on smaller screens */}
-            <div className="flex gap-2 flex-grow lg:flex-grow-0 min-w-full lg:min-w-fit">
-              <button
-                onClick={handleSearchClick}
-                className="bg-indigo-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center 
-              justify-center whitespace-nowrap hover:bg-indigo-800 transition"
-              >
-                <FontAwesomeIcon icon={faSearch} className="mr-2" />
-                Search
-              </button>
-
-              <button
-                onClick={printDiv}
-                className="bg-blue-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center 
-              justify-center whitespace-nowrap hover:bg-blue-800 transition"
-              >
-                <FontAwesomeIcon icon={faPrint} className="mr-2" />
-                Print
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* --- SUB-HEADER SECTION (Search & Info) --- */}
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            <div className="text-sm font-bold text-gray-600">
-              From:{" "}
-              <span className="text-black">{appliedFilters.startDate}</span> To:{" "}
-              <span className="text-black">{appliedFilters.endDate}</span>
-            </div>
-
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      {/* --- FILTER SECTION --- */}
+      <div className="p-3 bg-white border-b border-gray-100">
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow min-w-[300px]">
+            <InputField
+              labelName="From"
+              type="date"
+              value={reportData.startDate}
+              handlerChange={handleChange}
+              name="startDate"
             />
-          </div>
-        </div>
-
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto">
-          <div id="attendanceDiv" className="min-w-[800px]">
-            {/* Sticky Table Header */}
-            <div
-              className={`grid ${
-                isAdmin ? "grid-cols-7" : "grid-cols-6"
-              } bg-indigo-900 text-white items-center font-semibold text-sm sticky top-0 z-10 p-2`}
-            >
-              <span>Sr#</span>
-              <span>Date</span>
-              {isAdmin && <span>User</span>}
-              <span>Clock In</span>
-              <span>Clock Out</span>
-              <span>Hours</span>
-              <span>Day</span>
-            </div>
-
-            {/* Table Body */}
-            {filteredAttendance.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10 border-x border-b border-gray-200">
-                No records available at the moment!
-              </div>
+            <InputField
+              labelName="To"
+              type="date"
+              value={reportData.endDate}
+              handlerChange={handleChange}
+              name="endDate"
+            />
+            {isAdmin ? (
+              <OptionField
+                labelName="User"
+                name="userId"
+                value={reportData.userId}
+                optionData={users.map((u) => ({
+                  id: u.id,
+                  label: u.name,
+                  value: u.id,
+                }))}
+                inital="Select User"
+                handlerChange={handleChange}
+              />
             ) : (
-              paginatedData.map((item, index) => (
-                <div
-                  key={item.id}
-                  className={`grid ${
-                    isAdmin ? "grid-cols-7" : "grid-cols-6"
-                  } border-b border-x border-gray-200 text-gray-800 items-center text-sm p-2 hover:bg-gray-50 transition`}
-                >
-                  <span>{startIndex + index + 1}</span>
-                  <span>{item.date}</span>
-                  {isAdmin && <span className="truncate">{item.name}</span>}
-                  <span>{item.clockIn ?? "--"}</span>
-                  <span>{item.clockOut ?? "--"}</span>
-                  <span>{item.workingHours ?? "--"}</span>
-                  <span>{item.day ?? "--"}</span>
-                </div>
-              ))
+              <div className="hidden sm:block"></div>
             )}
           </div>
-        </div>
 
-        {/* --- PAGINATION SECTION --- */}
-        <div className="flex flex-row items-center justify-between p-2">
-          <ShowDataNumber
-            start={filteredAttendance.length === 0 ? 0 : startIndex + 1}
-            end={Math.min(startIndex + itemsPerPage, filteredAttendance.length)}
-            total={filteredAttendance.length}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={() =>
-              setPageNo((p) => Math.max(p - 1, 1))
-            }
-            handleIncrementPageButton={() =>
-              startIndex + itemsPerPage < filteredAttendance.length &&
-              setPageNo((p) => p + 1)
-            }
-          />
+          <div className="flex gap-2 flex-grow lg:flex-grow-0 min-w-full lg:min-w-fit">
+            <button
+              onClick={handleSearchClick}
+              className="bg-slate-700 text-white px-6 py-3 rounded-lg shadow flex-1 flex items-center 
+            justify-center whitespace-nowrap  transition"
+            >
+              <FontAwesomeIcon icon={faSearch} className="mr-2" />
+              Fetch Report
+            </button>
+            <button
+              onClick={printDiv}
+              className="bg-blue-400 text-white px-6 py-3 rounded-lg shadow flex-1 flex items-center
+             justify-center whitespace-nowrap transition"
+            >
+              <FontAwesomeIcon icon={faPrint} className="mr-2" />
+              Print
+            </button>
+          </div>
         </div>
       </div>
 
-     
+      {/* --- TABLE AREA --- */}
+      <div className="overflow-auto px-3 sm:px-0 mt-2">
+        <div className="min-w-[1000px]">
+          {/* Header Row */}
+          <div className="px-0.5 pt-0.5">
+            <div
+              className={`grid ${
+                isAdmin
+                  ? "grid-cols-[60px_1.5fr_1.5fr_1fr_1fr_1fr_1fr]"
+                  : "grid-cols-[60px_1.5fr_1fr_1fr_1fr_1fr]"
+              } bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm`}
+            >
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Date & Day</span>
+              {isAdmin && <span className="text-left">User Name</span>}
+              <span className="text-left">Clock In</span>
+              <span className="text-left">Clock Out</span>
+              <span className="text-left">Working Hours</span>
+              <span className="text-right pr-4">Status</span>
+            </div>
+          </div>
+
+          {/* Body Rows */}
+          <div id="attendanceDiv" className="px-0.5 sm:px-1 py-2">
+            {filteredAttendance.length === 0 ? (
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">No records available!</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {paginatedData.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className={`grid ${
+                      isAdmin
+                        ? "grid-cols-[60px_1.5fr_1.5fr_1fr_1fr_1fr_1fr]"
+                        : "grid-cols-[60px_1.5fr_1fr_1fr_1fr_1fr]"
+                    } items-center px-3 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm`}
+                  >
+                    <span className="text-gray-500 font-medium">
+                      {startIndex + index + 1}
+                    </span>
+
+                    <div className="flex flex-col min-w-0">
+                      <span className=" text-gray-800">
+                        {item.date}
+                      </span>
+                      <span className="text-xs text-gray-400">{item.day}</span>
+                    </div>
+
+                    {isAdmin && (
+                      <span className="font-medium text-gray-800 truncate">
+                        {item.name}
+                      </span>
+                    )}
+
+                    <div className="text-gray-600">
+                      {item.clockIn || "--:--"}
+                    </div>
+
+                    <div className="text-gray-600">
+                      {item.clockOut || "--:--"}
+                    </div>
+
+                    <div className="text-gray-600 font-medium">
+                      {item.workingHours || "0h 0m"}
+                    </div>
+
+                    <div className="text-right pr-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${
+                          item.attendanceStatus === "Present"
+                            ? "bg-green-100 text-green-600"
+                            : "bg-red-100 text-red-600"
+                        }`}
+                      >
+                        {item.attendanceStatus}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* --- PAGINATION SECTION --- */}
+      <div className="flex flex-row items-center justify-between p-2 mt-auto border-t border-gray-100">
+        <ShowDataNumber
+          start={filteredAttendance.length === 0 ? 0 : startIndex + 1}
+          end={Math.min(
+            startIndex + externalPageSize,
+            filteredAttendance.length,
+          )}
+          total={filteredAttendance.length}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+          handleIncrementPageButton={() =>
+            startIndex + externalPageSize < filteredAttendance.length &&
+            setPageNo((p) => p + 1)
+          }
+        />
+      </div>
     </div>
   );
 };

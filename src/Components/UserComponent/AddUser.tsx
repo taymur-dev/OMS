@@ -318,7 +318,7 @@ export const AddUser = ({
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-50">
-      <div className="w-[42rem] max-h-[90vh] overflow-y-auto bg-white mx-auto rounded shadow-xl">
+      <div className="w-[42rem] max-h-[99vh] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form
           onSubmit={handlerSubmitted}
           onKeyDown={(e) => {
@@ -326,8 +326,8 @@ export const AddUser = ({
           }}
         >
           {/* ===== Header ===== */}
-          <div className="bg-indigo-900 rounded px-4">
-            <div className="text-white">
+          <div className="bg-white rounded-xl border-t-5 border-blue-400">
+            <div className="text-black font-bold">
               <Title setModal={setModal}>{viewType} USER</Title>
             </div>
           </div>
@@ -400,11 +400,11 @@ export const AddUser = ({
             </div>
 
             <div className="md:col-span-2 mb-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-gray-600 text-xs font-semibold mb-2">
                 Profile Image
               </label>
               <div className="flex items-start gap-4">
-                {/* Image Preview */}
+                {/* Image Preview - Jab image select ho jaye */}
                 {imagePreview && (
                   <div className="relative">
                     <img
@@ -422,40 +422,44 @@ export const AddUser = ({
                   </div>
                 )}
 
-                {/* Upload Button */}
-                <div className="flex-1">
-                  <div className="flex items-center justify-center w-full">
-                    <label
-                      htmlFor="image-upload"
-                      className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300
-                       border rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
-                    >
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <FiUpload className="w-8 h-8 mb-2 text-gray-500" />
-                        <p className="mb-2 text-sm text-gray-500">
-                          <span className="font-semibold">Click to upload</span>{" "}
-                          or drag and drop
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          PNG, JPG or JPEG (MAX. 5MB)
-                        </p>
-                      </div>
-                      <input
-                        id="image-upload"
-                        type="file"
-                        className="hidden"
-                        accept="image/png, image/jpeg, image/jpg"
-                        onChange={handleImageChange}
-                      />
-                    </label>
+                {/* Upload Button - Sirf tab dikhega jab imagePreview empty ho */}
+                {!imagePreview && (
+                  <div className="flex-1">
+                    <div className="flex items-center justify-center w-full">
+                      <label
+                        htmlFor="image-upload"
+                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300
+                       border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
+                      >
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                          <FiUpload className="w-8 h-8 mb-2 text-blue-500" />
+                          <p className="mb-2 text-sm text-gray-500">
+                            <span className="font-semibold text-blue-400">
+                              Click to upload
+                            </span>{" "}
+                            or drag and drop
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            PNG, JPG or JPEG (MAX. 5MB)
+                          </p>
+                        </div>
+                        <input
+                          id="image-upload"
+                          type="file"
+                          className="hidden"
+                          accept="image/png, image/jpeg, image/jpg"
+                          onChange={handleImageChange}
+                        />
+                      </label>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
 
           {/* ===== Footer ===== */}
-          <div className="bg-indigo-900 rounded py-3 flex justify-end gap-3 px-4 sticky bottom-0">
+          <div className="bg-white rounded py-3 flex justify-end gap-3 px-4 sticky bottom-0">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

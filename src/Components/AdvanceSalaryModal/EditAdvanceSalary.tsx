@@ -55,22 +55,20 @@ export const EditAdvanceSalary = ({
 
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (advanceData) {
+      const localDate = new Date(advanceData.date);
+      const formattedDate = localDate.toLocaleDateString("sv-SE"); // Returns YYYY-MM-DD
 
-useEffect(() => {
-  if (advanceData) {
-    
-    const localDate = new Date(advanceData.date);
-    const formattedDate = localDate.toLocaleDateString("sv-SE"); // Returns YYYY-MM-DD
-
-    setUpdateAdvance({
-      employee_id: String(advanceData.employee_id),
-      date: formattedDate, // Use the YYYY-MM-DD format
-      amount: String(advanceData.amount),
-      approvalStatus: advanceData.approvalStatus || "Pending",
-      description: advanceData.description || "",
-    });
-  }
-}, [advanceData]);
+      setUpdateAdvance({
+        employee_id: String(advanceData.employee_id),
+        date: formattedDate, // Use the YYYY-MM-DD format
+        amount: String(advanceData.amount),
+        approvalStatus: advanceData.approvalStatus || "Pending",
+        description: advanceData.description || "",
+      });
+    }
+  }, [advanceData]);
 
   useEffect(() => {
     if (currentUser?.role !== "admin") return;
@@ -162,9 +160,9 @@ useEffect(() => {
         if (e.key === "Enter") e.preventDefault();
       }}
     >
-      <div className="w-[36rem] max-h-[28rem] bg-white mx-auto rounded border border-indigo-900 overflow-y-auto">
+      <div className="w-[36rem] max-h-[28rem] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form onSubmit={handleSubmit}>
-          <div className="bg-indigo-900 rounded px-6">
+          <div className="bg-white rounded-xl border-t-5 border-blue-400">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -174,27 +172,31 @@ useEffect(() => {
           </div>
 
           <div className="mx-4 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3 mt-2">
-            {currentUser?.role === "admin" && (
-              <UserSelect
-                labelName="Employee *"
-                name="employee_id"
-                value={updateAdvance.employee_id}
-                handlerChange={handleChange}
-                optionData={allUsers.map((u) => ({
-                  id: u.id,
-                  value: String(u.id),
-                  label: u.name,
-                }))}
-              />
-            )}
+            <div className="md:col-span-2">
+              {currentUser?.role === "admin" && (
+                <UserSelect
+                  labelName="Employee *"
+                  name="employee_id"
+                  value={updateAdvance.employee_id}
+                  handlerChange={handleChange}
+                  optionData={allUsers.map((u) => ({
+                    id: u.id,
+                    value: String(u.id),
+                    label: u.name,
+                  }))}
+                />
+              )}
+            </div>
 
-            <InputField
-              labelName="Date *"
-              name="date"
-              type="date"
-              value={updateAdvance.date}
-              handlerChange={handleChange}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Date *"
+                name="date"
+                type="date"
+                value={updateAdvance.date}
+                handlerChange={handleChange}
+              />
+            </div>
 
             <InputField
               labelName="Amount *"
@@ -227,7 +229,7 @@ useEffect(() => {
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

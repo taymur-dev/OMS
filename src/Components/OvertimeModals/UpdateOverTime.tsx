@@ -222,7 +222,7 @@ export const UpdateOverTime = ({
         if (e.key === "Enter") e.preventDefault();
       }}
     >
-      <div className="w-[42rem] max-h-[85vh] bg-white rounded border border-indigo-300 shadow-xl overflow-hidden">
+      <div className="w-[42rem] max-h-[85vh] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         {currentUser?.role !== "admin" ? (
           <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
             <p className="text-red-600 font-semibold text-lg">
@@ -239,7 +239,7 @@ export const UpdateOverTime = ({
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col">
             {/* Header */}
-            <div className="bg-indigo-900 rounded-t-lg px-6">
+            <div className="bg-white rounded-xl border-t-5 border-blue-400">
               <Title
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
@@ -293,7 +293,7 @@ export const UpdateOverTime = ({
             </div>
 
             {/* Footer */}
-            <div className="flex justify-end gap-3 px-6 py-4 bg-indigo-900 border-t border-indigo-800">
+            <div className="flex justify-end gap-3 px-6 py-4 bg-white">
               <CancelBtn setModal={setModal} />
               <AddButton
                 loading={loading}

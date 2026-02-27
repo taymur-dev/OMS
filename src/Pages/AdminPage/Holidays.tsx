@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
@@ -23,8 +22,7 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { BASE_URL } from "../../Content/URL";
-
-const numbers = [10, 25, 50, 100];
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 type THOLIDAYMODAL = "EDIT" | "DELETE" | "ADDHOLIDAY" | "VIEW" | "";
 
@@ -35,7 +33,17 @@ interface HOLIDAYSTATET {
   toDate: string;
 }
 
-export const Holidays = ({ triggerModal }: { triggerModal: number }) => {
+interface HolidaysProps {
+  triggerModal: number;
+  externalSearch: string;
+  externalPageSize: number;
+}
+
+export const Holidays = ({
+  triggerModal,
+  externalSearch,
+  externalPageSize,
+}: HolidaysProps) => {
   const dispatch = useAppDispatch();
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
@@ -46,10 +54,7 @@ export const Holidays = ({ triggerModal }: { triggerModal: number }) => {
   const [isOpenModal, setIsOpenModal] = useState<THOLIDAYMODAL>("");
   const [editHoliday, setEditHoliday] = useState<HOLIDAYSTATET | null>(null);
   const [catchId, setCatchId] = useState<number | null>(null);
-
-  const [selectedValue, setSelectedValue] = useState(10);
   const [pageNo, setPageNo] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
   const [viewHoliday, setViewHoliday] = useState<HolidayDetailT | null>(null);
 
   const handleGetAllHolidays = useCallback(async () => {
@@ -62,6 +67,11 @@ export const Holidays = ({ triggerModal }: { triggerModal: number }) => {
       console.log(error);
     }
   }, [token]);
+
+  // Sync pagination with external filters
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
 
   const handleDeleteHoliday = async () => {
     if (!catchId) return;
@@ -101,42 +111,38 @@ export const Holidays = ({ triggerModal }: { triggerModal: number }) => {
     handleToggleViewModal("VIEW");
   };
 
-  const handleIncrementPageButton = () => setPageNo((prev) => prev + 1);
-  const handleDecrementPageButton = () =>
-    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
-
-  const handleChangeShowData = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedValue(Number(e.target.value));
-    setPageNo(1);
-  };
-
   const filteredHolidays = useMemo(
     () =>
       [...allHoliday]
-        .sort((a, b) => a.id - b.id)
+        .sort((a, b) => b.id - a.id) // Sorting by newest first
         .filter((holiday) =>
-          holiday.holiday.toLowerCase().includes(searchTerm.toLowerCase()),
+          holiday.holiday.toLowerCase().includes(externalSearch.toLowerCase()),
         ),
-    [allHoliday, searchTerm],
+    [allHoliday, externalSearch],
   );
 
+  const totalNum = filteredHolidays.length;
+  const startIndex = (pageNo - 1) * externalPageSize;
   const paginatedHolidays = useMemo(
-    () =>
-      filteredHolidays.slice(
-        (pageNo - 1) * selectedValue,
-        pageNo * selectedValue,
-      ),
-    [filteredHolidays, pageNo, selectedValue],
+    () => filteredHolidays.slice(startIndex, startIndex + externalPageSize),
+    [filteredHolidays, startIndex, externalPageSize],
   );
+
+  const handleIncrementPageButton = () => {
+    const totalPages = Math.ceil(totalNum / externalPageSize);
+    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    if (pageNo > 1) setPageNo((prev) => prev - 1);
+  };
 
   const formatDate = (date: string) => {
-    return new Date(date)
-      .toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      })
-      .replace(/ /g, "-");
+    return new Date(date).toLocaleDateString("en-US", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
   };
 
   useEffect(() => {
@@ -155,96 +161,94 @@ export const Holidays = ({ triggerModal }: { triggerModal: number }) => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col bg-white">
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            <div className="text-sm flex items-center">
-              <span>Show</span>
-              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                <select
-                  value={selectedValue}
-                  onChange={handleChangeShowData}
-                  className="bg-transparent outline-none py-1 cursor-pointer"
-                >
-                  {numbers.map((num, index) => (
-                    <option key={index} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-              </span>
-              <span className="hidden xs:inline">entries</span>
-            </div>
-
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
-          </div>
-        </div>
-
-        <div className="overflow-auto px-2">
-          <div className="min-w-[700px]">
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      <div className="overflow-auto px-3 sm:px-0">
+        {/* Updated min-width to match UsersDetails feel */}
+        <div className="min-w-[1000px]">
+          {/* Header Row - Aligned with UsersDetails grid and spacing */}
+          <div className="px-0.5 pt-0.5">
             <div
-              className="grid grid-cols-5 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
+              className="grid grid-cols-[60px_1fr_1fr_1fr_auto] 
+            bg-blue-400 text-white rounded-lg items-center font-bold
+            text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
-              <span>Sr#</span>
-              <span>Holiday</span>
-              <span>From Date</span>
-              <span>To Date</span>
-              <span className="text-center">Actions</span>
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Holiday Name</span>
+              <span className="text-left">From Date</span>
+              <span className="text-left">To Date</span>
+              {/* Action width and padding matched to UsersDetails */}
+              <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
+          </div>
 
+          <div className="px-0.5 py-2">
             {paginatedHolidays.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
-                No records available at the moment!
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">No records available!</p>
+                <p className="text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              paginatedHolidays.map((holi, index) => (
-                <div
-                  key={holi.id}
-                  className="grid grid-cols-5 border-b border-x border-gray-200 text-gray-800 items-center
-                 text-sm p-2 hover:bg-gray-50 transition"
-                >
-                  <span>{(pageNo - 1) * selectedValue + index + 1}</span>
-                  <span className="truncate">{holi.holiday}</span>
-                  <span>{formatDate(holi.fromDate)}</span>
-                  <span>{formatDate(holi.toDate)}</span>
-                  <span className="flex flex-nowrap justify-center gap-1">
-                    <EditButton
-                      handleUpdate={() => handleUpdateHoliday(holi)}
-                    />
-                    <ViewButton handleView={() => handleViewHoliday(holi)} />
-                    <DeleteButton
-                      handleDelete={() => handleDeleteCall(holi.id)}
-                    />
-                  </span>
-                </div>
-              ))
+              <div className="flex flex-col gap-2">
+                {paginatedHolidays.map((holi, index) => (
+                  <div
+                    key={holi.id}
+                    className="grid grid-cols-[60px_1fr_1fr_1fr_auto] 
+                  items-center px-3 py-2 gap-3 text-sm bg-white 
+                  border border-gray-100 rounded-lg 
+                  hover:bg-blue-50/30 transition-colors shadow-sm"
+                  >
+                    <span className="text-gray-500 font-medium">
+                      {startIndex + index + 1}
+                    </span>
+
+                    {/* Icon removed, text styles aligned to user name style */}
+                    <div className="flex items-center overflow-hidden">
+                      <span className="truncate  text-gray-800">
+                        {holi.holiday}
+                      </span>
+                    </div>
+
+                    <span className="text-gray-600 truncate">
+                      {formatDate(holi.fromDate)}
+                    </span>
+                    <span className="text-gray-600 truncate">
+                      {formatDate(holi.toDate)}
+                    </span>
+
+                    {/* Actions container width matched to 140px */}
+                    <div className="flex items-center justify-end gap-1 w-[140px]">
+                      <ViewButton handleView={() => handleViewHoliday(holi)} />
+                      <EditButton
+                        handleUpdate={() => handleUpdateHoliday(holi)}
+                      />
+                      <DeleteButton
+                        handleDelete={() => handleDeleteCall(holi.id)}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
-
-        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
-          <ShowDataNumber
-            start={
-              paginatedHolidays.length === 0
-                ? 0
-                : (pageNo - 1) * selectedValue + 1
-            }
-            end={Math.min(pageNo * selectedValue, filteredHolidays.length)}
-            total={filteredHolidays.length}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={handleDecrementPageButton}
-            handleIncrementPageButton={handleIncrementPageButton}
-          />
-        </div>
       </div>
 
+      {/* Pagination Section - Simplified padding to match UsersDetails */}
+      <div className="flex flex-row items-center justify-between p-1 mt-2">
+        <ShowDataNumber
+          start={totalNum === 0 ? 0 : startIndex + 1}
+          end={Math.min(startIndex + externalPageSize, totalNum)}
+          total={totalNum}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
+      </div>
+
+      {/* Modals */}
       {isOpenModal === "ADDHOLIDAY" && (
         <AddHoliday
           handleGetAllHodidays={handleGetAllHolidays}

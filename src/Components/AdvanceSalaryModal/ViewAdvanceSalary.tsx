@@ -30,8 +30,8 @@ export const ViewAdvanceSalary = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
-      <div className="w-full max-w-4xl bg-white rounded overflow-hidden shadow-2xl border border-gray-300">
-        <div className="bg-indigo-900 rounded px-4">
+      <div className="w-full max-w-4xl overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
+        <div className="bg-white rounded-xl border-t-5 border-blue-400">
           <div className="text-white">
             <Title setModal={setIsOpenModal}>ADVANCE SALARY DETAILS</Title>
           </div>
@@ -39,13 +39,13 @@ export const ViewAdvanceSalary = ({
 
         <div className="p-4 space-y-4">
           <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Employee Information
             </h3>
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-blue-400" /> Employee Name
+                  <FaUser className="text-gray-400" /> Employee Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewAdvance.employee_name}
@@ -53,7 +53,7 @@ export const ViewAdvanceSalary = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-orange-400" /> Request Date
+                  <FaCalendarAlt className="text-gray-400" /> Request Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {new Date(viewAdvance.date)
@@ -69,13 +69,13 @@ export const ViewAdvanceSalary = ({
           </div>
 
           <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Financial Details
             </h3>
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaMoneyBillWave className="text-red-400" /> Amount
+                  <FaMoneyBillWave className="text-gray-400" /> Amount
                 </label>
                 <p className="text-gray-800 font-medium">
                   {viewAdvance.amount.toLocaleString()}
@@ -83,7 +83,7 @@ export const ViewAdvanceSalary = ({
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCheckCircle className="text-green-400" /> Approval Status
+                  <FaCheckCircle className="text-gray-400" /> Approval Status
                 </label>
                 <p
                   className={`font-bold ${
@@ -99,13 +99,13 @@ export const ViewAdvanceSalary = ({
           </div>
 
           <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Additional Notes
             </h3>
             <div className="grid grid-cols-1 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaAlignLeft className="text-yellow-400" /> Description
+                  <FaAlignLeft className="text-gray-400" /> Description
                 </label>
                 <p className="text-gray-800 font-medium italic">
                   {viewAdvance.description || "No description provided."}
@@ -115,7 +115,7 @@ export const ViewAdvanceSalary = ({
           </div>
         </div>
 
-        <div className="bg-indigo-900 p-3 flex justify-end">
+        <div className="bg-white p-3 flex justify-end">
           <button
             onClick={setIsOpenModal}
             className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-1 px-8 rounded shadow-sm transition-colors"

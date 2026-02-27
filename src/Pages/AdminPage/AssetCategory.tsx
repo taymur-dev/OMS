@@ -3,7 +3,6 @@ import axios, { AxiosError } from "axios";
 
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
@@ -19,10 +18,7 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { BASE_URL } from "../../Content/URL";
-
-const numbers = [10, 25, 50, 100];
-
-type AssetCategoryT = "ADD" | "EDIT" | "DELETE" | "";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 interface AssetCategoryItem {
   id: number;
@@ -30,15 +26,25 @@ interface AssetCategoryItem {
   category_status?: string;
 }
 
-export const AssetCategory = ({ triggerModal }: { triggerModal: number }) => {
+interface AssetCategoryProps {
+  triggerModal: number;
+  externalSearch: string;
+  externalPageSize: number;
+}
+
+export const AssetCategory = ({
+  triggerModal,
+  externalSearch,
+  externalPageSize,
+}: AssetCategoryProps) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
   const dispatch = useAppDispatch();
 
-  const [isOpenModal, setIsOpenModal] = useState<AssetCategoryT>("");
+  const [isOpenModal, setIsOpenModal] = useState<
+    "ADD" | "EDIT" | "DELETE" | ""
+  >("");
   const [pageNo, setPageNo] = useState(1);
-  const [selectedValue, setSelectedValue] = useState(10);
-  const [searchTerm, setSearchTerm] = useState("");
   const [categories, setCategories] = useState<AssetCategoryItem[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
     null,
@@ -46,15 +52,8 @@ export const AssetCategory = ({ triggerModal }: { triggerModal: number }) => {
 
   const token = currentUser?.token;
 
-  const handleChangeShowData = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    setSelectedValue(Number(event.target.value));
-    setPageNo(1);
-  };
-
   const handleToggleViewModal = (
-    modal: AssetCategoryT,
+    modal: "ADD" | "EDIT" | "DELETE" | "",
     categoryId: number | null = null,
   ) => {
     setSelectedCategoryId(categoryId);
@@ -69,13 +68,10 @@ export const AssetCategory = ({ triggerModal }: { triggerModal: number }) => {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
-
       const data: AssetCategoryItem[] = Array.isArray(response.data)
         ? response.data
         : response.data.categories || [];
-
       const sortedData = data.sort((a, b) => a.id - b.id);
-
       setCategories(sortedData);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -84,7 +80,6 @@ export const AssetCategory = ({ triggerModal }: { triggerModal: number }) => {
 
   const deleteCategory = async () => {
     if (!selectedCategoryId) return;
-
     try {
       await axios.delete(
         `${BASE_URL}/api/admin/deleteAssetCategory/${selectedCategoryId}`,
@@ -92,36 +87,30 @@ export const AssetCategory = ({ triggerModal }: { triggerModal: number }) => {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
-
       toast.success("Category deleted successfully");
       await fetchCategories();
       handleToggleViewModal("");
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
-
-      console.error("Error deleting category:", error);
-
       const errorMessage =
         error.response?.data?.message || "An unexpected error occurred";
-
       toast.error(errorMessage);
     }
   };
 
   useEffect(() => {
-    document.title = "(OMS) CONFIG TIME";
+    document.title = "(OMS) ASSET CATEGORY";
     dispatch(navigationStart());
-
     setTimeout(() => {
-      dispatch(navigationSuccess("CONFIG TIME"));
+      dispatch(navigationSuccess("ASSET CATEGORY"));
     }, 500);
-
     fetchCategories();
   }, [dispatch, fetchCategories]);
 
+  // Reset page number when search or page size changes
   useEffect(() => {
     setPageNo(1);
-  }, [searchTerm]);
+  }, [externalSearch, externalPageSize]);
 
   useEffect(() => {
     if (triggerModal > 0) {
@@ -134,116 +123,117 @@ export const AssetCategory = ({ triggerModal }: { triggerModal: number }) => {
   const filteredCategories = categories.filter(
     (cat) =>
       cat.category_name &&
-      cat.category_name.toLowerCase().includes(searchTerm.toLowerCase()),
+      cat.category_name.toLowerCase().includes(externalSearch.toLowerCase()),
   );
 
-  const totalPages = Math.ceil(filteredCategories.length / selectedValue);
-  const startIndex = (pageNo - 1) * selectedValue;
-  const endIndex = startIndex + selectedValue;
+  const totalNum = filteredCategories.length;
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const endIndex = startIndex + externalPageSize;
   const paginatedCategories = filteredCategories.slice(startIndex, endIndex);
 
+  const handleIncrementPageButton = () => {
+    const totalPages = Math.ceil(totalNum / externalPageSize);
+    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    if (pageNo > 1) setPageNo((prev) => prev - 1);
+  };
+
   return (
-    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            <div className="text-sm flex items-center">
-              <span>Show</span>
-              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                <select
-                  value={selectedValue}
-                  onChange={handleChangeShowData}
-                  className="bg-transparent outline-none py-1 cursor-pointer"
-                >
-                  {numbers.map((num, index) => (
-                    <option key={index} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-              </span>
-              <span className="hidden xs:inline">entries</span>
-            </div>
-
-            {/* Right Side: Search Input */}
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
-          </div>
-        </div>
-
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto">
-          <div className="min-w-[600px]">
-            {/* Sticky Table Header - Grid cols adjusted for Category */}
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      <div className="overflow-auto px-3 sm:px-0">
+        {/* min-w matched to UsersDetails style for consistency, 
+            though Categories need less space, keeping 600px or higher ensures layout doesn't break */}
+        <div className="min-w-[600px]">
+          {/* 1. Header Row */}
+          <div className="px-0.5 pt-0.5">
             <div
-              className="grid grid-cols-3 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
+              className="grid grid-cols-[60px_1fr_auto] 
+              bg-blue-400 text-white rounded-lg items-center font-bold
+              text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
-              <span>Sr#</span>
-              <span>Category Name</span>
-              <span className="text-center">Actions</span>
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Category Name</span>
+              {/* Added explicit width and padding to match UsersDetails alignment */}
+              <span className="text-right w-[100px] pr-4">Actions</span>
             </div>
+          </div>
 
-            {/* Table Body */}
+          {/* 2. Table Body */}
+          <div className="px-0.5 sm:px-1 py-2">
             {paginatedCategories.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
-                No records available at the moment!
+              <div className="bg-gray-50 rounded-lg border-2 border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">
+                  No records available at the moment!
+                </p>
+                <p className="text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              paginatedCategories.map((cat, index) => (
-                <div
-                  key={cat.id}
-                  className="grid grid-cols-3 border-b border-x border-gray-200 text-gray-800 items-center
-                 text-sm p-2 hover:bg-gray-50 transition"
-                >
-                  <span>{startIndex + index + 1}</span>
-                  <span className="truncate">{cat.category_name}</span>
-                  <span className="flex flex-nowrap justify-center gap-1">
-                    <EditButton
-                      handleUpdate={() => handleToggleViewModal("EDIT", cat.id)}
-                    />
-                    <DeleteButton
-                      handleDelete={() =>
-                        handleToggleViewModal("DELETE", cat.id)
-                      }
-                    />
-                  </span>
-                </div>
-              ))
+              <div className="flex flex-col gap-2">
+                {paginatedCategories.map((cat, index) => (
+                  <div
+                    key={cat.id}
+                    className="grid grid-cols-[60px_1fr_auto] 
+                    items-center px-3 py-2 gap-3 text-sm bg-white 
+                    border border-gray-100 rounded-lg 
+                    hover:bg-blue-50/30 transition-colors shadow-sm"
+                  >
+                    <span className="text-gray-500 font-medium">
+                      {startIndex + index + 1}
+                    </span>
+
+                    {/* Removed the Icon and Icon-Container Circle */}
+                    <div className="flex items-center overflow-hidden">
+                      <span className="truncate text-gray-800">
+                        {cat.category_name}
+                      </span>
+                    </div>
+
+                    {/* Aligned Actions container width with the header */}
+                    <div className="flex items-center justify-end gap-1 w-[100px]">
+                      <EditButton
+                        handleUpdate={() =>
+                          handleToggleViewModal("EDIT", cat.id)
+                        }
+                      />
+                      <DeleteButton
+                        handleDelete={() =>
+                          handleToggleViewModal("DELETE", cat.id)
+                        }
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
-
-        {/* 4) Pagination placed under the table */}
-        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
-          <ShowDataNumber
-            start={filteredCategories.length ? startIndex + 1 : 0}
-            end={Math.min(endIndex, filteredCategories.length)}
-            total={filteredCategories.length}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={() =>
-              setPageNo((p) => Math.max(1, p - 1))
-            }
-            handleIncrementPageButton={() =>
-              setPageNo((p) => Math.min(p + 1, totalPages))
-            }
-          />
-        </div>
       </div>
 
-      {/* --- MODALS SECTION --- */}
+      {/* 3. Bottom Section (Pagination) */}
+      <div className="flex flex-row items-center justify-between p-1">
+        <ShowDataNumber
+          start={totalNum === 0 ? 0 : startIndex + 1}
+          end={Math.min(endIndex, totalNum)}
+          total={totalNum}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
+      </div>
+
+      {/* --- MODALS --- */}
       {isOpenModal === "ADD" && (
         <AddAssetCategory
           setModal={() => handleToggleViewModal("")}
           existingCategories={categories}
           refreshCategories={async () => {
             await fetchCategories();
-            const lastPage = Math.ceil(categories.length / selectedValue);
-            setPageNo(lastPage);
+            setPageNo(1);
           }}
         />
       )}

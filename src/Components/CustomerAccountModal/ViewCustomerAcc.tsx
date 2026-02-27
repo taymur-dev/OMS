@@ -101,7 +101,7 @@ export const ViewCustomerAcc = ({
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
       <div className="w-full max-w-5xl bg-white rounded overflow-hidden shadow-2xl border border-gray-300">
         {/* Header */}
-        <div className="bg-indigo-900 rounded px-4">
+        <div className="bg-blue-400 rounded px-4">
           <div className="text-white">
             <Title setModal={setModal}>CUSTOMER ACCOUNT DETAILS</Title>
           </div>
@@ -110,7 +110,7 @@ export const ViewCustomerAcc = ({
         <div className="p-4 space-y-6 max-h-[75vh] overflow-y-auto">
           {/* Section 1: Customer Basic Info */}
           <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Customer Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-y-4 pt-2">
@@ -146,14 +146,14 @@ export const ViewCustomerAcc = ({
 
           {/* Section 2: Ledger Table */}
           <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Transaction Ledger
             </h3>
 
             <div className="overflow-x-auto mt-2">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-indigo-50 text-indigo-900 text-[11px] uppercase font-bold border-b border-gray-200">
+                  <tr className="bg-blue-400 text-white text-[11px] uppercase font-bold border-b border-gray-200">
                     <th className="px-3 py-2">Sr#</th>
                     <th className="px-3 py-2">Ref No</th>
                     <th className="px-3 py-2 text-right">Debit</th>
@@ -185,10 +185,10 @@ export const ViewCustomerAcc = ({
                         <td className="px-3 py-2 font-semibold text-gray-700">
                           {acc.refNo}
                         </td>
-                        <td className="px-3 py-2 text-right text-red-600">
+                        <td className="px-3 py-2 text-right text-green-600">
                           {Number(acc.debit).toFixed(2)}
                         </td>
-                        <td className="px-3 py-2 text-right text-green-600">
+                        <td className="px-3 py-2 text-right text-red-600">
                           {Number(acc.credit).toFixed(2)}
                         </td>
                         <td className="px-3 py-2 text-right font-medium">
@@ -197,7 +197,7 @@ export const ViewCustomerAcc = ({
                         <td className="px-3 py-2 text-right text-gray-500">
                           {Number(acc.prevBalance).toFixed(2)}
                         </td>
-                        <td className="px-3 py-2 text-right font-bold text-indigo-900 bg-indigo-50/30">
+                        <td className="px-3 py-2 text-right font-bold text-blue-400 bg-blue-50/30">
                           {Number(acc.netBalance).toFixed(2)}
                         </td>
                         <td className="px-3 py-2 text-right font-medium">{acc.paymentMethod}</td>
@@ -214,7 +214,7 @@ export const ViewCustomerAcc = ({
         </div>
 
         {/* Footer */}
-        <div className="bg-indigo-900 p-3 flex justify-between items-center">
+        <div className="bg-blue-400 p-3 flex justify-between items-center">
           <div className="text-white/70 text-[10px] flex items-center gap-2 px-2">
             <FaFileInvoiceDollar /> Total Entries: {accounts.length}
           </div>

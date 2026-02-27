@@ -126,7 +126,7 @@ export const AddProject = ({
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4  flex items-center justify-center z-50">
-      <div className="w-full max-w-3xl bg-white rounded shadow-lg border border-indigo-900 overflow-hidden">
+      <div className="w-full max-w-3xl overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form
           onSubmit={handlerSubmitted}
           onKeyDown={(e) => {
@@ -134,7 +134,7 @@ export const AddProject = ({
           }}
         >
           {/* Header */}
-          <div className="bg-indigo-900 px-6 ">
+          <div className="bg-white rounded-xl border-t-5 border-blue-400 ">
             <Title
               setModal={setModal}
               className="text-white text-xl font-semibold"
@@ -209,7 +209,7 @@ export const AddProject = ({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 px-6 py-4 bg-indigo-900 border-t border-indigo-900 rounded">
+          <div className="flex justify-end gap-3 px-6 py-4 bg-blue rounded">
             <CancelBtn setModal={setModal} />
             <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>

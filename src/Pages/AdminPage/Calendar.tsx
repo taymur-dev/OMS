@@ -7,9 +7,6 @@ import {
 } from "../../redux/NavigationSlice";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
@@ -19,10 +16,9 @@ import { ActivateCalendarSession } from "../../Components/CalendarModal/Activate
 import { EditCalendarSession } from "../../Components/CalendarModal/EditCalendarSession";
 import { ViewCalendarSession } from "../../Components/CalendarModal/ViewCalendarSession";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 import { Loader } from "../../Components/LoaderComponent/Loader";
-
-const numbers = [10, 25, 50, 100];
 
 type CALENDART = "ADD" | "EDIT" | "VIEW" | "DELETE" | "ACTIVATE" | "";
 
@@ -34,27 +30,45 @@ type CalendarSession = {
   calendarStatus?: string;
 };
 
-export const Calendar = ({ triggerModal }: { triggerModal: number }) => {
+interface CalendarProps {
+  externalSearch: string;
+  externalPageSize: number;
+  triggerModal: number;
+}
+
+export const Calendar = ({
+  externalSearch,
+  externalPageSize,
+  triggerModal,
+}: CalendarProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
 
   const [isOpenModal, setIsOpenModal] = useState<CALENDART>("");
   const [pageNo, setPageNo] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [searchTerm, setSearchTerm] = useState("");
   const [calendarList, setCalendarList] = useState<CalendarSession[]>([]);
   const [selectedSession, setSelectedSession] =
     useState<CalendarSession | null>(null);
 
   const token = currentUser?.token;
 
+  // Sync "Add" modal with parent button trigger
+  useEffect(() => {
+    if (triggerModal > 0) {
+      setIsOpenModal("ADD");
+    }
+  }, [triggerModal]);
+
   const handleIncrementPageButton = () => {
-    setPageNo((prev) => prev + 1);
+    const totalPages = Math.ceil(
+      filteredCalendarList.length / externalPageSize,
+    );
+    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
   };
 
   const handleDecrementPageButton = () => {
-    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+    if (pageNo > 1) setPageNo((prev) => prev - 1);
   };
 
   const handleToggleViewModal = (active: CALENDART) => {
@@ -65,7 +79,6 @@ export const Calendar = ({ triggerModal }: { triggerModal: number }) => {
     async (externalData?: CalendarSession[]): Promise<void> => {
       try {
         let mappedData: CalendarSession[];
-
         if (externalData) {
           mappedData = externalData;
         } else {
@@ -75,7 +88,6 @@ export const Calendar = ({ triggerModal }: { triggerModal: number }) => {
               headers: { Authorization: `Bearer ${token}` },
             },
           );
-
           mappedData = (res.data.data || res.data).map(
             (item: CalendarSession) => ({
               id: item.id,
@@ -86,7 +98,6 @@ export const Calendar = ({ triggerModal }: { triggerModal: number }) => {
             }),
           );
         }
-
         setCalendarList(mappedData);
       } catch (error) {
         console.error("Error fetching calendar sessions:", error);
@@ -96,61 +107,27 @@ export const Calendar = ({ triggerModal }: { triggerModal: number }) => {
   );
 
   const handleDeleteCalendarSession = async () => {
-    if (!selectedSession?.id) {
-      console.error("No session selected or ID missing!");
-      return;
-    }
-
+    if (!selectedSession?.id) return;
     try {
-      console.log("Deleting session with ID:", selectedSession.id);
-
-      const res = await axios.delete(
+      await axios.delete(
         `${BASE_URL}/api/admin/deleteCalendarSession/${selectedSession.id}`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
-
-      console.log("Delete response:", res.data);
-
-      // Refresh the table
       await handleGetAllCalendar();
-
-      // Close the modal
       handleToggleViewModal("");
     } catch (error) {
       console.error("Error deleting session:", error);
     }
   };
 
-  const handleClickEditButton = (session: CalendarSession) => {
-    setSelectedSession(session);
-    handleToggleViewModal("EDIT");
-  };
-
-  const handleClickViewButton = (session: CalendarSession) => {
-    setSelectedSession(session);
-    handleToggleViewModal("VIEW");
-  };
-
-  const handleClickDeleteButton = (session: CalendarSession) => {
-    setSelectedSession(session);
-    handleToggleViewModal("DELETE");
-  };
-
   useEffect(() => {
     handleGetAllCalendar();
     document.title = "(OMS) CALENDAR";
-
     dispatch(navigationStart());
     setTimeout(() => {
       dispatch(navigationSuccess("CALENDAR"));
     }, 1000);
   }, [dispatch, handleGetAllCalendar]);
-
-   useEffect(() => {
-      if (triggerModal > 0) {
-        setIsOpenModal("ADD");
-      }
-    }, [triggerModal]);
 
   const uniqueSessions = calendarList.reduce<CalendarSession[]>((acc, curr) => {
     if (!acc.find((s) => s.session_name === curr.session_name)) {
@@ -160,12 +137,11 @@ export const Calendar = ({ triggerModal }: { triggerModal: number }) => {
   }, []);
 
   const filteredCalendarList = uniqueSessions.filter((item) =>
-    `${item.session_name}`.toLowerCase().includes(searchTerm.toLowerCase()),
+    `${item.session_name}`.toLowerCase().includes(externalSearch.toLowerCase()),
   );
 
-  // Paginate
-  const startIndex = (pageNo - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const endIndex = startIndex + externalPageSize;
   const paginatedCalendarList = filteredCalendarList.slice(
     startIndex,
     endIndex,
@@ -174,116 +150,101 @@ export const Calendar = ({ triggerModal }: { triggerModal: number }) => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
-      
+    <div className="flex flex-col flex-grow bg-white overflow-hidden rounded-lg shadow-sm">
+      {/* Sub-header Action Bar */}
+      <div className="p-3 bg-white flex items-center justify-end border-b border-gray-50">
+        <button
+          onClick={() => handleToggleViewModal("ACTIVATE")}
+          className="bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-2 px-4 rounded-md transition-colors shadow-sm"
+        >
+          Activate Calendar Session
+        </button>
+      </div>
 
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800">
-            {/* Left Side: Show entries */}
-            <div className="text-sm flex items-center">
-              <span>Show</span>
-              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                <select
-                  value={pageSize}
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value));
-                    setPageNo(1);
-                  }}
-                  className="bg-transparent outline-none py-1 cursor-pointer"
-                >
-                  {numbers.map((num, index) => (
-                    <option key={index} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-              </span>
-              <span className="hidden xs:inline">entries</span>
-            </div>
-
-            <div className="flex flex-col items-end gap-2">
-              <TableInputField
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-              />
-
-              <CustomButton
-                label="Activate Calendar Session"
-                handleToggle={() => handleToggleViewModal("ACTIVATE")}
-              />
+      {/* Main Table Area */}
+      <div className="overflow-auto px-3 py-2">
+        <div className="min-w-[800px]">
+          <div className="px-0.5 pt-0.5">
+            {/* Grid Header aligned with UsersDetails style */}
+            <div className="grid grid-cols-[60px_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm">
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Session Name</span>
+              <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
           </div>
-        </div>
 
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto">
-          <div className="min-w-[500px]">
-            {/* Sticky Table Header */}
-            <div
-              className="grid grid-cols-3 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
-            >
-              <span>Sr#</span>
-              <span>Session Name</span>
-              <span>Actions</span>
-            </div>
-
-            {/* Table Body */}
-            {/* Table Body */}
+          <div className="px-0.5 py-2">
             {paginatedCalendarList.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
-                No records available at the moment!
+              <div className="bg-gray-50 rounded-lg border border-dashed border-gray-300 p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">No records available!</p>
               </div>
             ) : (
-              paginatedCalendarList.map((item, index) => (
-                <div
-                  key={item.id || index}
-                  className="grid grid-cols-3 border-b border-x border-gray-200 text-gray-800 items-center
-                 text-sm p-2 hover:bg-gray-50 transition"
-                >
-                  <span>{startIndex + index + 1}</span>
-                  <span>{item.session_name}</span>
-                  <span className="flex flex-nowrap gap-1">
-                    <EditButton
-                      handleUpdate={() => handleClickEditButton(item)}
-                    />
-                    <ViewButton
-                      handleView={() => handleClickViewButton(item)}
-                    />
-                    <DeleteButton
-                      handleDelete={() => handleClickDeleteButton(item)}
-                    />
-                  </span>
-                </div>
-              ))
+              <div className="flex flex-col gap-2">
+                {paginatedCalendarList.map((item, index) => (
+                  <div
+                    key={item.id || index}
+                    /* Grid Body aligned with Header */
+                    className="grid grid-cols-[60px_1fr_auto] items-center px-3 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
+                  >
+                    <span className="text-gray-500 font-medium">
+                      {startIndex + index + 1}
+                    </span>
+
+                    {/* Icon removed from Session Name div */}
+                    <div className="text-gray-800 truncate">
+                      {item.session_name}
+                    </div>
+
+                    <div className="flex items-center justify-end gap-1 w-[140px]">
+                      <ViewButton
+                        handleView={() => {
+                          setSelectedSession(item);
+                          handleToggleViewModal("VIEW");
+                        }}
+                      />
+                      <EditButton
+                        handleUpdate={() => {
+                          setSelectedSession(item);
+                          handleToggleViewModal("EDIT");
+                        }}
+                      />
+                      <DeleteButton
+                        handleDelete={() => {
+                          setSelectedSession(item);
+                          handleToggleViewModal("DELETE");
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
-
-        {/* 4) Pagination placed under the table */}
-        <div className="flex flex-row gap-2 items-center justify-between p-2">
-          <ShowDataNumber
-            start={filteredCalendarList.length === 0 ? 0 : startIndex + 1}
-            end={Math.min(endIndex, filteredCalendarList.length)}
-            total={filteredCalendarList.length}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={handleDecrementPageButton}
-            handleIncrementPageButton={handleIncrementPageButton}
-          />
-        </div>
       </div>
 
-      {/* --- MODALS SECTION --- */}
+      {/* Pagination Section */}
+      <div className="flex flex-row items-center justify-between p-3 border-t border-gray-100">
+        <ShowDataNumber
+          start={filteredCalendarList.length === 0 ? 0 : startIndex + 1}
+          end={Math.min(endIndex, filteredCalendarList.length)}
+          total={filteredCalendarList.length}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
+      </div>
+
+      {/* Modals */}
       {isOpenModal === "ADD" && (
         <AddCalendarSession
           setModal={() => handleToggleViewModal("")}
           refreshCalendar={handleGetAllCalendar}
         />
       )}
-
       {isOpenModal === "EDIT" && selectedSession && (
         <EditCalendarSession
           setModal={() => handleToggleViewModal("")}
@@ -291,7 +252,6 @@ export const Calendar = ({ triggerModal }: { triggerModal: number }) => {
           selectedSession={selectedSession}
         />
       )}
-
       {isOpenModal === "VIEW" && selectedSession && (
         <ViewCalendarSession
           setModal={() => handleToggleViewModal("")}
@@ -299,7 +259,6 @@ export const Calendar = ({ triggerModal }: { triggerModal: number }) => {
           allSessions={calendarList}
         />
       )}
-
       {isOpenModal === "DELETE" && (
         <ConfirmationModal
           isOpen={() => {}}
@@ -307,15 +266,12 @@ export const Calendar = ({ triggerModal }: { triggerModal: number }) => {
           onConfirm={handleDeleteCalendarSession}
         />
       )}
-
       {isOpenModal === "ACTIVATE" && (
         <ActivateCalendarSession
           setModal={() => handleToggleViewModal("")}
           refreshSessions={handleGetAllCalendar}
         />
       )}
-
-    
     </div>
   );
 };

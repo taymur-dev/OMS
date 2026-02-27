@@ -112,9 +112,8 @@ export const AttendanceHub = () => {
           )}
         </div>
 
-        {/* 3. Content Area */}
-        {/* 3. Content Area */}
-        <div className="flex-grow p-2 sm:p-4 overflow-auto">
+      
+        <div className="flex-grow p-1 sm:p-4 overflow-auto">
           {activeTab === "MARK" && (
             <MarkAttendance
               triggerMark={triggerModal.tab === "MARK" ? triggerModal.count : 0}

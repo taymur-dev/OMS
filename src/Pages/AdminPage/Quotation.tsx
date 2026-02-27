@@ -1,24 +1,23 @@
-import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
-import { Pagination } from "../../Components/Pagination/Pagination";
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-
-import { ViewButton } from "../../Components/CustomButtons/ViewButton";
-
 import { useEffect, useState, useCallback } from "react";
-import { AddQuotation } from "../../Components/QuotationModal/AddQuotation";
-import { ViewQuotation } from "../../Components/QuotationModal/ViewQuotation";
-import { CartItem } from "../../Components/QuotationModal/ViewQuotation";
-
+import axios from "axios";
+import { BASE_URL } from "../../Content/URL";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
-import { Loader } from "../../Components/LoaderComponent/Loader";
-import axios from "axios";
-import { BASE_URL } from "../../Content/URL";
 
-const numbers = [10, 25, 50, 100];
+import { Loader } from "../../Components/LoaderComponent/Loader";
+import { Pagination } from "../../Components/Pagination/Pagination";
+import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
+import { ViewButton } from "../../Components/CustomButtons/ViewButton";
+import { AddQuotation } from "../../Components/QuotationModal/AddQuotation";
+import {
+  ViewQuotation,
+  CartItem,
+} from "../../Components/QuotationModal/ViewQuotation";
+
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 type QuotationItem = {
   id: string;
@@ -32,208 +31,179 @@ type QuotationItem = {
   updatedAt?: string;
 };
 
-type QuotationT = "ADD" | "VIEW" | "DELETE" | "";
+type QuotationT = "ADD" | "VIEW" | "";
 
-export const Quotation = ({ triggerModal }: { triggerModal: number }) => {
+interface QuotationProps {
+  triggerModal: number;
+  externalSearch: string;
+  externalPageSize: number;
+}
+
+export const Quotation = ({
+  triggerModal,
+  externalSearch,
+  externalPageSize,
+}: QuotationProps) => {
   const dispatch = useAppDispatch();
-
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
-
   const token = currentUser?.token;
 
   const [isOpenModal, setIsOpenModal] = useState<QuotationT>("");
   const [pageNo, setPageNo] = useState(1);
-  const [selectedValue, setSelectedValue] = useState(10);
-  const [searchTerm, setSearchTerm] = useState("");
-
+  const [quotations, setQuotations] = useState<QuotationItem[]>([]);
   const [selectedQuotation, setSelectedQuotation] =
     useState<QuotationItem | null>(null);
-
-  const [quotations, setQuotations] = useState<QuotationItem[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-
-  const handleChangeShowData = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    setSelectedValue(Number(event.target.value));
-  };
-
-  const handleIncrementPageButton = () => {
-    setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
-  };
-
-  const handleToggleViewModal = (active: QuotationT) => {
-    setIsOpenModal((prev) => (prev === active ? "" : active));
-  };
-
-  const handleViewQuotation = async (id: string) => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/admin/getQuotation/${id}`, {
-        headers: { Authorization: token },
-      });
-
-      setSelectedQuotation(res.data);
-      handleToggleViewModal("VIEW");
-    } catch (error) {
-      console.error("Failed to fetch quotation:", error);
-    }
-  };
 
   const handleGetQuotations = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getQuotations`, {
-        headers: {
-          Authorization: token,
-        },
+        headers: { Authorization: token },
       });
-
       setQuotations(res.data?.data || []);
-      setTotalCount(res.data?.data?.length || 0);
     } catch (error) {
-      console.log(error);
+      console.error("Failed to fetch quotations:", error);
     }
   }, [token]);
 
   useEffect(() => {
     document.title = "(OMS) QUOTATION";
     dispatch(navigationStart());
-
-    setTimeout(() => {
+    handleGetQuotations().finally(() => {
       dispatch(navigationSuccess("QUOTATION"));
-    }, 1000);
-  }, [dispatch]);
+    });
+  }, [dispatch, handleGetQuotations]);
+
+  // Reset page number when search or page size changes
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
 
   useEffect(() => {
-    if (token) {
-      handleGetQuotations();
-    }
-  }, [token, handleGetQuotations]);
-
-  useEffect(() => {
-    if (triggerModal > 0) {
-      setIsOpenModal("ADD");
-    }
+    if (triggerModal > 0) setIsOpenModal("ADD");
   }, [triggerModal]);
+
+  const handleViewQuotation = async (id: string) => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/getQuotation/${id}`, {
+        headers: { Authorization: token },
+      });
+      setSelectedQuotation(res.data);
+      setIsOpenModal("VIEW");
+    } catch (error) {
+      console.error("Failed to fetch quotation details:", error);
+    }
+  };
+
+  // Logic: Filtering and Pagination
+  const filteredQuotations = quotations.filter(
+    (item) =>
+      item.refNo.toLowerCase().includes(externalSearch.toLowerCase()) ||
+      item.customerName.toLowerCase().includes(externalSearch.toLowerCase()),
+  );
+
+  const totalNum = filteredQuotations.length;
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const endIndex = startIndex + externalPageSize;
+  const paginatedData = filteredQuotations.slice(startIndex, endIndex);
+
+  const handleIncrementPageButton = () => {
+    if (pageNo < Math.ceil(totalNum / externalPageSize))
+      setPageNo((prev) => prev + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    if (pageNo > 1) setPageNo((prev) => prev - 1);
+  };
 
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col bg-white">
-        {/* 2) Filter Section (Entries & Search) */}
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            {/* Left Side: Show entries */}
-            <div className="text-sm flex items-center">
-              <span>Show</span>
-              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                <select
-                  value={selectedValue}
-                  onChange={handleChangeShowData}
-                  className="bg-transparent outline-none py-1 cursor-pointer"
-                >
-                  {numbers.map((num, index) => (
-                    <option key={index} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-              </span>
-              <span className="hidden xs:inline">entries</span>
-            </div>
-
-            {/* Right Side: Search Input */}
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
-          </div>
-        </div>
-
-        {/* 3) MIDDLE SECTION (Scrollable Table) */}
-        <div className="overflow-auto ">
-          <div className="min-w-[700px]">
-            {/* Sticky Table Header */}
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      <div className="overflow-auto px-3 sm:px-0">
+        <div className="min-w-[800px]">
+          {/* 1. Header Section - Aligned with UsersDetails */}
+          <div className="px-0.5 pt-0.5">
             <div
-              className="grid grid-cols-4 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
+              className="grid grid-cols-[60px_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center
+           font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
-              <span>Sr#</span>
-              <span>Ref</span>
-              <span>Customer</span>
-              <span className="text-center">Actions</span>
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Customer Name</span>
+              <span className="text-left">Ref Number</span>
+              <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
+          </div>
 
-            {/* Table Body */}
-            {quotations.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
-                No records available at the moment!
+          {/* 2. Body Section */}
+          <div className="px-0.5 sm:px-1 py-2">
+            {paginatedData.length === 0 ? (
+              <div className="bg-gray-50 rounded-lg border-2 border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">No quotations found!</p>
+                <p className="text-sm">Try adjusting your search criteria.</p>
               </div>
             ) : (
-              quotations
-                .slice(
-                  (pageNo - 1) * selectedValue,
-                  (pageNo - 1) * selectedValue + selectedValue,
-                )
-                .map((item, index) => (
+              <div className="flex flex-col gap-2">
+                {paginatedData.map((item, index) => (
                   <div
                     key={item.id}
-                    className="grid grid-cols-4 border-b border-x border-gray-200 text-gray-800 items-center
-                   text-sm p-2 hover:bg-gray-50 transition"
+                    className="grid grid-cols-[60px_1fr_1fr_auto] items-center px-3 py-2 gap-3 text-sm bg-white border
+                   border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
-                    <span>{(pageNo - 1) * selectedValue + index + 1}</span>
-                    <span className="truncate">{item.refNo}</span>
-                    <span className="truncate">{item.customerName}</span>
+                    <span className="text-gray-500 font-medium">
+                      {startIndex + index + 1}
+                    </span>
 
-                    <span className="flex flex-nowrap justify-center gap-1">
+                    <span className="text-gray-700 truncate">
+                      {item.customerName}
+                    </span>
+
+                    <span className=" text-gray-800 truncate">
+                      {item.refNo}
+                    </span>
+
+                    <div className="flex items-center justify-end gap-1 w-[140px] pr-5">
                       <ViewButton
                         handleView={() => handleViewQuotation(item.id)}
                       />
-                    </span>
+                    </div>
                   </div>
-                ))
+                ))}
+              </div>
             )}
           </div>
         </div>
-
-        {/* 4) Pagination Footer */}
-        <div className="flex flex-row sm:flex-row gap-2 items-center mt-0 justify-between">
-          <ShowDataNumber
-            start={
-              quotations.length === 0 ? 0 : (pageNo - 1) * selectedValue + 1
-            }
-            end={Math.min(pageNo * selectedValue, totalCount)}
-            total={totalCount}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={handleDecrementPageButton}
-            handleIncrementPageButton={handleIncrementPageButton}
-          />
-        </div>
       </div>
 
-      {/* --- MODALS SECTION --- */}
+      {/* 3. Pagination Footer */}
+      <div className="flex flex-row items-center justify-between p-1 mt-auto border-t border-gray-50">
+        <ShowDataNumber
+          start={totalNum === 0 ? 0 : startIndex + 1}
+          end={Math.min(endIndex, totalNum)}
+          total={totalNum}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
+      </div>
+
+      {/* --- MODALS --- */}
       {isOpenModal === "ADD" && (
         <AddQuotation
-          setModal={() => handleToggleViewModal("")}
+          setModal={() => setIsOpenModal("")}
           onAdded={handleGetQuotations}
         />
       )}
 
       {isOpenModal === "VIEW" && selectedQuotation && (
         <ViewQuotation
-          setModal={() => handleToggleViewModal("")}
+          setModal={() => setIsOpenModal("")}
           quotation={selectedQuotation}
         />
       )}
-
-      
     </div>
   );
 };

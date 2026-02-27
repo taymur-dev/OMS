@@ -204,9 +204,9 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
         if (e.key === "Enter") e.preventDefault();
       }}
     >
-      <div className="w-[42rem] bg-white mx-auto rounded border border-indigo-900">
+      <div className="w-[42rem] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form onSubmit={handleSubmit}>
-          <div className="bg-indigo-900 rounded px-6">
+          <div className="bg-white rounded-xl border-t-5 border-blue-400">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -266,13 +266,15 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
               handlerChange={handleInputChange}
             />
 
-            <InputField
-              labelName="Deduction *"
-              type="number"
-              name="deduction"
-              value={addLoan.deduction}
-              handlerChange={handleInputChange}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Deduction *"
+                type="number"
+                name="deduction"
+                value={addLoan.deduction}
+                handlerChange={handleInputChange}
+              />
+            </div>
 
             {/* <InputField
               labelName="Remaining Amount"
@@ -284,7 +286,7 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
             /> */}
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>

@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { InputField } from "../../Components/InputFields/InputField";
@@ -8,9 +7,18 @@ import { Loader } from "../../Components/LoaderComponent/Loader";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
-import { navigationStart, navigationSuccess } from "../../redux/NavigationSlice";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../redux/NavigationSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPrint } from "@fortawesome/free-solid-svg-icons";
+import {
+  RiInboxArchiveLine,
+  RiCalendarLine,
+  RiUserFill,
+  RiMoneyDollarCircleLine,
+} from "react-icons/ri";
 
 type CustomerT = {
   id: number;
@@ -25,20 +33,27 @@ type PaymentT = {
   date: string;
 };
 
-export const PaymentsReports = () => {
+interface PaymentsReportsProps {
+  externalSearch?: string;
+  externalPageSize?: number;
+}
+
+export const PaymentsReports = ({
+  externalSearch = "",
+  externalPageSize = 10,
+}: PaymentsReportsProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
   const token = currentUser?.token;
 
-  const [selectedValue] = useState(10);
   const [getCustomers, setGetCustomers] = useState<CustomerT[]>([]);
   const [reportData, setReportData] = useState({
     startDate: new Date().toLocaleDateString("sv-SE"),
     endDate: new Date().toLocaleDateString("sv-SE"),
     customerId: "",
   });
-  
+
   const [appliedFilters, setAppliedFilters] = useState({
     startDate: new Date().toLocaleDateString("sv-SE"),
     endDate: new Date().toLocaleDateString("sv-SE"),
@@ -46,10 +61,11 @@ export const PaymentsReports = () => {
   });
 
   const [pageNo, setPageNo] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
   const [payments, setPayments] = useState<PaymentT[]>([]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
     setReportData((prev) => ({ ...prev, [name]: value }));
   };
@@ -63,8 +79,10 @@ export const PaymentsReports = () => {
     setPageNo(1);
   };
 
-  const handleIncrementPageButton = () => setPageNo((p) => p + 1);
-  const handleDecrementPageButton = () => setPageNo((p) => Math.max(p - 1, 1));
+  // Reset page when search or page size changes from parent
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
 
   const fetchCustomers = useCallback(async () => {
     try {
@@ -86,7 +104,9 @@ export const PaymentsReports = () => {
 
       const mappedPayments = res.data.map((p: PaymentT) => ({
         ...p,
-        customerName: getCustomers.find((c) => c.id.toString() === p.customerId)?.customerName || p.customerId,
+        customerName:
+          getCustomers.find((c) => c.id.toString() === p.customerId)
+            ?.customerName || p.customerId,
         date: new Date(p.date).toLocaleDateString("sv-SE"),
       }));
 
@@ -111,19 +131,41 @@ export const PaymentsReports = () => {
 
   const filteredPayments = useMemo(() => {
     return payments
-      .filter((p) =>
-        searchTerm === "" ||
-        p.customerName?.toLowerCase().includes(searchTerm.toLowerCase())
+      .filter(
+        (p) =>
+          externalSearch === "" ||
+          p.customerName
+            ?.toLowerCase()
+            .includes(externalSearch.toLowerCase()) ||
+          p.amount.includes(externalSearch),
       )
       .filter((p) =>
-        appliedFilters.customerId ? p.customerId === appliedFilters.customerId : true
+        appliedFilters.customerId
+          ? p.customerId === appliedFilters.customerId
+          : true,
       )
-      .filter((p) =>
-        p.date >= appliedFilters.startDate && p.date <= appliedFilters.endDate
+      .filter(
+        (p) =>
+          p.date >= appliedFilters.startDate &&
+          p.date <= appliedFilters.endDate,
       );
-  }, [payments, searchTerm, appliedFilters]);
+  }, [payments, externalSearch, appliedFilters]);
+
+  const totalNum = filteredPayments.length;
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const paginatedPayments = filteredPayments.slice(
+    startIndex,
+    startIndex + externalPageSize,
+  );
+
+  const handleIncrementPageButton = () => {
+    const totalPages = Math.ceil(totalNum / externalPageSize);
+    if (pageNo < totalPages) setPageNo((p) => p + 1);
+  };
+  const handleDecrementPageButton = () => setPageNo((p) => Math.max(p - 1, 1));
 
   const printDiv = () => {
+    // ... (Keep your existing printDiv logic here)
     const printStyles = `
       @page { size: A4 portrait; }
       body { font-family: Arial, sans-serif; font-size: 11pt; color: #000; }
@@ -156,16 +198,12 @@ export const PaymentsReports = () => {
 
   if (loader) return <Loader />;
 
- return (
-  <div className="flex flex-col flex-grow bg-gray overflow-hidden">
-    <div className="min-h-screen w-full flex flex-col  bg-white">
-
-
+  return (
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
       {/* --- FILTER SECTION --- */}
-      <div className="p-2 bg-white">
+      <div className="p-3 bg-white border-b border-gray-100">
         <div className="flex flex-wrap items-end gap-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow min-w-[300px]">
-          
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow">
             <InputField
               labelName="From"
               type="date"
@@ -180,102 +218,106 @@ export const PaymentsReports = () => {
               handlerChange={handleChange}
               name="endDate"
             />
-
-              <OptionField
+            <OptionField
               labelName="Customer"
               name="customerId"
               value={reportData.customerId}
-              optionData={getCustomers?.map((customer) => ({
-                id: customer.id,
-                label: customer.customerName,
-                value: customer.id.toString(),
+              optionData={getCustomers?.map((c) => ({
+                id: c.id,
+                label: c.customerName,
+                value: c.id.toString(),
               }))}
               inital="Please Select Customer"
               handlerChange={handleChange}
             />
           </div>
-
-          {/* Buttons Container: Matches Sales Report wrapping logic */}
           <div className="flex gap-2 flex-grow lg:flex-grow-0 min-w-full lg:min-w-fit">
             <button
               onClick={handleSearch}
-              className="bg-indigo-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center justify-center whitespace-nowrap"
+              className="bg-slate-700 text-white px-6 py-3 rounded-lg shadow flex-1 flex items-center justify-center
+               whitespace-nowrap text-sm font-bold"
             >
-              <FontAwesomeIcon icon={faSearch} className="mr-2" />
-              Search
+              <FontAwesomeIcon icon={faSearch} className="mr-2" /> Search
             </button>
-
             <button
               onClick={printDiv}
-              className="bg-blue-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center justify-center whitespace-nowrap"
+              className="bg-blue-400 text-white px-6 py-3 rounded-lg shadow flex-1 flex items-center justify-center
+               whitespace-nowrap text-sm font-bold"
             >
-              <FontAwesomeIcon icon={faPrint} className="mr-2" />
-              Print
+              <FontAwesomeIcon icon={faPrint} className="mr-2" /> Print
             </button>
           </div>
         </div>
       </div>
 
-      {/* --- SUB-HEADER SECTION (Search & Info) --- */}
-      <div className="p-2">
-        <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-          <div className="text-sm font-bold text-gray-600">
-            From: <span className="text-black">{appliedFilters.startDate}</span>{" "}
-            To: <span className="text-black">{appliedFilters.endDate}</span>
-          </div>
-
-          <TableInputField
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-          />
-        </div>
-      </div>
-
-      {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-      <div className="overflow-auto">
-        <div id="myDiv" className="min-w-[800px]">
-          {/* Sticky Table Header */}
-          <div className="grid grid-cols-4 bg-indigo-900 text-white items-center font-semibold text-sm sticky top-0 z-10 p-2">
-            <span>Sr#</span>
-            <span>Customer</span>
-            <span>Payment Amount</span>
-            <span>Date</span>
-          </div>
-
-          {/* Table Body */}
-          {filteredPayments.length === 0 ? (
-            <div className="text-gray-800 text-lg text-center py-10 border-x border-b border-gray-200">
-              No records available at the moment!
+      {/* --- TABLE AREA --- */}
+      <div className="overflow-auto px-3 sm:px-0 flex-grow mt-2">
+        <div className="min-w-[1000px]">
+          {/* Header Row */}
+          <div className="px-0.5 pt-0.5">
+            <div className="grid grid-cols-[80px_1fr_1fr_1fr] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-4 px-4 py-3 shadow-sm">
+              <span>Sr#</span>
+              <span>Customer Name</span>
+              <span>Amount Paid</span>
+              <span>Payment Date</span>
             </div>
-          ) : (
-            filteredPayments
-              .slice((pageNo - 1) * selectedValue, pageNo * selectedValue)
-              .map((payment, index) => (
-                <div
-                  key={payment.id}
-                  className="grid grid-cols-4 border-b border-x border-gray-200 text-gray-800 items-center
-                 text-sm p-2 hover:bg-gray-50 transition"
-                >
-                  <span>{(pageNo - 1) * selectedValue + index + 1}</span>
-                  <span className="truncate">{payment.customerName}</span>
-                  <span className="truncate">{payment.amount}</span>
-                  <span>{payment.date}</span>
-                </div>
-              ))
-          )}
+          </div>
+
+          {/* Body Rows */}
+          <div className="px-0.5 sm:px-1 py-2">
+            {paginatedPayments.length === 0 ? (
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">
+                  No records available at the moment!
+                </p>
+                <p className="text-sm">
+                  Try adjusting your date range or search term.
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2" id="myDiv">
+                {paginatedPayments.map((payment, index) => (
+                  <div
+                    key={payment.id}
+                    className="grid grid-cols-[80px_1fr_1fr_1fr] items-center p-1.5 gap-4 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
+                  >
+                    <span className="pl-2 text-gray-500 font-medium">
+                      {startIndex + index + 1}
+                    </span>
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
+                        <RiUserFill size={16} />
+                      </div>
+                      <span className="font-semibold text-gray-800">
+                        {payment.customerName}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-700 font-bold">
+                      <RiMoneyDollarCircleLine
+                        className="text-green-500"
+                        size={18}
+                      />
+                      <span>{payment.amount}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-500">
+                      <RiCalendarLine className="text-blue-400" size={16} />
+                      <span>{payment.date}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* --- PAGINATION SECTION --- */}
-      <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
+      <div className="flex flex-row items-center justify-between p-2 border-t border-gray-100">
         <ShowDataNumber
-          start={
-            filteredPayments.length === 0
-              ? 0
-              : (pageNo - 1) * selectedValue + 1
-          }
-          end={Math.min(pageNo * selectedValue, filteredPayments.length)}
-          total={filteredPayments.length}
+          start={totalNum === 0 ? 0 : startIndex + 1}
+          end={Math.min(startIndex + externalPageSize, totalNum)}
+          total={totalNum}
         />
         <Pagination
           pageNo={pageNo}
@@ -284,8 +326,5 @@ export const PaymentsReports = () => {
         />
       </div>
     </div>
-
-   
-  </div>
-);
+  );
 };

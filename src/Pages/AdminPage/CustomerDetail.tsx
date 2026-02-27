@@ -19,14 +19,10 @@ import { Pagination } from "../../Components/Pagination/Pagination";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+import { RiUserFill } from "react-icons/ri";
 
 // Icons
-import {
-  RiMapPinLine,
-  RiBuilding4Line,
-  RiInboxArchiveLine,
-  RiUserFill,
-} from "react-icons/ri";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 type AllcustomerT = {
   id: number;
@@ -127,30 +123,27 @@ export const CustomerDetail = ({
     }
   };
 
-  const gridLayout =
-    "grid grid-cols-[60px_1.5fr_1.5fr_1.2fr_1.2fr_120px] gap-4 items-center";
-
   return (
     <div className="flex flex-col flex-grow bg-white overflow-hidden">
-      <div className="overflow-auto">
+      <div className="overflow-auto px-3 sm:px-0">
         <div className="min-w-[1100px]">
           {/* Header Grid */}
-          <div className="px-4 pt-0.5">
+          <div className="px-0.5 pt-0.5">
             <div
-              className={`${gridLayout} bg-blue-400 text-white rounded-lg items-center font-bold
-    text-xs  tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm`}
+              className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold
+            text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
-              <span>Sr#</span>
-              <span>Name & Contact</span>
-              <span>Address</span>
-              <span>Company</span>
-              <span>Comp. Address</span>
-              <span className="text-center">Actions</span>
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Name & Contact</span>
+              <span className="text-left">Address</span>
+              <span className="text-left">Company</span>
+              <span className="text-left">Comp. Address</span>
+              <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
           </div>
 
           {/* Body Content */}
-          <div className="px-4 py-2">
+          <div className="px-0.5 py-2">
             {paginatedCustomers.length === 0 ? (
               <div className="bg-gray-50 rounded-lg border-2 border p-12 flex flex-col items-center justify-center text-gray-400">
                 <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
@@ -162,19 +155,21 @@ export const CustomerDetail = ({
                 {paginatedCustomers.map((customer, index) => (
                   <div
                     key={customer.id}
-                    className={`${gridLayout} p-1 text-sm bg-white border border-gray-100 rounded-lg
-                     hover:bg-blue-50/30 transition-colors shadow-sm`}
+                    className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_auto] items-center px-3 py-0.5 gap-3 text-sm bg-white 
+                  border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
+                    {/* Column 1: Sr# */}
                     <span className="text-gray-500 font-medium">
                       {startIndex + index + 1}
                     </span>
 
+                    {/* Column 2: Name & Contact */}
                     <div className="flex items-center gap-3 overflow-hidden">
                       <div
                         className="h-10 w-10 rounded-full bg-blue-400 flex items-center justify-center
-                                    text-white flex-shrink-0 overflow-hidden border-2 border-gray-100 shadow-sm"
+                                   text-white flex-shrink-0 overflow-hidden border-2 border-gray-100 shadow-sm"
                       >
-                        <RiUserFill size={28} />
+                        <RiUserFill size={20} />
                       </div>
 
                       <div className="flex flex-col min-w-0">
@@ -187,31 +182,23 @@ export const CustomerDetail = ({
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <RiMapPinLine
-                        className="text-orange-400 flex-shrink-0"
-                        size={14}
-                      />
-                      <span className="truncate">
-                        {customer.customerAddress}
-                      </span>
+                    {/* Column 3: Address */}
+                    <div className="text-gray-600 truncate">
+                      {customer.customerAddress}
                     </div>
 
-                    
-
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <RiBuilding4Line
-                        className="text-red-400 flex-shrink-0"
-                        size={14}
-                      />
-                      <span className="truncate">{customer.companyName}</span>
+                    {/* Column 4: Company */}
+                    <div className="text-gray-600 truncate">
+                      {customer.companyName}
                     </div>
 
-                    <div className="truncate text-gray-500 italic">
+                    {/* Column 5: Comp. Address */}
+                    <div className="text-gray-500 truncate italic">
                       {customer.companyAddress}
                     </div>
 
-                    <div className="flex items-center justify-end gap-1 pr-2">
+                    {/* Column 6: Actions */}
+                    <div className="flex items-center justify-end gap-1 w-[140px]">
                       <ViewButton
                         handleView={() => {
                           setCustomerDetail(customer);
@@ -240,7 +227,7 @@ export const CustomerDetail = ({
       </div>
 
       {/* Pagination Section */}
-      <div className="flex flex-row items-center justify-between py-4 px-4">
+      <div className="flex flex-row items-center justify-between p-1">
         <ShowDataNumber
           start={totalNum === 0 ? 0 : startIndex + 1}
           end={Math.min(endIndex, totalNum)}
@@ -257,7 +244,7 @@ export const CustomerDetail = ({
         />
       </div>
 
-      {/* Modals */}
+      {/* Modals Section */}
       {isOpenModal === "ADD" && (
         <AddCustomer
           setIsOpenModal={() => setIsOpenModal("")}

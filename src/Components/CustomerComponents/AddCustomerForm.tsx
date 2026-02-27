@@ -152,10 +152,10 @@ export const AddCustomer = ({
       className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-50"
       onKeyDown={handleKeyDown}
     >
-      <div className="w-full max-w-3xl max-h-[90vh] bg-white rounded border border-indigo-900 shadow-lg overflow-y-auto">
+      <div className="w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form onSubmit={handlerSubmitted} className="flex flex-col">
           {/* Header */}
-          <div className="bg-indigo-900 rounded px-6">
+          <div className="bg-white rounded-xl border-t-5 border-blue-400">
             <Title
               setModal={setIsOpenModal}
               className="text-white text-lg font-semibold"
@@ -212,7 +212,7 @@ export const AddCustomer = ({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end items-center gap-3 px-6 py-4 bg-indigo-900 rounded">
+          <div className="flex justify-end items-center gap-3 px-6 py-4 bg-white rounded">
             <CancelBtn setModal={setIsOpenModal} />
             <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>

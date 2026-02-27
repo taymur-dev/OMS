@@ -31,8 +31,8 @@ export const Profile = () => {
 
   const DetailRow = ({ icon: Icon, label, value }: DetailRowProps) => (
     <div className="flex items-start gap-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
-      <div className="p-3 bg-indigo-50 rounded-xl">
-        <Icon className="w-5 h-5 text-indigo-600" />
+      <div className="p-3 bg-blue-50 rounded-xl">
+        <Icon className="w-5 h-5 text-blue-600" />
       </div>
       <div>
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
@@ -52,7 +52,7 @@ export const Profile = () => {
         <div className="max-w-4xl mx-auto mt-5">
           <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
             {/* Header Background */}
-            <div className="h-30 bg-indigo-900 relative">
+            <div className="h-30 bg-blue-400 relative">
               <div className="absolute inset-0 bg-black/10 backdrop-blur-sm" />
             </div>
 
@@ -60,7 +60,7 @@ export const Profile = () => {
               {/* Avatar + Name Section */}
               <div className="relative flex flex-col sm:flex-row items-center sm:items-end gap-6 -mt-20 mb-10">
                 <div className="relative group">
-                  <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-full border-4 border-white shadow-2xl bg-indigo-900 flex items-center justify-center overflow-hidden transition-transform duration-300 group-hover:scale-105">
+                  <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-full border-4 border-white shadow-2xl bg-blue-400 flex items-center justify-center overflow-hidden transition-transform duration-300 group-hover:scale-105">
                     {currentUser?.profileImage ? (
                       <img
                         className="w-full h-full object-cover"
@@ -93,7 +93,7 @@ export const Profile = () => {
                     {currentUser?.name ?? "Guest User"}
                   </h2>
 
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 mt-3 bg-indigo-100 text-indigo-700 rounded-full text-sm font-semibold shadow-sm">
+                  <div className="inline-flex items-center gap-2 px-4 py-1.5 mt-3 bg-blue-400 text-white rounded-full text-sm font-semibold shadow-sm">
                     <ShieldCheck className="w-4 h-4" />
                     {currentUser?.role ?? "Standard User"}
                   </div>

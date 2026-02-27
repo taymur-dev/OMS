@@ -1,7 +1,3 @@
-import { Pagination } from "../../Components/Pagination/Pagination";
-import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-
 import { useCallback, useEffect, useState } from "react";
 import { AddSalaryCycle } from "../../Components/SalaryCycleModal/AddSalaryCycle";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
@@ -12,9 +8,9 @@ import {
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-
-
-const numbers = [10, 25, 50, 100];
+import { Pagination } from "../../Components/Pagination/Pagination";
+import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 type SALARYCYCLET = "RUN" | "";
 
@@ -25,7 +21,17 @@ type CalendarSession = {
   calendarStatus?: string;
 };
 
-export const SalaryCycle = ({ triggerModal }: { triggerModal: number }) => {
+interface SalaryCycleProps {
+  triggerModal: number;
+  externalSearch: string;
+  externalPageSize: number;
+}
+
+export const SalaryCycle = ({
+  triggerModal,
+  externalSearch,
+  externalPageSize,
+}: SalaryCycleProps) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
 
@@ -33,23 +39,9 @@ export const SalaryCycle = ({ triggerModal }: { triggerModal: number }) => {
 
   const [isOpenModal, setIsOpenModal] = useState<SALARYCYCLET>("");
   const [pageNo, setPageNo] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [searchTerm, setSearchTerm] = useState("");
   const [calendarList, setCalendarList] = useState<CalendarSession[]>([]);
 
   const token = currentUser?.token;
-
-  const handleIncrementPageButton = () => {
-    setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
-  };
-
-  const handleToggleViewModal = (active: SALARYCYCLET) => {
-    setIsOpenModal((prev) => (prev === active ? "" : active));
-  };
 
   const handleGetCalendarSession = useCallback(async () => {
     try {
@@ -64,8 +56,6 @@ export const SalaryCycle = ({ triggerModal }: { triggerModal: number }) => {
     }
   }, [token]);
 
-  
-
   useEffect(() => {
     handleGetCalendarSession();
     document.title = "(OMS) SALARY CYCLE";
@@ -76,131 +66,132 @@ export const SalaryCycle = ({ triggerModal }: { triggerModal: number }) => {
     }, 1000);
   }, [dispatch, handleGetCalendarSession]);
 
-   useEffect(() => {
-      if (triggerModal > 0) {
-        setIsOpenModal("RUN");
-      }
-    }, [triggerModal]);
+  useEffect(() => {
+    if (triggerModal > 0) {
+      setIsOpenModal("RUN");
+    }
+  }, [triggerModal]);
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
 
   const filteredList = calendarList.filter((item) =>
     `${item.year} ${item.month}`
       .toLowerCase()
-      .includes(searchTerm.toLowerCase()),
+      .includes(externalSearch.toLowerCase()),
   );
 
-  const startIndex = (pageNo - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
+  const totalNum = filteredList.length;
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const endIndex = startIndex + externalPageSize;
   const paginatedList = filteredList.slice(startIndex, endIndex);
+
+  const handleIncrementPageButton = () => {
+    const totalPages = Math.ceil(totalNum / externalPageSize);
+    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    if (pageNo > 1) setPageNo((prev) => prev - 1);
+  };
 
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
-       
-
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            {/* Left Side: Show entries */}
-            <div className="text-sm flex items-center">
-              <span>Show</span>
-              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                <select
-                  value={pageSize}
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value));
-                    setPageNo(1);
-                  }}
-                  className="bg-transparent outline-none py-1 cursor-pointer"
-                >
-                  {numbers.map((num, index) => (
-                    <option key={index} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-              </span>
-              <span className="hidden xs:inline">entries</span>
-            </div>
-
-            {/* Right Side: Search Input */}
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
-          </div>
-        </div>
-
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto">
-          <div className="min-w-[600px]">
-            {/* Sticky Table Header */}
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      <div className="overflow-auto px-3 sm:px-0">
+        {/* Increased min-width slightly to match the layout density of UsersDetails */}
+        <div className="min-w-[800px]">
+          {/* 1. Header Row - Aligned with UsersDetails grid logic */}
+          <div className="px-0.5 pt-0.5">
             <div
-              className="grid grid-cols-4 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
+              className="grid grid-cols-[60px_1fr_1fr_1fr] 
+            bg-blue-400 text-white rounded-lg items-center font-bold
+            text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
-              <span>Sr#</span>
-              <span>Year</span>
-              <span>Month</span>
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Year</span>
+              <span className="text-left">Month</span>
               <span className="text-center">Status</span>
             </div>
+          </div>
 
-            {/* Table Body */}
+          {/* 2. Table Body */}
+          <div className="px-0.5 sm:px-1 py-2">
             {paginatedList.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
-                No records available at the moment!
+              <div className="bg-gray-50 rounded-lg border-2 border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">
+                  No records available at the moment!
+                </p>
+                <p className="text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              paginatedList.map((item, index) => (
-                <div
-                  key={item._id || index}
-                  className="grid grid-cols-4 border-b border-x border-gray-200 text-gray-800 items-center
-                 text-sm p-2 hover:bg-gray-50 transition"
-                >
-                  <span>{startIndex + index + 1}</span>
-                  <span>{item.year}</span>
-                  <span>{item.month}</span>
-                  <span className="flex items-center justify-center">
-                    <button
-                      className={`w-20 h-6 text-xs font-semibold rounded text-white ${
-                        item.calendarStatus?.toLowerCase() === "active"
-                          ? "bg-green-500"
-                          : "bg-red-500"
-                      }`}
-                    >
-                      {item.calendarStatus || "InActive"}
-                    </button>
-                  </span>
-                </div>
-              ))
+              <div className="flex flex-col gap-2">
+                {paginatedList.map((item, index) => (
+                  <div
+                    key={item._id || index}
+                    className="grid grid-cols-[60px_1fr_1fr_1fr] 
+                  items-center px-3 py-2 gap-3 text-sm bg-white 
+                  border border-gray-100 rounded-lg 
+                  hover:bg-blue-50/30 transition-colors shadow-sm"
+                  >
+                    {/* Sr# - Removed extra padding to match UsersDetails */}
+                    <span className="text-gray-500 font-medium">
+                      {startIndex + index + 1}
+                    </span>
+
+                    {/* Year - Icons removed, kept font styling */}
+                    <div className="text-gray-800  truncate">
+                      {item.year}
+                    </div>
+
+                    {/* Month - Icons removed */}
+                    <div className="text-gray-600 truncate">{item.month}</div>
+
+                    {/* Status */}
+                    <div className="flex items-center justify-center">
+                      <span
+                        className={`px-4 py-1 text-xs font-bold rounded-full ${
+                          item.calendarStatus?.toLowerCase() === "active"
+                            ? "bg-green-100 text-green-600 border border-green-200"
+                            : "bg-red-100 text-red-600 border border-red-200"
+                        }`}
+                      >
+                        {item.calendarStatus || "InActive"}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
+      </div>
 
-        {/* 4) Pagination placed under the table */}
-        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
-          <ShowDataNumber
-            start={filteredList.length === 0 ? 0 : startIndex + 1}
-            end={Math.min(endIndex, filteredList.length)}
-            total={filteredList.length}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={handleDecrementPageButton}
-            handleIncrementPageButton={handleIncrementPageButton}
-          />
-        </div>
+      {/* 3. Bottom Pagination Section */}
+      <div className="flex flex-row items-center justify-between p-1 mt-auto">
+        <ShowDataNumber
+          start={totalNum === 0 ? 0 : startIndex + 1}
+          end={Math.min(endIndex, totalNum)}
+          total={totalNum}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
       </div>
 
       {/* --- MODALS SECTION --- */}
       {isOpenModal === "RUN" && (
         <AddSalaryCycle
-          setModal={() => handleToggleViewModal("")}
+          setModal={() => setIsOpenModal("")}
           calendarList={calendarList}
         />
       )}
-
-     
     </div>
   );
 };

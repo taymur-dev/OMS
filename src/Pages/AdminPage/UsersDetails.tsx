@@ -17,14 +17,7 @@ import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
-import {
-  RiLockPasswordFill,
-  RiPhoneLine,
-  RiCalendarLine,
-  RiBriefcaseLine,
-  RiInboxArchiveLine,
-  RiUserFill,
-} from "react-icons/ri";
+import { RiLockPasswordFill, RiUserFill } from "react-icons/ri";
 
 type UserType = {
   id: number;
@@ -183,31 +176,26 @@ export const UsersDetails = ({
 
   return (
     <div className="flex flex-col flex-grow bg-white overflow-hidden">
-      <div className="overflow-auto">
-        <div className="min-w-[1000px]">
-          <div className="px-4 pt-0.5">
+      <div className="overflow-auto px-3 sm:px-0">
+        <div className="min-w-[1000px] ">
+          <div className="px-0.5 pt-0.5">
             <div
               className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_auto] 
     bg-blue-400 text-white rounded-lg items-center font-bold
-    text-xs  tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
+    text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
               <span className="text-left">Sr#</span>
               <span className="text-left">Name & Email</span>
               <span className="text-left">Contact</span>
               <span className="text-left">Role</span>
               <span className="text-left">Joining Date</span>
-              <span className="text-right pr-10">Actions</span>
+              <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
           </div>
-
-          <div className="px-4 py-2">
+          <div className="px-0.5 sm:px-1 py-2">
             {paginatedUsers.length === 0 ? (
-              <div className="bg-gray-50 rounded-lg border-2 border p-12 flex flex-col items-center justify-center text-gray-400">
-                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
-                <p className="text-lg font-medium">
-                  No records available at the moment!
-                </p>
-                <p className="text-sm">Try adjusting your search or filters.</p>
+              <div className="text-center py-10 text-gray-500">
+                No users found.
               </div>
             ) : (
               <div className="flex flex-col gap-2">
@@ -215,40 +203,24 @@ export const UsersDetails = ({
                   <div
                     key={user.id}
                     className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_auto] 
-           items-center p-1 gap-3 text-sm bg-white 
-           border border-gray-100 rounded-lg 
-           hover:bg-blue-50/30 transition-colors shadow-sm"
+          items-center px-3 py-0.5 gap-3 text-sm bg-white 
+          border border-gray-100 rounded-lg 
+          hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
-                    <span className=" text-gray-500 font-medium">
+                    <span className="text-gray-500 font-medium">
                       {startIndex + index + 1}
                     </span>
 
                     <div className="flex items-center gap-3 overflow-hidden">
-                      <div
-                        className="h-10 w-10 rounded-full bg-blue-400 flex items-center justify-center
-               text-white flex-shrink-0 overflow-hidden border-2 border-gray-100 shadow-sm"
-                      >
+                      <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
                         {user.image ? (
                           <img
-                            src={getImageUrl(user.image) || ""}
-                            alt={user.name}
-                            className="h-full w-full object-cover"
-                            onError={(e) => {
-                              e.currentTarget.style.display = "none";
-                              const parent = e.currentTarget.parentElement;
-                              if (parent) {
-                                parent.innerHTML = "";
-
-                                parent.classList.add(
-                                  "flex",
-                                  "items-center",
-                                  "justify-center",
-                                );
-                              }
-                            }}
+                            src={getImageUrl(user.image)!}
+                            alt=""
+                            className="h-full w-full rounded-full object-cover"
                           />
                         ) : (
-                          <RiUserFill size={24} />
+                          <RiUserFill size={18} />
                         )}
                       </div>
                       <div className="flex flex-col min-w-0">
@@ -261,35 +233,13 @@ export const UsersDetails = ({
                       </div>
                     </div>
 
-                    {/* Column 3: Contact */}
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <RiPhoneLine
-                        className="text-green-400 flex-shrink-0"
-                        size={14}
-                      />
-                      <span>{user.contact}</span>
+                    <div className="text-gray-600 truncate">{user.contact}</div>
+                    <div className="text-gray-600 truncate">{user.role}</div>
+                    <div className="text-gray-600 truncate">
+                      {formatDate(user.date)}
                     </div>
 
-                    {/* Column 4: Role */}
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <RiBriefcaseLine
-                        className="text-yellow-400 flex-shrink-0"
-                        size={14}
-                      />
-                      <span>{user.role}</span>
-                    </div>
-
-                    {/* Column 5: Date */}
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <RiCalendarLine
-                        className="text-blue-400 flex-shrink-0"
-                        size={14}
-                      />
-                      <span>{formatDate(user.date)}</span>
-                    </div>
-
-                    {/* Column 6: Actions */}
-                    <div className="flex items-center justify-end gap-1 pr-2">
+                    <div className="flex items-center justify-end gap-1 w-[140px]">
                       <ViewButton
                         handleView={() => handleViewUserDetail(user)}
                       />
@@ -301,8 +251,7 @@ export const UsersDetails = ({
                       />
                       <button
                         onClick={() => handleCatchId(user.id)}
-                        className="p-1.5 rounded-md text-gray-400 hover:bg-bl transition-colors"
-                        title="Change Password"
+                        className="p-1.5 rounded-md text-gray-400 hover:bg-gray-100 transition-colors"
                       >
                         <RiLockPasswordFill size={16} />
                       </button>
@@ -315,8 +264,7 @@ export const UsersDetails = ({
         </div>
       </div>
 
-      {/* BOTTOM SECTION (Pagination) */}
-      <div className="flex flex-row items-center justify-between py-4">
+      <div className="flex flex-row items-center justify-between p-1">
         <ShowDataNumber
           start={totalNum === 0 ? 0 : startIndex + 1}
           end={Math.min(endIndex, totalNum)}
@@ -355,7 +303,7 @@ export const UsersDetails = ({
                   email: editUser.email,
                   password: editUser.confirmPassword,
                   role: editUser.role,
-                  image: editUser.image, // Add image to initialValues
+                  image: editUser.image,
                 },
               }
             : {})}

@@ -1,7 +1,5 @@
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -16,6 +14,7 @@ import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 type SALET = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
@@ -30,18 +29,17 @@ type Sale = {
   UnitPrice: number;
 };
 
-const formatDate = (date: string) =>
-  new Date(date)
-    .toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    })
-    .replace(/ /g, "-");
+interface SalesProps {
+  triggerModal: number;
+  externalSearch: string;
+  externalPageSize: number;
+}
 
-const pageSizes = [10, 25, 50, 100];
-
-export const Sales = ({ triggerModal }: { triggerModal: number }) => {
+export const Sales = ({
+  triggerModal,
+  externalSearch,
+  externalPageSize,
+}: SalesProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
@@ -52,11 +50,7 @@ export const Sales = ({ triggerModal }: { triggerModal: number }) => {
   const [allSales, setAllSales] = useState<Sale[]>([]);
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
   const [catchId, setCatchId] = useState<number | null>(null);
-
-  const [searchTerm, setSearchTerm] = useState("");
-
   const [pageNo, setPageNo] = useState(1);
-  const [limit, setLimit] = useState(10);
 
   const handleToggleViewModal = (active: SALET) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
@@ -65,13 +59,9 @@ export const Sales = ({ triggerModal }: { triggerModal: number }) => {
   const handleGetSales = useCallback(async () => {
     try {
       dispatch(navigationStart());
-
       const res = await axios.get(`${BASE_URL}/api/admin/getSales`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       setAllSales(res.data.sort((a: Sale, b: Sale) => a.id - b.id));
     } catch (error) {
       console.error(error);
@@ -80,31 +70,52 @@ export const Sales = ({ triggerModal }: { triggerModal: number }) => {
     }
   }, [dispatch, token]);
 
-  const handleDeleteClick = (id: number) => {
-    setCatchId(id);
-    handleToggleViewModal("DELETE");
-  };
+  useEffect(() => {
+    document.title = "(OMS) SALE";
+    handleGetSales();
+  }, [handleGetSales]);
 
-  const handleView = (sale: Sale) => {
-    setSelectedSale(sale);
-    handleToggleViewModal("VIEW");
+  // Sync with Parent triggers
+  useEffect(() => {
+    if (triggerModal > 0) setIsOpenModal("ADD");
+  }, [triggerModal]);
+
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
+
+  const filteredSales = useMemo(() => {
+    return allSales.filter(
+      (sale) =>
+        sale.projectName.toLowerCase().includes(externalSearch.toLowerCase()) ||
+        sale.customerName.toLowerCase().includes(externalSearch.toLowerCase()),
+    );
+  }, [allSales, externalSearch]);
+
+  const totalNum = filteredSales.length;
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const paginatedSales = filteredSales.slice(
+    startIndex,
+    startIndex + externalPageSize,
+  );
+
+  const handleIncrementPageButton = () => {
+    if (pageNo < Math.ceil(totalNum / externalPageSize))
+      setPageNo((p) => p + 1);
   };
+  const handleDecrementPageButton = () => setPageNo((p) => Math.max(p - 1, 1));
 
   const handleDeleteSale = async () => {
     if (!catchId) return;
     try {
       dispatch(navigationStart());
-
       await axios.patch(
         `${BASE_URL}/api/admin/deleteSale/${catchId}`,
         {},
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
-
       handleGetSales();
       handleToggleViewModal("");
     } catch (error) {
@@ -114,133 +125,108 @@ export const Sales = ({ triggerModal }: { triggerModal: number }) => {
     }
   };
 
-  useEffect(() => {
-    document.title = "(OMS) SALE";
-    handleGetSales();
-  }, [handleGetSales]);
-
-  useEffect(() => {
-    if (triggerModal > 0) {
-      setIsOpenModal("ADD");
-    }
-  }, [triggerModal]);
-
-  const filteredSales = useMemo(() => {
-    return allSales
-      .filter(
-        (sale) =>
-          sale.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          sale.customerName.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
-      .sort((a, b) => a.id - b.id);
-  }, [allSales, searchTerm]);
-
-  const handleIncrementPageButton = () => setPageNo((p) => p + 1);
-
-  const handleDecrementPageButton = () => setPageNo((p) => Math.max(p - 1, 1));
-
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            {/* Left Side: Show entries */}
-            <div className="text-sm flex items-center">
-              <span>Show</span>
-              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                <select
-                  value={limit}
-                  onChange={(e) => {
-                    setLimit(Number(e.target.value));
-                    setPageNo(1);
-                  }}
-                  className="bg-transparent outline-none py-1 cursor-pointer"
-                >
-                  {pageSizes.map((num) => (
-                    <option key={num} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-              </span>
-              <span className="hidden xs:inline">entries</span>
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      <div className="overflow-auto px-3 sm:px-0">
+        <div className="min-w-[1000px]">
+          {" "}
+          {/* Increased to match UsersDetails min-width */}
+          {/* Header Section */}
+          <div className="px-0.5 pt-0.5">
+            <div className="grid grid-cols-[60px_1.5fr_1.5fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm">
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Customer Name</span>
+              <span className="text-left">Project Name</span>
+              <span className="text-left">Sale Date</span>
+              <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
-
-            {/* Right Side: Search Input */}
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
           </div>
-        </div>
-
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto">
-          <div className="min-w-[900px]">
-            <div
-              className="grid grid-cols-5 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
-            >
-              <span>Sr#</span>
-              <span>Customer</span>
-              <span>Project</span>
-              <span>Date</span>
-              <span className="text-center">Actions</span>
-            </div>
-
-            {filteredSales.slice((pageNo - 1) * limit, pageNo * limit)
-              .length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
-                No records available at the moment!
+          {/* Body Section */}
+          <div className="px-0.5 py-2">
+            {paginatedSales.length === 0 ? (
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">
+                  No records available at the moment!
+                </p>
+                <p className="text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              filteredSales
-                .slice((pageNo - 1) * limit, pageNo * limit)
-                .map((sale, index) => (
+              <div className="flex flex-col gap-2">
+                {paginatedSales.map((sale, index) => (
                   <div
                     key={sale.id}
-                    className="grid grid-cols-5 border-b border-x border-gray-200 text-gray-800 items-center
-                   text-sm p-2 hover:bg-gray-50 transition"
+                    className="grid grid-cols-[60px_1.5fr_1.5fr_1fr_auto] items-center px-3 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
-                    <span>{(pageNo - 1) * limit + index + 1}</span>
-                    <span className="truncate">{sale.customerName}</span>
-                    <span className="truncate">{sale.projectName}</span>
-                    <span>{formatDate(sale.saleDate)}</span>
-                    <span className="flex flex-nowrap justify-center gap-1">
-                      <ViewButton handleView={() => handleView(sale)} />
-                      <DeleteButton
-                        handleDelete={() => handleDeleteClick(sale.id)}
-                      />
+                    <span className="text-gray-500 font-medium">
+                      {startIndex + index + 1}
                     </span>
+
+                    {/* Customer - Icons Removed */}
+                    <div className="text-gray-800  truncate">
+                      {sale.customerName}
+                    </div>
+
+                    {/* Project - Icons Removed */}
+                    <div className="text-gray-600 truncate">
+                      {sale.projectName}
+                    </div>
+
+                    {/* Date - Icons Removed */}
+                    <div className="text-gray-600 truncate">
+                      {new Date(sale.saleDate).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </div>
+
+                    {/* Actions - Aligned with UsersDetails style */}
+                    <div className="flex items-center justify-end gap-1 w-[140px]">
+                      <ViewButton
+                        handleView={() => {
+                          setSelectedSale(sale);
+                          handleToggleViewModal("VIEW");
+                        }}
+                      />
+                      <DeleteButton
+                        handleDelete={() => {
+                          setCatchId(sale.id);
+                          handleToggleViewModal("DELETE");
+                        }}
+                      />
+                    </div>
                   </div>
-                ))
+                ))}
+              </div>
             )}
           </div>
         </div>
-
-        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
-          <ShowDataNumber
-            start={filteredSales.length === 0 ? 0 : (pageNo - 1) * limit + 1}
-            end={Math.min(pageNo * limit, filteredSales.length)}
-            total={filteredSales.length}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={handleDecrementPageButton}
-            handleIncrementPageButton={handleIncrementPageButton}
-          />
-        </div>
       </div>
 
+      {/* Pagination Section */}
+      <div className="flex flex-row items-center justify-between p-1">
+        <ShowDataNumber
+          start={totalNum === 0 ? 0 : startIndex + 1}
+          end={Math.min(startIndex + externalPageSize, totalNum)}
+          total={totalNum}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
+      </div>
+
+      {/* Modals */}
       {isOpenModal === "ADD" && (
         <AddSale
           setModal={() => handleToggleViewModal("")}
           handleGetsales={handleGetSales}
         />
       )}
-
       {isOpenModal === "VIEW" && selectedSale && (
         <ViewSale
           setIsOpenModal={() => handleToggleViewModal("")}
@@ -257,7 +243,6 @@ export const Sales = ({ triggerModal }: { triggerModal: number }) => {
           }}
         />
       )}
-
       {isOpenModal === "DELETE" && (
         <ConfirmationModal
           isOpen={() => handleToggleViewModal("")}

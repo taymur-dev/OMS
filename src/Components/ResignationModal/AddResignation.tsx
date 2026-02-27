@@ -190,9 +190,9 @@ export const AddResignation = ({
         if (e.key === "Enter") e.preventDefault();
       }}
     >
-      <div className="w-[42rem] bg-white rounded border border-indigo-900">
+      <div className="w-[42rem] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form onSubmit={handlerSubmitted}>
-          <div className="bg-indigo-900 rounded px-6">
+          <div className="bg-white rounded-xl border-t-5 border-blue-400">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -202,15 +202,17 @@ export const AddResignation = ({
           </div>
 
           <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-2 space-y-2">
-            {isAdmin && (
-              <UserSelect
-                labelName="Select Employee*"
-                name="id"
-                value={formData.id}
-                optionData={userOptions}
-                handlerChange={handlerChange}
-              />
-            )}
+            <div className="md:col-span-2">
+              {isAdmin && (
+                <UserSelect
+                  labelName="Select Employee*"
+                  name="id"
+                  value={formData.id}
+                  optionData={userOptions}
+                  handlerChange={handlerChange}
+                />
+              )}
+            </div>
 
             <InputField
               labelName="Current Position*"
@@ -220,16 +222,14 @@ export const AddResignation = ({
               readOnly
             />
 
-            <div className="md:col-span-2">
-              <InputField
-                labelName="Resignation Date*"
-                type="date"
-                name="resignation_date"
-                value={formData.resignation_date}
-                handlerChange={handlerChange}
-              />
-            </div>
-            
+            <InputField
+              labelName="Resignation Date*"
+              type="date"
+              name="resignation_date"
+              value={formData.resignation_date}
+              handlerChange={handlerChange}
+            />
+
             <div className="md:col-span-2">
               <TextareaField
                 labelName="Note*"
@@ -240,7 +240,7 @@ export const AddResignation = ({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>

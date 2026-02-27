@@ -44,9 +44,9 @@ export const ViewQuotation = ({ setModal, quotation }: ViewQuotationProps) => {
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm p-3 sm:p-6 flex items-center justify-center z-50">
-      <div className="w-full max-w-5xl bg-white rounded-xl overflow-hidden shadow-2xl border border-gray-200 flex flex-col max-h-[95vh]">
+      <div className="w-full max-w-5xl  flex flex-col max-h-[95vh] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         {/* Header */}
-        <div className="bg-indigo-900 px-4 sm:px-6 ">
+        <div className="bg-white rounded-xl border-t-5 border-blue-400 ">
           <div className="text-white text-sm sm:text-base">
             <Title setModal={setModal}>VIEW QUOTATION DETAILS</Title>
           </div>
@@ -56,7 +56,7 @@ export const ViewQuotation = ({ setModal, quotation }: ViewQuotationProps) => {
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
           {/* General Info */}
           <div className="border border-gray-200 rounded-lg p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-xs font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-xs font-bold text-blue-400 uppercase tracking-wider">
               General Information
             </h3>
 
@@ -88,14 +88,14 @@ export const ViewQuotation = ({ setModal, quotation }: ViewQuotationProps) => {
 
           {/* Items Table */}
           <div className="border border-gray-200 rounded-lg p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-xs font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-xs font-bold text-blue-400 uppercase tracking-wider">
               Project Items
             </h3>
 
             <div className="mt-4 overflow-x-auto">
               <div className="min-w-[600px] border border-gray-100 rounded-md">
                 {/* Table Header */}
-                <div className="grid grid-cols-12 bg-indigo-900 text-white text-xs font-semibold p-2">
+                <div className="grid grid-cols-12 bg-blue-400 text-white text-xs font-semibold p-2">
                   <span className="col-span-1 text-center">#</span>
                   <span className="col-span-5">Project</span>
                   <span className="col-span-2 text-center">QTY</span>
@@ -132,7 +132,7 @@ export const ViewQuotation = ({ setModal, quotation }: ViewQuotationProps) => {
 
           {/* Billing Summary */}
           <div className="border border-gray-200 rounded-lg p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-xs font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-xs font-bold text-blue-400 uppercase tracking-wider">
               Billing Summary
             </h3>
 
@@ -147,11 +147,11 @@ export const ViewQuotation = ({ setModal, quotation }: ViewQuotationProps) => {
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center bg-indigo-50 p-3 rounded-md border border-indigo-200">
-                  <span className="flex items-center gap-2 font-bold text-indigo-900 uppercase text-sm">
+                <div className="flex justify-between items-center bg-blue-50 p-3 rounded-md border border-blue-200">
+                  <span className="flex items-center gap-2 font-bold text-blue-400 text-sm">
                     <FaCalculator /> Grand Total
                   </span>
-                  <span className="text-indigo-900 font-bold text-lg">
+                  <span className="text-blue-400 font-bold text-lg">
                     {totalBill.toLocaleString()}
                   </span>
                 </div>
@@ -163,7 +163,7 @@ export const ViewQuotation = ({ setModal, quotation }: ViewQuotationProps) => {
         
 
         {/* Footer */}
-        <div className="bg-indigo-900 p-4 flex flex-col sm:flex-row gap-3 sm:justify-end">
+        <div className="bg-white p-4 flex flex-col sm:flex-row gap-3 sm:justify-end">
           <button
             onClick={setModal}
             className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-6 rounded-md transition"

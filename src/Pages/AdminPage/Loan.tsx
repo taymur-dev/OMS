@@ -3,7 +3,6 @@ import axios from "axios";
 
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 
@@ -18,7 +17,7 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 
-const numbers = [10, 25, 50, 100];
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 type LoanT = "ADD" | "VIEW" | "";
 
@@ -39,7 +38,17 @@ export type UserLoanSummary = ALLLOANT & {
   allLoans: ALLLOANT[];
 };
 
-export const Loan = ({ triggerModal }: { triggerModal: number }) => {
+interface LoanProps {
+  triggerModal: number;
+  externalSearch: string;
+  externalPageSize: number;
+}
+
+export const Loan = ({
+  triggerModal,
+  externalSearch,
+  externalPageSize,
+}: LoanProps) => {
   const dispatch = useAppDispatch();
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
@@ -52,8 +61,6 @@ export const Loan = ({ triggerModal }: { triggerModal: number }) => {
   );
 
   const [pageNo, setPageNo] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedValue, setSelectedValue] = useState(10);
 
   const handleGetAllLoans = useCallback(async () => {
     if (!token || !currentUser) return;
@@ -77,174 +84,164 @@ export const Loan = ({ triggerModal }: { triggerModal: number }) => {
     }
   }, [token, currentUser]);
 
-  // Combine loans for admin or keep individual loans for user
   const displayLoans: UserLoanSummary[] =
     currentUser?.role === "admin"
       ? Object.values(
           allLoans.reduce((acc: Record<string, ALLLOANT[]>, loan) => {
             if (!acc[loan.employee_id]) acc[loan.employee_id] = [];
-            acc[loan.employee_id].push(loan);
+
+            const isDuplicate = acc[loan.employee_id].some(
+              (l) => l.id === loan.id,
+            );
+            if (!isDuplicate) {
+              acc[loan.employee_id].push(loan);
+            }
             return acc;
           }, {}),
         ).map((loans) => {
           const firstLoan = loans[0];
-          const totalLoan = loans.reduce((sum, l) => sum + l.loanAmount, 0);
-          const totalDeduction = loans.reduce((sum, l) => sum + l.deduction, 0);
-          const totalReturn = loans.reduce(
-            (sum, l) => sum + l.return_amount,
-            0,
-          );
-          const totalRemaining = loans.reduce(
-            (sum, l) => sum + l.remainingAmount,
-            0,
-          );
-
           return {
             ...firstLoan,
-            loanAmount: totalLoan,
-            deduction: totalDeduction,
-            return_amount: totalReturn,
-            remainingAmount: totalRemaining,
+            loanAmount: loans.reduce(
+              (sum, l) => sum + Number(l.loanAmount || 0),
+              0,
+            ),
+            deduction: loans.reduce(
+              (sum, l) => sum + Number(l.deduction || 0),
+              0,
+            ),
+            return_amount: loans.reduce(
+              (sum, l) => sum + Number(l.return_amount || 0),
+              0,
+            ),
+            remainingAmount: loans.reduce(
+              (sum, l) => sum + Number(l.remainingAmount || 0),
+              0,
+            ),
             allLoans: loans,
           };
         })
       : allLoans.map((loan) => ({ ...loan, allLoans: [loan] }));
 
-  // Filter loans by search term
   const filteredLoans = displayLoans.filter((l) =>
-    l.employee_name?.toLowerCase().includes(searchTerm.toLowerCase()),
+    l.employee_name?.toLowerCase().includes(externalSearch.toLowerCase()),
   );
 
-  // Pagination logic
   const totalItems = filteredLoans.length;
-  const totalPages = Math.ceil(totalItems / selectedValue);
-  const startIndex = (pageNo - 1) * selectedValue;
-  const endIndex = Math.min(startIndex + selectedValue, totalItems);
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const endIndex = startIndex + externalPageSize;
   const paginatedLoans = filteredLoans.slice(startIndex, endIndex);
 
-  // Reset pageNo if searchTerm or selectedValue changes
-  useEffect(() => setPageNo(1), [searchTerm, selectedValue]);
+  useEffect(() => setPageNo(1), [externalSearch, externalPageSize]);
 
   useEffect(() => {
     handleGetAllLoans();
     document.title = "(OMS) LOAN";
-
     dispatch(navigationStart());
     setTimeout(() => dispatch(navigationSuccess("loan")), 500);
   }, [dispatch, handleGetAllLoans]);
 
-   useEffect(() => {
-      if (triggerModal > 0) {
-        setIsOpenModal("ADD");
-      }
-    }, [triggerModal]);
+  useEffect(() => {
+    if (triggerModal > 0) {
+      setIsOpenModal("ADD");
+    }
+  }, [triggerModal]);
+
+  const handleIncrementPageButton = () => {
+    const totalPages = Math.ceil(totalItems / externalPageSize);
+    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    if (pageNo > 1) setPageNo((prev) => prev - 1);
+  };
 
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
-        
-
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            {/* Left Side: Show entries */}
-            <div className="text-sm flex items-center">
-              <span>Show</span>
-              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                <select
-                  value={selectedValue}
-                  onChange={(e) => {
-                    setSelectedValue(Number(e.target.value));
-                    setPageNo(1);
-                  }}
-                  className="bg-transparent outline-none py-1 cursor-pointer"
-                >
-                  {numbers.map((num, index) => (
-                    <option key={index} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-              </span>
-              <span className="hidden xs:inline">entries</span>
-            </div>
-
-            {/* Right Side: Search Input */}
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
-          </div>
-        </div>
-
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto">
-          <div className="min-w-[900px]">
-            {/* Sticky Table Header - Adjusted to 7 columns to match UserDetails dimensions */}
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      <div className="overflow-auto px-3 sm:px-0">
+        <div className="min-w-[1000px]">
+          {/* Header Section */}
+          <div className="px-0.5 pt-0.5">
             <div
-              className="grid grid-cols-4 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
+              className="grid grid-cols-[60px_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold text-xs
+             tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
-              <span>Sr#</span>
-              <span>Employee</span>
-              <span>Contact</span>
-           
-              <span className="text-center">Actions</span>
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Employee Name</span>
+              <span className="text-left">Contact</span>
+              <span className="text-left">Total Loan</span>
+              <span className="text-right w-[140px] ">Actions</span>
             </div>
+          </div>
 
-            {/* Table Body */}
+          {/* Table Body */}
+          <div className="px-0.5 sm:px-1 py-2">
             {paginatedLoans.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
-                No records available at the moment!
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">
+                  No records available at the moment!
+                </p>
+                <p className="text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              paginatedLoans.map((item, index) => (
-                <div
-                  key={item.id}
-                  className="grid grid-cols-4 border-b border-x border-gray-200 text-gray-800 items-center
-                 text-sm p-2 hover:bg-gray-50 transition"
-                >
-                  <span>{startIndex + index + 1}</span>
-                  <span className=" truncate">
-                    {item.employee_name}
-                  </span>
-                  <span>{item.contact}</span>
+              <div className="flex flex-col gap-2">
+                {paginatedLoans.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="grid grid-cols-[60px_1fr_1fr_1fr_auto] items-center px-3 py-2 gap-3 text-sm bg-white
+                     border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
+                  >
+                    <span className="text-gray-500 font-medium">
+                      {startIndex + index + 1}
+                    </span>
 
-                  <span className="flex flex-nowrap justify-center gap-1">
-                    <ViewButton
-                      handleView={() => {
-                        setSelectedLoan(item);
-                        setIsOpenModal("VIEW");
-                      }}
-                    />
-                  </span>
-                </div>
-              ))
+                    <div className="flex items-center gap-3 overflow-hidden">
+                      <span className="truncate text-gray-800 text-sm">
+                        {item.employee_name}
+                      </span>
+                    </div>
+
+                    {/* Icons removed from following sections */}
+                    <div className="text-gray-600 truncate">{item.contact}</div>
+
+                    <div className="text-gray-800 font-medium truncate">
+                      {item.loanAmount.toLocaleString()}
+                    </div>
+
+                    <div className="flex items-center justify-end gap-1 w-[140px]">
+                      <ViewButton
+                        handleView={() => {
+                          setSelectedLoan(item);
+                          setIsOpenModal("VIEW");
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
-
-        {/* 4) Pagination placed under the table */}
-        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
-          <ShowDataNumber
-            start={totalItems === 0 ? 0 : startIndex + 1}
-            end={Math.min(endIndex, totalItems)}
-            total={totalItems}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={() =>
-              setPageNo((p) => Math.max(p - 1, 1))
-            }
-            handleIncrementPageButton={() =>
-              pageNo < totalPages && setPageNo((p) => p + 1)
-            }
-          />
-        </div>
       </div>
 
-      {/* --- MODALS SECTION --- */}
+      {/* Pagination Section */}
+      <div className="flex flex-row items-center justify-between p-1 mt-auto">
+        <ShowDataNumber
+          start={totalItems === 0 ? 0 : startIndex + 1}
+          end={Math.min(endIndex, totalItems)}
+          total={totalItems}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
+      </div>
+
+      {/* Modals */}
       {isOpenModal === "ADD" && (
         <AddLoan
           setModal={() => setIsOpenModal("")}
@@ -258,8 +255,6 @@ export const Loan = ({ triggerModal }: { triggerModal: number }) => {
           viewLoan={selectedLoan}
         />
       )}
-
-    
     </div>
   );
 };

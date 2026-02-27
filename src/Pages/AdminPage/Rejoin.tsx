@@ -3,7 +3,6 @@ import axios from "axios";
 
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
@@ -22,9 +21,7 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 
-const numbers = [10, 25, 50, 100];
-
-type MODAL_T = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 export type REJOIN_T = {
   id: number;
@@ -37,37 +34,46 @@ export type REJOIN_T = {
   approval_status: string;
 };
 
-export const Rejoin = ({ triggerModal }: { triggerModal: number }) => {
+interface RejoinProps {
+  triggerModal: number;
+  externalSearch: string;
+  externalPageSize: number;
+}
+
+export const Rejoin = ({
+  triggerModal,
+  externalSearch,
+  externalPageSize,
+}: RejoinProps) => {
   const dispatch = useAppDispatch();
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
 
   const token = currentUser?.token;
-
   const isAdmin = currentUser?.role === "admin";
 
   const [rejoinList, setRejoinList] = useState<REJOIN_T[]>([]);
-  const [isOpenModal, setIsOpenModal] = useState<MODAL_T>("");
+  const [isOpenModal, setIsOpenModal] = useState<
+    "ADD" | "VIEW" | "EDIT" | "DELETE" | ""
+  >("");
 
   const [selectedRejoin, setSelectedRejoin] = useState<REJOIN_T | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
-
   const [pageNo, setPageNo] = useState(1);
-  const [selectedValue, setSelectedValue] = useState(10);
-  const [searchTerm, setSearchTerm] = useState("");
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return "";
     const date = new Date(dateStr);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    return `${day}-${month}-${year}`;
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
   };
 
   const handleGetRejoinRequests = useCallback(async () => {
     if (!token || !currentUser) return;
-
+    dispatch(navigationStart());
     try {
       const url =
         currentUser.role === "admin"
@@ -81,11 +87,12 @@ export const Rejoin = ({ triggerModal }: { triggerModal: number }) => {
       setRejoinList(
         Array.isArray(res.data) ? res.data.sort((a, b) => a.id - b.id) : [],
       );
+      dispatch(navigationSuccess("REJOIN"));
     } catch (error) {
       console.error("Failed to fetch rejoin requests:", error);
       setRejoinList([]);
     }
-  }, [token, currentUser]);
+  }, [token, currentUser, dispatch]);
 
   const handleDeleteRejoin = async () => {
     if (!selectedId || !token) return;
@@ -105,23 +112,14 @@ export const Rejoin = ({ triggerModal }: { triggerModal: number }) => {
     }
   };
 
-  const filteredData = rejoinList.filter(
-    (r) =>
-      r.employee_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      r.designation.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
-
-  const totalItems = filteredData.length;
-  const startIndex = (pageNo - 1) * selectedValue;
-  const endIndex = Math.min(startIndex + selectedValue, totalItems);
-  const paginatedData = filteredData.slice(startIndex, endIndex);
-
   useEffect(() => {
     document.title = "(OMS) REJOIN";
-    dispatch(navigationStart());
     handleGetRejoinRequests();
-    setTimeout(() => dispatch(navigationSuccess("REJOIN")), 500);
-  }, [dispatch, handleGetRejoinRequests]);
+  }, [handleGetRejoinRequests]);
+
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
 
   useEffect(() => {
     if (triggerModal > 0) {
@@ -131,154 +129,151 @@ export const Rejoin = ({ triggerModal }: { triggerModal: number }) => {
 
   if (loader) return <Loader />;
 
+  const filteredData = rejoinList.filter(
+    (r) =>
+      r.employee_name.toLowerCase().includes(externalSearch.toLowerCase()) ||
+      r.designation.toLowerCase().includes(externalSearch.toLowerCase()) ||
+      r.approval_status?.toLowerCase().includes(externalSearch.toLowerCase()),
+  );
+
+  const totalItems = filteredData.length;
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const endIndex = startIndex + externalPageSize;
+  const paginatedData = filteredData.slice(startIndex, endIndex);
+
   const getStatusStyles = (status: string) => {
     switch (status?.toLowerCase()) {
       case "accepted":
-        return "bg-green-700 text-white border-green-200";
+        return "bg-green-100 text-green-700 border-green-200";
       case "rejected":
-        return "bg-red-700 text-white border-red-200";
+        return "bg-red-100 text-red-700 border-red-200";
       default:
-        return "bg-orange-600 text-white border-orange-200"; // For "Pending"
+        return "bg-orange-100 text-orange-700 border-orange-200";
     }
   };
 
   return (
-    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
-        {/* Stats and Filter Section */}
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            {/* Left Side: Show entries */}
-            <div className="text-sm flex items-center">
-              <span>Show</span>
-              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                <select
-                  value={selectedValue}
-                  onChange={(e) => {
-                    setSelectedValue(Number(e.target.value));
-                    setPageNo(1);
-                  }}
-                  className="bg-transparent outline-none py-1 cursor-pointer"
-                >
-                  {numbers.map((num, index) => (
-                    <option key={index} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-              </span>
-              <span className="hidden xs:inline">entries</span>
-              {/* Total Count Badge matching UsersDetails feel */}
-            </div>
-
-            {/* Right Side: Search Input */}
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={(term) => {
-                setSearchTerm(term);
-                setPageNo(1);
-              }}
-            />
-          </div>
-        </div>
-
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto">
-          <div className="min-w-[900px]">
-            {/* Sticky Table Header - Using grid-cols-7 to match dimension*/}
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      <div className="overflow-auto px-3 sm:px-0">
+        <div className="min-w-[1000px]">
+          <div className="px-0.5 pt-0.5">
             <div
               className={`grid ${
-                isAdmin ? "grid-cols-7" : "grid-cols-6"
-              } bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2`}
+                isAdmin
+                  ? "grid-cols-[60px_1fr_1fr_1fr_1fr_0.8fr_auto]"
+                  : "grid-cols-[60px_1fr_1fr_1fr_0.8fr_auto]"
+              } bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm`}
             >
-              <span>Sr#</span>
-              {isAdmin && <span>Employee Name</span>}
-              <span>Current Position</span>
-              <span>Resignation</span>
-              <span>Rejoin Date</span>
-              <span>Status</span>
-              <span className="text-center">Actions</span>
+              <span className="text-left">Sr#</span>
+              {isAdmin && <span className="text-left">Employee Name</span>}
+              <span className="text-left">Position</span>
+              <span className="text-left">Resignation</span>
+              <span className="text-left">Rejoin Date</span>
+              <span className="text-left">Status</span>
+              <span className="text-right pr-4">Actions</span>
             </div>
+          </div>
 
-            {/* Table Body */}
+          <div className="px-0.5 sm:px-1 py-2">
             {paginatedData.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
-                No records available at the moment!
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">
+                  No records available at the moment!
+                </p>
+                <p className="text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              paginatedData.map((item, index) => (
-                <div
-                  key={item.id}
-                  className={`grid ${
-                    isAdmin ? "grid-cols-7" : "grid-cols-6"
-                  } border-b border-x border-gray-200 text-gray-800 items-center
-                 text-sm p-2 hover:bg-gray-50 transition`}
-                >
-                  <span>{startIndex + index + 1}</span>
-                  {isAdmin && (
-                    <span className="truncate">{item.employee_name}</span>
-                  )}
-                  <span className="truncate">{item.designation}</span>
-                  <span>{formatDate(item.resignation_date)}</span>
-                  <span>{formatDate(item.rejoinRequest_date)}</span>
-                  <span className="flex items-center">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusStyles(
-                        item.approval_status,
-                      )}`}
-                    >
-                      {item.approval_status || "Pending"}
+              <div className="flex flex-col gap-2">
+                {paginatedData.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className={`grid ${
+                      isAdmin
+                        ? "grid-cols-[60px_1fr_1fr_1fr_1fr_0.8fr_auto]"
+                        : "grid-cols-[60px_1fr_1fr_1fr_0.8fr_auto]"
+                    } items-center px-3 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm`}
+                  >
+                    <span className="text-gray-500 font-medium">
+                      {startIndex + index + 1}
                     </span>
-                  </span>
-                  <span className="flex flex-nowrap justify-center gap-1">
-                    <EditButton
-                      handleUpdate={() => {
-                        setSelectedRejoin(item);
-                        setIsOpenModal("EDIT");
-                      }}
-                    />
-                    <ViewButton
-                      handleView={() => {
-                        setSelectedRejoin(item);
-                        setIsOpenModal("VIEW");
-                      }}
-                    />
-                    {currentUser?.role === "admin" && (
-                      <DeleteButton
-                        handleDelete={() => {
-                          setSelectedId(item.id);
-                          setIsOpenModal("DELETE");
+
+                    {isAdmin && (
+                      <div className="flex items-center gap-3 overflow-hidden">
+                        <span className="truncate  text-gray-800">
+                          {item.employee_name}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="text-gray-600 truncate">
+                      {item.designation}
+                    </div>
+
+                    <div className="text-gray-600 truncate">
+                      {formatDate(item.resignation_date)}
+                    </div>
+
+                    <div className="text-gray-600 truncate">
+                      {formatDate(item.rejoinRequest_date)}
+                    </div>
+
+                    <div className="flex items-center">
+                      <span
+                        className={`px-3 py-1 rounded-full text-[10px] font-bold border ${getStatusStyles(
+                          item.approval_status,
+                        )}`}
+                      >
+                        {(item.approval_status || "Pending").toUpperCase()}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-1">
+                      <ViewButton
+                        handleView={() => {
+                          setSelectedRejoin(item);
+                          setIsOpenModal("VIEW");
                         }}
                       />
-                    )}
-                  </span>
-                </div>
-              ))
+                      <EditButton
+                        handleUpdate={() => {
+                          setSelectedRejoin(item);
+                          setIsOpenModal("EDIT");
+                        }}
+                      />
+                      {isAdmin && (
+                        <DeleteButton
+                          handleDelete={() => {
+                            setSelectedId(item.id);
+                            setIsOpenModal("DELETE");
+                          }}
+                        />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
-
-        {/* 4) Pagination placed under the table */}
-        <div className="flex flex-row gap-2 items-center justify-between p-2">
-          <ShowDataNumber
-            start={totalItems === 0 ? 0 : startIndex + 1}
-            end={Math.min(endIndex, totalItems)}
-            total={totalItems}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={() =>
-              setPageNo((p) => Math.max(p - 1, 1))
-            }
-            handleIncrementPageButton={() =>
-              pageNo * selectedValue < totalItems && setPageNo((p) => p + 1)
-            }
-          />
-        </div>
       </div>
 
-      {/* --- MODALS SECTION --- */}
+      {/* Footer and Modals remain largely the same, ensuring logic consistency */}
+      <div className="flex flex-row items-center justify-between p-1">
+        <ShowDataNumber
+          start={totalItems === 0 ? 0 : startIndex + 1}
+          end={Math.min(endIndex, totalItems)}
+          total={totalItems}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+          handleIncrementPageButton={() => {
+            const totalPages = Math.ceil(totalItems / externalPageSize);
+            if (pageNo < totalPages) setPageNo((prev) => prev + 1);
+          }}
+        />
+      </div>
       {isOpenModal === "ADD" && (
         <AddRejoining
           setModal={() => setIsOpenModal("")}

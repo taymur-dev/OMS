@@ -165,14 +165,14 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur flex px-4 items-center justify-center z-50">
-      <div className="w-[42rem] bg-white rounded border border-indigo-900">
+      <div className="w-[42rem] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form
           onSubmit={handlerSubmitted}
           onKeyDown={(e) => {
             if (e.key === "Enter") e.preventDefault();
           }}
         >
-          <div className="bg-indigo-900 rounded px-6">
+          <div className="bg-white rounded-xl border-t-5 border-blue-400">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -182,22 +182,26 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
           </div>
 
           <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2  py-2 space-y-2 gap-3">
-            {isAdmin && (
-              <UserSelect
-                labelName="Employee *"
-                name="employee_id"
-                value={addLeave.employee_id}
-                handlerChange={handlerChange}
-                optionData={userOptions}
-              />
-            )}
+            <div className="md:col-span-2">
+              {isAdmin && (
+                <UserSelect
+                  labelName="Employee *"
+                  name="employee_id"
+                  value={addLeave.employee_id}
+                  handlerChange={handlerChange}
+                  optionData={userOptions}
+                />
+              )}
+            </div>
 
-            <InputField
-              labelName="Leave Subject *"
-              name="leaveSubject"
-              value={addLeave.leaveSubject}
-              handlerChange={handlerChange}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Leave Subject *"
+                name="leaveSubject"
+                value={addLeave.leaveSubject}
+                handlerChange={handlerChange}
+              />
+            </div>
 
             <InputField
               labelName="From Date *"
@@ -207,16 +211,14 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
               handlerChange={handlerChange}
             />
 
-            <div className="md:col-span-2">
-              <InputField
-                labelName="To Date *"
-                type="date"
-                name="toDate"
-                value={addLeave.toDate}
-                handlerChange={handlerChange}
-              />
-            </div>
-            
+            <InputField
+              labelName="To Date *"
+              type="date"
+              name="toDate"
+              value={addLeave.toDate}
+              handlerChange={handlerChange}
+            />
+
             <div className="md:col-span-2">
               <TextareaField
                 labelName="Leave Reason *"
@@ -227,7 +229,7 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 rounded px-4 py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 rounded px-4 py-3 bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>

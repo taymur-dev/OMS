@@ -18,7 +18,6 @@ const currentDate = today.toLocaleDateString("sv-SE");
 type AddPromotionProps = {
   setModal: () => void;
   handleRefresh: () => void;
-  
 };
 
 type AddPromotionType = {
@@ -27,7 +26,6 @@ type AddPromotionType = {
   requested_designation: string;
   note: string;
   date: string;
-  
 };
 
 type User = {
@@ -117,10 +115,9 @@ export const AddPromotion = ({
 
     if (name === "note") {
       updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
-
     }
 
-     if (name === "current_designation") {
+    if (name === "current_designation") {
       updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
     }
 
@@ -210,9 +207,9 @@ export const AddPromotion = ({
         if (e.key === "Enter") e.preventDefault();
       }}
     >
-      <div className="w-[42rem] bg-white rounded border border-indigo-900">
+      <div className="w-[42rem] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form onSubmit={handlerSubmitted}>
-          <div className="bg-indigo-900 rounded  px-6">
+          <div className="bg-white rounded-xl border-t-5 border-blue-400">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -249,13 +246,15 @@ export const AddPromotion = ({
               value={addPromotion.requested_designation}
             />
 
-            <InputField
-              labelName="Date *"
-              type="date"
-              name="date"
-              handlerChange={handlerChange}
-              value={addPromotion.date}
-            />
+            <div className="md:col-span-2">
+              <InputField
+                labelName="Date *"
+                type="date"
+                name="date"
+                handlerChange={handlerChange}
+                value={addPromotion.date}
+              />
+            </div>
 
             <div className="md:col-span-2">
               <TextareaField
@@ -267,12 +266,9 @@ export const AddPromotion = ({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
+          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Saving" : "Save"}
-            />
+            <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>
         </form>
       </div>

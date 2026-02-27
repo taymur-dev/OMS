@@ -1,20 +1,27 @@
 import { useState } from "react";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
+import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
+
 import { EmployeeAccount } from "./EmployeeAccount";
 import { CustomerAccount } from "./CustomerAccount";
 import { SupplierAccount } from "./SupplierAccount";
+
 import { useAppSelector } from "../../redux/Hooks";
-import { Users, UserPlus, Truck } from "lucide-react";
 import { Footer } from "../../Components/Footer";
 
 // Define Tab Types
 type TabType = "EMPLOYEE" | "CUSTOMER" | "SUPPLIER";
+const entriesOptions = [5, 10, 15, 20, 30];
 
 export const Ledgers = () => {
-  const [activeTab, setActiveTab] = useState<TabType>("EMPLOYEE");
   const { currentUser } = useAppSelector((state) => state.officeState);
   const isAdmin = currentUser?.role === "admin";
+
+  // 1. Lifted states to match People.tsx
+  const [activeTab, setActiveTab] = useState<TabType>("EMPLOYEE");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedValue, setSelectedValue] = useState(10);
 
   // Trigger state for Add buttons
   const [triggerModal, setTriggerModal] = useState<{
@@ -32,26 +39,27 @@ export const Ledgers = () => {
   return (
     <div className="flex flex-col flex-grow shadow-lg p-1 sm:p-2 rounded-lg bg-gray-100 overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white rounded-md">
-        {/* Table Title with Add buttons */}
+        
+        {/* 1. Main Title Section */}
         <TableTitle
           tileName="Accounts"
           rightElement={
             <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
               {isAdmin && activeTab === "EMPLOYEE" && (
                 <CustomButton
-                  label="+ Employee"
+                  label="Add Employee"
                   handleToggle={() => handleActionClick("EMPLOYEE")}
                 />
               )}
               {isAdmin && activeTab === "CUSTOMER" && (
                 <CustomButton
-                  label="+ Customer"
+                  label="Add Customer"
                   handleToggle={() => handleActionClick("CUSTOMER")}
                 />
               )}
               {isAdmin && activeTab === "SUPPLIER" && (
                 <CustomButton
-                  label="+ Supplier"
+                  label="Add Supplier"
                   handleToggle={() => handleActionClick("SUPPLIER")}
                 />
               )}
@@ -59,72 +67,71 @@ export const Ledgers = () => {
           }
         />
 
-        {/* Tab Navigation */}
-        <div className="flex flex-wrap lg:flex-nowrap items-center gap-1 px-2 sm:px-4  bg-white border-b border-gray-300">
-          <button
-            onClick={() => setActiveTab("EMPLOYEE")}
-            className={`flex items-center justify-center gap-2 flex-1 lg:flex-none px-2 sm:px-6 py-2.5
-               text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-                 activeTab === "EMPLOYEE"
-                   ? "bg-indigo-900 text-white shadow-md"
-                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-               }`}
-          >
-            <Users size={16} className="sm:w-4 sm:h-4" />
-            <span className="truncate">Employee</span>
-            <span className="hidden sm:inline"> Accounts</span>
-          </button>
+        {/* 2. Navigation & Controls Section (New UI) */}
+        <div className="px-4 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
+          {/* Pill Tabs */}
+          <div className="flex w-full sm:w-auto p-1 bg-[#F1F5F9] rounded-xl border border-gray-200">
+            {(["EMPLOYEE", "CUSTOMER", "SUPPLIER"] as TabType[]).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 text-sm font-bold transition-all duration-200 rounded-lg ${
+                  activeTab === tab
+                    ? "bg-white text-[#334155] shadow-sm"
+                    : "text-[#64748B] hover:text-[#334155]"
+                }`}
+              >
+                {tab.charAt(0) + tab.slice(1).toLowerCase()}
+              </button>
+            ))}
+          </div>
 
-          <button
-            onClick={() => setActiveTab("CUSTOMER")}
-            className={`flex items-center justify-center gap-2 flex-1 lg:flex-none px-2 sm:px-6 py-2.5
-               text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-                 activeTab === "CUSTOMER"
-                   ? "bg-indigo-900 text-white shadow-md"
-                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-               }`}
-          >
-            <UserPlus size={16} className="sm:w-4 sm:h-4" />
-            <span className="truncate">Customer</span>
-            <span className="hidden sm:inline"> Accounts</span>
-          </button>
+          {/* Search and Page Size */}
+          <div className="flex items-center flex-grow justify-end gap-3 max-w-2xl">
+            <div className="flex-grow">
+              <TableInputField
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+            </div>
 
-          <button
-            onClick={() => setActiveTab("SUPPLIER")}
-            className={`flex items-center justify-center gap-2 flex-1 lg:flex-none px-2 sm:px-6 py-2.5
-               text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-                 activeTab === "SUPPLIER"
-                   ? "bg-indigo-900 text-white shadow-md"
-                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-               }`}
-          >
-            <Truck size={16} className="sm:w-4 sm:h-4" />
-            <span className="truncate">Supplier</span>
-            <span className="hidden sm:inline"> Accounts</span>
-          </button>
+            <div className="flex items-center border border-gray-200 rounded-lg px-3 py-3 bg-white shadow-sm min-w-[140px]">
+              <select
+                value={selectedValue}
+                onChange={(e) => setSelectedValue(Number(e.target.value))}
+                className="bg-transparent outline-none text-sm font-medium text-gray-700 cursor-pointer w-full"
+              >
+                {entriesOptions.map((num) => (
+                  <option key={num} value={num}>
+                    {num} per page
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
-        {/* Content Area */}
+        {/* 3. Content Area */}
         <div className="flex-grow p-2 sm:p-4 overflow-auto">
           {activeTab === "EMPLOYEE" && (
             <EmployeeAccount
-              triggerModal={
-                triggerModal.tab === "EMPLOYEE" ? triggerModal.count : 0
-              }
+              triggerModal={triggerModal.tab === "EMPLOYEE" ? triggerModal.count : 0}
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
             />
           )}
           {activeTab === "CUSTOMER" && (
             <CustomerAccount
-              triggerModal={
-                triggerModal.tab === "CUSTOMER" ? triggerModal.count : 0
-              }
+              triggerModal={triggerModal.tab === "CUSTOMER" ? triggerModal.count : 0}
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
             />
           )}
           {activeTab === "SUPPLIER" && (
             <SupplierAccount
-              triggerModal={
-                triggerModal.tab === "SUPPLIER" ? triggerModal.count : 0
-              }
+              triggerModal={triggerModal.tab === "SUPPLIER" ? triggerModal.count : 0}
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
             />
           )}
         </div>

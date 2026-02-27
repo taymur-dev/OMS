@@ -22,35 +22,24 @@ type ViewOvertimeProps = {
 export const ViewOverTimeModal = ({ setModal, data }: ViewOvertimeProps) => {
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
-      <div className="w-full max-w-4xl bg-white rounded overflow-hidden shadow-2xl border border-gray-300">
+      <div className="w-full max-w-4xl overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         {/* Header Section */}
-        <div className="bg-indigo-900 rounded px-4">
+        <div className="bg-white rounded-xl border-t-5 border-blue-400">
           <div className="text-white">
             <Title setModal={setModal}>OVERTIME DETAILS</Title>
           </div>
         </div>
 
         <div className="p-4 space-y-4">
-          {/* Profile Header */}
-          <div className="flex items-center space-x-4 pb-2">
-           
-            <div>
-              <h2 className="text-xl font-bold text-indigo-900">{data.name}</h2>
-              <p className="text-xs font-bold text-black uppercase tracking-widest">
-                Employee
-              </p>
-            </div>
-          </div>
-
           {/* Section 1: Time Information */}
           <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Time Information
             </h3>
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCalendarAlt className="text-red-400" /> Date
+                  <FaCalendarAlt className="text-gray-400" /> Date
                 </label>
                 <p className="text-gray-800 font-medium">
                   {new Date(data.date)
@@ -64,7 +53,7 @@ export const ViewOverTimeModal = ({ setModal, data }: ViewOvertimeProps) => {
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaClock className="text-green-400" /> Overtime Duration
+                  <FaClock className="text-gray-400" /> Overtime Duration
                 </label>
                 <p className="text-gray-800 font-medium">{data.totalTime}</p>
               </div>
@@ -73,13 +62,13 @@ export const ViewOverTimeModal = ({ setModal, data }: ViewOvertimeProps) => {
 
           {/* Section 2: Status & Tracking */}
           <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Status & Tracking
             </h3>
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCheckCircle className="text-yellow-400" /> Approval Status
+                  <FaCheckCircle className="text-gray-400" /> Approval Status
                 </label>
                 <span
                   className={`inline-block mt-1 px-3 py-0.5 rounded-full text-xs font-bold uppercase ${
@@ -93,7 +82,7 @@ export const ViewOverTimeModal = ({ setModal, data }: ViewOvertimeProps) => {
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaInfoCircle className="text-blue-400" /> Request ID
+                  <FaInfoCircle className="text-gray-400" /> Request ID
                 </label>
                 <p className="text-gray-800 font-medium">#OT-{data.id}</p>
               </div>
@@ -102,7 +91,7 @@ export const ViewOverTimeModal = ({ setModal, data }: ViewOvertimeProps) => {
         </div>
 
         {/* Footer Section */}
-        <div className="bg-indigo-900 p-3 flex justify-end">
+        <div className="bg-white p-3 flex justify-end">
           <button
             onClick={setModal}
             className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-1 px-8 rounded shadow-sm transition-colors"

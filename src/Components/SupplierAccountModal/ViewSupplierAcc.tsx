@@ -39,7 +39,6 @@ const formatDate = (dateString: string) => {
     .replace(/ /g, "-");
 };
 
-
 export const ViewSupplierAcc = ({
   setModal,
   supplierId,
@@ -97,7 +96,7 @@ export const ViewSupplierAcc = ({
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
       <div className="w-full max-w-5xl bg-white rounded overflow-hidden shadow-2xl border border-gray-300">
         {/* Header Section */}
-        <div className="bg-indigo-900 rounded px-4">
+        <div className="bg-blue-400 rounded px-4">
           <div className="text-white">
             <Title setModal={setModal}>SUPPLIER ACCOUNT DETAILS</Title>
           </div>
@@ -106,7 +105,7 @@ export const ViewSupplierAcc = ({
         <div className="p-4 space-y-6 max-h-[75vh] overflow-y-auto">
           {/* Section 1: Supplier Information (Blueprint Style) */}
           <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Supplier Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-y-4 pt-2">
@@ -139,7 +138,7 @@ export const ViewSupplierAcc = ({
 
           {/* Section 2: Ledger/Account Table */}
           <div className="border border-gray-200 rounded-md p-4 relative">
-            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 tracking-wider">
+            <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 tracking-wider">
               Account Ledger
             </h3>
 
@@ -193,13 +192,13 @@ export const ViewSupplierAcc = ({
                         <td className="p-2 font-medium text-indigo-900">
                           {acc.refNo}
                         </td>
-                        <td className="p-2 text-gray-700">
+                        <td className="p-2 text-green-700">
                           {Number(acc.debit).toLocaleString()}
                         </td>
-                        <td className="p-2 text-gray-700">
+                        <td className="p-2 text-red-700">
                           {Number(acc.credit).toLocaleString()}
                         </td>
-                        <td className="p-2 text-gray-500">
+                        <td className="p-2 text-yellow-500">
                           {Number(acc.prevBalance).toLocaleString()}
                         </td>
                         <td
@@ -208,15 +207,9 @@ export const ViewSupplierAcc = ({
                           {Number(acc.netBalance).toLocaleString()}
                         </td>
 
-                        <td
-                          className={`p-2 font-bold`}
-                        >
-                          {(acc.paymentMethod)}
-                        </td>
+                        <td className={`p-2 font-bold`}>{acc.paymentMethod}</td>
 
-                        <td
-                          className={`p-2 font-bold`}
-                        >
+                        <td className={`p-2 font-bold`}>
                           {formatDate(acc.paymentDate)}
                         </td>
                       </tr>
@@ -229,7 +222,7 @@ export const ViewSupplierAcc = ({
         </div>
 
         {/* Footer Section */}
-        <div className="bg-indigo-900 p-3 flex justify-end">
+        <div className="bg-white p-3 flex justify-end">
           <button
             onClick={setModal}
             className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-1 px-8 rounded shadow-sm transition-colors"

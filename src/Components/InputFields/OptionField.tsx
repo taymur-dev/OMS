@@ -27,8 +27,8 @@ export const OptionField = ({
   icon,
 }: OptionFieldProps) => {
   return (
-    <div className="flex flex-col gap-1">
-      <label className="text-gray-600 text-xs font-semibold uppercase">{labelName}</label>
+    <div className="flex flex-col">
+      <label className="text-gray-600 text-xs font-semibold">{labelName}</label>
 
       {/* 1. Added relative wrapper */}
       <div className="relative flex items-center w-full">

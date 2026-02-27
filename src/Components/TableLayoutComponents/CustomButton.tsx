@@ -19,7 +19,7 @@ export const CustomButton = ({
       onClick={handleToggle}
       className={`bg-blue-500 text-white 
       px-2 py-1 sm:px-4 sm:py-1.5 
-      text-[10px] sm:text-sm font-medium
+      text-[15px] sm:text-sm font-medium
       rounded-lg sm:rounded-xl shadow-md
       hover:opacity-95 active:scale-95 transition-all duration-300 
       flex items-center gap-2 ${className}`}

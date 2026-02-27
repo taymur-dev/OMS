@@ -25,13 +25,13 @@ export const UserSelect = ({
 }: OptionFieldProps) => {
   return (
     <div className="flex flex-col">
-      <label className="text-black text-xs font-semibold">{labelName}</label>
+      <label className="text-gray-600 text-xs font-semibold">{labelName}</label>
       <select
         value={value}
         onChange={handlerChange}
         name={name}
         disabled={disabled}
-        className="p-3 rounded bg-white text-gray-800 border-1 rounded-lg border-indigo-900"
+        className="p-3 rounded bg-white text-gray-800 border-1 shadow rounded-lg border-gray-200"
       >
         <option value="">Please Select User</option>
         {optionData?.map((opt, idx) => (

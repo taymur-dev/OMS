@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { InputField } from "../../Components/InputFields/InputField";
@@ -8,8 +7,9 @@ import { OptionField } from "../../Components/InputFields/OptionField";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPrint } from "@fortawesome/free-solid-svg-icons";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
-import { useAppDispatch, useAppSelector } from "../../redux/Hooks"
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
   navigationStart,
   navigationSuccess,
@@ -26,7 +26,15 @@ export type ALLPROGRESST = {
   note: string;
 };
 
-export const ProgressReports = () => {
+interface ProgressReportsProps {
+  externalSearch: string;
+  externalPageSize: number;
+}
+
+export const ProgressReports = ({
+  externalSearch,
+  externalPageSize,
+}: ProgressReportsProps) => {
   const dispatch = useAppDispatch();
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
@@ -41,7 +49,7 @@ export const ProgressReports = () => {
     employeeId: "",
   });
 
-  // Filter states (applied only on Search click)
+  // Filter states
   const [appliedFilters, setAppliedFilters] = useState({
     startDate: currentDate,
     endDate: currentDate,
@@ -50,8 +58,6 @@ export const ProgressReports = () => {
 
   const [allProgress, setAllProgress] = useState<ALLPROGRESST[]>([]);
   const [pageNo, setPageNo] = useState(1);
-  const [itemsPerPage] = useState(10);
-  const [searchTerm, setSearchTerm] = useState("");
 
   const getProgressReport = useCallback(async () => {
     if (!token || !currentUser) return;
@@ -78,6 +84,10 @@ export const ProgressReports = () => {
     document.title = "(OMS) PROGRESS REPORTS";
     getProgressReport();
   }, [getProgressReport]);
+
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
 
   const employeeOptions = useMemo(() => {
     const map = new Map<number, string>();
@@ -110,19 +120,23 @@ export const ProgressReports = () => {
         : true;
 
       const matchesSearch =
-        item.employeeName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.projectName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.note?.toLowerCase().includes(searchTerm.toLowerCase());
+        item.employeeName
+          ?.toLowerCase()
+          .includes(externalSearch.toLowerCase()) ||
+        item.projectName
+          ?.toLowerCase()
+          .includes(externalSearch.toLowerCase()) ||
+        item.note?.toLowerCase().includes(externalSearch.toLowerCase());
 
       return inDateRange && matchesEmployee && matchesSearch;
     });
-  }, [allProgress, appliedFilters, searchTerm]);
+  }, [allProgress, appliedFilters, externalSearch]);
 
   const totalItems = filteredProgress.length;
-  const startIndex = (pageNo - 1) * itemsPerPage;
+  const startIndex = (pageNo - 1) * externalPageSize;
   const paginatedData = filteredProgress.slice(
     startIndex,
-    startIndex + itemsPerPage,
+    startIndex + externalPageSize,
   );
 
   const handleChange = (
@@ -139,168 +153,142 @@ export const ProgressReports = () => {
       .print-container { width: 100%; padding: 0; }
       .print-header { text-align: center; }
       .print-header h1 { font-size: 25pt; font-weight: bold; }
-      .print-header h2 { font-size: 20pt; font-weight: normal; }
-      .date-range { text-align: left; font-size: 14pt; display: flex; justify-content: space-between; margin-bottom: 10px; }
-      table { width: 100%; border-collapse: collapse; border: 2px solid #000; }
-      thead { background-color: #ccc; color: #000; }
-      thead th, tbody td { border: 2px solid #000; font-size: 10pt; text-align: left; padding: 5px; }
-      tbody tr:nth-child(even) { background-color: #f9f9f9; }
+      .print-header h2 { font-size: 20pt; font-normal; }
+      table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+      th, td { border: 1px solid #000; padding: 8px; text-align: left; }
       @media print { .no-print { display: none; } }
     `;
-    const content = document.getElementById("myDiv")?.outerHTML || "";
-    document.body.innerHTML = `
-      <div class="print-container">
-        <div class="print-header">
-          <h1>Office Management System</h1>
-          <h2>Progress Report</h2>
-        </div>
-        <div class="date-range">
-          <strong>From: ${appliedFilters.startDate}</strong>
-          <strong>To: ${appliedFilters.endDate}</strong>
-        </div>
-        ${content}
-      </div>
-    `;
-    const style = document.createElement("style");
-    style.type = "text/css";
-    style.appendChild(document.createTextNode(printStyles));
-    document.head.appendChild(style);
-    window.print();
-    location.reload();
+    const content = document.getElementById("myDiv")?.innerHTML || "";
+    const printWindow = window.open("", "_blank");
+    printWindow?.document.write(
+      `<html><head><style>${printStyles}</style></head><body>${content}</body></html>`,
+    );
+    printWindow?.document.close();
+    printWindow?.print();
   };
 
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
-
-
-        {/* --- FILTER SECTION (Aligned with Sales Report) --- */}
-        <div className="p-2 bg-white">
-          <div className="flex flex-wrap items-end gap-4">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow min-w-[300px]">
-              <InputField
-                labelName="From"
-                type="date"
-                name="startDate"
-                value={reportData.startDate}
-                handlerChange={handleChange}
-              />
-              <InputField
-                labelName="To"
-                type="date"
-                name="endDate"
-                value={reportData.endDate}
-                handlerChange={handleChange}
-              />
-
-              {currentUser?.role === "admin" ? (
-                <OptionField
-                  labelName="Employee"
-                  name="employeeId"
-                  value={reportData.employeeId}
-                  optionData={employeeOptions}
-                  inital="Select Employee"
-                  handlerChange={handleChange}
-                />
-              ) : (
-                <div className="hidden sm:block"></div>
-              )}
-            </div>
-
-            {/* Buttons Container: Wraps automatically like Sales Report */}
-            <div className="flex gap-2 flex-grow lg:flex-grow-0 min-w-full lg:min-w-fit">
-              <button
-                onClick={handleSearch}
-                className="bg-indigo-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center
-                 justify-center whitespace-nowrap hover:bg-indigo-800 transition"
-              >
-                <FontAwesomeIcon icon={faSearch} className="mr-2" />
-                Search
-              </button>
-
-              <button
-                onClick={printDiv}
-                className="bg-blue-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center justify-center
-                 whitespace-nowrap hover:bg-blue-800 transition"
-              >
-                <FontAwesomeIcon icon={faPrint} className="mr-2" />
-                Print
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* --- SUB-HEADER SECTION --- */}
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            <div className="text-sm font-bold text-gray-600">
-              From:{" "}
-              <span className="text-black">{appliedFilters.startDate}</span> To:{" "}
-              <span className="text-black">{appliedFilters.endDate}</span>
-            </div>
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      {/* --- TOP FILTERS --- */}
+      <div className="p-4 bg-gray-50 border-b border-gray-100">
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow">
+            <InputField
+              labelName="From"
+              type="date"
+              name="startDate"
+              value={reportData.startDate}
+              handlerChange={handleChange}
             />
-          </div>
-        </div>
-
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto">
-          <div id="myDiv" className="min-w-[800px]">
-            {/* Sticky Table Header */}
-            <div className="grid grid-cols-4 bg-indigo-900 text-white items-center font-semibold text-sm sticky top-0 z-10 p-2">
-              <span>Sr#</span>
-              {currentUser?.role === "admin" && <span>Employee</span>}
-              <span>Project</span>
-              <span>Progress Note</span>
-            </div>
-
-            {/* Table Body */}
-            {paginatedData.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10 border-x border-b border-gray-200">
-                No records available at the moment!
-              </div>
-            ) : (
-              paginatedData.map((item, index) => (
-                <div
-                  key={item.id}
-                  className="grid grid-cols-4 border-b border-x border-gray-200 text-gray-800 items-center text-sm p-2 hover:bg-gray-50 transition break-words"
-                >
-                  <span>{startIndex + index + 1}</span>
-                  {currentUser?.role === "admin" && (
-                    <span className="truncate">{item.employeeName}</span>
-                  )}
-                  <span className="truncate pr-2">{item.projectName}</span>
-                  <span className="whitespace-pre-wrap">{item.note}</span>
-                </div>
-              ))
+            <InputField
+              labelName="To"
+              type="date"
+              name="endDate"
+              value={reportData.endDate}
+              handlerChange={handleChange}
+            />
+            {currentUser?.role === "admin" && (
+              <OptionField
+                labelName="Employee"
+                name="employeeId"
+                value={reportData.employeeId}
+                optionData={employeeOptions}
+                inital="Select Employee"
+                handlerChange={handleChange}
+              />
             )}
           </div>
-        </div>
-
-        {/* --- PAGINATION SECTION --- */}
-        <div className="flex flex-row items-center justify-between p-2">
-          <ShowDataNumber
-            start={totalItems === 0 ? 0 : startIndex + 1}
-            end={Math.min(startIndex + itemsPerPage, totalItems)}
-            total={totalItems}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={() =>
-              setPageNo((p) => Math.max(p - 1, 1))
-            }
-            handleIncrementPageButton={() =>
-              pageNo * itemsPerPage < totalItems && setPageNo((p) => p + 1)
-            }
-          />
+          <div className="flex gap-2 w-full lg:w-auto">
+            <button
+              onClick={handleSearch}
+              className="bg-slate-700 text-white px-6 py-3 rounded-lg shadow flex-1 lg:flex-none flex items-center justify-center transition"
+            >
+              <FontAwesomeIcon icon={faSearch} className="mr-2" /> Search
+            </button>
+            <button
+              onClick={printDiv}
+              className="bg-blue-400 text-white px-6 py-3 rounded-lg shadow flex-1 lg:flex-none flex items-center justify-center transition"
+            >
+              <FontAwesomeIcon icon={faPrint} className="mr-2" /> Print
+            </button>
+          </div>
         </div>
       </div>
 
-     
+      {/* --- TABLE AREA --- */}
+      <div className="overflow-auto px-3 sm:px-0 flex-grow">
+        <div className="min-w-[1000px]">
+          <div className="px-0.5 pt-0.5">
+            {/* Aligned with UsersDetails grid logic */}
+            <div className="grid grid-cols-[60px_1fr_1fr_3fr] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm">
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Employee</span>
+              <span className="text-left">Project</span>
+              <span className="text-left">Progress Note</span>
+            </div>
+          </div>
+
+          <div className="px-0.5 sm:px-1 py-2" id="myDiv">
+            {paginatedData.length === 0 ? (
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">
+                  No records available at the moment!
+                </p>
+                <p className="text-sm">
+                  Try adjusting your date range or search term.
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {paginatedData.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="grid grid-cols-[60px_1fr_1fr_3fr] items-center px-3 py-2 gap-3 text-sm bg-white border 
+                    border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
+                  >
+                    <span className="text-gray-500 font-medium">
+                      {startIndex + index + 1}
+                    </span>
+
+                    {/* Icons removed to match UsersDetails clean text style */}
+                    <div className="truncate text-gray-800">
+                      {item.employeeName}
+                    </div>
+
+                    <div className="text-gray-700 font-medium truncate">
+                      {item.projectName}
+                    </div>
+
+                    <div className="text-gray-600 whitespace-pre-wrap leading-relaxed">
+                      {item.note}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* --- PAGINATION --- */}
+      <div className="flex flex-row items-center justify-between p-2 border-t border-gray-100">
+        <ShowDataNumber
+          start={totalItems === 0 ? 0 : startIndex + 1}
+          end={Math.min(startIndex + externalPageSize, totalItems)}
+          total={totalItems}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
+          handleIncrementPageButton={() =>
+            startIndex + externalPageSize < totalItems &&
+            setPageNo((p) => p + 1)
+          }
+        />
+      </div>
     </div>
   );
 };

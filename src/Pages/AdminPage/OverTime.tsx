@@ -1,4 +1,3 @@
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
@@ -17,8 +16,7 @@ import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
-
-const numbers = [10, 25, 50, 100];
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 type OVERTIMET = {
   id: number;
@@ -32,11 +30,22 @@ type OVERTIMET = {
 
 type MODALT = "ADD" | "VIEW" | "UPDATE" | "DELETE" | "";
 
-export const OverTime = ({ triggerModal }: { triggerModal: number }) => {
+interface OverTimeProps {
+  triggerModal: number;
+  externalSearch: string;
+  externalPageSize: number;
+}
+
+export const OverTime = ({
+  triggerModal,
+  externalSearch,
+  externalPageSize,
+}: OverTimeProps) => {
   const dispatch = useAppDispatch();
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
+  const isAdmin = currentUser?.role === "admin";
 
   const [isOpenModal, setIsOpenModal] = useState<MODALT>("");
   const [allOvertime, setAllOvertime] = useState<OVERTIMET[]>([]);
@@ -44,14 +53,10 @@ export const OverTime = ({ triggerModal }: { triggerModal: number }) => {
     null,
   );
   const [viewOvertime, setViewOvertime] = useState<OVERTIMET | null>(null);
-
-  const [selectedValue, setSelectedValue] = useState(10);
   const [pageNo, setPageNo] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
 
   const handleGetOvertime = useCallback(async () => {
     if (!currentUser) return;
-
     try {
       const url =
         currentUser.role === "admin"
@@ -62,9 +67,9 @@ export const OverTime = ({ triggerModal }: { triggerModal: number }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const sortedData = (res.data || []).sort((a: OVERTIMET, b: OVERTIMET) => {
-        return a.id - b.id;
-      });
+      const sortedData = (res.data || []).sort(
+        (a: OVERTIMET, b: OVERTIMET) => a.id - b.id,
+      );
       setAllOvertime(sortedData);
     } catch (error) {
       console.error("Error fetching overtime:", error);
@@ -74,7 +79,6 @@ export const OverTime = ({ triggerModal }: { triggerModal: number }) => {
 
   const handleDeleteOvertime = async () => {
     if (!selectedOvertime || !currentUser) return;
-
     try {
       const url =
         currentUser.role === "admin"
@@ -84,7 +88,6 @@ export const OverTime = ({ triggerModal }: { triggerModal: number }) => {
       await axios.delete(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       setAllOvertime((prev) =>
         prev.filter((o) => o.id !== selectedOvertime.id),
       );
@@ -99,223 +102,185 @@ export const OverTime = ({ triggerModal }: { triggerModal: number }) => {
     document.title = "(OMS) OVER TIME";
     dispatch(navigationStart());
     setTimeout(() => dispatch(navigationSuccess("OVER TIME")), 1000);
-  }, [dispatch]);
-
-  useEffect(() => {
     handleGetOvertime();
-  }, [handleGetOvertime]);
+  }, [dispatch, handleGetOvertime]);
 
   useEffect(() => {
-    if (triggerModal > 0) {
-      setIsOpenModal("ADD");
-    }
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
+
+  useEffect(() => {
+    if (triggerModal > 0) setIsOpenModal("ADD");
   }, [triggerModal]);
 
   const filteredOvertime = useMemo(() => {
     return allOvertime.filter(
       (o) =>
-        o.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        o.approvalStatus.toLowerCase().includes(searchTerm.toLowerCase()),
+        o.name.toLowerCase().includes(externalSearch.toLowerCase()) ||
+        o.approvalStatus.toLowerCase().includes(externalSearch.toLowerCase()),
     );
-  }, [allOvertime, searchTerm]);
+  }, [allOvertime, externalSearch]);
 
-  const paginatedOvertime = useMemo(() => {
-    const start = (pageNo - 1) * selectedValue;
-    return filteredOvertime.slice(start, start + selectedValue);
-  }, [filteredOvertime, pageNo, selectedValue]);
-
-  const startIndex = (pageNo - 1) * selectedValue;
+  const totalNum = filteredOvertime.length;
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const paginatedOvertime = filteredOvertime.slice(
+    startIndex,
+    startIndex + externalPageSize,
+  );
 
   if (loader) return <Loader />;
 
-  const getStatusBadge = (status: string) => {
-    const baseClasses =
-      "px-2 py-1 rounded-full text-xs font-semibold capitalize";
+  const getStatusColor = (status: string) => {
+    const base =
+      "px-2.5 py-0.5 rounded-full text-xs font-semibold w-fit inline-block whitespace-nowrap";
 
     switch (status.toLowerCase()) {
       case "approved":
       case "accepted":
-        return (
-          <span
-            className={`${baseClasses} bg-green-700 text-white border border-green-200`}
-          >
-            {status}
-          </span>
-        );
+        return `${base} bg-green-100 text-green-700 border border-green-200`;
       case "pending":
-        return (
-          <span className={`${baseClasses} bg-orange-600 text-white border`}>
-            {status}
-          </span>
-        );
+        return `${base} bg-yellow-100 text-yellow-700 border border-yellow-200`;
       case "rejected":
       case "declined":
-        return (
-          <span
-            className={`${baseClasses} bg-red-100 text-red-700 border border-red-200`}
-          >
-            {status}
-          </span>
-        );
+        return `${base} bg-red-100 text-red-700 border border-red-200`;
       default:
-        return (
-          <span
-            className={`${baseClasses} bg-gray-100 text-gray-700 border border-gray-200`}
-          >
-            {status}
-          </span>
-        );
+        return `${base} bg-gray-100 text-gray-600 border border-gray-200`;
     }
   };
 
   return (
-    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            {/* Left Side: Show entries */}
-            <div className="text-sm flex items-center">
-              <span>Show</span>
-              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                <select
-                  value={selectedValue}
-                  onChange={(e) => {
-                    setSelectedValue(Number(e.target.value));
-                    setPageNo(1);
-                  }}
-                  className="bg-transparent outline-none py-1 cursor-pointer"
-                >
-                  {numbers.map((num) => (
-                    <option key={num} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-              </span>
-              <span className="hidden xs:inline">entries</span>
-            </div>
-
-            {/* Right Side: Search Input */}
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
-          </div>
-        </div>
-
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto px-2">
-          <div className="min-w-[900px]">
-            {/* Sticky Table Header */}
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      <div className="overflow-auto px-3 sm:px-0">
+        <div className="min-w-[1000px]">
+          <div className="px-0.5 pt-0.5">
             <div
               className={`grid ${
-                currentUser?.role === "admin" ? "grid-cols-6" : "grid-cols-5"
-              } bg-indigo-900 text-white items-center font-semibold text-sm sticky top-0 z-10 p-2`}
+                currentUser?.role === "admin"
+                  ? "grid-cols-[60px_1fr_1fr_1fr_1fr_auto]"
+                  : "grid-cols-[60px_1fr_1fr_1fr_auto]"
+              } bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm`}
             >
-              <span>Sr#</span>
-              {currentUser?.role === "admin" && <span>Employee Name</span>}
-              <span>Date</span>
-              <span>Over Time</span>
-              <span>Approval</span>
-              <span className="text-center">Actions</span>
-            </div>
+              <span className="text-left">Sr#</span>
+              {isAdmin && <span className="text-left">Employee Details</span>}
 
-            {/* Table Body */}
+              <span className="text-left">Date</span>
+              <span className="text-left">Over Time</span>
+              <span className="text-left">Status</span>
+              <span className="text-right w-[140px] pr-4">Actions</span>
+            </div>
+          </div>
+
+          {/* Table Body */}
+          <div className="px-0.5 sm:px-1 py-2">
             {paginatedOvertime.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
-                No records available at the moment!
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">
+                  No records available at the moment!
+                </p>
               </div>
             ) : (
-              paginatedOvertime.map((ot, index) => (
-                <div
-                  key={ot.id}
-                  className={`grid ${
-                    currentUser?.role === "admin"
-                      ? "grid-cols-6"
-                      : "grid-cols-5"
-                  } border-b border-x border-gray-200 text-gray-800 items-center text-sm p-2 hover:bg-gray-50 transition`}
-                >
-                  <span>{startIndex + index + 1}</span>
-                  {currentUser?.role === "admin" && (
-                    <span className="truncate">{ot.name}</span>
-                  )}
-                  <span>
-                    {new Date(ot.date)
-                      .toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })
-                      .replace(/ /g, "-")}
-                  </span>
-                  <span>{ot.totalTime}</span>
-                  <span className="flex items-center">
-                    {getStatusBadge(ot.approvalStatus)}
-                  </span>
-                  <span className="flex flex-nowrap justify-center gap-1">
-                    {(currentUser?.role === "admin" ||
-                      ot.name === currentUser?.name) && (
-                      <EditButton
-                        handleUpdate={() => {
-                          setSelectedOvertime(ot);
-                          setIsOpenModal("UPDATE");
+              <div className="flex flex-col gap-2">
+                {paginatedOvertime.map((ot, index) => (
+                  <div
+                    key={ot.id}
+                    className={`grid ${
+                      currentUser?.role === "admin"
+                        ? "grid-cols-[60px_1fr_1fr_1fr_1fr_auto]"
+                        : "grid-cols-[60px_1fr_1fr_1fr_auto]"
+                    } 
+                  items-center px-3 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30
+                   transition-colors shadow-sm`}
+                  >
+                    <span className="text-gray-500 font-medium">
+                      {startIndex + index + 1}
+                    </span>
+
+                    {isAdmin && (
+                      <div className="flex items-center gap-3 overflow-hidden">
+                        <span className="truncate  text-gray-800">
+                          {ot.name}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="text-gray-600 truncate">
+                      {new Date(ot.date)
+                        .toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })
+                        .replace(/ /g, "-")}
+                    </div>
+
+                    <div className="text-gray-600 truncate">{ot.totalTime}</div>
+
+                    <div
+                      className={`capitalize font-medium ${getStatusColor(ot.approvalStatus)}`}
+                    >
+                      {ot.approvalStatus}
+                    </div>
+
+                    <div className="flex items-center justify-end gap-1 w-[140px] pr-5">
+                      <ViewButton
+                        handleView={() => {
+                          setViewOvertime(ot);
+                          setIsOpenModal("VIEW");
                         }}
                       />
-                    )}
-                    <ViewButton
-                      handleView={() => {
-                        setViewOvertime(ot);
-                        setIsOpenModal("VIEW");
-                      }}
-                    />
-                    {(currentUser?.role === "admin" ||
-                      ot.name === currentUser?.name) && (
-                      <DeleteButton
-                        handleDelete={() => {
-                          setSelectedOvertime(ot);
-                          setIsOpenModal("DELETE");
-                        }}
-                      />
-                    )}
-                  </span>
-                </div>
-              ))
+                      {isAdmin && (
+                        <>
+                          <EditButton
+                            handleUpdate={() => {
+                              setSelectedOvertime(ot);
+                              setIsOpenModal("UPDATE");
+                            }}
+                          />
+                          <DeleteButton
+                            handleDelete={() => {
+                              setSelectedOvertime(ot);
+                              setIsOpenModal("DELETE");
+                            }}
+                          />
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
-
-        {/* 4) Pagination placed under the table */}
-        <div className="flex flex-row items-center justify-between p-2">
-          <ShowDataNumber
-            start={paginatedOvertime.length === 0 ? 0 : startIndex + 1}
-            end={Math.min(startIndex + selectedValue, filteredOvertime.length)}
-            total={filteredOvertime.length}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleIncrementPageButton={() =>
-              setPageNo((prev) =>
-                Math.min(
-                  prev + 1,
-                  Math.ceil(filteredOvertime.length / selectedValue),
-                ),
-              )
-            }
-            handleDecrementPageButton={() =>
-              setPageNo((prev) => Math.max(prev - 1, 1))
-            }
-          />
-        </div>
       </div>
 
-      {/* --- MODALS SECTION --- */}
+      {/* Pagination */}
+      <div className="flex flex-row items-center justify-between p-1">
+        <ShowDataNumber
+          start={totalNum === 0 ? 0 : startIndex + 1}
+          end={Math.min(startIndex + externalPageSize, totalNum)}
+          total={totalNum}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleIncrementPageButton={() =>
+            setPageNo((prev) =>
+              Math.min(prev + 1, Math.ceil(totalNum / externalPageSize)),
+            )
+          }
+          handleDecrementPageButton={() =>
+            setPageNo((prev) => Math.max(prev - 1, 1))
+          }
+        />
+      </div>
+
+      {/* Modals */}
       {isOpenModal === "ADD" && (
         <AddOverTime
           setModal={() => setIsOpenModal("")}
           refreshOvertime={handleGetOvertime}
         />
       )}
-
       {isOpenModal === "UPDATE" && selectedOvertime && (
         <UpdateOverTime
           setModal={() => setIsOpenModal("")}
@@ -330,14 +295,12 @@ export const OverTime = ({ triggerModal }: { triggerModal: number }) => {
           refreshOvertimes={handleGetOvertime}
         />
       )}
-
       {isOpenModal === "VIEW" && viewOvertime && (
         <ViewOverTimeModal
           setModal={() => setIsOpenModal("")}
           data={viewOvertime}
         />
       )}
-
       {isOpenModal === "DELETE" && selectedOvertime && (
         <ConfirmationModal
           isOpen={() => setIsOpenModal("")}

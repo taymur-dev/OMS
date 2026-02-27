@@ -17,7 +17,7 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { BASE_URL } from "../../Content/URL";
-import { RiInboxArchiveLine, RiBriefcaseLine } from "react-icons/ri";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 type ModalT = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 type Job = {
@@ -34,7 +34,11 @@ interface JobsProps {
   externalPageSize: number;
 }
 
-export const Jobs = ({ triggerRecruit, externalSearch, externalPageSize }: JobsProps) => {
+export const Jobs = ({
+  triggerRecruit,
+  externalSearch,
+  externalPageSize,
+}: JobsProps) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
 
@@ -92,7 +96,7 @@ export const Jobs = ({ triggerRecruit, externalSearch, externalPageSize }: JobsP
   const filteredJobs = useMemo(() => {
     return jobs
       .filter((job) =>
-        job.job_title.toLowerCase().includes(externalSearch.toLowerCase())
+        job.job_title.toLowerCase().includes(externalSearch.toLowerCase()),
       )
       .sort((a, b) => a.id - b.id);
   }, [jobs, externalSearch]);
@@ -114,27 +118,30 @@ export const Jobs = ({ triggerRecruit, externalSearch, externalPageSize }: JobsP
 
   return (
     <div className="flex flex-col flex-grow bg-white overflow-hidden">
-      <div className="overflow-auto">
+      <div className="overflow-auto px-3 sm:px-0">
         <div className="min-w-[600px]">
           {/* Header Section aligned with UsersDetails */}
-          <div className="px-4 pt-0.5">
+          <div className="px-0.5 pt-0.5">
             <div
-              className="grid grid-cols-3 
+              className="grid grid-cols-[60px_1fr_1fr_auto]
               bg-blue-400 text-white rounded-lg items-center font-bold
               text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
               <span className="text-left">Sr#</span>
               <span className="text-left">Job Title</span>
-              <span className="text-right pr-10">Actions</span>
+              <span className="text-left">Description</span>
+              <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
           </div>
 
           {/* Table Body Section */}
-          <div className="px-4 py-2">
+          <div className="px-0.5 py-2">
             {paginatedJobs.length === 0 ? (
-              <div className="bg-gray-50 rounded-lg border-2 border-dashed p-12 flex flex-col items-center justify-center text-gray-400">
+              <div className="bg-gray-50 rounded-lg border-2 border p-12 flex flex-col items-center justify-center text-gray-400">
                 <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
-                <p className="text-lg font-medium">No records available at the moment!</p>
+                <p className="text-lg font-medium">
+                  No records available at the moment!
+                </p>
                 <p className="text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
@@ -142,25 +149,30 @@ export const Jobs = ({ triggerRecruit, externalSearch, externalPageSize }: JobsP
                 {paginatedJobs.map((job, index) => (
                   <div
                     key={job.id}
-                    className="grid grid-cols-3 
-                    items-center p-1 gap-3 text-sm bg-white 
+                    className="grid grid-cols-[60px_1fr_1fr_auto]
+                    items-center px-3 py-2 gap-3 text-sm bg-white 
                     border border-gray-100 rounded-lg 
                     hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
-                    <span className="text-gray-500 font-medium pl-2">
+                    <span className="text-gray-500 font-medium">
                       {startIndex + index + 1}
                     </span>
 
-                    <div className="flex items-center gap-3 overflow-hidden">
-                      <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 flex-shrink-0">
-                        <RiBriefcaseLine size={20} />
-                      </div>
-                      <span className="truncate font-semibold text-gray-800">
+                    {/* Removed the briefcase icon div to match the "no icon" request */}
+                    <div className="flex items-center min-w-0">
+                      <span className="truncate  text-gray-800">
                         {job.job_title}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-end gap-1 pr-2">
+                    <div className="flex items-center min-w-0">
+                      <span className="truncate text-gray-800">
+                        {job.description}
+                      </span>
+                    </div>
+
+                    {/* Aligned width with the header and UsersDetails action container */}
+                    <div className="flex items-center justify-end gap-1 w-[140px]">
                       <ViewButton
                         handleView={() => {
                           setSelectedJob(job);
@@ -189,7 +201,7 @@ export const Jobs = ({ triggerRecruit, externalSearch, externalPageSize }: JobsP
       </div>
 
       {/* BOTTOM SECTION (Pagination) */}
-      <div className="flex flex-row items-center justify-between py-4">
+      <div className="flex flex-row items-center justify-between p-1">
         <ShowDataNumber
           start={totalNum === 0 ? 0 : startIndex + 1}
           end={Math.min(endIndex, totalNum)}
@@ -204,7 +216,11 @@ export const Jobs = ({ triggerRecruit, externalSearch, externalPageSize }: JobsP
 
       {/* --- MODALS SECTION --- */}
       {isOpenModal === "ADD" && (
-        <AddJob setModal={() => handleToggleModal("")} refreshJobs={getJobs} existingJobs={jobs} />
+        <AddJob
+          setModal={() => handleToggleModal("")}
+          refreshJobs={getJobs}
+          existingJobs={jobs}
+        />
       )}
 
       {isOpenModal === "EDIT" && selectedJob && (
@@ -217,7 +233,10 @@ export const Jobs = ({ triggerRecruit, externalSearch, externalPageSize }: JobsP
       )}
 
       {isOpenModal === "VIEW" && selectedJob && (
-        <ViewJob setIsOpenModal={() => handleToggleModal("")} viewJob={selectedJob} />
+        <ViewJob
+          setIsOpenModal={() => handleToggleModal("")}
+          viewJob={selectedJob}
+        />
       )}
 
       {isOpenModal === "DELETE" && (

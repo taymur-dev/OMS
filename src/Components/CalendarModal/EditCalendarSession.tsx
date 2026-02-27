@@ -128,9 +128,9 @@ export const EditCalendarSession = ({
           if (e.key === "Enter") e.preventDefault();
         }}
       >
-        <div className="w-[42rem] max-h-[29rem] bg-white mx-auto rounded border border-indigo-900">
+        <div className="w-[42rem] max-h-[29rem] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
           <form onSubmit={handlerSubmitted}>
-            <div className="bg-indigo-900 rounded px-6">
+            <div className="bg-white rounded-xl border-t-5 border-blue-400">
               <Title
                 setModal={setModal}
                 className="text-white text-lg font-semibold"
@@ -158,7 +158,7 @@ export const EditCalendarSession = ({
                     }
                     placeholder="Enter Session Name"
                     className="border border-gray-300 px-3 py-2.5 rounded-lg w-full text-gray-800 
-                    focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                    focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                   />
                 </div>
 
@@ -177,13 +177,13 @@ export const EditCalendarSession = ({
                     dateFormat="yyyy-MM"
                     showMonthYearPicker
                     className="border border-gray-300 px-3 py-2.5 rounded-lg w-full text-gray-800 
-                    focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                    focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 px-4 rounded py-3 bg-indigo-900 border-t border-indigo-900">
+            <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
               <CancelBtn setModal={setModal} />
               <AddButton
                 loading={loading}

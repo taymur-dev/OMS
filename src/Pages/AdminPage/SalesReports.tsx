@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { InputField } from "../../Components/InputFields/InputField";
@@ -14,6 +13,7 @@ import {
 } from "../../redux/NavigationSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPrint } from "@fortawesome/free-solid-svg-icons";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 type CustomerT = {
   id: number;
@@ -27,14 +27,21 @@ type SaleReportT = {
   saleDate: string;
 };
 
-export const SalesReports = () => {
+interface SalesReportsProps {
+  externalSearch: string;
+  externalPageSize: number;
+}
+
+export const SalesReports = ({
+  externalSearch,
+  externalPageSize,
+}: SalesReportsProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
 
   const token = currentUser?.token;
 
-  const [selectedValue] = useState(10);
   const [getCustomers, setGetCustomers] = useState<CustomerT[] | null>(null);
   const [reportData, setReportData] = useState({
     startDate: new Date().toLocaleDateString("sv-SE"),
@@ -42,7 +49,6 @@ export const SalesReports = () => {
     customerName: "",
   });
   const [pageNo, setPageNo] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
   const [salesReports, setSalesReports] = useState<SaleReportT[]>([]);
   const [appliedFilters, setAppliedFilters] = useState({
     startDate: new Date().toLocaleDateString("sv-SE"),
@@ -63,10 +69,13 @@ export const SalesReports = () => {
       endDate: reportData.endDate,
       customerName: reportData.customerName,
     });
-    setPageNo(1); // Filter change hone par pehle page par jana behtar hai
+    setPageNo(1);
   };
 
-  const handleIncrementPageButton = () => setPageNo((p) => p + 1);
+  const handleIncrementPageButton = () => {
+    const totalPages = Math.ceil(filteredReports.length / externalPageSize);
+    if (pageNo < totalPages) setPageNo((p) => p + 1);
+  };
   const handleDecrementPageButton = () => setPageNo((p) => Math.max(p - 1, 1));
 
   const handleGetALLCustomers = useCallback(async () => {
@@ -83,25 +92,16 @@ export const SalesReports = () => {
   const handleGetSalesReports = useCallback(async () => {
     try {
       dispatch(navigationStart());
-
       const res = await axios.get(`${BASE_URL}/api/admin/getSales`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       setSalesReports(
-        res.data.map(
-          (sale: {
-            id: number;
-            customerName: string;
-            projectName: string;
-            saleDate: string;
-          }) => ({
-            id: sale.id,
-            customerName: sale.customerName,
-            projectName: sale.projectName,
-            saleDate: new Date(sale.saleDate).toLocaleDateString("sv-SE"),
-          }),
-        ),
+        res.data.map((sale: SaleReportT) => ({
+          id: sale.id,
+          customerName: sale.customerName,
+          projectName: sale.projectName,
+          saleDate: new Date(sale.saleDate).toLocaleDateString("sv-SE"),
+        })),
       );
     } catch (error) {
       console.error(error);
@@ -110,53 +110,16 @@ export const SalesReports = () => {
     }
   }, [dispatch, token]);
 
-  const printDiv = () => {
-    const printStyles = `
-      @page { size: A4 portrait; }
-      body { font-family: Arial, sans-serif; font-size: 11pt; color: #000; }
-      .print-container { width: 100%; padding: 0; }
-      .print-header { text-align: center; }
-      .print-header h1 { font-size: 25pt; font-weight: bold; }
-      .print-header h2 { font-size: 20pt; font-weight: normal; }
-      .date-range { text-align: left; font-size: 14pt; display: flex; justify-content: space-between; }
-      table { width: 100%; border-collapse: collapse; border: 2px solid #000; }
-      thead { background-color: #ccc; color: #000; }
-      thead th, tbody td { border: 2px solid #000; font-size: 10pt; text-align: left; }
-      tbody tr:nth-child(even) { background-color: #f9f9f9; }
-      .footer { position: fixed; bottom: 0; width: 100%; text-align: center; font-size: 10pt; padding: 10px 0;
-       border-top: 1px solid #ccc; }
-      @media print { .no-print { display: none; } }
-    `;
-    const content = document.getElementById("myDiv")?.outerHTML || "";
-    document.body.innerHTML = `
-      <div class="print-container">
-        <div class="print-header">
-          <h1>Office Management System</h1>
-          <h2>Sales Report</h2>
-        </div>
-        <div class="date-range">
-          <strong>From: ${reportData.startDate}</strong>
-          <strong>To: ${reportData.endDate}</strong>
-        </div>
-        ${content}
-        <div class="footer"></div>
-      </div>
-    `;
-    const style = document.createElement("style");
-    style.type = "text/css";
-    style.appendChild(document.createTextNode(printStyles));
-    document.head.appendChild(style);
-    window.print();
-    location.reload();
-  };
-
   useEffect(() => {
     handleGetALLCustomers();
     handleGetSalesReports();
     document.title = "(OMS) SALE REPORTS";
-    dispatch(navigationStart());
-    setTimeout(() => dispatch(navigationSuccess("SALE REPORTS")), 1000);
-  }, [dispatch, handleGetALLCustomers, handleGetSalesReports]);
+  }, [handleGetALLCustomers, handleGetSalesReports]);
+
+  // Reset page on search/size change
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
 
   const filteredReports = useMemo(() => {
     return salesReports
@@ -164,8 +127,10 @@ export const SalesReports = () => {
         (report) =>
           report.customerName
             .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          report.projectName.toLowerCase().includes(searchTerm.toLowerCase()),
+            .includes(externalSearch.toLowerCase()) ||
+          report.projectName
+            .toLowerCase()
+            .includes(externalSearch.toLowerCase()),
       )
       .filter((report) =>
         appliedFilters.customerName
@@ -180,137 +145,147 @@ export const SalesReports = () => {
           report.saleDate >= appliedFilters.startDate &&
           report.saleDate <= appliedFilters.endDate,
       );
-  }, [salesReports, searchTerm, appliedFilters, getCustomers]);
+  }, [salesReports, externalSearch, appliedFilters, getCustomers]);
+
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const paginatedReports = filteredReports.slice(
+    startIndex,
+    startIndex + externalPageSize,
+  );
+
+  const printDiv = () => {
+    const content = document.getElementById("myDiv")?.outerHTML || "";
+    const printWindow = window.open("", "_blank");
+    printWindow?.document.write(
+      `<html><head><title>Print Report</title></head><body>${content}</body></html>`,
+    );
+    printWindow?.document.close();
+    printWindow?.print();
+  };
 
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
-
-        <div className="p-2 bg-white">
-          <div className="flex flex-wrap items-end gap-4">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow min-w-[300px]">
-              <InputField
-                labelName="From"
-                type="date"
-                value={reportData.startDate}
-                handlerChange={handleChange}
-                name="startDate"
-              />
-              <InputField
-                labelName="To"
-                type="date"
-                value={reportData.endDate}
-                handlerChange={handleChange}
-                name="endDate"
-              />
-
-              <OptionField
-                labelName="Customer"
-                name="customerName"
-                value={reportData.customerName}
-                optionData={getCustomers?.map((customer) => ({
-                  id: customer.id,
-                  label: customer.customerName,
-                  value: customer.id,
-                }))}
-                inital="Please Select Customer"
-                handlerChange={handleChange}
-              />
-            </div>
-
-            {/* Buttons Container: Jab space kam hogi (1300px approx), 
-        to ye automatic neeche wrap ho jayega aur full width le lega */}
-            <div className="flex gap-2 flex-grow lg:flex-grow-0 min-w-full lg:min-w-fit">
-              <button
-                onClick={handleSearch}
-                className="bg-indigo-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex
-                 items-center justify-center whitespace-nowrap"
-              >
-                <FontAwesomeIcon icon={faSearch} className="mr-2" />
-                Search
-              </button>
-
-              <button
-                onClick={printDiv}
-                className="bg-blue-900 text-white px-6 py-3 rounded-xl shadow flex-1 flex items-center 
-                justify-center whitespace-nowrap"
-              >
-                <FontAwesomeIcon icon={faPrint} className="mr-2" />
-                Print
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* --- SUB-HEADER SECTION (Search & Info) --- */}
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            <div className="text-sm font-bold text-gray-600">
-              From: <span className="text-black">{reportData.startDate}</span>{" "}
-              To: <span className="text-black">{reportData.endDate}</span>
-            </div>
-
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      {/* 1. Filters Section */}
+      <div className="p-3 bg-white border-b border-gray-100">
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow">
+            <InputField
+              labelName="From"
+              type="date"
+              value={reportData.startDate}
+              handlerChange={handleChange}
+              name="startDate"
+            />
+            <InputField
+              labelName="To"
+              type="date"
+              value={reportData.endDate}
+              handlerChange={handleChange}
+              name="endDate"
+            />
+            <OptionField
+              labelName="Customer"
+              name="customerName"
+              value={reportData.customerName}
+              optionData={getCustomers?.map((c) => ({
+                id: c.id,
+                label: c.customerName,
+                value: c.id,
+              }))}
+              inital="Please Select Customer"
+              handlerChange={handleChange}
             />
           </div>
+          <div className="flex gap-2 w-full lg:w-auto">
+            <button
+              onClick={handleSearch}
+              className="bg-[#334155] text-white px-6 py-3 rounded-lg shadow-sm flex-1 flex items-center 
+            justify-center font-bold text-sm transition-hover "
+            >
+              <FontAwesomeIcon icon={faSearch} className="mr-2" /> Search
+            </button>
+            <button
+              onClick={printDiv}
+              className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-sm flex-1 flex items-center justify-center 
+            font-bold text-sm transition-hover "
+            >
+              <FontAwesomeIcon icon={faPrint} className="mr-2" /> Print
+            </button>
+          </div>
         </div>
+      </div>
 
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto ">
-          <div id="myDiv" className="min-w-[800px]">
-            {/* Sticky Table Header */}
-            <div className="grid grid-cols-4 bg-indigo-900 text-white items-center font-semibold text-sm sticky top-0 z-10 p-2">
-              <span>Sr#</span>
-              <span>Customer</span>
-              <span>Project</span>
-              <span>Date</span>
+      {/* 2. Table Section */}
+      <div className="overflow-auto px-3 sm:px-0 mt-4">
+        <div className="min-w-[1000px]">
+          {/* Header Row - Aligned with UsersDetails grid logic */}
+          <div className="px-0.5 pt-0.5">
+            <div className="grid grid-cols-[60px_1.5fr_1.5fr_1fr] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm">
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Customer Name</span>
+              <span className="text-left">Project Title</span>
+              <span className="text-right pr-8">Sale Date</span>
             </div>
+          </div>
 
-            {/* Table Body */}
-            {filteredReports.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10 border-x border-b border-gray-200">
-                No records available at the moment!
+          {/* Body Rows */}
+          <div id="myDiv" className="px-0.5 sm:px-1 py-2">
+            {paginatedReports.length === 0 ? (
+              <div className="bg-gray-50 rounded-lg border-2 border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">No sales records found!</p>
+                <p className="text-sm">
+                  Try adjusting your date range or search terms.
+                </p>
               </div>
             ) : (
-              filteredReports
-                .slice((pageNo - 1) * selectedValue, pageNo * selectedValue)
-                .map((report, index) => (
+              <div className="flex flex-col gap-2">
+                {paginatedReports.map((report, index) => (
                   <div
                     key={report.id}
-                    className="grid grid-cols-4 border-b border-x border-gray-200 text-gray-800 items-center
-                   text-sm p-2 hover:bg-gray-50 transition"
+                    className="grid grid-cols-[60px_1.5fr_1.5fr_1fr] items-center px-3 py-2 gap-3 text-sm bg-white border 
+                    border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
-                    <span>{(pageNo - 1) * selectedValue + index + 1}</span>
-                    <span className="truncate">{report.customerName}</span>
-                    <span className="truncate">{report.projectName}</span>
-                    <span>{report.saleDate}</span>
+                    <span className="text-gray-500 font-medium">
+                      {startIndex + index + 1}
+                    </span>
+
+                    {/* Customer Name - Removed Icon/Avatar container to match clean text style */}
+                    <div className="truncate text-gray-800">
+                      {report.customerName}
+                    </div>
+
+                    {/* Project Title - Removed Icon */}
+                    <div className="text-gray-600 truncate">
+                      {report.projectName}
+                    </div>
+
+                    {/* Sale Date - Removed Icon, Kept Right Aligned */}
+                    <div className="text-gray-600 text-right pr-4">
+                      {report.saleDate}
+                    </div>
                   </div>
-                ))
+                ))}
+              </div>
             )}
           </div>
         </div>
+      </div>
 
-        {/* --- PAGINATION SECTION --- */}
-        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
-          <ShowDataNumber
-            start={
-              filteredReports.length === 0
-                ? 0
-                : (pageNo - 1) * selectedValue + 1
-            }
-            end={Math.min(pageNo * selectedValue, filteredReports.length)}
-            total={filteredReports.length}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={handleDecrementPageButton}
-            handleIncrementPageButton={handleIncrementPageButton}
-          />
-        </div>
+      {/* 3. Pagination Section */}
+      <div className="mt-auto flex flex-row items-center justify-between p-3 border-t border-gray-100">
+        <ShowDataNumber
+          start={filteredReports.length === 0 ? 0 : startIndex + 1}
+          end={Math.min(startIndex + externalPageSize, filteredReports.length)}
+          total={filteredReports.length}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
       </div>
     </div>
   );
