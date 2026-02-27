@@ -12,10 +12,10 @@ import axios from "axios";
 
 export interface IHeaderProps extends React.ComponentPropsWithoutRef<"div"> {
   toggleSideBar: () => void;
-  isSidebarOpen: boolean;
+  isOpen: boolean;
 }
 
-export const Header = ({ toggleSideBar, isSidebarOpen }: IHeaderProps) => {
+export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
   const navigate = useNavigate();
   const { currentUser } = useAppSelector((state) => state?.officeState);
 
@@ -80,7 +80,7 @@ export const Header = ({ toggleSideBar, isSidebarOpen }: IHeaderProps) => {
           >
             <RxHamburgerMenu
               size={26}
-              className={`transition-transform duration-300 ${isSidebarOpen ? "rotate-90" : "rotate-0"}`}
+              className={`transition-transform duration-300 ${isOpen ? "rotate-90" : "rotate-0"}`}
             />
           </button>
         </div>

@@ -188,7 +188,6 @@ export const EmployeeDashboard = () => {
             >
               <Card
                 titleName={card.titleName}
-                totalUser=""
                 totalNumber={dashboardData[card.key as keyof DashboardDataT]}
                 icon={card.icon}
                 style={`${card.style} shadow-md rounded-xl text-white`}
