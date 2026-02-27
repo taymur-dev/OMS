@@ -35,6 +35,7 @@ type SalaryState = {
   medical_allowance: string;
   total_salary: string;
   config_date: string;
+  effective_from: string;
 };
 
 const initialState: SalaryState = {
@@ -46,6 +47,7 @@ const initialState: SalaryState = {
   medical_allowance: "",
   total_salary: "0",
   config_date: currentDate,
+  effective_from: currentDate,
 };
 
 export const AddConfigEmpSalary = ({
@@ -143,6 +145,7 @@ export const AddConfigEmpSalary = ({
         medical_allowance: Number(addConfigEmployee.medical_allowance),
         total_salary: Number(addConfigEmployee.total_salary),
         config_date: addConfigEmployee.config_date,
+        effective_from: addConfigEmployee.effective_from,
       };
 
       await axios.post(`${BASE_URL}/api/admin/addsalaries`, payload, {
@@ -250,10 +253,10 @@ export const AddConfigEmpSalary = ({
 
             <InputField
               labelName="With Effect from Date *"
-              name="config_date"
+              name="effective_from"
               type="date"
               handlerChange={handlerChange}
-              value={addConfigEmployee.config_date}
+              value={addConfigEmployee.effective_from}
             />
           </div>
 

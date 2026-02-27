@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 
 type CardProps = {
   titleName: string;
-  totalUser?: string; // Kept for prop consistency
   totalNumber: number;
   icon: ReactNode;
   style?: string;
@@ -16,54 +15,51 @@ const Card = ({
   style = "",
   isCurrency,
 }: CardProps) => {
+  const formatCompact = (val: number) => {
+    return Intl.NumberFormat("en-US", {
+      notation: "compact",
+      maximumFractionDigits: 1,
+    })
+      .format(val)
+      .toLowerCase();
+  };
+
+  const formattedValue = isCurrency
+    ? `${formatCompact(totalNumber)}`
+    : totalNumber.toLocaleString();
+
   return (
     <div
       className={`
-        h-full min-h-[100px]
-        rounded-2xl
-        border-1 hover:border-white border-indigo-900 
-        bg-white
-        shadow-[0_8px_30px_rgb(0,0,0,0.04)]
-        px-4 
-        flex flex-col justify-between
-        relative overflow-hidden
-        transition-all duration-300 ease-in-out
-        hover:translate-y-[-4px]
-        hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
-        group
+        flex flex-col items-center justify-center
+        bg-white rounded-[12px] md:rounded-[24px] 
+        p-[1px] 
+        border border-blue-400 hover:border-gray-100 shadow-sm
+        transition-all duration-300 hover:shadow-md hover:-translate-y-1
+        w-full min-w-[100px] min-h-[100px] md:min-h-[auto] md:aspect-square
+        overflow-hidden
         ${style}
       `}
     >
-      {/* Subtle Background Accent - Modern Industry Standard */}
-      <div className="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 bg-indigo-50/50 rounded-full blur-3xl group-hover:bg-indigo-100/50 transition-colors duration-500"></div>
-
-      <div className="relative z-10 flex flex-col h-full justify-between">
-        {/* Header Row */}
-        <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <p className="text-md mt-2 font-normal text-black">
-              {titleName}
-            </p>
-          </div>
-
-          {/* Icon Container with subtle glass effect */}
-          <div
-            className="w-9 h-9 mt-2 flex items-center justify-center rounded-xl bg-indigo-900 
-          text-white group-hover:bg-indigo-800 group-hover:text-white transition-all duration-300 shadow-sm"
-          >
-            <span className="text-1xl">{icon}</span>
-          </div>
-        </div>
-
-        {/* Value Section */}
-        <div className="mb-2">
-          <h2 className="text-md font-normal text-gray-900 tracking-tight">
-            {isCurrency
-              ? `${Number(totalNumber).toLocaleString()}`
-              : totalNumber.toLocaleString()}
-          </h2>
+      {/* Icon Wrapper */}
+      <div className="mb-1 md:mb-3 flex items-center justify-center w-10 h-10 md:w-14 md:h-14">
+        <div className="text-2xl md:text-4xl transition-transform duration-300 hover:scale-110">
+          {icon}
         </div>
       </div>
+
+      {/* Title */}
+      <p
+        className="text-[10px] md:text-[11px] font-bold text-gray-500 uppercase tracking-tight
+        md:tracking-[0.15em] mb-0.5 md:mb-1 text-center whitespace-nowrap px-1"
+      >
+        {titleName}
+      </p>
+
+      {/* Value */}
+      <h2 className="text-base md:text-2xl font-black text-slate-800 tracking-tight text-center truncate w-full px-1">
+        {formattedValue}
+      </h2>
     </div>
   );
 };

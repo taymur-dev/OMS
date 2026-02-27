@@ -1,6 +1,6 @@
-import loginAvatar from "../assets/Avatar.png";
+import Avatar from "../assets/vector.png";
 import { RxHamburgerMenu } from "react-icons/rx";
-import headerLogo from "../assets/technic mentors.png";
+import headerLogo from "../assets/techmen.png";
 import { CiBellOn } from "react-icons/ci";
 import React, { useState, useEffect, useCallback } from "react";
 import { useAppSelector } from "../redux/Hooks";
@@ -11,16 +11,15 @@ import { BASE_URL } from "../Content/URL";
 import axios from "axios";
 
 export interface IHeaderProps extends React.ComponentPropsWithoutRef<"div"> {
-  isOpen: boolean;
   toggleSideBar: () => void;
+  isSidebarOpen: boolean;
 }
 
-export const Header = ({ isOpen, toggleSideBar }: IHeaderProps) => {
+export const Header = ({ toggleSideBar, isSidebarOpen }: IHeaderProps) => {
   const navigate = useNavigate();
   const { currentUser } = useAppSelector((state) => state?.officeState);
 
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [showTime, setShowTime] = useState("");
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
@@ -53,73 +52,61 @@ export const Header = ({ isOpen, toggleSideBar }: IHeaderProps) => {
   };
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setShowTime(
-        new Date().toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: true,
-        }),
-      );
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
     if (currentUser) fetchNotifications();
   }, [currentUser, fetchNotifications]);
 
   return (
-    <div className="bg-indigo-900 w-full h-16 px-4 flex items-center relative">
+    <div className="bg-white w-full h-16 px-2 sm:px-4 flex shadow-md z-40 items-center relative">
       <div className="flex items-center justify-between w-full">
-        <div className="flex items-center gap-5">
-          {/* 1. Wrap the logo in a fixed-width container */}
-          {!isOpen && (
-            <div
-              className="hidden lg:flex items-center w-48 flex-shrink-0 cursor-pointer"
-              onClick={handleLogoClick}
-            >
-              <img
-                src={headerLogo}
-                alt="logo"
-                // Use w-full and object-contain so it fits inside the 'w-48' parent
-                className="w-49 h-auto object-contain"
-              />
-            </div>
-          )}
+        <div className="flex items-center gap-1 sm:gap-10">
+          {/* Logo Section */}
+          <div
+            className="flex items-center w-[180px] flex-shrink-0 cursor-pointer"
+            onClick={handleLogoClick}
+          >
+            <img
+              src={headerLogo}
+              alt="logo"
+              className="h-12 sm:h-14 w-auto object-contain"
+            />
+          </div>
 
-          {/* 2. Remove the dynamic margin-left and let Flexbox do the work */}
+          {/* Toggle Button */}
           <button
             onClick={toggleSideBar}
-            className="p-2 rounded-full text-white hover:bg-white/20 transition-all ml-1"
+            className="text-blue-400 hover:bg-gray-100 rounded-full transition-colors flex items-center 
+            justify-center w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0"
+            aria-label="Toggle sidebar"
           >
-            <RxHamburgerMenu size={20} />
+            <RxHamburgerMenu
+              size={26}
+              className={`transition-transform duration-300 ${isSidebarOpen ? "rotate-90" : "rotate-0"}`}
+            />
           </button>
         </div>
-
-        <div className="flex items-center gap-3 md:gap-6">
-          <span className="text-white text-[10px] md:text-xs font-medium">
-            {showTime}
-          </span>
-
-          <div className="flex items-center gap-3 relative">
+        <div className="flex items-center gap-2 sm:gap-3 md:gap-6">
+          <div className="flex items-center gap-2 sm:gap-3 relative">
+            {/* Notification Bell */}
             <div
-              className="relative flex items-center justify-center h-8 w-8 cursor-pointer"
+              className="relative flex items-center justify-center h-7 w-7 sm:h-8 sm:w-8 cursor-pointer
+               hover:bg-gray-100 rounded-full transition-colors"
               onClick={() => setIsNotifOpen(!isNotifOpen)}
             >
               {notifications.length > 0 && (
-                <span className="absolute inset-0 animate-ping rounded-full bg-sky-400 opacity-75"></span>
+                <>
+                  <span className="absolute inset-0 animate-ping rounded-full bg-sky-400 opacity-75"></span>
+                  <span
+                    className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-600 flex 
+                  items-center justify-center text-[8px] sm:text-[10px] text-white font-bold z-10"
+                  >
+                    {notifications.length > 5 ? "5+" : notifications.length}
+                  </span>
+                </>
               )}
-              <CiBellOn size={24} className="relative text-white" />
-              {notifications.length > 0 && (
-                <span
-                  className="absolute top-1 right-1 h-2.5 w-3.0 rounded-full bg-black border-2 
-                border-indigo-900 flex items-center justify-center text-[10px] text-white font-bold"
-                >
-                  {notifications.length}
-                </span>
-              )}
+              <CiBellOn
+                size={18}
+                className="sm:w-5 sm:h-5 relative text-gray-700"
+              />
               {isNotifOpen && (
                 <NotificationDropdown
                   notifications={notifications}
@@ -129,33 +116,35 @@ export const Header = ({ isOpen, toggleSideBar }: IHeaderProps) => {
             </div>
 
             {/* User Info */}
-            <div className="hidden sm:block text-right">
-              <p className="text-white text-xs font-bold leading-none">
-                {currentUser?.name}
+            <div className="hidden xs:block text-right min-w-[70px] sm:min-w-[90px] md:min-w-[100px]">
+              <p className="text-blue-500 text-xs sm:text-sm font-semibold leading-none truncate">
+                {currentUser?.name || "User"}
               </p>
-              <h4 className="text-white text-[10px] opacity-80 mt-1">
-                {currentUser?.role}
-              </h4>
+              <p className="text-gray-500 text-[10px] sm:text-xs capitalize truncate mt-0.5">
+                {currentUser?.role || "Role"}
+              </p>
             </div>
 
+            {/* User Avatar */}
             <img
               onClick={() => handleToggleViewModal()}
-              src={loginAvatar || currentUser?.image}
-              alt="user profile"
-              className="h-10 w-10 rounded-full object-cover cursor-pointer active:scale-95
-
-              transition duration-200 border-2 border-white/20"
+              src={Avatar || currentUser?.image}
+              alt={currentUser?.name || "User profile"}
+              className="h-8 w-8 sm:h-9 sm:w-10 rounded-full object-cover cursor-pointer active:scale-95
+                 transition duration-200 border-2 border-gray-200 hover:border-blue-400"
             />
           </div>
         </div>
-      </div>
 
-      {isOpenModal && (
-        <ProfileDropdown
-          isOpenModal={true}
-          setIsOpenModal={() => setIsOpenModal(false)}
-        />
-      )}
+        {isOpenModal && (
+          <div className="absolute top-9 right-4 z-50">
+            <ProfileDropdown
+              isOpenModal={true}
+              setIsOpenModal={() => setIsOpenModal(false)}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

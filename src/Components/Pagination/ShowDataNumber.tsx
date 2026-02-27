@@ -11,7 +11,7 @@ export const ShowDataNumber: React.FC<ShowDataNumberProps> = ({
 }) => {
   return (
     <div className="text-xs sm:text-sm text-gray-800 ml-1">
-      Showing {start} to {end} of {total} entries
+      Showing {start} - {end} of {total} personnel
     </div>
   );
 };

@@ -36,6 +36,7 @@ interface Salary {
   total_loan_deduction: number;
   net_salary: number;
   config_date: string;
+  effective_from: string;
 }
 
 const numbers = [10, 25, 50, 100];
@@ -63,7 +64,13 @@ export const ConfigEmpSalary = ({ triggerModal }: { triggerModal: number }) => {
   const fetchSalaries = useCallback(async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getsalaries`);
-      setSalaries(res.data.salaries);
+
+      const sortedSalaries = [...res.data.salaries].sort(
+        (a, b) => a.id - b.id,
+      );
+
+      setSalaries(sortedSalaries);
+
       setTotalRecords(res.data.total);
       console.log("API salaries:", res.data.salaries);
     } catch (error) {
@@ -274,7 +281,8 @@ export const ConfigEmpSalary = ({ triggerModal }: { triggerModal: number }) => {
             transportAllowance: selectedSalary.transport_allowance?.toString(),
             medicalAllowance: selectedSalary.medical_allowance?.toString(),
             totalSalary: selectedSalary.total_salary?.toString(),
-            date: selectedSalary.config_date,
+            config_date: selectedSalary.config_date,
+            effective_from: selectedSalary.effective_from,
           }}
         />
       )}

@@ -48,7 +48,7 @@ interface CardConfigItem {
 const CARD_CONFIG: CardConfigItem[] = [
   {
     key: "workingDays",
-    titleName: "Working Days",
+    titleName: "Work Days",
     icon: <FaComputer />,
     style: "bg-indigo-900",
     path: "/user/reports",
@@ -69,14 +69,14 @@ const CARD_CONFIG: CardConfigItem[] = [
   },
   {
     key: "absents",
-    titleName: "Absent / Leave",
+    titleName: "Absent/Leave",
     icon: <FaUserAltSlash />,
     style: "bg-orange-400",
     path: "/users/leaveRequests",
   },
   {
     key: "totalTodos",
-    titleName: "Total Todo",
+    titleName: "Todos",
     icon: <CiViewList />,
     style: "bg-fuchsia-500",
     path: "/users/todo",

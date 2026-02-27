@@ -8,7 +8,7 @@ import {
   LucideIcon,
   User,
 } from "lucide-react";
-import DefaultAvatar from "../../assets/Avatar.png";
+import Avatar from "../../assets/vector.png";
 import { Footer } from "../../Components/Footer";
 
 interface DetailRowProps {
@@ -38,9 +38,7 @@ export const Profile = () => {
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
           {label}
         </p>
-        <p className="text-gray-800 font-semibold mt-1 break-all">
-          {value}
-        </p>
+        <p className="text-gray-800 font-semibold mt-1 break-all">{value}</p>
       </div>
     </div>
   );
@@ -53,7 +51,6 @@ export const Profile = () => {
 
         <div className="max-w-4xl mx-auto mt-5">
           <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
-
             {/* Header Background */}
             <div className="h-30 bg-indigo-900 relative">
               <div className="absolute inset-0 bg-black/10 backdrop-blur-sm" />
@@ -62,7 +59,6 @@ export const Profile = () => {
             <div className="px-8 pb-10">
               {/* Avatar + Name Section */}
               <div className="relative flex flex-col sm:flex-row items-center sm:items-end gap-6 -mt-20 mb-10">
-
                 <div className="relative group">
                   <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-full border-4 border-white shadow-2xl bg-indigo-900 flex items-center justify-center overflow-hidden transition-transform duration-300 group-hover:scale-105">
                     {currentUser?.profileImage ? (
@@ -71,17 +67,19 @@ export const Profile = () => {
                         src={currentUser.profileImage}
                         alt="Profile"
                       />
-                    ) : DefaultAvatar ? (
+                    ) : Avatar ? (
                       <img
                         className="w-full h-full object-cover"
-                        src={DefaultAvatar}
+                        src={Avatar}
                         alt="Default Avatar"
                       />
                     ) : (
                       <span className="text-white text-5xl font-bold">
-                        {currentUser?.name
-                          ? getInitials(currentUser.name)
-                          : <User size={50} />}
+                        {currentUser?.name ? (
+                          getInitials(currentUser.name)
+                        ) : (
+                          <User size={50} />
+                        )}
                       </span>
                     )}
                   </div>

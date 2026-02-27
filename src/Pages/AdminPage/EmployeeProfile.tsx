@@ -8,9 +8,8 @@ import {
   User,
   LucideIcon,
 } from "lucide-react";
-import DefaultAvatar from "../../assets/Avatar.png";
+import Avatar from "../../assets/vector.png";
 import { Footer } from "../../Components/Footer";
-
 
 interface DetailRowProps {
   icon: LucideIcon;
@@ -64,7 +63,7 @@ export const EmployeeProfile = () => {
                     bg-indigo-900 flex items-center justify-center overflow-hidden bg-cover bg-center"
                     style={{
                       backgroundImage: !currentUser?.profileImage
-                        ? `url(${DefaultAvatar})`
+                        ? `url(${Avatar})`
                         : "none",
                     }}
                   >
@@ -77,7 +76,7 @@ export const EmployeeProfile = () => {
                     ) : (
                       <img
                         className="w-full h-full object-cover opacity-90"
-                        src={DefaultAvatar}
+                        src={Avatar}
                         alt="Default"
                       />
                     )}
@@ -129,7 +128,7 @@ export const EmployeeProfile = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Footer added here */}
       <Footer />
     </div>

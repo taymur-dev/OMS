@@ -1,46 +1,57 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faAngleDoubleLeft,
-  faAngleDoubleRight,
-} from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 type PaginationT = {
-  handleIncrementPageButton?: () => void;
-  handleDecrementPageButton?: () => void;
-  pageNo?: number;
+  handleIncrementPageButton: () => void;
+  handleDecrementPageButton: () => void;
+  pageNo: number;
 };
 
 export const Pagination = ({
   handleIncrementPageButton,
   handleDecrementPageButton,
-  pageNo,
+  pageNo = 1,
 }: PaginationT) => {
-  const slimBtnClass = "join-item btn bg-white rounded-xl text-indigo-900 border-indigo-900 hover:bg-indigo-50 min-h-0 h-7 md:h-9 px-2 py-0";
-  const activeBtnClass = "join-item btn bg-indigo-900 rounded-xl text-white border-white whitespace-nowrap cursor-default min-h-0 h-7 md:h-9 px-2 py-0";
+  const baseClass = "flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-lg border text-xs md:text-sm transition-all";
+  const activeClass = `${baseClass} bg-slate-800 text-white border-slate-800`;
+  const inactiveClass = `${baseClass} bg-white text-slate-500 border-gray-200 hover:bg-gray-50`;
+
+  // Without totalPages, we show the current page and the next two options
+  const pageButtons = [pageNo, pageNo + 1, pageNo + 2];
 
   return (
-    <div>
-      <div className="join flex items-center justify-end mt-2 gap-1 sm:gap-2 mr-2">
-        <button
-          className={slimBtnClass}
-          onClick={handleDecrementPageButton}
-          aria-label="Previous Page"
-        >
-          <FontAwesomeIcon icon={faAngleDoubleLeft} className="text-xs md:text-sm" />
-        </button>
+    <div className="flex items-center justify-end mt-2 gap-1 md:gap-2 mr-2">
+      {/* Previous Button */}
+      <button
+        className={inactiveClass}
+        onClick={handleDecrementPageButton}
+        disabled={pageNo === 1}
+      >
+        <FontAwesomeIcon icon={faChevronLeft} />
+      </button>
 
-        <button className={activeBtnClass}>
-          <span className="text-xs md:text-sm">Page {pageNo}</span>
-        </button>
-
+      {/* Numbered Buttons */}
+      {pageButtons.map((num) => (
         <button
-          className={slimBtnClass}
-          onClick={handleIncrementPageButton}
-          aria-label="Next Page"
+          key={num}
+          className={num === pageNo ? activeClass : inactiveClass}
+          // Note: Since we don't have a direct "jump to" function passed, 
+          // these buttons only visually represent the sequence.
         >
-          <FontAwesomeIcon icon={faAngleDoubleRight} className="text-xs md:text-sm" />
+          {num}
         </button>
-      </div>
+      ))}
+
+      {/* Ellipsis to show more exist */}
+      <span className="text-slate-400 px-1">...</span>
+
+      {/* Next Button */}
+      <button
+        className={inactiveClass}
+        onClick={handleIncrementPageButton}
+      >
+        <FontAwesomeIcon icon={faChevronRight} />
+      </button>
     </div>
   );
 };

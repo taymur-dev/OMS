@@ -1,15 +1,18 @@
+import { ReactNode } from "react";
+
 type InputFieldProps = {
   type?: string;
   labelName?: string;
   placeHolder?: string;
   handlerChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void; 
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   name?: string;
-  value?: string | number; 
+  value?: string | number;
   disabled?: boolean;
   readOnly?: boolean;
   className?: string;
   min?: string;
+  icon?: ReactNode;
 };
 
 export const InputField = ({
@@ -17,28 +20,37 @@ export const InputField = ({
   labelName,
   placeHolder,
   handlerChange,
-  onKeyDown, 
+  onKeyDown,
   name,
   value,
   disabled,
   className,
-  readOnly
+  readOnly,
+  icon,
 }: InputFieldProps) => {
   return (
-    <div>
-      <div className="flex flex-col">
-        <label className="text-black text-xs font-semibold">
-          {labelName}
-        </label>
+    <div className="flex flex-col gap-1">
+      <label className="text-gray-600 text-xs font-semibold uppercase">
+        {labelName}
+      </label>
+
+      <div className="relative flex items-center w-full">
+        {icon && (
+          <div className="absolute left-3 flex items-center pointer-events-none text-black z-10">
+            {icon}
+          </div>
+        )}
+
         <input
           type={type}
-          className={`w-full p-2.5 border-1 border-indigo-900 rounded-lg text-gray-800
+          className={`w-full p-2.5 ${icon ? "pl-10" : "pl-3"} border border-gray-200 rounded-lg shadow text-gray-800
             ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"}
-            focus:ring-2 focus:ring-indigo-900 focus:outline-none
+            focus:outline-none focus:ring-1 focus:ring-blue-500
+            ${type === "date" ? "relative" : ""}
             ${className || ""}`}
           placeholder={placeHolder}
           onChange={handlerChange}
-          onKeyDown={onKeyDown} 
+          onKeyDown={onKeyDown}
           name={name}
           value={value}
           disabled={disabled}

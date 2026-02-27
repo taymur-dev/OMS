@@ -1,21 +1,21 @@
 import axios, { AxiosError } from "axios";
 import { InputField } from "../Components/InputFields/InputField";
-import technic from "../assets/technic.png";
-import Logo from "../assets/Logo.png";
-
 import { useEffect, useState } from "react";
+import Logo from "../assets/techmen.png";
+import BackgroundImg from "../assets/officepic.jpg";
 import { BASE_URL } from "../Content/URL";
 import { useAppDispatch, useAppSelector } from "../redux/Hooks";
-import { authFailure, authSuccess } from "../redux/UserSlice";
+import { authSuccess, authFailure } from "../redux/UserSlice";
 import setAuthToken from "../SetAuthToken";
 import { Navigate } from "react-router-dom";
 import { navigationStart, navigationSuccess } from "../redux/NavigationSlice";
 import { toast } from "react-toastify";
-import Lottie from "lottie-react";
-import SplashAnimation from "../assets/login-splash.json";
 import { ClipLoader } from "react-spinners";
 
+// Icons
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook, FaApple } from "react-icons/fa";
 
 const initialState = {
   email: "",
@@ -23,48 +23,21 @@ const initialState = {
 };
 
 export const Login = () => {
-  const { currentUser, error } = useAppSelector((state) => state.officeState);
+  const { currentUser } = useAppSelector((state) => state.officeState);
   const [formData, setFormData] = useState(initialState);
   const [loading, setLoading] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    document.title = "(OMS) Login";
+    document.title = "Login | OMS";
     dispatch(navigationStart());
-
-    const timer = setTimeout(() => {
-      dispatch(navigationSuccess("logIn"));
-      setShowSplash(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
+    dispatch(navigationSuccess("logIn"));
   }, [dispatch]);
 
   if (currentUser?.role === "admin") return <Navigate to="/" />;
   if (currentUser?.role === "user") return <Navigate to="/User/dashboard" />;
-
-  if (showSplash) {
-    return (
-      <div
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900
-       to-indigo-900 relative"
-      >
-        <div className="w-72 relative">
-          <Lottie animationData={SplashAnimation} loop={false} />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <img
-              src={Logo}
-              alt="Logo"
-              className="w-24 h-24 object-contain animate-[pulse_2s_ease-in-out_infinite]"
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
@@ -86,126 +59,137 @@ export const Login = () => {
       toast.error(axiosError.response?.data?.message ?? "");
     }
     setLoading(false);
-    setFormData(initialState);
   };
 
   return (
     <div
-      className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden bg-indigo-900"
+      className="min-h-screen w-full flex flex-col items-center justify-center p-4 relative overflow-hidden bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: `linear-gradient(to bottom, rgba(39, 39, 39, 0.7), rgba(27, 27, 27, 0.5)), url(${BackgroundImg})`,
+      }}
     >
-      <div
-        className="absolute -bottom-10 -left-16 w-60 h-60 bg-slate-200/20 rounded-full
-       animate-[float_2s_ease-in-out_infinite] delay-1000 animate-pulse blur-1xl"
-      />
+      <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]"
+        />
+      </div>
 
       <div
-        className="absolute -top-10 -right-16 w-60 h-60 bg-slate-200/20 rounded-full
-       animate-[float_2s_ease-in-out_infinite] delay-1000 blur-1xl"
-      />
-
-      <div
-        className="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl px-8 py-10
-       animate-[fadeIn_0.6s_ease-out]"
+        className="relative z-10 w-full max-w-[440px] bg-gray-100 backdrop-blur-xl rounded-[40px]
+        border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-10 text-center animate-[fadeIn_0.5s_ease-out]"
       >
-        <div className="flex flex-col items-center  justify-center">
-          <div className="relative mb-4">
-            <div
-              className="relative w-32 h-32 rounded-full bg-indigo-900 flex items-center
-             justify-center shadow-xl animate-[float_3s_ease-in-out_infinite]"
-            >
-              <div
-                className="absolute inset-0 rounded-full bg-indigo-900/30 blur-3xl 
-              animate-[pulse_2s_ease-in-out_infinite]"
-              />
-              <img
-                src={technic}
-                alt="Logo"
-                className="relative w-20 h-20 object-contain"
-              />
-            </div>
+        <div className="flex justify-center mb-6">
+          <div className="w-full h-14  flex items-center justify-center overflow-hidden ">
+            <img
+              src={Logo}
+              alt="Technic Mentors"
+              className="w-full h-full object-contain"
+            />
           </div>
-
-          <h1 className="text-3xl font-semibold text-gray-800">
-            Welcome Back!
-          </h1>
-          <p className="text-sm text-gray-500">Sign in to your account</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="relative focus-within:text-blue-500">
+        <h1 className="text-2xl font-bold text-[#1E293B] mb-2">
+          Welcome Back!
+        </h1>
+        <p className="text-sm text-gray-500 mb-4 leading-relaxed">
+          Login to your account.
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="relative group">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <FiMail size={18} />
+            </div>
             <InputField
               type="email"
-              labelName="Email"
+              placeHolder="Email"
               name="email"
               handlerChange={handlerChange}
               value={formData.email}
-              className="pl-10 pr-10 border border-gray-300 focus:border-indigo-900 focus:outline-none 
-              rounded-lg w-full h-12"
+              icon={<FiMail size={18} />}
+              className="h-12 bg-gray-100/50 border-none rounded-xl focus:ring-2 focus:ring-blue-400 transition-all placeholder:text-gray-400"
             />
-            <div className="absolute inset-y-0 top-3 left-0 flex items-center pl-3 pointer-events-none">
-              <FiMail className="w-5 h-5" />
-            </div>
           </div>
 
-          <div className="relative focus-within:text-blue-500">
+          <div className="relative group">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <FiLock size={18} />
+            </div>
             <InputField
               type={showPassword ? "text" : "password"}
-              labelName="Password"
+              placeHolder="Password"
               name="password"
               handlerChange={handlerChange}
               value={formData.password}
-              className="pl-10 pr-10 border border-gray-300 focus:border-blue-500 focus:outline-none
-               rounded-lg w-full h-12"
+              icon={<FiLock size={18} />}
+              className="w-full h-12 pl-12 pr-12 bg-gray-100/50 border-none rounded-xl focus:ring-2 focus:ring-blue-400
+                transition-all placeholder:text-gray-400"
             />
-            <div className="absolute inset-y-0 top-3 left-0 flex items-center pl-3 pointer-events-none">
-              <FiLock className="w-5 h-5" />
-            </div>
-            <div
-              className="absolute inset-y-0 top-3 right-0 flex items-center pr-3 cursor-pointer"
+            <button
+              type="button"
               onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
             >
-              {showPassword ? (
-                <FiEyeOff className="w-5 h-5" />
-              ) : (
-                <FiEye className="w-5 h-5" />
-              )}
-            </div>
+              {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+            </button>
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              type="button"
+              className="text-xs font-medium text-gray-600 hover:underline"
+            >
+              Forgot password?
+            </button>
           </div>
 
           <button
             disabled={loading}
-            className="w-full h-12 rounded-lg bg-indigo-900 text-white font-semibold tracking-wide transition-all
-       duration-300 hover:bg-indigo-900 hover:shadow-lg active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full h-14 bg-blue-400 hover:bg-[#5198f6] text-white font-semibold rounded-2xl
+              shadow-lg transition-all active:scale-[0.98] disabled:opacity-70"
           >
-            {loading ? (
-              <div className="flex items-center justify-center gap-2">
-                <span>Logging in</span>
-                {loading && <ClipLoader size={22} color="#ffffff" />}
-              </div>
-            ) : (
-              "LOGIN"
-            )}
+            {loading ? <ClipLoader size={20} color="#fff" /> : "Get Started"}
           </button>
-
-          {error && (
-            <p className="text-sm text-red-500 text-center pt-1">{error}</p>
-          )}
         </form>
 
-        <div className="mt-6 text-center text-xs text-gray-400">
-          © {new Date().getFullYear()} Technic Mentors — OMS
+        <div className="relative my-4">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-gray-200 border-dashed"></span>
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-transparent px-2 text-gray-400">
+              Or sign in with
+            </span>
+          </div>
+        </div>
+
+        <div className="flex justify-between gap-4">
+          <button
+            className="flex-1 h-12 flex items-center justify-center bg-white rounded-xl border border-gray-100
+            shadow-sm hover:bg-gray-50 transition-colors"
+          >
+            <FcGoogle size={20} />
+          </button>
+          <button
+            className="flex-1 h-12 flex items-center justify-center bg-white rounded-xl border border-gray-100
+            shadow-sm hover:bg-gray-50 transition-colors"
+          >
+            <FaFacebook className="text-[#1877F2]" size={20} />
+          </button>
+          <button
+            className="flex-1 h-12 flex items-center justify-center bg-white rounded-xl border border-gray-100
+            shadow-sm hover:bg-gray-50 transition-colors"
+          >
+            <FaApple className="text-black" size={20} />
+          </button>
         </div>
       </div>
 
       <style>
         {`
           @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-          }
-          @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
           }
         `}
       </style>

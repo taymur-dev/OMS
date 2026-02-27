@@ -235,6 +235,7 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
               value={addTodo.startDate}
               handlerChange={handleChange}
             />
+
             <InputField
               labelName="End Date *"
               name="endDate"
@@ -243,15 +244,13 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
               handlerChange={handleChange}
             />
 
-            <div className="md:col-span-2">
-              <InputField
-                labelName="Deadline *"
-                name="deadline"
-                type="date"
-                value={addTodo.deadline}
-                handlerChange={handleChange}
-              />
-            </div>
+            <InputField
+              labelName="Deadline *"
+              name="deadline"
+              type="date"
+              value={addTodo.deadline}
+              handlerChange={handleChange}
+            />
 
             <div className="md:col-span-2">
               <TextareaField

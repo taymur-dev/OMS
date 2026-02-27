@@ -16,7 +16,8 @@ export type ConfigEmpSalaryT = {
   transportAllowance?: string;
   medicalAllowance?: string;
   totalSalary?: string;
-  date?: string;
+  config_date?: string;
+  effective_from: string;
 };
 
 type ViewConfigEmpSalaryProps = {
@@ -85,7 +86,8 @@ export const ViewConfigEmpSalary = ({
               {viewSalary.transportAllowance && (
                 <div>
                   <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                    <FaCarSide className="text-purple-400" /> Transport Allowance
+                    <FaCarSide className="text-purple-400" /> Transport
+                    Allowance
                   </label>
                   <p className="text-gray-800 font-medium">
                     {viewSalary.transportAllowance}
@@ -95,7 +97,8 @@ export const ViewConfigEmpSalary = ({
               {viewSalary.medicalAllowance && (
                 <div>
                   <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                    <FaPlusSquare className="text-yellow-400" /> Medical Allowance
+                    <FaPlusSquare className="text-yellow-400" /> Medical
+                    Allowance
                   </label>
                   <p className="text-gray-800 font-medium">
                     {viewSalary.medicalAllowance}
@@ -116,7 +119,7 @@ export const ViewConfigEmpSalary = ({
           </div>
 
           {/* Section 3: History/Date */}
-          {viewSalary.date && (
+          {viewSalary.config_date && (
             <div className="border border-gray-200 rounded-md p-4 relative">
               <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-indigo-900 uppercase tracking-wider">
                 Records
@@ -128,7 +131,7 @@ export const ViewConfigEmpSalary = ({
                     Date
                   </label>
                   <p className="text-gray-800 font-medium">
-                    {new Date(viewSalary.date)
+                    {new Date(viewSalary.config_date)
                       .toLocaleDateString("en-GB", {
                         day: "2-digit",
                         month: "short",
@@ -144,7 +147,7 @@ export const ViewConfigEmpSalary = ({
                     Date
                   </label>
                   <p className="text-gray-800 font-medium">
-                    {new Date(viewSalary.date)
+                    {new Date(viewSalary.effective_from)
                       .toLocaleDateString("en-GB", {
                         day: "2-digit",
                         month: "short",

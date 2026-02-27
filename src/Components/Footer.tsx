@@ -12,7 +12,7 @@ export const Footer = () => {
             href="https://technicmentors.com/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:underline font-extrabold text-indigo-700 cursor-pointer hover:text-blue-600 
+            className="hover:underline font-extrabold text-blue-400 cursor-pointer hover:text-blue-600 
             transition-colors duration-300 ml-1"
           >
             Technic Mentors

@@ -282,6 +282,7 @@ export const UpdateTodo = ({
               value={todo?.deadline}
             />
 
+            <div className="md:col-span-2">
               <OptionField
                 labelName="Completion Status"
                 name="completionStatus"
@@ -290,6 +291,7 @@ export const UpdateTodo = ({
                 optionData={StatusOptions}
                 inital="Select Completion Status"
               />
+            </div>
 
             <div className="md:col-span-2">
               <TextareaField

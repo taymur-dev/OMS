@@ -29,12 +29,18 @@ const NotificationDropdown = ({
   const handleViewAll = () => {
     onClose();
 
-    if (currentUser?.role?.toLowerCase() === "admin") {
-      navigate("/attendance");
-    }
+    try {
+      console.log("Current user role:", currentUser?.role);
 
-    if (currentUser?.role?.toLowerCase() === "user") {
-      navigate("/users/leaveRequests");
+      if (currentUser?.role?.toLowerCase() === "admin") {
+        navigate("/attendance");
+      } else if (currentUser?.role?.toLowerCase() === "user") {
+        navigate("/users/leaveRequests");
+      } else {
+        console.log("Unknown role:", currentUser?.role);
+      }
+    } catch (error) {
+      console.error("Navigation error:", error);
     }
   };
 
@@ -67,7 +73,7 @@ const NotificationDropdown = ({
 
   "
       >
-        <div className="bg-indigo-900 p-3">
+        <div className="bg-blue-400 p-3">
           <h3 className="text-white font-semibold text-sm">Notifications</h3>
         </div>
 
@@ -119,7 +125,7 @@ const NotificationDropdown = ({
         <div className="p-2 bg-gray-50 text-center border-t border-gray-100">
           <button
             onClick={handleViewAll}
-            className="text-xs text-indigo-900 font-semibold hover:underline w-full py-1"
+            className="text-xs text-blue-400 font-semibold hover:underline w-full py-1"
           >
             View All Requests
           </button>

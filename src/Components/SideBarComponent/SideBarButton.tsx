@@ -26,7 +26,7 @@ export const SideBarButton = ({
       onClick={handlerClick}
       className={`
         w-full flex items-center px-3 py-2.5 my-1 rounded-lg transition-all duration-300 group
-        ${isActive ? "bg-indigo-50 text-indigo-700" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}
+        ${isActive ? "bg-blue-400 text-white" : "text-gray-600 hover:bg-blue-50 hover:text-indigo-900"}
       `}
     >
       <div className="flex items-center justify-center min-w-[24px] transition-transform duration-300 group-hover:scale-110">
@@ -44,7 +44,7 @@ export const SideBarButton = ({
         {arrowIcon && (
           <span
             className={`
-              ml-2 transition-transform duration-300 text-gray-400
+              ml-2 transition-transform duration-300 text-gray-500
               ${isActive ? "-rotate-90" : "rotate-0"}
             `}
           >

@@ -1,9 +1,7 @@
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { useEffect, useState, useCallback } from "react";
 import { AddUser } from "../../Components/UserComponent/AddUser";
 import axios, { AxiosError } from "axios";
 import { BASE_URL } from "../../Content/URL";
-import { RiLockPasswordFill } from "react-icons/ri";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import { toast } from "react-toastify";
 import { ComfirmPasswordModal } from "../../Components/ComfirmPasswordModal";
@@ -19,8 +17,12 @@ import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
-
-const numbers = [10, 25, 50, 100];
+import {
+  RiLockPasswordFill,
+  RiPhoneLine,
+  RiCalendarLine,
+  RiBriefcaseLine
+} from "react-icons/ri";
 
 type UserType = {
   id: number;
@@ -36,11 +38,20 @@ type UserType = {
   loginStatus: string;
 };
 
-export const UsersDetails = ({ triggerAdd }: { triggerAdd: number }) => {
+// Added props to interface with People.tsx
+interface UsersDetailsProps {
+  triggerAdd: number;
+  externalSearch: string;
+  externalPageSize: number;
+}
+
+export const UsersDetails = ({
+  triggerAdd,
+  externalSearch,
+  externalPageSize,
+}: UsersDetailsProps) => {
   const [catchId, setCatchId] = useState<number | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
   const [allUsers, setAllUsers] = useState<UserType[]>([]);
-  const [selectedValue, setSelectedValue] = useState(10);
   const [pageNo, setPageNo] = useState(1);
 
   const { currentUser } = useAppSelector((state) => state.officeState);
@@ -75,6 +86,11 @@ export const UsersDetails = ({ triggerAdd }: { triggerAdd: number }) => {
     handlerGetUsers();
   }, [handlerGetUsers]);
 
+  // Reset page number when search or page size changes
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
+
   useEffect(() => {
     if (triggerAdd && triggerAdd > 0) {
       setModalTypeTooPen("ADD");
@@ -83,30 +99,27 @@ export const UsersDetails = ({ triggerAdd }: { triggerAdd: number }) => {
 
   if (loader) return <Loader />;
 
+  // Filtering using externalSearch prop
   const activeUsers = allUsers.filter(
     (user) =>
       user.loginStatus === "Y" &&
-      (user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.contact.includes(searchTerm)),
+      (user.name.toLowerCase().includes(externalSearch.toLowerCase()) ||
+        user.email.toLowerCase().includes(externalSearch.toLowerCase()) ||
+        user.contact.includes(externalSearch) ||
+        user.cnic.includes(externalSearch) ||
+        user.role.toLowerCase().includes(externalSearch.toLowerCase()) ||
+        user.address.toLowerCase().includes(externalSearch.toLowerCase())),
   );
 
   const totalNum = activeUsers.length;
 
-  const startIndex = (pageNo - 1) * selectedValue;
-  const endIndex = startIndex + selectedValue;
-
+  // Calculation using externalPageSize prop
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const endIndex = startIndex + externalPageSize;
   const paginatedUsers = activeUsers.slice(startIndex, endIndex);
 
-  const handleChangeShowData = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    setSelectedValue(Number(event.target.value));
-    setPageNo(1);
-  };
-
   const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(totalNum / selectedValue);
+    const totalPages = Math.ceil(totalNum / externalPageSize);
     if (pageNo < totalPages) setPageNo((prev) => prev + 1);
   };
 
@@ -149,116 +162,136 @@ export const UsersDetails = ({ triggerAdd }: { triggerAdd: number }) => {
     setModalTypeTooPen("DELETE");
   };
 
+  // Format date function
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   return (
-    <div className="flex flex-col flex-grow  bg-gray overflow-hidden">
-      <div className="min-h-200 w-full flex flex-col bg-white">
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            {/* Left Side: Show entries */}
-            <div className="text-sm flex items-center">
-              <span>Show</span>
-              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                <select
-                  value={selectedValue}
-                  onChange={handleChangeShowData}
-                  className="bg-transparent outline-none py-1 cursor-pointer"
-                >
-                  {numbers.map((num, index) => (
-                    <option key={index} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-              </span>
-              <span className="hidden xs:inline">entries</span>
-            </div>
-
-            {/* Right Side: Search Input */}
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      <div className="overflow-auto">
+        <div className="min-w-[1000px]">
+          <div
+            className="grid grid-cols-6   text-black rounded items-center font-semibold
+              text-sm sticky top-0 z-10 p-4 gap-4" // Increased gap and padding for better breathability
+          >
+            <span className="pl-2">Sr#</span>
+            <span>User Details</span>
+            <span>Contact</span>
+            <span>Role</span>
+            <span>Joining Date</span>
+            <span className="text-right pr-10">Actions</span>
           </div>
-        </div>
 
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto">
-          <div className="min-w-[900px]">
-            {/* Sticky Table Header */}
-            <div
-              className="grid grid-cols-6 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 sm:z-10 p-2"
-            >
-              <span>Sr#</span>
-              <span>Users</span>
-              <span>Email</span>
-              <span>Contact No</span>
-              <span>Joining Date</span>
-              <span className="text-center">Actions</span>
-            </div>
-
-            {/* Table Body */}
+          <div className="p-4">
             {paginatedUsers.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
+              <div className="bg-gray-50 rounded-lg border-2 border-dashed p-10 text-center text-gray-500">
                 No records available at the moment!
               </div>
             ) : (
-              paginatedUsers.map((user, index) => (
-                <div
-                  key={user.id}
-                  className="grid grid-cols-6 border-b border-x border-gray-200 text-gray-800 items-center
-                   text-sm p-2 hover:bg-gray-50 transition"
-                >
-                  <span>{startIndex + index + 1}</span>
-                  <span className="truncate">{user.name}</span>
-                  <span className="truncate">{user.email}</span>
-                  <span>{user.contact}</span>
-                  <span>
-                    {new Date(user.date)
-                      .toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })
-                      .replace(/ /g, "-")}
-                  </span>
-                  <span className="flex flex-nowrap justify-center gap-1">
-                    <EditButton
-                      handleUpdate={() => handleUpdateSingleUser(user)}
-                    />
-                    <ViewButton handleView={() => handleViewUserDetail(user)} />
-                    <DeleteButton
-                      handleDelete={() => handleDeleteModal(user.id)}
-                    />
-                    <div
-                      onClick={() => handleCatchId(user.id)}
-                      className="p-1 px-1.5 rounded-xl bg-blue-50 hover:cursor-pointer active:scale-95 transition-all"
-                    >
-                      <RiLockPasswordFill size={15} title="Password" />
+              <div className="flex flex-col gap-2">
+                {paginatedUsers.map((user, index) => (
+                  <div
+                    key={user.id}
+                    className="grid grid-cols-6 items-center p-2 gap-4 text-sm bg-white border border-gray-100 
+                               rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
+                  >
+                    {/* Column 1: Sr# */}
+                    <span className="pl-2 text-gray-500 font-medium">
+                      {startIndex + index + 1}
+                    </span>
+
+                    {/* Column 2: Name */}
+                    <div className="flex items-center gap-3 overflow-hidden">
+                      <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 ?
+                      font-bold text-xl flex-shrink-0">
+                        {user.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        {" "}
+                        {/* flex-col se email neeche ayega */}
+                        <span className="truncate font-semibold text-gray-800 text-sm">
+                          {user.name}
+                        </span>
+                        <span className="truncate text-gray-500 text-xs">
+                          {user.email}
+                        </span>
+                      </div>
                     </div>
-                  </span>
-                </div>
-              ))
+
+                    {/* Column 4: Contact */}
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <RiPhoneLine
+                        className="text-gray-400 flex-shrink-0"
+                        size={14}
+                      />
+                      <span>{user.contact}</span>
+                    </div>
+
+                     <div className="flex items-center gap-2 text-gray-600">
+                      <RiBriefcaseLine
+                        className="text-gray-400 flex-shrink-0"
+                        size={14}
+                      />
+                      <span>{user.role}</span>
+                    </div>
+
+                    {/* Column 5: Date */}
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <RiCalendarLine
+                        className="text-gray-400 flex-shrink-0"
+                        size={14}
+                      />
+                      <span>{formatDate(user.date)}</span>
+                    </div>
+
+                    {/* Column 6: Actions */}
+                    <div className="flex items-center justify-end gap-1 pr-2">
+                      <ViewButton
+                        handleView={() => handleViewUserDetail(user)}
+                      />
+                      <EditButton
+                        handleUpdate={() => handleUpdateSingleUser(user)}
+                      />
+                      <DeleteButton
+                        handleDelete={() => handleDeleteModal(user.id)}
+                      />
+                      <button
+                        onClick={() => handleCatchId(user.id)}
+                        className="p-1.5 rounded-md text-gray-400 hover:bg-blue-100 hover:text-blue-600 transition-colors"
+                        title="Change Password"
+                      >
+                        <RiLockPasswordFill size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
-
-        {/* 4) Pagination placed under the table */}
-        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between">
-          <ShowDataNumber
-            start={totalNum === 0 ? 0 : startIndex + 1}
-            end={Math.min(endIndex, totalNum)}
-            total={totalNum}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={handleDecrementPageButton}
-            handleIncrementPageButton={handleIncrementPageButton}
-          />
-        </div>
       </div>
 
-      {/* --- MODALS SECTION --- */}
+      {/* BOTTOM SECTION (Pagination) */}
+      <div className="flex flex-row items-center justify-between py-4">
+        <ShowDataNumber
+          start={totalNum === 0 ? 0 : startIndex + 1}
+          end={Math.min(endIndex, totalNum)}
+          total={totalNum}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
+      </div>
+
+      {/* Modals */}
       {(modalTypeTooPen === "ADD" || modalTypeTooPen === "UPDATE") && (
         <AddUser
           viewType={modalTypeTooPen}

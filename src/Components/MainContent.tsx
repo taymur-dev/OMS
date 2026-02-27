@@ -1,11 +1,11 @@
-import { BiUser } from "react-icons/bi";
-import { BiGroup } from "react-icons/bi";
+import { RiUserFill } from "react-icons/ri";
+import { RiGroupFill } from "react-icons/ri";
 import { BsBoxes } from "react-icons/bs";
-import { FaProjectDiagram } from "react-icons/fa";
-import { LuListTodo } from "react-icons/lu";
-import { GiTakeMyMoney } from "react-icons/gi";
-import { CiViewList } from "react-icons/ci";
-import { MdOutlineSell } from "react-icons/md";
+import { AiFillProject } from "react-icons/ai";
+import { RiFileList3Fill } from "react-icons/ri";
+import { GiMoneyStack } from "react-icons/gi";
+import { IoListCircleSharp } from "react-icons/io5";
+import { MdSell } from "react-icons/md";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/Hooks";
@@ -18,6 +18,7 @@ import { Columns } from "./MenuCards/Colums";
 import Card from "./DetailCards/Card";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { Shapes, Calendar } from "lucide-react";
 
 type CategoryT = { id: number; categoryName: string };
 type UserT = {
@@ -110,6 +111,7 @@ export const MainContent = () => {
         completionStatus: p.completionStatus,
         projectCategory: p.projectCategory,
         startDate: p.startDate,
+        endDate: p.endDate,
       }));
 
       setAllAssignProjects(formattedProjects);
@@ -297,144 +299,153 @@ export const MainContent = () => {
   });
 
   return (
-    <div className="w-full h-full overflow-y-auto p-4 md:p-6 space-y-5 bg-gray-50">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="w-full h-full overflow-y-auto p-4 md:p-6 space-y-5 bg-slate-50">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-slate-800">Dashboard</h1>
+      </div>
+
+      <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
         <div
           onClick={() => navigate("/people?tab=USERS")}
-          className="cursor-pointer"
+          className="group cursor-pointer"
         >
           <Card
             titleName="Users"
-            totalUser="Total Users"
             totalNumber={activeUsers.length}
-            icon={<BiUser className="text-2xl" />}
-            style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+            icon={<RiUserFill className="text-blue-500" />}
           />
         </div>
 
-        <div onClick={() => navigate("/projects")} className="cursor-pointer">
+        <div
+          onClick={() => navigate("/projects")}
+          className="group cursor-pointer"
+        >
           <Card
             titleName="Projects"
-            totalUser="Total Projects"
             totalNumber={allAssignProjects.length}
-            icon={<FaProjectDiagram className="text-2xl" />}
-            style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+            icon={<IoListCircleSharp className="text-purple-500" />}
           />
         </div>
 
         <div
           onClick={() => navigate("/performance")}
-          className="cursor-pointer"
+          className="group cursor-pointer"
         >
           <Card
-            titleName="Todo's"
-            totalUser="Active Todo's"
+            titleName="Todo"
             totalNumber={activeTodos.length}
-            icon={<LuListTodo className="text-2xl" />}
-            style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+            icon={<AiFillProject className="text-teal-500" />}
           />
         </div>
 
         <div
           onClick={() => navigate("/expenses?tab=CATEGORY")}
-          className="cursor-pointer"
+          className="group cursor-pointer"
         >
-          {" "}
           <Card
-            titleName="Expense Categories"
-            totalUser="Total Categories"
+            titleName="Categories"
             totalNumber={expenseCategory.length}
-            icon={<CiViewList className="text-2xl" />}
-            style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+            icon={<RiFileList3Fill className="text-indigo-400" />}
           />
         </div>
 
-        <div onClick={() => navigate("/expenses")} className="cursor-pointer">
+        <div
+          onClick={() => navigate("/expenses")}
+          className="group cursor-pointer"
+        >
           <Card
-            titleName="Total Expense"
+            titleName="Expenses"
             totalNumber={totalExpenseAmount}
             isCurrency
-            icon={<GiTakeMyMoney className="text-2xl" />}
-            style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+            icon={<GiMoneyStack className="text-orange-500" />}
           />
         </div>
 
         <div
           onClick={() => navigate("/sales?tab=SALE")}
-          className="cursor-pointer"
+          className="group cursor-pointer"
         >
           <Card
             titleName="Sales"
-            totalUser="Total Sales Count"
             totalNumber={allSales.length}
-            icon={<MdOutlineSell className="text-2xl" />}
-            style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+            isCurrency
+            icon={<MdSell className="text-green-500" />}
           />
         </div>
 
         <div
           onClick={() => navigate("/people?tab=CUSTOMERS")}
-          className="cursor-pointer"
+          className="group cursor-pointer"
         >
           <Card
-            titleName="Total Customers"
-            totalUser="Registered Customers"
+            titleName="Customers"
             totalNumber={allCustomers.length}
-            icon={<BiGroup className="text-2xl" />}
-            style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+            icon={<RiGroupFill className="text-blue-600" />}
           />
         </div>
 
-        <div onClick={() => navigate("/assets")} className="cursor-pointer">
+        <div
+          onClick={() => navigate("/assets")}
+          className="group cursor-pointer"
+        >
           <Card
             titleName="Assets"
-            totalUser="Total Assets"
             totalNumber={allAssets.length}
-            icon={<BsBoxes className="text-2xl" />}
-            style="bg-white shadow-md rounded-lg border border-gray-100 h-full"
+            icon={<BsBoxes className="text-purple-600" />}
           />
         </div>
       </div>
 
-      <form className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end w-full">
-        <div className="w-full min-w-0">
-          <OptionField
-            labelName="Category"
-            name="categoryName"
-            handlerChange={handleChange}
-            value={formData.categoryName}
-            optionData={allCategory?.map((category) => ({
-              id: category.id,
-              label: category.categoryName,
-              value: category.categoryName,
-            }))}
-            inital="All Categories"
-          />
-        </div>
+      {/* Filter Bar Container */}
+      <div className="w-full bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+        <form
+          className="flex flex-col md:flex-row items-end gap-4 w-full"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <div className="flex-1 min-w-0 w-full">
+            <OptionField
+              labelName="CATEGORY"
+              name="categoryName"
+              icon={<Shapes className="w-4 h-4 text-black" />} // Added Category Icon
+              handlerChange={handleChange}
+              value={formData.categoryName}
+              optionData={allCategory?.map((category) => ({
+                id: category.id,
+                label: category.categoryName,
+                value: category.categoryName,
+              }))}
+              inital="All Categories"
+            />
+          </div>
 
-        <div className="w-full min-w-0">
-          <InputField
-            type="date"
-            labelName="From Date"
-            name="fromDate"
-            value={formData.fromDate}
-            handlerChange={handleChange}
-          />
-        </div>
+          <div className="flex-1 min-w-0 text-black w-full">
+            <InputField
+              type="date"
+              className="[color-scheme:light] ..."
+              labelName="FROM DATE"
+              name="fromDate"
+              icon={<Calendar className="w-4 h-4 text-black" />}
+              value={formData.fromDate}
+              handlerChange={handleChange}
+            />
+          </div>
 
-        <div className="w-full min-w-0">
-          <InputField
-            type="date"
-            labelName="To Date"
-            name="toDate"
-            value={formData.toDate}
-            handlerChange={handleChange}
-          />
-        </div>
-      </form>
+          <div className="flex-1 min-w-0 text-black w-full">
+            <InputField
+              type="date"
+              className="[color-scheme:light] ..."
+              labelName="TO DATE"
+              name="toDate"
+              icon={<Calendar className="w-4 h-4 text-black" />}
+              value={formData.toDate}
+              handlerChange={handleChange}
+            />
+          </div>
+        </form>
+      </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 w-full gap-6">
           {columsData.map((column) => (
             <div key={column.id} className="min-h-[400px]">
               <Columns

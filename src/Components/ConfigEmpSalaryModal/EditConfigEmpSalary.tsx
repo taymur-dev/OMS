@@ -20,6 +20,7 @@ type Salary = {
   medical_allowance: number;
   total_salary: number;
   config_date: string;
+  effective_from: string;
 };
 
 type EditSalaryProps = {
@@ -43,6 +44,7 @@ type SalaryState = {
   medical_allowance: string;
   total_salary: string;
   config_date: string;
+  effective_from: string;
 };
 
 const initialState: SalaryState = {
@@ -53,6 +55,7 @@ const initialState: SalaryState = {
   medical_allowance: "",
   total_salary: "0",
   config_date: "",
+  effective_from: "",
 };
 
 export const EditConfigEmpSalary = ({
@@ -70,12 +73,15 @@ export const EditConfigEmpSalary = ({
 
   useEffect(() => {
     if (editData) {
-      const dateObj = new Date(editData.config_date);
-
-      const year = dateObj.getFullYear();
-      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
-      const day = String(dateObj.getDate()).padStart(2, "0");
-      const formattedDate = `${year}-${month}-${day}`;
+      // Helper function to handle formatting for any date string
+      const formatForInput = (dateString: string) => {
+        if (!dateString) return "";
+        const dateObj = new Date(dateString);
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+        const day = String(dateObj.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      };
 
       setEditConfigEmployee({
         employee_id: editData.employee_id.toString(),
@@ -84,7 +90,8 @@ export const EditConfigEmpSalary = ({
         transport_allowance: editData.transport_allowance?.toString() || "",
         medical_allowance: editData.medical_allowance?.toString() || "",
         total_salary: editData.total_salary?.toString() || "",
-        config_date: formattedDate,
+        config_date: formatForInput(editData.config_date),
+        effective_from: formatForInput(editData.effective_from),
       });
     }
   }, [editData]);
@@ -177,6 +184,7 @@ export const EditConfigEmpSalary = ({
         medical_allowance: Number(editConfigEmployee.medical_allowance),
         total_salary: Number(editConfigEmployee.total_salary),
         config_date: editConfigEmployee.config_date,
+        effective_from: editConfigEmployee.effective_from,
       };
 
       await axios.put(
@@ -290,10 +298,10 @@ export const EditConfigEmpSalary = ({
 
             <InputField
               labelName="Date *"
-              name="config_date"
+              name="effective_from"
               type="date"
               handlerChange={handlerChange}
-              value={editConfigEmployee.config_date}
+              value={editConfigEmployee.effective_from}
             />
           </div>
 
