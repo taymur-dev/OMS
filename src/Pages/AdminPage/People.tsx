@@ -4,8 +4,8 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 
 import { UsersDetails } from "./UsersDetails";
-import { CustomerDetail } from "./CustomerDetail";
-import { Suppliers } from "./Suppliers";
+// import { CustomerDetail } from "./CustomerDetail";
+// import { Suppliers } from "./Suppliers";
 
 import { useSearchParams } from "react-router-dom";
 import { Footer } from "../../Components/Footer";
@@ -135,7 +135,7 @@ export const People = () => {
             />
           )}
 
-          {activeTab === "CUSTOMERS" && (
+          {/* {activeTab === "CUSTOMERS" && (
             <CustomerDetail
               triggerAdd={triggerModal.tab === "CUSTOMERS" ? triggerModal.count : 0}
               externalSearch={searchTerm}
@@ -149,7 +149,7 @@ export const People = () => {
               externalSearch={searchTerm}
               externalPageSize={selectedValue}
             />
-          )}
+          )} */}
         </div>
       </div>
 
