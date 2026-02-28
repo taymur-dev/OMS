@@ -56,6 +56,8 @@ export const UserLeave = () => {
           {activeTab === "LEAVE" && (
             <LeaveRequests
               triggerAdd={triggerModal.tab === "LEAVE" ? triggerModal.count : 0}
+              externalSearch="" // Pass an empty string or a state variable
+              externalPageSize={10} // Pass a default number or a state variable
             />
           )}
         </div>
