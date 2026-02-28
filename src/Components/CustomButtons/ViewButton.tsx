@@ -1,4 +1,4 @@
-import { PiEye } from "react-icons/pi";
+import { PiEyeFill } from "react-icons/pi";
 
 type ViewButtonProps = {
   handleView: () => void;
@@ -13,13 +13,12 @@ export const ViewButton = ({ handleView }: ViewButtonProps) => {
         bg-grey
         p-0.5 py-0.5 px-1
         rounded-lg
-        bg-blue-50
         hover:cursor-pointer
         active:scale-95
         transition-all duration-300
       "
     >
-      <PiEye
+      <PiEyeFill
         size={15}
         className="text-green-500"
         title="View"

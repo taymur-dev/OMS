@@ -1,7 +1,5 @@
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
@@ -12,7 +10,7 @@ import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import { toast } from "react-toastify";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
@@ -20,6 +18,11 @@ import {
   navigationStart,
   navigationSuccess,
 } from "../../redux/NavigationSlice";
+import { Briefcase, Calendar, Archive } from "lucide-react";
+
+import { RiUserFill } from "react-icons/ri";
+
+import { RiCloseCircleLine , RiCheckboxCircleLine , RiTimerLine } from "react-icons/ri";
 
 type ApplicantT = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
@@ -32,15 +35,22 @@ export interface Applicant {
   status: "pending" | "approved" | "rejected";
 }
 
-const pageSizes = [10, 25, 50, 100];
+interface ApplicantsProps {
+  triggerRecruit: number;
+  externalSearch: string;
+  externalPageSize: number;
+}
 
-export const Applicants = ({ triggerRecruit }: { triggerRecruit: number }) => {
+export const Applicants = ({
+  triggerRecruit,
+  externalSearch,
+  externalPageSize,
+}: ApplicantsProps) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
 
   const [isOpenModal, setIsOpenModal] = useState<ApplicantT>("");
   const [applicants, setApplicants] = useState<Applicant[]>([]);
-  const [total, setTotal] = useState(0);
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(
     null,
   );
@@ -49,8 +59,6 @@ export const Applicants = ({ triggerRecruit }: { triggerRecruit: number }) => {
   );
 
   const [pageNo, setPageNo] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const [searchTerm, setSearchTerm] = useState("");
 
   const handleToggleViewModal = (active: ApplicantT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
@@ -59,30 +67,23 @@ export const Applicants = ({ triggerRecruit }: { triggerRecruit: number }) => {
   const fetchApplicants = useCallback(async () => {
     try {
       dispatch(navigationStart());
-
-      const res = await axios.get(`${BASE_URL}/api/admin/getapplicants`, {
-        params: {
-          page: pageNo,
-          limit: limit,
-        },
-      });
-
-      const sortedApplicants = res.data.data.sort(
-        (a: Applicant, b: Applicant) => a.id - b.id,
-      );
-
-      setApplicants(sortedApplicants);
-      setTotal(res.data.total);
+      const res = await axios.get(`${BASE_URL}/api/admin/getapplicants`);
+      // Since UsersDetails handles filtering/pagination on the frontend, we fetch all here
+      setApplicants(res.data.data || []);
     } catch (error) {
       console.error("Failed to fetch applicants", error);
     } finally {
       dispatch(navigationSuccess("APPLICATION"));
     }
-  }, [dispatch, pageNo, limit]);
+  }, [dispatch]);
 
   useEffect(() => {
     fetchApplicants();
   }, [fetchApplicants]);
+
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
 
   useEffect(() => {
     if (triggerRecruit > 0) {
@@ -94,31 +95,40 @@ export const Applicants = ({ triggerRecruit }: { triggerRecruit: number }) => {
     document.title = "(OMS) APPLICATION";
   }, []);
 
-  const filteredApplicants = useMemo(() => {
-    return applicants
-      .filter((app) =>
-        `${app.applicant_name} ${app.job} ${app.status}`
+  // Filter and Sort logic matching UsersDetails style
+  const filteredApplicants = applicants
+    .filter(
+      (app) =>
+        app.applicant_name
           .toLowerCase()
-          .includes(searchTerm.toLowerCase()),
-      )
-      .sort((a, b) => a.id - b.id);
-  }, [applicants, searchTerm]);
+          .includes(externalSearch.toLowerCase()) ||
+        app.job.toLowerCase().includes(externalSearch.toLowerCase()) ||
+        app.applicant_contact.includes(externalSearch) ||
+        app.status.toLowerCase().includes(externalSearch.toLowerCase()),
+    )
+    .sort((a, b) => a.id - b.id);
 
-  const handleIncrementPageButton = () => setPageNo((prev) => prev + 1);
-  const handleDecrementPageButton = () =>
-    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
+  const totalNum = filteredApplicants.length;
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const endIndex = startIndex + externalPageSize;
+  const paginatedApplicants = filteredApplicants.slice(startIndex, endIndex);
+
+  const handleIncrementPageButton = () => {
+    const totalPages = Math.ceil(totalNum / externalPageSize);
+    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    if (pageNo > 1) setPageNo((prev) => prev - 1);
+  };
 
   const handleDeleteApplicant = async () => {
     if (!selectedApplicantId) return;
-
     try {
       await axios.patch(
         `${BASE_URL}/api/admin/deleteapplicant/${selectedApplicantId}`,
       );
-      setApplicants((prev) =>
-        prev.filter((item) => item.id !== selectedApplicantId),
-      );
-      setTotal((prev) => prev - 1);
+      fetchApplicants();
       toast.success("Applicant deleted successfully");
     } catch (error) {
       console.error("Delete failed", error);
@@ -131,129 +141,147 @@ export const Applicants = ({ triggerRecruit }: { triggerRecruit: number }) => {
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow p-2 bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            <div className="text-sm flex items-center">
-              <span>Show</span>
-              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                <select
-                  value={limit}
-                  onChange={(e) => {
-                    setLimit(Number(e.target.value));
-                    setPageNo(1);
-                  }}
-                  className="bg-transparent outline-none py-1 cursor-pointer"
-                >
-                  {pageSizes.map((num) => (
-                    <option key={num} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-              </span>
-              <span className="hidden xs:inline">entries</span>
-            </div>
-
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
-          </div>
-        </div>
-
-        <div className="overflow-auto">
-          <div className="min-w-[900px]">
-            <div
-              className="grid grid-cols-7 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
-            >
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      <div className="overflow-auto">
+        <div className="min-w-[1000px]">
+          {/* Header Row */}
+          <div className="px-4 pt-0.5">
+            <div className="grid grid-cols-[60px_1.5fr_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm">
               <span>Sr#</span>
-              <span>Name</span>
-              <span>Contact</span>
+              <span>Name & Contact</span>
+              <span>Job Role</span>
+              <span>Status</span>
               <span>Date Applied</span>
-              <span>Job</span>
-              <span className="text-center">Status</span>
-              <span className="text-center">Actions</span>
+              <span className="text-right pr-10">Actions</span>
             </div>
+          </div>
 
-            {filteredApplicants.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
-                No records available at the moment!
+          {/* Data Rows */}
+          <div className="px-4 py-2">
+            {paginatedApplicants.length === 0 ? (
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <Archive size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">No records available!</p>
+                <p className="text-sm">Try adjusting your search.</p>
               </div>
             ) : (
-              filteredApplicants.map((item, index) => (
-                <div
-                  key={item.id}
-                  className="grid grid-cols-7 border-b border-x border-gray-200 text-gray-800 items-center
-                 text-sm p-2 hover:bg-gray-50 transition"
-                >
-                  <span>{(pageNo - 1) * limit + index + 1}</span>
-                  <span className="truncate">{item.applicant_name}</span>
-                  <span>{item.applicant_contact}</span>
-                  <span>
-                    {new Date(item.applied_date)
-                      .toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })
-                      .replace(/ /g, "-")}
-                  </span>
-                  <span className="truncate">{item.job}</span>
-                  <span className="text-center">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold
-                    ${item.status === "pending" && "bg-orange-600 text-white"}
-                    ${item.status === "approved" && "bg-green-700 text-white"}
-                    ${item.status === "rejected" && "bg-red-700 text-white"}`}
-                    >
-                      {item.status}
+              <div className="flex flex-col gap-2">
+                {paginatedApplicants.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="grid grid-cols-[60px_1.5fr_1fr_1fr_1fr_auto] items-center p-1 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
+                  >
+                    <span className="text-gray-500 font-medium pl-2">
+                      {startIndex + index + 1}
                     </span>
-                  </span>
-                  <span className="flex flex-nowrap justify-center gap-1">
-                    <EditButton
-                      handleUpdate={() => {
-                        setSelectedApplicant(item);
-                        handleToggleViewModal("EDIT");
-                      }}
-                    />
-                    <ViewButton
-                      handleView={() => {
-                        setSelectedApplicant(item);
-                        handleToggleViewModal("VIEW");
-                      }}
-                    />
-                    <DeleteButton
-                      handleDelete={() => {
-                        setSelectedApplicantId(item.id);
-                        handleToggleViewModal("DELETE");
-                      }}
-                    />
-                  </span>
-                </div>
-              ))
+
+                    <div className="flex items-center gap-3 overflow-hidden">
+                      <div className="h-10 w-10 rounded-full bg-blue-400 flex items-center justify-center text-white flex-shrink-0 shadow-sm">
+                        <RiUserFill size={20} />
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="truncate font-semibold text-gray-800">
+                          {item.applicant_name}
+                        </span>
+
+                        <span className="truncate font-sm text-gray-400">{item.applicant_contact}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Briefcase className="text-yellow-400" size={14} />
+                      <span className="truncate">{item.job}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-gray-600">
+                      {/* Dynamic Icon based on status */}
+                      {item.status === "approved" ? (
+                        <RiCheckboxCircleLine
+                          className="text-green-500 flex-shrink-0"
+                          size={16}
+                        />
+                      ) : item.status === "pending" ? (
+                        <RiTimerLine
+                          className="text-orange-500 flex-shrink-0"
+                          size={16}
+                        />
+                      ) : (
+                        <RiCloseCircleLine
+                          className="text-red-500 flex-shrink-0"
+                          size={16}
+                        />
+                      )}
+
+                      <span
+                        className={`text-[10px] font-bold uppercase tracking-wider ${
+                          item.status === "approved"
+                            ? "text-green-500"
+                            : item.status === "pending"
+                              ? "text-orange-500"
+                              : "text-red-500"
+                        }`}
+                      >
+                        {item.status}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Calendar className="text-blue-400" size={14} />
+                      <span>
+                        {new Date(item.applied_date).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          },
+                        )}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-1 pr-2">
+                      <ViewButton
+                        handleView={() => {
+                          setSelectedApplicant(item);
+                          handleToggleViewModal("VIEW");
+                        }}
+                      />
+                      <EditButton
+                        handleUpdate={() => {
+                          setSelectedApplicant(item);
+                          handleToggleViewModal("EDIT");
+                        }}
+                      />
+                      <DeleteButton
+                        handleDelete={() => {
+                          setSelectedApplicantId(item.id);
+                          handleToggleViewModal("DELETE");
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
-
-        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
-          <ShowDataNumber
-            start={
-              filteredApplicants.length === 0 ? 0 : (pageNo - 1) * limit + 1
-            }
-            end={Math.min(pageNo * limit, total)}
-            total={total}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={handleDecrementPageButton}
-            handleIncrementPageButton={handleIncrementPageButton}
-          />
-        </div>
       </div>
 
+      {/* Pagination Footer */}
+      <div className="flex flex-row items-center justify-between py-4">
+        <ShowDataNumber
+          start={totalNum === 0 ? 0 : startIndex + 1}
+          end={Math.min(endIndex, totalNum)}
+          total={totalNum}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
+      </div>
+
+      {/* Modals */}
       {isOpenModal === "ADD" && (
         <AddApplicant
           setModal={() => {

@@ -1,32 +1,28 @@
-import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
-import { Pagination } from "../../Components/Pagination/Pagination";
-
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-
-
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import toast, { Toaster } from "react-hot-toast";
+import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
+import { navigationStart, navigationSuccess } from "../../redux/NavigationSlice";
 
+// Components
+import { Loader } from "../../Components/LoaderComponent/Loader";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
-
 import { AddEmployeeLifeLine } from "../../Components/EmpLifeLine/AddEmployeeLifeLine";
 import { ViewEmployeeLifeLine } from "../../Components/EmpLifeLine/ViewEmployeeLifeLine";
+import { Pagination } from "../../Components/Pagination/Pagination";
+import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 
-import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
-import {
-  navigationStart,
-  navigationSuccess,
-} from "../../redux/NavigationSlice";
+// Icons
+import { 
+  RiUserFill, 
+  RiPhoneLine, 
+  RiBriefcaseLine, 
+  RiCalendarLine, 
+  RiInboxArchiveLine 
+} from "react-icons/ri";
 
-import { Loader } from "../../Components/LoaderComponent/Loader";
-
-const numbers = [10, 25, 50, 100];
-
-type LoanT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
-
-
+type LoanT = "ADD" | "VIEW" | "";
 
 type LifeLine = {
   id: number;
@@ -35,231 +31,213 @@ type LifeLine = {
   contact: string;
   position: string;
   date: string;
+  image?: string;
 };
 
-export const EmployeeLifeline = ({ triggerAdd }: { triggerAdd: number }) => {
+interface EmployeeLifelineProps {
+  triggerAdd: number;
+  externalSearch: string;
+  externalPageSize: number;
+}
+
+export const EmployeeLifeline = ({ 
+  triggerAdd, 
+  externalSearch, 
+  externalPageSize 
+}: EmployeeLifelineProps) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
+  const token = useAppSelector((state) => state.officeState.currentUser?.token);
   const dispatch = useAppDispatch();
 
   const [isOpenModal, setIsOpenModal] = useState<LoanT>("");
-  const [selectedEmployee, setSelectedEmployee] = useState<LifeLine | null>(
-    null,
-  );
-
+  const [selectedEmployee, setSelectedEmployee] = useState<LifeLine | null>(null);
   const [pageNo, setPageNo] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
   const [lifeLines, setLifeLines] = useState<LifeLine[]>([]);
 
-  const [selectedValue, setSelectedValue] = useState(10);
-
-  const handleChangeShowData = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    setSelectedValue(Number(event.target.value));
-    setPageNo(1);
-  };
-
-  const handleIncrementPageButton = (totalPages: number) => {
-    setPageNo((prev) => Math.min(prev + 1, totalPages));
-  };
-
-  const handleDecrementPageButton = () => {
-    setPageNo((prev) => Math.max(prev - 1, 1));
-  };
-
-  const handleToggleViewModal = (active: LoanT) => {
-    setIsOpenModal((prev) => (prev === active ? "" : active));
-  };
-
-  const handleAddLifeLine = (newLifeLine: LifeLine) => {
-    setLifeLines((prev) => [...prev, newLifeLine]);
-    toast.success("Employee added successfully!");
-  };
-
-  useEffect(() => {
-    document.title = "(OMS)LifeLine";
-    dispatch(navigationStart());
-    setTimeout(() => {
-      dispatch(navigationSuccess("Employee lifeline"));
-    }, 1000);
-  }, [dispatch]);
-
-  const token = useAppSelector((state) => state.officeState.currentUser?.token);
+  // UI Setup matching UsersDetails
+  const gridTemplate = "grid-cols-6";
 
   const fetchLifelines = useCallback(async () => {
+    dispatch(navigationStart());
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getEmpll`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      const sorted = res.data.data.sort(
-        (a: LifeLine, b: LifeLine) => a.id - b.id,
-      );
-
+      const sorted = res.data.data.sort((a: LifeLine, b: LifeLine) => a.id - b.id);
       setLifeLines(sorted);
+      dispatch(navigationSuccess("Employee Lifeline"));
     } catch (err) {
-      console.log(err);
+      console.error(err);
+      toast.error("Failed to fetch lifelines");
     }
-  }, [token]);
+  }, [token, dispatch]);
 
   useEffect(() => {
+    document.title = "(OMS) LifeLine";
     fetchLifelines();
   }, [fetchLifelines]);
 
-   useEffect(() => {
-    if (triggerAdd > 0) {
-      setIsOpenModal("ADD");
-    }
+  useEffect(() => {
+    if (triggerAdd > 0) setIsOpenModal("ADD");
   }, [triggerAdd]);
 
-  const filteredLifeLines = lifeLines.filter((item) => {
-    const name = item.employeeName?.toLowerCase() || "";
-    const contact = item.contact?.toLowerCase() || "";
-    const position = item.position?.toLowerCase() || "";
-    const search = searchTerm.toLowerCase();
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
 
+  // Filtering Logic
+  const filteredLifeLines = lifeLines.filter((item) => {
+    const search = externalSearch.toLowerCase();
     return (
-      name.includes(search) ||
-      contact.includes(search) ||
-      position.includes(search)
+      item.employeeName?.toLowerCase().includes(search) ||
+      item.contact?.includes(search) ||
+      item.position?.toLowerCase().includes(search) ||
+      item.email?.toLowerCase().includes(search)
     );
   });
 
-  const totalPages = Math.ceil(filteredLifeLines.length / selectedValue);
-  const startIndex = (pageNo - 1) * selectedValue;
-  const endIndex = startIndex + selectedValue;
+  const totalNum = filteredLifeLines.length;
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const endIndex = startIndex + externalPageSize;
   const paginatedLifeLines = filteredLifeLines.slice(startIndex, endIndex);
+
+  const handleIncrementPageButton = () => {
+    const totalPages = Math.ceil(totalNum / externalPageSize);
+    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    if (pageNo > 1) setPageNo((prev) => prev - 1);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
 
   if (loader) return <Loader />;
 
- 
-
   return (
-    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-        <Toaster position="top-center" reverseOrder={false} />
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      <Toaster position="top-center" reverseOrder={false} />
 
-       
-
-        {/* Control Bar: Show entries and Search */}
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            {/* Left Side: Show entries */}
-            <div className="text-sm flex items-center">
-              <span>Show</span>
-              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                <select
-                  value={selectedValue}
-                  onChange={handleChangeShowData}
-                  className="bg-transparent outline-none py-1 cursor-pointer"
-                >
-                  {numbers.map((num, index) => (
-                    <option key={index} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-              </span>
-              <span className="hidden xs:inline">entries</span>
+      <div className="overflow-auto">
+        <div className="min-w-[1000px]">
+          {/* Header Section matching UsersDetails */}
+          <div className="px-4 pt-0.5">
+            <div className={`grid ${gridTemplate} bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm`}>
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Employee & Email</span>
+              <span className="text-left">Contact</span>
+              <span className="text-left">Position</span>
+              <span className="text-left">Date</span>
+              <span className="text-right">Actions</span>
             </div>
-
-            {/* Right Side: Search Input */}
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
           </div>
-        </div>
 
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto">
-          <div className="min-w-[900px]">
-            {/* Sticky Table Header */}
-            <div
-              className="grid grid-cols-6 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
-            >
-              <span>Sr#</span>
-              <span>Employee Name</span>
-              <span>Contact</span>
-              <span>Position</span>
-              <span>Date</span>
-              <span className="text-center">Actions</span>
-            </div>
-
-            {/* Table Body */}
+          {/* Body Section */}
+          <div className="px-4 py-2">
             {paginatedLifeLines.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
-                No records available at the moment!
+              <div className="bg-gray-50 rounded-lg border-2 border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">No records available!</p>
               </div>
             ) : (
-              paginatedLifeLines.map((item: LifeLine, index: number) => (
-                <div
-                  key={item.id || index}
-                  className="grid grid-cols-6 border-b border-x border-gray-200 text-gray-800 items-center
-                 text-sm p-2 hover:bg-gray-50 transition"
-                >
-                  <span>{startIndex + index + 1}</span>
-                  <span className="truncate">{item.employeeName}</span>
-                  <span>{item.contact}</span>
-                  <span>{item.position}</span>
-                  <span>
-                    {new Date(item.date)
-                      .toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })
-                      .replace(/ /g, "-")}
-                  </span>
-                  <span className="flex flex-nowrap justify-center gap-1">
-                    <ViewButton
-                      handleView={() => {
-                        setSelectedEmployee(item);
-                        handleToggleViewModal("VIEW");
-                      }}
-                    />
-                  </span>
-                </div>
-              ))
+              <div className="flex flex-col gap-2">
+                {paginatedLifeLines.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className={`grid ${gridTemplate} items-center p-1 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm`}
+                  >
+                    <span className="text-gray-500 font-medium ml-2">
+                      {startIndex + index + 1}
+                    </span>
+
+                    {/* Name & Avatar */}
+                    <div className="flex items-center gap-3 overflow-hidden">
+                      <div className="h-10 w-10 rounded-full bg-blue-400 flex items-center justify-center text-white flex-shrink-0 border-2 border-gray-100 shadow-sm">
+                        {item.image ? (
+                          <img src={`${BASE_URL}/${item.image}`} alt="" className="h-full w-full object-cover rounded-full" />
+                        ) : (
+                          <RiUserFill size={20} />
+                        )}
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="truncate font-semibold text-gray-800">{item.employeeName}</span>
+                        <span className="truncate text-gray-400 text-xs">{item.email}</span>
+                      </div>
+                    </div>
+
+                    {/* Contact */}
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <RiPhoneLine className="text-green-400 flex-shrink-0" size={14} />
+                      <span>{item.contact}</span>
+                    </div>
+
+                    {/* Position */}
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <RiBriefcaseLine className="text-yellow-400 flex-shrink-0" size={14} />
+                      <span>{item.position}</span>
+                    </div>
+
+                    {/* Date */}
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <RiCalendarLine className="text-blue-400 flex-shrink-0" size={14} />
+                      <span>{formatDate(item.date)}</span>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center justify-end gap-1 pr-2">
+                      <ViewButton
+                        handleView={() => {
+                          setSelectedEmployee(item);
+                          setIsOpenModal("VIEW");
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
-
-        {/* 4) Pagination placed under the table */}
-        <div className="flex flex-row gap-2 items-center justify-between p-2">
-          <ShowDataNumber
-            start={paginatedLifeLines.length ? startIndex + 1 : 0}
-            end={Math.min(endIndex, filteredLifeLines.length)}
-            total={filteredLifeLines.length}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={handleDecrementPageButton}
-            handleIncrementPageButton={() =>
-              handleIncrementPageButton(totalPages)
-            }
-          />
-        </div>
       </div>
 
-      {/* --- MODALS SECTION --- */}
+      {/* Pagination Footer */}
+      <div className="flex flex-row items-center justify-between py-4 px-4">
+        <ShowDataNumber
+          start={totalNum === 0 ? 0 : startIndex + 1}
+          end={Math.min(endIndex, totalNum)}
+          total={totalNum}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
+      </div>
+
+      {/* Modals */}
       {isOpenModal === "ADD" && (
         <AddEmployeeLifeLine
-          setModal={() => handleToggleViewModal("")}
-          onAdd={handleAddLifeLine}
+          setModal={() => setIsOpenModal("")}
+          onAdd={() => {
+            fetchLifelines();
+            setIsOpenModal("");
+          }}
           existingLifeLines={lifeLines}
         />
       )}
 
       {isOpenModal === "VIEW" && selectedEmployee && (
         <ViewEmployeeLifeLine
-          setIsOpenModal={() => handleToggleViewModal("")}
+          setIsOpenModal={() => setIsOpenModal("")}
           employeeData={selectedEmployee}
         />
       )}
-
-      
     </div>
   );
 };

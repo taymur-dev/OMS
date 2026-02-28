@@ -1,4 +1,4 @@
-import { AiTwotoneEdit } from "react-icons/ai";
+import { HiPencil } from "react-icons/hi";
 type EditButtonProps = {
   handleUpdate: () => void;
 };
@@ -11,14 +11,13 @@ export const EditButton = ({ handleUpdate }: EditButtonProps) => {
         bg-grey
         p-0.5 py-0.5 px-1
         rounded-lg
-        bg-blue-50
         hover:cursor-pointer
         active:scale-95
         transition-all duration-300
       "
     >
       <span className="text-[10px]"></span>
-      <AiTwotoneEdit   size={15}
+      <HiPencil   size={15}
         className="text-indigo-900"
         title="Edit" />
     </div>

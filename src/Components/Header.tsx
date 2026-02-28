@@ -1,5 +1,5 @@
-import Avatar from "../assets/vector.png";
 import { RxHamburgerMenu } from "react-icons/rx";
+import { RiUserFill } from "react-icons/ri";
 import headerLogo from "../assets/techmen.png";
 import { CiBellOn } from "react-icons/ci";
 import React, { useState, useEffect, useCallback } from "react";
@@ -127,13 +127,14 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
             </div>
 
             {/* User Avatar */}
-            <img
+            <div
               onClick={() => handleToggleViewModal()}
-              src={Avatar || currentUser?.image}
-              alt={currentUser?.name || "User profile"}
-              className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover cursor-pointer active:scale-95
-         transition duration-200 border-2 border-gray-200 hover:border-blue-400"
-            />
+              className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-400 flex items-center justify-center
+                        text-white flex-shrink-0 overflow-hidden border-2 border-gray-100 shadow-sm 
+                        cursor-pointer active:scale-95 transition duration-200 hover:border-blue-400"
+            >
+              <RiUserFill size={28} />
+            </div>
           </div>
         </div>
 

@@ -1,19 +1,24 @@
 import { useState } from "react";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
+import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { MarkAttendance } from "./MarkAttendance";
 import { UserAttendance } from "./UserAttendance";
 import { LeaveRequests } from "./LeaveRequests";
 import { useAppSelector } from "../../redux/Hooks";
-import { ClipboardCheck, Users, FileText } from "lucide-react";
 import { Footer } from "../../Components/Footer";
 
-type TabType = "MARK" | "USER" | "LEAVE" | "";
+type TabType = "MARK" | "USER" | "LEAVE";
+const entriesOptions = [5, 10, 15, 20, 30];
 
 export const AttendanceHub = () => {
   const [activeTab, setActiveTab] = useState<TabType>("MARK");
   const { currentUser } = useAppSelector((state) => state.officeState);
   const isAdmin = currentUser?.role === "admin";
+
+  // States for search and pagination to match People.tsx header
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedValue, setSelectedValue] = useState(10);
 
   const [triggerModal, setTriggerModal] = useState<{
     tab: TabType;
@@ -30,20 +35,21 @@ export const AttendanceHub = () => {
   return (
     <div className="flex flex-col flex-grow shadow-lg p-1 sm:p-2 rounded-lg bg-gray-100 overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white rounded-md">
+        {/* 1. Main Title Section */}
         <TableTitle
           tileName="Attendance"
           rightElement={
             <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
               {activeTab === "USER" && isAdmin && (
                 <CustomButton
-                  label="+ Attendance"
+                  label="Add User Attendance"
                   handleToggle={() => handleActionClick("USER")}
                 />
               )}
 
               {activeTab === "LEAVE" && (
                 <CustomButton
-                  label="+ Leave"
+                  label="Add Leave"
                   handleToggle={() => handleActionClick("LEAVE")}
                 />
               )}
@@ -51,54 +57,63 @@ export const AttendanceHub = () => {
           }
         />
 
-        {/* Responsive tabs - wrap on all screens except desktop (lg breakpoint) */}
-        <div className="flex flex-wrap lg:flex-nowrap items-center gap-1 px-2 sm:px-4  bg-white border-b border-gray-300">
-          <button
-            onClick={() => setActiveTab("MARK")}
-            className={`flex items-center justify-center gap-2 flex-1 lg:flex-none px-2 sm:px-6 py-2.5
-               text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-                 activeTab === "MARK"
-                   ? "bg-indigo-900 text-white shadow-md"
-                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-               }`}
-          >
-            <ClipboardCheck size={16} className="sm:w-4 sm:h-4" />
-            <span className="truncate">Mark</span>
-            <span className="hidden sm:inline"> Attendance</span>
-          </button>
+        {/* 2. Tabs and Controls Section (Styled like People.tsx) */}
+        <div className="px-4 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex w-full sm:w-auto p-1 bg-[#F1F5F9] rounded-xl border border-gray-200">
+            {(["MARK", "USER", "LEAVE"] as TabType[]).map((tab) => {
+              // Hide USER tab if not admin
+              if (tab === "USER" && !isAdmin) return null;
 
-          {isAdmin && (
-            <button
-              onClick={() => setActiveTab("USER")}
-              className={`flex items-center justify-center gap-2 flex-1 lg:flex-none px-2 sm:px-6
-                 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-                   activeTab === "USER"
-                     ? "bg-indigo-900 text-white shadow-md"
-                     : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-                 }`}
-            >
-              <Users size={16} className="sm:w-4 sm:h-4" />
-              <span className="truncate">User</span>
-              <span className="hidden sm:inline"> Attendance</span>
-            </button>
+              const labels = {
+                MARK: "Mark Attendance",
+                USER: "User Attendance",
+                LEAVE: "Leave Requests",
+              };
+
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 text-sm font-bold transition-all duration-200 rounded-lg ${
+                    activeTab === tab
+                      ? "bg-white text-[#334155] shadow-sm"
+                      : "text-[#64748B] hover:text-[#334155]"
+                  }`}
+                >
+                  {labels[tab]}
+                </button>
+              );
+            })}
+          </div>
+
+          {activeTab !== "MARK" && (
+            <div className="flex items-center flex-grow justify-end gap-3 max-w-2xl">
+              <div className="flex-grow">
+                <TableInputField
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                />
+              </div>
+
+              <div className="flex items-center border border-gray-200 rounded-lg px-3 py-3 bg-white shadow-sm min-w-[140px]">
+                <select
+                  value={selectedValue}
+                  onChange={(e) => setSelectedValue(Number(e.target.value))}
+                  className="bg-transparent outline-none text-sm font-medium text-gray-700 cursor-pointer w-full"
+                >
+                  {entriesOptions.map((num) => (
+                    <option key={num} value={num}>
+                      {num} per page
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           )}
-
-          <button
-            onClick={() => setActiveTab("LEAVE")}
-            className={`flex items-center justify-center gap-2 flex-1 lg:flex-none px-2 sm:px-6 py-2.5
-               text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-                 activeTab === "LEAVE"
-                   ? "bg-indigo-900 text-white shadow-md"
-                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-               }`}
-          >
-            <FileText size={16} className="sm:w-4 sm:h-4" />
-            <span className="truncate">Leave</span>
-            <span className="hidden sm:inline"> Requests</span>
-          </button>
         </div>
 
-        {/* 3) Content Area */}
+        {/* 3. Content Area */}
+        {/* 3. Content Area */}
         <div className="flex-grow p-2 sm:p-4 overflow-auto">
           {activeTab === "MARK" && (
             <MarkAttendance
@@ -109,12 +124,17 @@ export const AttendanceHub = () => {
           {activeTab === "USER" && isAdmin && (
             <UserAttendance
               triggerAdd={triggerModal.tab === "USER" ? triggerModal.count : 0}
+              // Pass the search and pagination states here:
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
             />
           )}
 
           {activeTab === "LEAVE" && (
             <LeaveRequests
               triggerAdd={triggerModal.tab === "LEAVE" ? triggerModal.count : 0}
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
             />
           )}
         </div>

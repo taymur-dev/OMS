@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { UserPlusIcon } from "lucide-react"; // Solid version
+import { PlusIcon } from "lucide-react"; // Solid version
 
 type ButtonProps = {
   label: ReactNode;
@@ -25,7 +25,7 @@ export const CustomButton = ({
       flex items-center gap-2 ${className}`}
     >
       {showIcon && (
-        <UserPlusIcon
+        <PlusIcon
           size={16}
           className="sm:w-5 sm:h-5 fill-current"
         />

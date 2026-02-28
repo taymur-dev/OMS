@@ -9,7 +9,6 @@ import {
   FaSignOutAlt,
   FaHourglassHalf,
   FaCalendarAlt,
-  FaInfoCircle,
 } from "react-icons/fa";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import {
@@ -181,18 +180,17 @@ export const MarkAttendance = ({ triggerMark }: { triggerMark: number }) => {
   return (
     <div className="flex flex-col flex-grow bg-gray-100 overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white">
-
         <div className="p-4">
           <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
             <div className="flex items-center space-x-3">
-              <FaUserShield className="text-green-500 text-2xl" />
+              <FaUserShield className="text-gray-500 text-2xl" />
               <span className="text-lg font-semibold text-gray-800">
                 {currentUser?.name}
               </span>
             </div>
             <div className="flex items-center space-x-3">
               <FaClock className="text-gray-700 text-xl" />
-              <span className="font-bold text-lg text-indigo-900">
+              <span className="font-bold text-lg text-blue-500">
                 {showTime}
               </span>
             </div>
@@ -231,29 +229,38 @@ export const MarkAttendance = ({ triggerMark }: { triggerMark: number }) => {
             ) : (
               <div className="overflow-x-auto my-4">
                 <div className="min-w-[600px]">
-                  <div className="grid grid-cols-5 bg-indigo-900 text-white items-center font-semibold text-sm p-2 rounded-t-md">
+                  <div className="grid grid-cols-5 bg-blue-500 text-white items-center font-semibold text-sm p-2 rounded-t-md">
                     <span className="flex items-center justify-center gap-2">
-                      <FaSignInAlt className="text-blue-300" /> Clock In
+                      Clock In
                     </span>
                     <span className="flex items-center justify-center gap-2">
-                      <FaSignOutAlt className="text-orange-300" /> Clock Out
+                      Clock Out
                     </span>
                     <span className="flex items-center justify-center gap-2">
-                      <FaHourglassHalf className="text-green-300" /> Working
-                      Hours
+                      Working Hours
                     </span>
                     <span className="flex items-center justify-center gap-2">
-                      <FaCalendarAlt className="text-purple-300" /> Date
+                      Date
                     </span>
-                    <span className="flex items-center gap-2 justify-center">
-                      <FaInfoCircle className="text-indigo-200" /> Status
+                    <span className="flex items-center  gap-2 justify-center">
+                      Status
                     </span>
                   </div>
-                  <div className="grid grid-cols-5 border-b border-x border-gray-200 text-gray-800 items-center text-sm p-3 bg-white">
-                    <span>{attendanceTime.clockIn}</span>
-                    <span>{attendanceTime.clockOut}</span>
-                    <span>{attendanceTime.workingHours}</span>
-                    <span>
+                  <div className="grid grid-cols-5 border-b border-x border-gray-200 items-center text-sm p-3 bg-white">
+                    <span className="text-green-500 flex items-center justify-center gap-2">
+                      <FaSignInAlt className="opacity-70" />
+                      {attendanceTime.clockIn}
+                    </span>
+                    <span className="text-orange-500 flex items-center justify-center gap-2">
+                      <FaSignOutAlt className="opacity-70" />
+                      {attendanceTime.clockOut}
+                    </span>
+                    <span className="text-yellow-800 flex items-center justify-center gap-2">
+                      <FaHourglassHalf className="opacity-70" />
+                      {attendanceTime.workingHours}
+                    </span>
+                    <span className="text-purple-500 flex items-center justify-center gap-2">
+                      <FaCalendarAlt className="opacity-70" />
                       {new Date(attendanceTime.date)
                         .toLocaleDateString("en-GB", {
                           day: "2-digit",
@@ -277,7 +284,7 @@ export const MarkAttendance = ({ triggerMark }: { triggerMark: number }) => {
               ${
                 isHoliday
                   ? "bg-gray-300 cursor-not-allowed text-gray-500"
-                  : "bg-indigo-900 hover:bg-indigo-800 text-white shadow-md"
+                  : "bg-blue-500 hover:bg-blue-700 text-white shadow-md"
               }`}
                 onClick={() => handleMarkAttendance(userId)}
               >
@@ -288,8 +295,6 @@ export const MarkAttendance = ({ triggerMark }: { triggerMark: number }) => {
             </div>
           </div>
         </div>
-
-       
       </div>
     </div>
   );

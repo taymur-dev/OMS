@@ -3,13 +3,19 @@ import { EmployeeLifeline } from "./EmployeeLifeline";
 import { EmployeeWithdraw } from "./EmployeeWithdraw";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
-import { UserCheck, WalletCards } from "lucide-react";
+import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { Footer } from "../../Components/Footer";
 
 type HRTab = "LIFELINE" | "WITHDRAW";
+const entriesOptions = [5, 10, 15, 20, 30];
 
 export const HumanResources = () => {
   const [activeTab, setActiveTab] = useState<HRTab>("LIFELINE");
+
+  // Lifted states for search and pagination consistency
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedValue, setSelectedValue] = useState(10);
+
   const [triggerModal, setTriggerModal] = useState<{
     tab: HRTab;
     count: number;
@@ -25,75 +31,93 @@ export const HumanResources = () => {
   return (
     <div className="flex flex-col flex-grow shadow-lg p-1 sm:p-2 rounded-lg bg-gray-100 overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white rounded-md">
-        {/* 1) Header - Matching AttendanceHub flex logic */}
+        {/* 1) Header Section */}
         <TableTitle
           tileName="Human Resources"
           rightElement={
             <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
               {activeTab === "LIFELINE" && (
                 <CustomButton
-                  label="+ Employee"
+                  label="Add Employee Lifeline"
                   handleToggle={() => handleAddClick("LIFELINE")}
                 />
               )}
-              
               {activeTab === "WITHDRAW" && (
                 <CustomButton
-                  label="+ Withdraw"
+                  label="Add Employee Withdraw"
                   handleToggle={() => handleAddClick("WITHDRAW")}
                 />
               )}
-              
             </div>
           }
         />
 
-        {/* 2) Tab Navigation - Optimized for Mobile Consistency */}
-        <div className="flex items-center gap-1 px-2 sm:px-4  bg-white border-b border-gray-300">
-          <button
-            onClick={() => setActiveTab("LIFELINE")}
-            className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-2 sm:px-6 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-              activeTab === "LIFELINE"
-                ? "bg-indigo-900 text-white shadow-md"
-                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-            }`}
-          >
-            <UserCheck size={16} />
-            <span className="hidden xs:block">Lifeline</span>
-            <span className="block xs:hidden">Employee Lifeline</span>
-          </button>
+        {/* 2) Search, Filters and Tab Navigation (People.tsx Style) */}
+        <div className="px-4 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
+          {/* Tab Selection Pill */}
+          <div className="flex w-full sm:w-auto p-1 bg-[#F1F5F9] rounded-xl border border-gray-200">
+            {(["LIFELINE", "WITHDRAW"] as HRTab[]).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 text-sm font-bold transition-all duration-200 rounded-lg ${
+                  activeTab === tab
+                    ? "bg-white text-[#334155] shadow-sm"
+                    : "text-[#64748B] hover:text-[#334155]"
+                }`}
+              >
+                {tab === "LIFELINE" ? "Lifeline" : "Withdraw"}
+              </button>
+            ))}
+          </div>
 
-          <button
-            onClick={() => setActiveTab("WITHDRAW")}
-            className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-2 sm:px-6 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-              activeTab === "WITHDRAW"
-                ? "bg-indigo-900 text-white shadow-md"
-                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-            }`}
-          >
-            <WalletCards size={16} />
-            <span className="hidden xs:block">Withdraw</span>
-            <span className="block xs:hidden">Employee Withdraw</span>
-          </button>
+          {/* Search and Pagination Controls */}
+          <div className="flex items-center flex-grow justify-end gap-3 max-w-2xl">
+            <div className="flex-grow">
+              <TableInputField
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+            </div>
+
+            <div className="flex items-center border border-gray-200 rounded-lg px-3 py-3 bg-white shadow-sm min-w-[140px]">
+              <select
+                value={selectedValue}
+                onChange={(e) => setSelectedValue(Number(e.target.value))}
+                className="bg-transparent outline-none text-sm font-medium text-gray-700 cursor-pointer w-full"
+              >
+                {entriesOptions.map((num) => (
+                  <option key={num} value={num}>
+                    {num} per page
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
-        {/* 3) Dynamic Content Area - Matching Padding */}
+        {/* 3) Content Area */}
         <div className="flex-grow p-2 sm:p-4 overflow-auto">
           {activeTab === "LIFELINE" ? (
             <EmployeeLifeline
               triggerAdd={
                 triggerModal.tab === "LIFELINE" ? triggerModal.count : 0
               }
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
             />
           ) : (
             <EmployeeWithdraw
               triggerAdd={
                 triggerModal.tab === "WITHDRAW" ? triggerModal.count : 0
               }
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
             />
           )}
         </div>
       </div>
+
       <div className="mt-auto border-t-5 border-gray-200">
         <Footer />
       </div>

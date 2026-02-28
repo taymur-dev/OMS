@@ -1,7 +1,5 @@
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
@@ -19,8 +17,9 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { BASE_URL } from "../../Content/URL";
+import { RiInboxArchiveLine, RiBriefcaseLine } from "react-icons/ri";
 
-type ModalT = "ADD" | "EDIT" | "DELETE" | "VIEW" |  "";
+type ModalT = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 type Job = {
   id: number;
   job_title: string;
@@ -29,19 +28,20 @@ type Job = {
   date?: string;
 };
 
-const pageSizes = [5, 10, 20, 50];
+interface JobsProps {
+  triggerRecruit: number;
+  externalSearch: string;
+  externalPageSize: number;
+}
 
-export const Jobs = ({ triggerRecruit }: {  triggerRecruit: number }) => {
+export const Jobs = ({ triggerRecruit, externalSearch, externalPageSize }: JobsProps) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
 
   const [isOpenModal, setIsOpenModal] = useState<ModalT>("");
   const [jobs, setJobs] = useState<Job[]>([]);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-
   const [pageNo, setPageNo] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const [searchTerm, setSearchTerm] = useState("");
 
   const handleToggleModal = (active: ModalT) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
@@ -78,108 +78,99 @@ export const Jobs = ({ triggerRecruit }: {  triggerRecruit: number }) => {
     getJobs();
   }, [getJobs]);
 
-   useEffect(() => {
-      if (triggerRecruit > 0) {
-        setIsOpenModal("ADD");
-      }
-    }, [triggerRecruit]);
+  useEffect(() => {
+    if (triggerRecruit > 0) {
+      setIsOpenModal("ADD");
+    }
+  }, [triggerRecruit]);
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
 
   const filteredJobs = useMemo(() => {
     return jobs
       .filter((job) =>
-        job.job_title.toLowerCase().includes(searchTerm.toLowerCase()),
+        job.job_title.toLowerCase().includes(externalSearch.toLowerCase())
       )
       .sort((a, b) => a.id - b.id);
-  }, [jobs, searchTerm]);
+  }, [jobs, externalSearch]);
 
-  const handleIncrementPageButton = () => setPageNo((p) => p + 1);
-  const handleDecrementPageButton = () => setPageNo((p) => Math.max(p - 1, 1));
+  const totalNum = filteredJobs.length;
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const endIndex = startIndex + externalPageSize;
+  const paginatedJobs = filteredJobs.slice(startIndex, endIndex);
+
+  const handleIncrementPageButton = () => {
+    const totalPages = Math.ceil(totalNum / externalPageSize);
+    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
+  };
+  const handleDecrementPageButton = () => {
+    if (pageNo > 1) setPageNo((prev) => prev - 1);
+  };
 
   if (loader) return <Loader />;
 
- 
-
   return (
-    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
-       
-
-
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            {/* Left Side: Show entries */}
-            <div className="text-sm flex items-center">
-              <span>Show</span>
-              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                <select
-                  value={limit}
-                  onChange={(e) => {
-                    setLimit(Number(e.target.value));
-                    setPageNo(1);
-                  }}
-                  className="bg-transparent outline-none py-1 cursor-pointer"
-                >
-                  {pageSizes.map((num) => (
-                    <option key={num} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-              </span>
-              <span className="hidden xs:inline">entries</span>
-            </div>
-
-            {/* Right Side: Search Input */}
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
-          </div>
-        </div>
-
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto">
-          <div className="min-w-[600px]">
-            {/* Sticky Table Header */}
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      <div className="overflow-auto">
+        <div className="min-w-[600px]">
+          {/* Header Section aligned with UsersDetails */}
+          <div className="px-4 pt-0.5">
             <div
-              className="grid grid-cols-3 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
+              className="grid grid-cols-3 
+              bg-blue-400 text-white rounded-lg items-center font-bold
+              text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
-              <span>Sr#</span>
-              <span>Job Title</span>
-              <span className="text-center">Actions</span>
+              <span className="text-left">Sr#</span>
+              <span className="text-left">Job Title</span>
+              <span className="text-right pr-10">Actions</span>
             </div>
+          </div>
 
-            {/* Table Body */}
-            {filteredJobs.slice((pageNo - 1) * limit, pageNo * limit).length ===
-            0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
-                No records available at the moment!
+          {/* Table Body Section */}
+          <div className="px-4 py-2">
+            {paginatedJobs.length === 0 ? (
+              <div className="bg-gray-50 rounded-lg border-2 border-dashed p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">No records available at the moment!</p>
+                <p className="text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              filteredJobs
-                .slice((pageNo - 1) * limit, pageNo * limit)
-                .map((job, index) => (
+              <div className="flex flex-col gap-2">
+                {paginatedJobs.map((job, index) => (
                   <div
                     key={job.id}
-                    className="grid grid-cols-3 border-b border-x border-gray-200 text-gray-800 items-center
-                   text-sm p-2 hover:bg-gray-50 transition"
+                    className="grid grid-cols-3 
+                    items-center p-1 gap-3 text-sm bg-white 
+                    border border-gray-100 rounded-lg 
+                    hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
-                    <span>{(pageNo - 1) * limit + index + 1}</span>
-                    <span className="truncate font-medium">
-                      {job.job_title}
+                    <span className="text-gray-500 font-medium pl-2">
+                      {startIndex + index + 1}
                     </span>
-                    <span className="flex flex-nowrap justify-center gap-1">
-                      <EditButton
-                        handleUpdate={() => {
-                          setSelectedJob(job);
-                          handleToggleModal("EDIT");
-                        }}
-                      />
+
+                    <div className="flex items-center gap-3 overflow-hidden">
+                      <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 flex-shrink-0">
+                        <RiBriefcaseLine size={20} />
+                      </div>
+                      <span className="truncate font-semibold text-gray-800">
+                        {job.job_title}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-1 pr-2">
                       <ViewButton
                         handleView={() => {
                           setSelectedJob(job);
                           handleToggleModal("VIEW");
+                        }}
+                      />
+                      <EditButton
+                        handleUpdate={() => {
+                          setSelectedJob(job);
+                          handleToggleModal("EDIT");
                         }}
                       />
                       <DeleteButton
@@ -188,32 +179,32 @@ export const Jobs = ({ triggerRecruit }: {  triggerRecruit: number }) => {
                           handleToggleModal("DELETE");
                         }}
                       />
-                    </span>
+                    </div>
                   </div>
-                ))
+                ))}
+              </div>
             )}
           </div>
         </div>
+      </div>
 
-        {/* 4) Pagination placed under the table */}
-        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
-          <ShowDataNumber
-            start={filteredJobs.length === 0 ? 0 : (pageNo - 1) * limit + 1}
-            end={Math.min(pageNo * limit, filteredJobs.length)}
-            total={filteredJobs.length}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={handleDecrementPageButton}
-            handleIncrementPageButton={handleIncrementPageButton}
-          />
-        </div>
+      {/* BOTTOM SECTION (Pagination) */}
+      <div className="flex flex-row items-center justify-between py-4">
+        <ShowDataNumber
+          start={totalNum === 0 ? 0 : startIndex + 1}
+          end={Math.min(endIndex, totalNum)}
+          total={totalNum}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
       </div>
 
       {/* --- MODALS SECTION --- */}
       {isOpenModal === "ADD" && (
         <AddJob setModal={() => handleToggleModal("")} refreshJobs={getJobs} existingJobs={jobs} />
-
       )}
 
       {isOpenModal === "EDIT" && selectedJob && (
@@ -226,10 +217,7 @@ export const Jobs = ({ triggerRecruit }: {  triggerRecruit: number }) => {
       )}
 
       {isOpenModal === "VIEW" && selectedJob && (
-        <ViewJob
-          setIsOpenModal={() => handleToggleModal("")}
-          viewJob={selectedJob}
-        />
+        <ViewJob setIsOpenModal={() => handleToggleModal("")} viewJob={selectedJob} />
       )}
 
       {isOpenModal === "DELETE" && (
@@ -240,8 +228,6 @@ export const Jobs = ({ triggerRecruit }: {  triggerRecruit: number }) => {
           message="Are you sure you want to delete this job?"
         />
       )}
-
-     
     </div>
   );
 };

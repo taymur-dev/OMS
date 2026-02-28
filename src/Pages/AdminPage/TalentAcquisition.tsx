@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
+import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 import { Jobs } from "./Jobs";
 import { Applicants } from "./Applicants";
 import { Footer } from "../../Components/Footer";
-import { Briefcase, Users } from "lucide-react";
 
 // Define Tab Types
 type TabType = "JOBS" | "APPLICANTS";
+const entriesOptions = [5, 10, 15, 20, 30];
 
 export const TalentAcquisition = () => {
   const [activeTab, setActiveTab] = useState<TabType>("JOBS");
 
-  // Trigger system (similar to AttendanceHub)
+  // Lifted states for Search and Pagination to match People.tsx
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedValue, setSelectedValue] = useState(10);
+
   const [triggerAction, setTriggerAction] = useState<{
     tab: TabType;
     count: number;
@@ -35,13 +39,13 @@ export const TalentAcquisition = () => {
             <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
               {activeTab === "JOBS" && (
                 <CustomButton
-                  label="+ Jobs"
+                  label="Add Jobs"
                   handleToggle={() => handleActionClick("JOBS")}
                 />
               )}
               {activeTab === "APPLICANTS" && (
                 <CustomButton
-                  label="+ Applicants"
+                  label="Add Applicants"
                   handleToggle={() => handleActionClick("APPLICANTS")}
                 />
               )}
@@ -49,31 +53,48 @@ export const TalentAcquisition = () => {
           }
         />
 
-        {/* 2) Tab Navigation */}
-        <div className="flex items-center gap-1 px-2 sm:px-4  bg-white border-b border-gray-300">
-          <button
-            onClick={() => setActiveTab("JOBS")}
-            className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-2 sm:px-6 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-              activeTab === "JOBS"
-                ? "bg-indigo-900 text-white shadow-md"
-                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-            }`}
-          >
-            <Briefcase size={16} />
-            <span>Jobs</span>
-          </button>
+        {/* 2) Combined Navigation & Controls Section */}
+        <div className="px-4 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
+          {/* Pills-style Tab Navigation */}
+          <div className="flex w-full sm:w-auto p-1 bg-[#F1F5F9] rounded-xl border border-gray-200">
+            {(["JOBS", "APPLICANTS"] as TabType[]).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 text-sm font-bold transition-all duration-200 rounded-lg ${
+                  activeTab === tab
+                    ? "bg-white text-[#334155] shadow-sm"
+                    : "text-[#64748B] hover:text-[#334155]"
+                }`}
+              >
+                {tab.charAt(0) + tab.slice(1).toLowerCase()}
+              </button>
+            ))}
+          </div>
 
-          <button
-            onClick={() => setActiveTab("APPLICANTS")}
-            className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-2 sm:px-6 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 rounded-t-lg ${
-              activeTab === "APPLICANTS"
-                ? "bg-indigo-900 text-white shadow-md"
-                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-            }`}
-          >
-            <Users size={16} />
-            <span>Applicants</span>
-          </button>
+          {/* Search and Entries Controls */}
+          <div className="flex items-center flex-grow justify-end gap-3 max-w-2xl">
+            <div className="flex-grow">
+              <TableInputField
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+            </div>
+
+            <div className="flex items-center border border-gray-200 rounded-lg px-3 py-3 bg-white shadow-sm min-w-[140px]">
+              <select
+                value={selectedValue}
+                onChange={(e) => setSelectedValue(Number(e.target.value))}
+                className="bg-transparent outline-none text-sm font-medium text-gray-700 cursor-pointer w-full"
+              >
+                {entriesOptions.map((num) => (
+                  <option key={num} value={num}>
+                    {num} per page
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
         {/* 3) Content Area */}
@@ -83,6 +104,8 @@ export const TalentAcquisition = () => {
               triggerRecruit={
                 triggerAction.tab === "JOBS" ? triggerAction.count : 0
               }
+              externalSearch={searchTerm} // Pass this
+              externalPageSize={selectedValue}
             />
           )}
 
@@ -91,6 +114,8 @@ export const TalentAcquisition = () => {
               triggerRecruit={
                 triggerAction.tab === "APPLICANTS" ? triggerAction.count : 0
               }
+              externalSearch={searchTerm} // Pass this
+              externalPageSize={selectedValue}
             />
           )}
         </div>

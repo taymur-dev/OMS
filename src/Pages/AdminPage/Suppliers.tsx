@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
-import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
@@ -22,9 +21,13 @@ import {
 } from "../../redux/NavigationSlice";
 import { BASE_URL } from "../../Content/URL";
 
-const numbers = [10, 25, 50, 100];
-
-type SuppliersT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
+// Icons to match UsersDetails style
+import {
+  RiPhoneLine,
+  RiMapPinLine,
+  RiInboxArchiveLine,
+  RiUserFill,
+} from "react-icons/ri";
 
 interface Supplier {
   supplierId: number;
@@ -34,7 +37,19 @@ interface Supplier {
   supplierAddress: string;
 }
 
-export const Suppliers = ({ triggerAdd }: { triggerAdd: number }) => {
+interface SuppliersProps {
+  triggerAdd: number;
+  externalSearch: string;
+  externalPageSize: number;
+}
+
+type SuppliersT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
+
+export const Suppliers = ({
+  triggerAdd,
+  externalSearch,
+  externalPageSize,
+}: SuppliersProps) => {
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
@@ -43,8 +58,6 @@ export const Suppliers = ({ triggerAdd }: { triggerAdd: number }) => {
 
   const [isOpenModal, setIsOpenModal] = useState<SuppliersT>("");
   const [pageNo, setPageNo] = useState(1);
-  const [selectedValue, setSelectedValue] = useState(10);
-  const [searchTerm, setSearchTerm] = useState("");
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(
@@ -55,206 +68,199 @@ export const Suppliers = ({ triggerAdd }: { triggerAdd: number }) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
   };
 
-  const handleChangeShowData = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    setSelectedValue(Number(event.target.value));
-    setPageNo(1);
-  };
-
-  const handleIncrementPageButton = () => {
-    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    setPageNo((prev) => Math.max(prev - 1, 1));
-  };
-
   const handleGetAllSupplier = useCallback(async () => {
+    dispatch(navigationStart());
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getSuppliers`, {
         headers: { Authorization: token || "" },
       });
-
       const sortedData = (res.data.data || []).sort(
         (a: Supplier, b: Supplier) => a.supplierId - b.supplierId,
       );
-
       setSuppliers(sortedData);
+      dispatch(navigationSuccess("All Suppliers"));
     } catch (error) {
       console.error("Error fetching suppliers:", error);
       toast.error("Failed to fetch suppliers");
     }
-  }, [token]);
+  }, [token, dispatch]);
+
+  useEffect(() => {
+    document.title = "(OMS) All Suppliers";
+    handleGetAllSupplier();
+  }, [handleGetAllSupplier]);
+
+  // Sync with external filters
+  useEffect(() => {
+    setPageNo(1);
+  }, [externalSearch, externalPageSize]);
+
+  useEffect(() => {
+    if (triggerAdd && triggerAdd > 0) {
+      setIsOpenModal("ADD");
+    }
+  }, [triggerAdd]);
+
+  const filteredSuppliers = suppliers.filter(
+    (item) =>
+      item.supplierName.toLowerCase().includes(externalSearch.toLowerCase()) ||
+      item.supplierEmail.toLowerCase().includes(externalSearch.toLowerCase()) ||
+      item.supplierContact.includes(externalSearch) ||
+      item.supplierAddress.toLowerCase().includes(externalSearch.toLowerCase()),
+  );
+
+  const totalNum = filteredSuppliers.length;
+  const startIndex = (pageNo - 1) * externalPageSize;
+  const endIndex = startIndex + externalPageSize;
+  const paginatedData = filteredSuppliers.slice(startIndex, endIndex);
+
+  const handleIncrementPageButton = () => {
+    const totalPages = Math.ceil(totalNum / externalPageSize);
+    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
+  };
+
+  const handleDecrementPageButton = () => {
+    if (pageNo > 1) setPageNo((prev) => prev - 1);
+  };
 
   const handleDeleteSupplier = async () => {
     if (!deleteId) return;
     try {
       const res = await axios.delete(
         `${BASE_URL}/api/admin/deleteSupplier/${deleteId}`,
-        {
-          headers: { Authorization: token || "" },
-        },
+        { headers: { Authorization: token || "" } },
       );
       toast.success(res.data.message);
       handleGetAllSupplier();
       setIsOpenModal("");
       setDeleteId(null);
     } catch (error) {
-      console.error(error);
+      console.log(error);
       toast.error("Failed to delete supplier");
     }
   };
 
-  useEffect(() => {
-    document.title = "(OMS) All Suppliers";
-    dispatch(navigationStart());
-    handleGetAllSupplier();
-    const timer = setTimeout(
-      () => dispatch(navigationSuccess("All Suppliers")),
-      1000,
-    );
-    return () => clearTimeout(timer);
-  }, [dispatch, handleGetAllSupplier]);
-
-    useEffect(() => {
-      if (triggerAdd && triggerAdd > 0) {
-        setIsOpenModal("ADD");
-      }
-    }, [triggerAdd]);
-
-  const filteredSuppliers = suppliers.filter((item) =>
-    item.supplierName.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
-
-  useEffect(() => {
-    setPageNo(1);
-  }, [searchTerm]);
-
-  const totalPages = Math.ceil(filteredSuppliers.length / selectedValue);
-
-  const paginatedData = filteredSuppliers.slice(
-    (pageNo - 1) * selectedValue,
-    pageNo * selectedValue,
-  );
-
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow bg-gray overflow-hidden">
-      <div className="min-h-screen w-full flex flex-col  bg-white">
-        {/* 1 & 3) Table Title with Add Supplier button as the rightElement */}
-
-        {/* Top Bar / Filter Row */}
-        <div className="p-2">
-          <div className="flex flex-row items-center justify-between text-gray-800 gap-2">
-            {/* Left Side: Show entries */}
-            <div className="text-sm flex items-center">
-              <span>Show</span>
-              <span className="bg-gray-100 border border-gray-300 rounded mx-1 px-1">
-                <select
-                  value={selectedValue}
-                  onChange={handleChangeShowData}
-                  className="bg-transparent outline-none py-1 cursor-pointer"
-                >
-                  {numbers.map((num, index) => (
-                    <option key={index} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-              </span>
-              <span className="hidden xs:inline">entries</span>
-            </div>
-
-            {/* Right Side: Search Input */}
-            <TableInputField
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
-          </div>
-        </div>
-
-        {/* --- MIDDLE SECTION (Scrollable Table) --- */}
-        <div className="overflow-auto">
-          <div className="min-w-[900px]">
-            {/* Sticky Table Header - Using grid-cols-6 to match the 6 columns below */}
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+      <div className="overflow-auto">
+        <div className="min-w-[1000px]">
+          {/* Header Row */}
+          <div className="px-4 pt-0.5">
             <div
-              className="grid grid-cols-6 bg-indigo-900 text-white items-center font-semibold
-             text-sm sticky top-0 z-10 p-2"
+              className="grid grid-cols-[60px_1.5fr_1fr_1.5fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold
+    text-xs  tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
               <span>Sr#</span>
-              <span>Supplier Name</span>
-              <span>Email</span>
-              <span>Phone No</span>
+              <span>Name & Email</span>
+              <span>Contact</span>
               <span>Address</span>
-              <span className="text-center">Actions</span>
+              <span className="text-right pr-10">Actions</span>
             </div>
+          </div>
 
-            {/* Table Body */}
+          {/* Table Body */}
+          <div className="px-4 py-2">
             {paginatedData.length === 0 ? (
-              <div className="text-gray-800 text-lg text-center py-10">
-                No records available at the moment!
+              <div className="bg-gray-50 rounded-lg border-2 border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">No records available!</p>
+                <p className="text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              paginatedData.map((item, index) => (
-                <div
-                  key={item.supplierId}
-                  className="grid grid-cols-6 border-b border-x border-gray-200 text-gray-800 items-center
-                 text-sm p-2 hover:bg-gray-50 transition"
-                >
-                  <span>{index + 1 + (pageNo - 1) * selectedValue}</span>
-                  <span className="truncate">{item.supplierName}</span>
-                  <span className="truncate">{item.supplierEmail}</span>
-                  <span>{item.supplierContact}</span>
-                  <span className="truncate">{item.supplierAddress}</span>
+              <div className="flex flex-col gap-2">
+                {paginatedData.map((item, index) => (
+                  <div
+                    key={item.supplierId}
+                    className="grid grid-cols-[60px_1.5fr_1fr_1.5fr_auto] items-center p-1 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
+                  >
+                    {/* Sr# */}
+                    <span className="text-gray-500 font-medium">
+                      {startIndex + index + 1}
+                    </span>
 
-                  <span className="flex flex-nowrap justify-center gap-1">
-                    <EditButton
-                      handleUpdate={() => {
-                        setSelectedSupplier(item);
-                        handleToggleViewModal("EDIT");
-                      }}
-                    />
-                    <ViewButton
-                      handleView={() => {
-                        setSelectedSupplier(item);
-                        handleToggleViewModal("VIEW");
-                      }}
-                    />
-                    <DeleteButton
-                      handleDelete={() => {
-                        setDeleteId(item.supplierId);
-                        handleToggleViewModal("DELETE");
-                      }}
-                    />
-                  </span>
-                </div>
-              ))
+                    {/* Name with Avatar placeholder */}
+                    <div className="flex items-center gap-3 overflow-hidden">
+                      <div
+                        className="h-10 w-10 rounded-full bg-blue-400 flex items-center justify-center
+               text-white flex-shrink-0 overflow-hidden border-2 border-gray-100 shadow-sm"
+                      >
+                        <RiUserFill size={28} />
+                      </div>
+
+                      <div className="flex flex-col min-w-0">
+                        <span className="truncate font-semibold text-gray-800 text-sm">
+                          {item.supplierName}
+                        </span>
+                        <span className="truncate text-gray-400 text-xs">
+                          {item.supplierEmail}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Contact */}
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <RiPhoneLine
+                        className="text-purple-700 flex-shrink-0"
+                        size={14}
+                      />
+                      <span>{item.supplierContact}</span>
+                    </div>
+
+                    {/* Address */}
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <RiMapPinLine
+                        className="text-orange-400 flex-shrink-0"
+                        size={14}
+                      />
+                      <span className="truncate">{item.supplierAddress}</span>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center justify-end gap-1 pr-2">
+                      <ViewButton
+                        handleView={() => {
+                          setSelectedSupplier(item);
+                          handleToggleViewModal("VIEW");
+                        }}
+                      />
+                      <EditButton
+                        handleUpdate={() => {
+                          setSelectedSupplier(item);
+                          handleToggleViewModal("EDIT");
+                        }}
+                      />
+                      <DeleteButton
+                        handleDelete={() => {
+                          setDeleteId(item.supplierId);
+                          handleToggleViewModal("DELETE");
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
-
-        {/* 4) Pagination placed under the table */}
-        <div className="flex flex-row sm:flex-row gap-2 items-center justify-between p-2">
-          <ShowDataNumber
-            start={
-              filteredSuppliers.length === 0
-                ? 0
-                : (pageNo - 1) * selectedValue + 1
-            }
-            end={Math.min(pageNo * selectedValue, filteredSuppliers.length)}
-            total={filteredSuppliers.length}
-          />
-          <Pagination
-            pageNo={pageNo}
-            handleDecrementPageButton={handleDecrementPageButton}
-            handleIncrementPageButton={handleIncrementPageButton}
-          />
-        </div>
       </div>
 
-      {/* --- MODALS SECTION --- */}
+      {/* Pagination Section */}
+      <div className="flex flex-row items-center justify-between py-4">
+        <ShowDataNumber
+          start={totalNum === 0 ? 0 : startIndex + 1}
+          end={Math.min(endIndex, totalNum)}
+          total={totalNum}
+        />
+        <Pagination
+          pageNo={pageNo}
+          handleDecrementPageButton={handleDecrementPageButton}
+          handleIncrementPageButton={handleIncrementPageButton}
+        />
+      </div>
+
+      {/* Modals */}
       {isOpenModal === "ADD" && (
         <AddSupplier
           setModal={() => handleToggleViewModal("")}

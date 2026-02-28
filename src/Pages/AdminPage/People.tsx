@@ -4,14 +4,14 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
 
 import { UsersDetails } from "./UsersDetails";
-// import { CustomerDetail } from "./CustomerDetail";
-// import { Suppliers } from "./Suppliers";
+import { CustomerDetail } from "./CustomerDetail";
+import { Suppliers } from "./Suppliers";
 
 import { useSearchParams } from "react-router-dom";
 import { Footer } from "../../Components/Footer";
 
 type TabType = "USERS" | "CUSTOMERS" | "SUPPLIERS";
-const entriesOptions = [5 , 10, 15, 20, 30];
+const entriesOptions = [5, 10, 15, 20, 30];
 
 export const People = () => {
   const [searchParams] = useSearchParams();
@@ -65,13 +65,13 @@ export const People = () => {
               )}
               {activeTab === "CUSTOMERS" && (
                 <CustomButton
-                  label="Customers"
+                  label="Add Customer"
                   handleToggle={() => handleActionClick("CUSTOMERS")}
                 />
               )}
               {activeTab === "SUPPLIERS" && (
                 <CustomButton
-                  label="Suppliers"
+                  label="Add Supplier"
                   handleToggle={() => handleActionClick("SUPPLIERS")}
                 />
               )}
@@ -79,16 +79,13 @@ export const People = () => {
           }
         />
 
-        {/* 2. Unified Header (Tabs + Search + Page Size) */}
         <div className="px-4 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
-          
-          {/* Left: Tab Pills */}
-          <div className="inline-flex p-1 bg-[#F1F5F9] rounded-xl border border-gray-200">
+          <div className="flex w-full sm:w-auto p-1 bg-[#F1F5F9] rounded-xl border border-gray-200">
             {(["USERS", "CUSTOMERS", "SUPPLIERS"] as TabType[]).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-2 text-sm font-bold transition-all duration-200 rounded-lg ${
+                className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 text-sm font-bold transition-all duration-200 rounded-lg ${
                   activeTab === tab
                     ? "bg-white text-[#334155] shadow-sm"
                     : "text-[#64748B] hover:text-[#334155]"
@@ -99,7 +96,6 @@ export const People = () => {
             ))}
           </div>
 
-          {/* Right: Search and Entries (Matched to screenshot) */}
           <div className="flex items-center flex-grow justify-end gap-3 max-w-2xl">
             <div className="flex-grow">
               <TableInputField
@@ -135,7 +131,7 @@ export const People = () => {
             />
           )}
 
-          {/* {activeTab === "CUSTOMERS" && (
+          {activeTab === "CUSTOMERS" && (
             <CustomerDetail
               triggerAdd={triggerModal.tab === "CUSTOMERS" ? triggerModal.count : 0}
               externalSearch={searchTerm}
@@ -149,7 +145,7 @@ export const People = () => {
               externalSearch={searchTerm}
               externalPageSize={selectedValue}
             />
-          )} */}
+          )}
         </div>
       </div>
 

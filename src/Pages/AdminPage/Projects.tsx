@@ -15,7 +15,6 @@ export const Projects = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const isAdmin = currentUser?.role === "admin";
 
-  // Trigger system (same pattern as AttendanceHub)
   const [triggerModal, setTriggerModal] = useState<{
     tab: TabType;
     count: number;
