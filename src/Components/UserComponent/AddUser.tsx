@@ -8,6 +8,7 @@ import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 import { toast } from "react-toastify";
+import { FiUpload, FiX } from "react-icons/fi";
 
 export interface IAddUserValues {
   userId: number | string;
@@ -20,6 +21,7 @@ export interface IAddUserValues {
   role: string;
   password: string;
   confirmPassword?: string;
+  image?: string; // Add image field to store URL
 }
 
 export interface IAddUserProps extends React.ComponentPropsWithoutRef<"div"> {
@@ -46,6 +48,7 @@ const initialState: IAddUserValues = {
   userId: "",
   password: "",
   confirmPassword: "",
+  image: "",
 };
 
 const isValidEmail = (email: string): boolean => {
@@ -70,6 +73,7 @@ export const AddUser = ({
 
   // Image Upload States
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
 
   useEffect(() => {
     if (initialValues) {
@@ -77,6 +81,10 @@ export const AddUser = ({
         ...initialValues,
         role: "User",
       });
+
+      if (initialValues.image) {
+        setImagePreview(`${BASE_URL}/${initialValues.image}`);
+      }
     }
   }, [initialValues]);
 
@@ -98,7 +106,6 @@ export const AddUser = ({
 
     if (name === "email") {
       value = value.replace(/^\s+/, "");
-
       value = value.replace(/[^a-zA-Z0-9@._+-]/g, "");
 
       const [local, domain] = value.split("@");
@@ -148,6 +155,42 @@ export const AddUser = ({
     setUserData({ ...userData, [name]: value });
   };
 
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        toast.error("Please select an image file");
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Image size should be less than 5MB");
+        return;
+      }
+
+      setSelectedFile(file);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedFile(null);
+    setImagePreview("");
+    // Reset file input
+    const fileInput = document.getElementById(
+      "image-upload",
+    ) as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
+  };
+
   const handlerSubmitted = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (viewType === "ADD") {
@@ -160,7 +203,7 @@ export const AddUser = ({
   const prepareFormData = () => {
     const data = new FormData();
     Object.entries(userData).forEach(([key, value]) => {
-      if (value !== undefined && key !== "confirmPassword") {
+      if (value !== undefined && key !== "confirmPassword" && key !== "image") {
         data.append(key, value.toString());
       }
     });
@@ -213,6 +256,7 @@ export const AddUser = ({
       toast.success("User added successfully", { toastId: "user-success" });
       setUserData(initialState);
       setSelectedFile(null);
+      setImagePreview("");
       handlerGetUsers();
       onSuccesAction();
     } catch (error: unknown) {
@@ -282,7 +326,7 @@ export const AddUser = ({
           }}
         >
           {/* ===== Header ===== */}
-          <div className=" bg-indigo-900 rounded px-4">
+          <div className="bg-indigo-900 rounded px-4">
             <div className="text-white">
               <Title setModal={setModal}>{viewType} USER</Title>
             </div>
@@ -290,6 +334,8 @@ export const AddUser = ({
 
           {/* ===== Body ===== */}
           <div className="mx-4 my-4 grid grid-cols-1 sm:grid-cols-2 width-full gap-4">
+            {/* Image Upload Field */}
+
             <InputField
               labelName="Name *"
               type="text"
@@ -352,6 +398,60 @@ export const AddUser = ({
                 inputVal={userData.address}
               />
             </div>
+
+            <div className="md:col-span-2 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Profile Image
+              </label>
+              <div className="flex items-start gap-4">
+                {/* Image Preview */}
+                {imagePreview && (
+                  <div className="relative">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                    >
+                      <FiX size={14} />
+                    </button>
+                  </div>
+                )}
+
+                {/* Upload Button */}
+                <div className="flex-1">
+                  <div className="flex items-center justify-center w-full">
+                    <label
+                      htmlFor="image-upload"
+                      className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300
+                       border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <FiUpload className="w-8 h-8 mb-2 text-gray-500" />
+                        <p className="mb-2 text-sm text-gray-500">
+                          <span className="font-semibold">Click to upload</span>{" "}
+                          or drag and drop
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          PNG, JPG or JPEG (MAX. 5MB)
+                        </p>
+                      </div>
+                      <input
+                        id="image-upload"
+                        type="file"
+                        className="hidden"
+                        accept="image/png, image/jpeg, image/jpg"
+                        onChange={handleImageChange}
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* ===== Footer ===== */}
@@ -360,11 +460,7 @@ export const AddUser = ({
             <AddButton
               loading={loading}
               label={
-                loading
-                  ? "Processing"
-                  : viewType === "ADD"
-                    ? "Save"
-                    : "Update"
+                loading ? "Processing" : viewType === "ADD" ? "Save" : "Update"
               }
             />
           </div>

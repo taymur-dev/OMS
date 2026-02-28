@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { FaTasks, FaUserAltSlash, FaArrowRight } from "react-icons/fa"; 
+import { FaTasks, FaUserAltSlash, FaArrowRight } from "react-icons/fa";
 import { FaComputer } from "react-icons/fa6";
 import { BiUser } from "react-icons/bi";
 import { CiViewList } from "react-icons/ci";
@@ -48,7 +48,7 @@ interface CardConfigItem {
 const CARD_CONFIG: CardConfigItem[] = [
   {
     key: "workingDays",
-    titleName: "Work Days",
+    titleName: "Working  Days",
     icon: <FaComputer />,
     style: "bg-indigo-900",
     path: "/user/reports",
@@ -252,7 +252,7 @@ export const EmployeeDashboard = () => {
             </div>
             {/* View More Button for Todo */}
             <div className="p-3 border-t border-gray-100 bg-gray-50 text-center">
-              <button 
+              <button
                 onClick={() => navigate("/users/todo")}
                 className="text-indigo-700 text-sm font-semibold flex items-center justify-center gap-2
                  hover:text-indigo-900 transition-colors w-full"
@@ -317,7 +317,7 @@ export const EmployeeDashboard = () => {
             </div>
             {/* View More Button for Projects */}
             <div className="p-3 border-t border-gray-100 bg-gray-50 text-center">
-              <button 
+              <button
                 onClick={() => navigate("/users/progress")} // Adjust path if needed
                 className="text-indigo-700 text-sm font-semibold flex items-center justify-center gap-2
                  hover:text-indigo-900 transition-colors w-full"

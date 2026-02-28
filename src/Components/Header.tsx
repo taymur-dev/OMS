@@ -84,28 +84,29 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
             />
           </button>
         </div>
+
         <div className="flex items-center gap-2 sm:gap-3 md:gap-6">
           <div className="flex items-center gap-2 sm:gap-3 relative">
             {/* Notification Bell */}
             <div
-              className="relative flex items-center justify-center h-7 w-7 sm:h-8 sm:w-8 cursor-pointer
-               hover:bg-gray-100 rounded-full transition-colors"
+              className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 cursor-pointer
+       hover:bg-gray-100 rounded-full transition-colors"
               onClick={() => setIsNotifOpen(!isNotifOpen)}
             >
               {notifications.length > 0 && (
                 <>
                   <span className="absolute inset-0 animate-ping rounded-full bg-sky-400 opacity-75"></span>
                   <span
-                    className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-600 flex 
-                  items-center justify-center text-[8px] sm:text-[10px] text-white font-bold z-10"
+                    className="absolute top-1 right-1 h-5 w-5 rounded-full bg-red-600 flex 
+          items-center justify-center text-[10px] sm:text-[12px] text-white font-bold z-10"
                   >
                     {notifications.length > 5 ? "5+" : notifications.length}
                   </span>
                 </>
               )}
               <CiBellOn
-                size={18}
-                className="sm:w-5 sm:h-5 relative text-gray-700"
+                size={32} // Increased icon size
+                className="relative text-gray-700" // Removed sm:w-5 sm:h-5 to let size prop take over
               />
               {isNotifOpen && (
                 <NotificationDropdown
@@ -130,8 +131,8 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
               onClick={() => handleToggleViewModal()}
               src={Avatar || currentUser?.image}
               alt={currentUser?.name || "User profile"}
-              className="h-8 w-8 sm:h-9 sm:w-10 rounded-full object-cover cursor-pointer active:scale-95
-                 transition duration-200 border-2 border-gray-200 hover:border-blue-400"
+              className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover cursor-pointer active:scale-95
+         transition duration-200 border-2 border-gray-200 hover:border-blue-400"
             />
           </div>
         </div>

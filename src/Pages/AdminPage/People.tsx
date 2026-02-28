@@ -11,7 +11,7 @@ import { useSearchParams } from "react-router-dom";
 import { Footer } from "../../Components/Footer";
 
 type TabType = "USERS" | "CUSTOMERS" | "SUPPLIERS";
-const entriesOptions = [10, 25, 50, 100];
+const entriesOptions = [5 , 10, 15, 20, 30];
 
 export const People = () => {
   const [searchParams] = useSearchParams();

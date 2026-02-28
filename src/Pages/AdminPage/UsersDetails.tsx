@@ -21,7 +21,7 @@ import {
   RiLockPasswordFill,
   RiPhoneLine,
   RiCalendarLine,
-  RiBriefcaseLine
+  RiBriefcaseLine,
 } from "react-icons/ri";
 
 type UserType = {
@@ -36,6 +36,7 @@ type UserType = {
   confirmPassword: string;
   role: string;
   loginStatus: string;
+  image?: string; // Add image field
 };
 
 // Added props to interface with People.tsx
@@ -172,20 +173,28 @@ export const UsersDetails = ({
     });
   };
 
+  // Get image URL
+  const getImageUrl = (imagePath: string | undefined) => {
+    if (!imagePath) return null;
+    return `${BASE_URL}/${imagePath}`;
+  };
+
   return (
     <div className="flex flex-col flex-grow bg-white overflow-hidden">
       <div className="overflow-auto">
         <div className="min-w-[1000px]">
-          <div
-            className="grid grid-cols-6   text-black rounded items-center font-semibold
-              text-sm sticky top-0 z-10 p-4 gap-4" // Increased gap and padding for better breathability
-          >
-            <span className="pl-2">Sr#</span>
-            <span>User Details</span>
-            <span>Contact</span>
-            <span>Role</span>
-            <span>Joining Date</span>
-            <span className="text-right pr-10">Actions</span>
+          <div className="px-4 pt-4">
+            <div
+              className="grid grid-cols-6 text-black rounded items-center font-semibold
+                text-sm sticky top-0 z-10 gap-4"
+            >
+              <span className="pl-2">Sr#</span>
+              <span>User Details</span>
+              <span>Contact</span>
+              <span>Role</span>
+              <span>Joining Date</span>
+              <span className="text-right pr-10">Actions</span>
+            </div>
           </div>
 
           <div className="p-4">
@@ -206,15 +215,41 @@ export const UsersDetails = ({
                       {startIndex + index + 1}
                     </span>
 
-                    {/* Column 2: Name */}
+                    {/* Column 2: User Details with Image */}
                     <div className="flex items-center gap-3 overflow-hidden">
-                      <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 ?
-                      font-bold text-xl flex-shrink-0">
-                        {user.name.charAt(0).toUpperCase()}
+                      <div
+                        className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center
+                       text-blue-700 font-bold text-xl flex-shrink-0 overflow-hidden"
+                      >
+                        {user.image ? (
+                          <img
+                            src={getImageUrl(user.image) || ""}
+                            alt={user.name}
+                            className="h-full w-full object-cover"
+                            onError={(e) => {
+                              // Fallback to initials if image fails to load
+                              e.currentTarget.style.display = "none";
+                              e.currentTarget.parentElement?.classList.add(
+                                "flex",
+                                "items-center",
+                                "justify-center",
+                              );
+                              const fallback = document.createElement("span");
+                              fallback.className =
+                                "text-blue-700 font-bold text-xl";
+                              fallback.textContent = user.name
+                                .charAt(0)
+                                .toUpperCase();
+                              e.currentTarget.parentElement?.appendChild(
+                                fallback,
+                              );
+                            }}
+                          />
+                        ) : (
+                          user.name.charAt(0).toUpperCase()
+                        )}
                       </div>
                       <div className="flex flex-col min-w-0">
-                        {" "}
-                        {/* flex-col se email neeche ayega */}
                         <span className="truncate font-semibold text-gray-800 text-sm">
                           {user.name}
                         </span>
@@ -224,18 +259,19 @@ export const UsersDetails = ({
                       </div>
                     </div>
 
-                    {/* Column 4: Contact */}
+                    {/* Column 3: Contact */}
                     <div className="flex items-center gap-2 text-gray-600">
                       <RiPhoneLine
-                        className="text-gray-400 flex-shrink-0"
+                        className="text-blue-400 flex-shrink-0"
                         size={14}
                       />
                       <span>{user.contact}</span>
                     </div>
 
-                     <div className="flex items-center gap-2 text-gray-600">
+                    {/* Column 4: Role */}
+                    <div className="flex items-center gap-2 text-gray-600">
                       <RiBriefcaseLine
-                        className="text-gray-400 flex-shrink-0"
+                        className="text-green-400 flex-shrink-0"
                         size={14}
                       />
                       <span>{user.role}</span>
@@ -244,7 +280,7 @@ export const UsersDetails = ({
                     {/* Column 5: Date */}
                     <div className="flex items-center gap-2 text-gray-600">
                       <RiCalendarLine
-                        className="text-gray-400 flex-shrink-0"
+                        className="text-yellow-400 flex-shrink-0"
                         size={14}
                       />
                       <span>{formatDate(user.date)}</span>
@@ -317,6 +353,7 @@ export const UsersDetails = ({
                   email: editUser.email,
                   password: editUser.confirmPassword,
                   role: editUser.role,
+                  image: editUser.image, // Add image to initialValues
                 },
               }
             : {})}
