@@ -23,6 +23,7 @@ type QuotationItem = {
   id: string;
   refNo: string;
   customerName: string;
+  invoiceNo: string;
   date: string;
   items: CartItem[];
   subTotal: number;
@@ -60,6 +61,7 @@ export const Quotation = ({
       const res = await axios.get(`${BASE_URL}/api/admin/getQuotations`, {
         headers: { Authorization: token },
       });
+
       setQuotations(res.data?.data || []);
     } catch (error) {
       console.error("Failed to fetch quotations:", error);
@@ -96,11 +98,15 @@ export const Quotation = ({
   };
 
   // Logic: Filtering and Pagination
-  const filteredQuotations = quotations.filter(
-    (item) =>
-      item.refNo.toLowerCase().includes(externalSearch.toLowerCase()) ||
-      item.customerName.toLowerCase().includes(externalSearch.toLowerCase()),
-  );
+  const filteredQuotations = quotations.filter((item) => {
+    const search = externalSearch.toLowerCase();
+
+    return (
+      item.refNo.toLowerCase().includes(search) ||
+      item.customerName.toLowerCase().includes(search) ||
+      item.invoiceNo?.toLowerCase().includes(search)
+    );
+  });
 
   const totalNum = filteredQuotations.length;
   const startIndex = (pageNo - 1) * externalPageSize;
@@ -125,11 +131,12 @@ export const Quotation = ({
           {/* 1. Header Section - Aligned with UsersDetails */}
           <div className="px-0.5 pt-0.5">
             <div
-              className="grid grid-cols-[60px_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center
+              className="grid grid-cols-[60px_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center
            font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
               <span className="text-left">Sr#</span>
               <span className="text-left">Customer Name</span>
+              <span className="text-left">Invoice No</span>
               <span className="text-left">Ref Number</span>
               <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
@@ -148,18 +155,22 @@ export const Quotation = ({
                 {paginatedData.map((item, index) => (
                   <div
                     key={item.id}
-                    className="grid grid-cols-[60px_1fr_1fr_auto] items-center px-3 py-2 gap-3 text-sm bg-white border
+                    className="grid grid-cols-[60px_1fr_1fr_1fr_auto] items-center px-3 py-2 gap-3 text-sm bg-white border
                    border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
-                    <span className="text-gray-500 font-medium">
+                    <span className="text-gray-600 font-medium">
                       {startIndex + index + 1}
                     </span>
 
-                    <span className="text-gray-700 truncate">
+                    <span className="text-gray-600 truncate">
                       {item.customerName}
                     </span>
 
-                    <span className=" text-gray-800 truncate">
+                    <span className="text-gray-600 truncate">
+                      {item.invoiceNo}
+                    </span>
+
+                    <span className=" text-gray-600 truncate">
                       {item.refNo}
                     </span>
 

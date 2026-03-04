@@ -20,6 +20,7 @@ type ViewCustomerAccProps = {
 
 type CustomerAccountEntry = {
   id: number;
+  invoiceNo?: string;
   refNo: string;
   debit: number;
   credit: number;
@@ -99,9 +100,9 @@ export const ViewCustomerAcc = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
-      <div className="w-full max-w-5xl bg-white rounded overflow-hidden shadow-2xl border border-gray-300">
+      <div className="w-full max-w-5xl overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         {/* Header */}
-        <div className="bg-blue-400 rounded px-4">
+        <div className="bg-white rounded-xl border-t-5 border-blue-400">
           <div className="text-white">
             <Title setModal={setModal}>CUSTOMER ACCOUNT DETAILS</Title>
           </div>
@@ -155,6 +156,7 @@ export const ViewCustomerAcc = ({
                 <thead>
                   <tr className="bg-blue-400 text-white text-[11px] uppercase font-bold border-b border-gray-200">
                     <th className="px-3 py-2">Sr#</th>
+                    <th className="px-3 py-2">invoiceNo</th>
                     <th className="px-3 py-2">Ref No</th>
                     <th className="px-3 py-2 text-right">Debit</th>
                     <th className="px-3 py-2 text-right">Credit</th>
@@ -183,6 +185,9 @@ export const ViewCustomerAcc = ({
                       >
                         <td className="px-3 py-2 text-gray-500">{index + 1}</td>
                         <td className="px-3 py-2 font-semibold text-gray-700">
+                          {acc.invoiceNo}
+                        </td>
+                        <td className="px-3 py-2 font-semibold text-gray-700">
                           {acc.refNo}
                         </td>
                         <td className="px-3 py-2 text-right text-green-600">
@@ -200,7 +205,9 @@ export const ViewCustomerAcc = ({
                         <td className="px-3 py-2 text-right font-bold text-blue-400 bg-blue-50/30">
                           {Number(acc.netBalance).toFixed(2)}
                         </td>
-                        <td className="px-3 py-2 text-right font-medium">{acc.paymentMethod}</td>
+                        <td className="px-3 py-2 text-right font-medium">
+                          {acc.paymentMethod}
+                        </td>
                         <td className="px-3 py-2 text-right font-medium">
                           {formatDate(acc.paymentDate)}
                         </td>
@@ -214,7 +221,7 @@ export const ViewCustomerAcc = ({
         </div>
 
         {/* Footer */}
-        <div className="bg-blue-400 p-3 flex justify-between items-center">
+        <div className="bg-white p-3 flex justify-between items-center">
           <div className="text-white/70 text-[10px] flex items-center gap-2 px-2">
             <FaFileInvoiceDollar /> Total Entries: {accounts.length}
           </div>

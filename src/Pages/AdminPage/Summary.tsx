@@ -64,7 +64,7 @@ export const Summary = () => {
               />
             </div>
 
-            <div className="flex items-center border border-gray-200 rounded-lg px-3 py-3 bg-white shadow-sm min-w-[140px]">
+            <div className="flex items-center border border-gray-200 rounded-lg px-3 py-3 bg-white shadow-sm min-w-[110px]">
               <select
                 value={selectedValue}
                 onChange={(e) => setSelectedValue(Number(e.target.value))}

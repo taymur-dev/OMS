@@ -15,6 +15,7 @@ type ViewSupplierAccProps = {
 
 type SupplierAccountEntry = {
   id: number;
+  invoiceNo?: string;
   refNo: string;
   debit: number;
   credit: number;
@@ -94,9 +95,9 @@ export const ViewSupplierAcc = ({
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
-      <div className="w-full max-w-5xl bg-white rounded overflow-hidden shadow-2xl border border-gray-300">
+      <div className="w-full max-w-5xl overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         {/* Header Section */}
-        <div className="bg-blue-400 rounded px-4">
+        <div className="bg-white rounded-xl border-t-5 border-blue-400">
           <div className="text-white">
             <Title setModal={setModal}>SUPPLIER ACCOUNT DETAILS</Title>
           </div>
@@ -150,6 +151,9 @@ export const ViewSupplierAcc = ({
                       Sr#
                     </th>
                     <th className="p-2 text-[10px] font-bold text-gray-500 uppercase">
+                      invoiceNo
+                    </th>
+                    <th className="p-2 text-[10px] font-bold text-gray-500 uppercase">
                       Ref No
                     </th>
                     <th className="p-2 text-[10px] font-bold text-gray-500 uppercase text-red-600">
@@ -189,6 +193,9 @@ export const ViewSupplierAcc = ({
                         className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                       >
                         <td className="p-2 text-gray-600">{index + 1}</td>
+                        <td className="p-2 font-medium text-indigo-900">
+                          {acc.invoiceNo}
+                        </td>
                         <td className="p-2 font-medium text-indigo-900">
                           {acc.refNo}
                         </td>

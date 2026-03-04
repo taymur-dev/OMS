@@ -30,7 +30,7 @@ const columnBgStyles = (id: string) => {
     case "Working":
       return "bg-blue-100";
     case "Complete":
-      return "bg-blue-200";
+      return "bg-green-200";
     default:
       return "bg-slate-50";
   }
@@ -43,7 +43,7 @@ const columnHeaderBadge = (id: string) => {
     case "Working":
       return "bg-blue-100 text-[#000000]";
     case "Complete":
-      return "bg-blue-200 text-[#000000]";
+      return "bg-green-200 text-[#000000]";
     default:
       return "bg-gray-200 text-gray-600";
   }
@@ -58,7 +58,7 @@ const ProjectIcon = ({ name, status }: { name: string; status: string }) => {
     case "Working":
       return <BiCog className={`${iconClass} text-blue-600`} />;
     case "Complete":
-      return <BiCheckDouble className={`${iconClass} text-blue-600`} />;
+      return <BiCheckDouble className={`${iconClass} text-green-600`} />;
     default:
       return <BiRocket className={`${iconClass} text-blue-500`} />;
   }

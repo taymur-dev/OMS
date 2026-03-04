@@ -189,7 +189,7 @@ export const ProjectsDetails = ({
 
                     {/* Project Name (Icon Removed) */}
                     <div className="flex flex-col min-w-0">
-                      <span className="truncate font-semibold text-gray-800">
+                      <span className="truncate  text-gray-600">
                         {project.projectName}
                       </span>
                     </div>

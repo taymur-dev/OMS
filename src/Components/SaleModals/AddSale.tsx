@@ -185,7 +185,6 @@ export const AddSale = ({ setModal, handleGetsales }: AddSaleProps) => {
               value={selectedProject}
               handlerChange={(e) => setSelectedProject(e.target.value)}
               optionData={allProjects
-                .filter((p) => p.completionStatus === "Complete")
                 .map((p) => ({
                   id: p.id,
                   label: p.projectName,

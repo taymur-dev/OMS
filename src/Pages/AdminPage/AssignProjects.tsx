@@ -169,13 +169,13 @@ export const AssignProjects = ({
 
                     {isAdmin && (
                       <div className="flex items-center gap-3 overflow-hidden">
-                        <span className="truncate font-semibold text-gray-800">
+                        <span className="truncate  text-gray-600">
                           {item.name}
                         </span>
                       </div>
                     )}
 
-                    <div className="text-blue-600 truncate">
+                    <div className="text-gray-600 truncate">
                       {item.projectName}
                     </div>
 

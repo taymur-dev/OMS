@@ -4,14 +4,14 @@ import App from "./App.tsx";
 import { Provider } from "react-redux";
 import { persistor, store } from "./redux/Store.tsx";
 import { PersistGate } from "redux-persist/integration/react";
-import {  Slide, ToastContainer } from "react-toastify";
+import { Slide, ToastContainer } from "react-toastify";
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
       <App />
       <ToastContainer
         position="top-center" // Professional UI me mostly top-right best hota hai
-        autoClose={3000} // Faster auto-close for better UX
+        autoClose={1500} // Faster auto-close for better UX
         hideProgressBar={true} // Hide default progress bar for cleaner look
         newestOnTop={true} // Newest notification on top for better visibility
         closeOnClick // Allow closing on click
@@ -23,10 +23,9 @@ createRoot(document.getElementById("root")!).render(
         transition={Slide} // Smoother transition instead of Bounce
         style={{
           borderRadius: "8px", // Slightly rounded corners
-          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Soft shadow for depth
           fontSize: "14px", // Professional font size
         }}
       />
     </PersistGate>
-  </Provider>
+  </Provider>,
 );

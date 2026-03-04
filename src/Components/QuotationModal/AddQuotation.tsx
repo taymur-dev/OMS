@@ -124,7 +124,6 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
   };
 
   const projectOptions = projects
-    .filter((p) => p.completionStatus === "Complete")
     .map((p) => ({
       id: Number(p.id),
       label: p.projectName,

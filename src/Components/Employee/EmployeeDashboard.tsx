@@ -163,7 +163,7 @@ export const EmployeeDashboard = () => {
                 <div className=" rounded-xl text-indigo-900">
                   <CiViewList size={28} className="font-bold" />
                 </div>
-                <h3 className="text-gray-900 font-extrabold text-2xl tracking-tight">
+                <h3 className="text-gray-900 font-extrabold text-xl tracking-tight">
                   Todo List
                 </h3>
               </div>
@@ -226,7 +226,7 @@ export const EmployeeDashboard = () => {
                 <div className="rounded-xl text-indigo-900">
                   <FaTasks size={24} />
                 </div>
-                <h3 className="text-gray-900 font-extrabold text-2xl tracking-tight">
+                <h3 className="text-gray-900 font-extrabold text-xl tracking-tight">
                   Assigned Projects
                 </h3>
               </div>

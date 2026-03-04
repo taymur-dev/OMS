@@ -20,6 +20,7 @@ type SALET = "ADD" | "EDIT" | "DELETE" | "VIEW" | "";
 
 type Sale = {
   id: number;
+  invoiceNo: number;
   projectId: number;
   projectName: string;
   customerId: number;
@@ -135,9 +136,10 @@ export const Sales = ({
           {/* Increased to match UsersDetails min-width */}
           {/* Header Section */}
           <div className="px-0.5 pt-0.5">
-            <div className="grid grid-cols-[60px_1.5fr_1.5fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm">
+            <div className="grid grid-cols-[60px_1.5fr_1.5fr_1.5fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm">
               <span className="text-left">Sr#</span>
               <span className="text-left">Customer Name</span>
+              <span className="text-left">InvoiceNo</span>
               <span className="text-left">Project Name</span>
               <span className="text-left">Sale Date</span>
               <span className="text-right w-[140px] pr-4">Actions</span>
@@ -158,15 +160,20 @@ export const Sales = ({
                 {paginatedSales.map((sale, index) => (
                   <div
                     key={sale.id}
-                    className="grid grid-cols-[60px_1.5fr_1.5fr_1fr_auto] items-center px-3 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
+                    className="grid grid-cols-[60px_1.5fr_1.5fr_1.5fr_1fr_auto] items-center px-3 py-2 gap-3 text-sm
+                     bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
-                    <span className="text-gray-500 font-medium">
+                    <span className="text-gray-600 font-medium">
                       {startIndex + index + 1}
                     </span>
 
                     {/* Customer - Icons Removed */}
-                    <div className="text-gray-800  truncate">
+                    <div className="text-gray-600  truncate">
                       {sale.customerName}
+                    </div>
+
+                    <div className="text-gray-600  text-xs">
+                      {sale.invoiceNo}
                     </div>
 
                     {/* Project - Icons Removed */}

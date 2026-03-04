@@ -158,7 +158,7 @@ export const ProjectsCatogries = ({
                     </span>
 
                     <div className="flex items-center gap-3 text-left">
-                      <span className="font-semibold text-gray-800">
+                      <span className="text-gray-500">
                         {category.categoryName}
                       </span>
                     </div>

@@ -18,6 +18,7 @@ type Props = {
 
 type AccountEntry = {
   id: number;
+  invoiceNo?: string;
   refNo: string;
   debit: number;
   credit: number;
@@ -125,12 +126,11 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
                 <thead className="sticky top-0 z-50">
                   <tr className="bg-blue-400 text-white text-[11px] ">
                     <th className="p-2 border-blue-400">Sr#</th>
+                    <th className="p-2 border-blue-400">Invoice</th>
                     <th className="p-2 border-blue-400">Ref No</th>
                     <th className="p-2 border-blue-400 text-right">Debit</th>
                     <th className="p-2 border-blue-400 text-right">Credit</th>
-                    <th className="p-2 border-blue-400 text-right">
-                      Balance
-                    </th>
+                    <th className="p-2 border-blue-400 text-right">Balance</th>
                     <th className="p-2 border-blue-400 text-right">
                       Prev Balance
                     </th>
@@ -168,6 +168,11 @@ export const ViewEmployeeAccount = ({ setModal, employee }: Props) => {
                           <td className="p-2 text-gray-600 font-semibold">
                             {idx + 1}
                           </td>
+
+                          <td className="p-2 text-gray-800 font-medium">
+                            {acc.invoiceNo || "N/A"}
+                          </td>
+
                           <td className="p-2 text-gray-800">
                             {acc.refNo || "-"}
                           </td>
