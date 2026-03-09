@@ -8,6 +8,9 @@ export type ConfigTimeDetailT = {
   offDay: string;
   lateTime: string;
   halfLeave: string;
+  month: string;
+  year: string;
+  status: string;
 };
 
 type ViewConfigTimeProps = {
@@ -21,7 +24,7 @@ export const ViewAttendanceRule = ({
 }: ViewConfigTimeProps) => {
   const formatTime = (time: string) => {
     if (!time) return "N/A";
-    return time.slice(0, 5); 
+    return time.slice(0, 5);
   };
 
   return (
@@ -38,7 +41,7 @@ export const ViewAttendanceRule = ({
             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Shift & Schedule Info
             </h3>
-            
+
             <div className="grid grid-cols-2 gap-y-6 gap-x-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
@@ -82,6 +85,33 @@ export const ViewAttendanceRule = ({
                 </label>
                 <p className="text-gray-800 font-semibold text-sm">
                   {formatTime(viewConfig?.halfLeave ?? "")}
+                </p>
+              </div>
+
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaUserClock className="text-gray-600" /> Month
+                </label>
+                <p className="text-gray-800 font-semibold text-sm">
+                  {formatTime(viewConfig?.month ?? "")}
+                </p>
+              </div>
+
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaUserClock className="text-gray-600" /> Year
+                </label>
+                <p className="text-gray-800 font-semibold text-sm">
+                  {formatTime(viewConfig?.year ?? "")}
+                </p>
+              </div>
+
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaUserClock className="text-gray-600" /> Status
+                </label>
+                <p className="text-gray-800 font-semibold text-sm">
+                  {formatTime(viewConfig?.status ?? "")}
                 </p>
               </div>
             </div>

@@ -46,8 +46,7 @@ import { UserPropulsive } from "./Pages/AdminPage/UserPropulsive";
 import { UserSalary } from "./Pages/AdminPage/UserSalary";
 import { UserPayroll } from "./Pages/AdminPage/UserPayroll";
 import { UserReports } from "./Pages/AdminPage/UserReports";
-
-
+import { UsersManagementHub } from "./Pages/AdminPage/UsersManagementHub";
 
 function App() {
   const { currentUser } = useAppSelector((state) => state?.officeState);
@@ -59,7 +58,8 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route
             element={
-              currentUser?.role === "admin" ? (
+              currentUser?.role === "admin" ||
+              currentUser?.role === "system-user" ? (
                 <PrivateLayout />
               ) : (
                 <Navigate to="/User/dashboard" />
@@ -88,7 +88,8 @@ function App() {
             <Route path="/talent-acquisition" element={<TalentAcquisition />} />
 
             <Route path="/reports" element={<Summary />} />
-            
+
+            <Route path="/users-management" element={<UsersManagementHub />} />
 
             <Route
               path="/User/dashboard-admin-view"
@@ -119,12 +120,8 @@ function App() {
             <Route path="/users/progress" element={<UserProgress />} />
             <Route path="/user/payroll" element={<UserPayroll />} />
             <Route path="/user/salarydetail" element={<UserSalary />} />
-            
-             <Route
-              path="/user/reports"
-              element={<UserReports />}
-            />
-          
+
+            <Route path="/user/reports" element={<UserReports />} />
           </Route>
         </Route>
       </Routes>

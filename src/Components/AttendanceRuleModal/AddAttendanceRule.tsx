@@ -24,12 +24,36 @@ const dayOptions = [
   { id: 7, label: "Sunday", value: "Sunday" },
 ];
 
+const monthOptions = [
+  { id: 1, label: "January", value: "January" },
+  { id: 2, label: "February", value: "February" },
+  { id: 3, label: "March", value: "March" },
+  { id: 4, label: "April", value: "April" },
+  { id: 5, label: "May", value: "May" },
+  { id: 6, label: "June", value: "June" },
+  { id: 7, label: "July", value: "July" },
+  { id: 8, label: "August", value: "August" },
+  { id: 9, label: "September", value: "September" },
+  { id: 10, label: "October", value: "October" },
+  { id: 11, label: "November", value: "November" },
+  { id: 12, label: "December", value: "December" },
+];
+
+const currentYear = new Date().getFullYear();
+const yearOptions = Array.from({ length: 6 }, (_, i) => ({
+  id: i,
+  label: (currentYear + i).toString(),
+  value: (currentYear + i).toString(),
+}));
+
 const initialState = {
   startTime: "",
   endTime: "",
   offDay: "",
   lateTime: "",
   halfLeave: "",
+  month: "",
+  year: "",
 };
 
 export const AddAttendanceRule = ({
@@ -155,6 +179,24 @@ export const AddAttendanceRule = ({
                   handlerChange={handlerChange}
                 />
               </div>
+
+              <OptionField
+                labelName="Year *"
+                name="year"
+                value={addConfig.year}
+                handlerChange={handlerChange}
+                optionData={yearOptions}
+                inital="Select Year"
+              />
+
+              <OptionField
+                labelName="Month *"
+                name="month"
+                value={addConfig.month}
+                handlerChange={handlerChange}
+                optionData={monthOptions}
+                inital="Select Month"
+              />
             </div>
 
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">

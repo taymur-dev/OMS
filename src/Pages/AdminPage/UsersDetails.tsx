@@ -169,10 +169,20 @@ export const UsersDetails = ({
   };
 
   // Get image URL
-  const getImageUrl = (imagePath: string | undefined) => {
-    if (!imagePath) return null;
-    return `${BASE_URL}/${imagePath}`;
-  };
+  // const getImageUrl = (imagePath: string | undefined) => {
+  //   if (!imagePath) return null;
+  //   return `${BASE_URL}/${imagePath}`;
+  // };
+
+const getImageUrl = (imagePath: string | undefined) => {
+  if (!imagePath) return null;
+
+  if (imagePath.startsWith("http")) {
+    return imagePath;
+  }
+
+  return `${BASE_URL}/${imagePath}`;
+};
 
   return (
     <div className="flex flex-col flex-grow bg-white overflow-hidden">

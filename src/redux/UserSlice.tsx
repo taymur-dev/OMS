@@ -1,25 +1,42 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type UserT = {
-  [key: string]: string;
+  id: number;
+  employeeName?: string;
+  name?: string;
+  loginStatus?: string;
+  role?: string;
+  token: string;
+  userId: string | number;
 };
 
 type AuthState = {
   currentUser: UserT | null;
+  permissions: string[];
   error: string;
 };
 
 const initialState: AuthState = {
   currentUser: null,
+  permissions: [],
   error: "",
 };
 
 const userSlice = createSlice({
-  name: "auth",
+  name: "officeState",
   initialState,
   reducers: {
-    authSuccess: (state, action: PayloadAction<UserT | null>) => {
-      state.currentUser = action.payload;
+    authSuccess: (
+      state,
+      action: PayloadAction<{ user: UserT; permissions: string[] } | null>,
+    ) => {
+      if (action.payload) {
+        state.currentUser = action.payload.user || action.payload;
+        state.permissions = action.payload.permissions || [];
+      } else {
+        state.currentUser = null;
+        state.permissions = [];
+      }
       state.error = "";
     },
     authFailure: (state, action: PayloadAction<string>) => {
@@ -27,8 +44,8 @@ const userSlice = createSlice({
     },
     logOut: (state) => {
       state.currentUser = null;
+      state.permissions = [];
       localStorage.clear();
-      // localStorage.removeItem("persist:root");
     },
     resetStore: () => initialState,
   },

@@ -83,7 +83,10 @@ export const AddUser = ({
       });
 
       if (initialValues.image) {
-        setImagePreview(`${BASE_URL}/${initialValues.image}`);
+        const imageSrc = initialValues.image?.startsWith("http")
+          ? initialValues.image
+          : `${BASE_URL}/${initialValues.image}`;
+        setImagePreview(imageSrc);
       }
     }
   }, [initialValues]);
@@ -202,15 +205,22 @@ export const AddUser = ({
 
   const prepareFormData = () => {
     const data = new FormData();
-    Object.entries(userData).forEach(([key, value]) => {
-      if (value !== undefined && key !== "confirmPassword" && key !== "image") {
-        data.append(key, value.toString());
-      }
-    });
 
+    // Only append valid fields
+    data.append("name", userData.name);
+    data.append("email", userData.email);
+    data.append("contact", userData.contact);
+    data.append("cnic", userData.cnic);
+    data.append("address", userData.address);
+    data.append("date", userData.date);
+    data.append("role", userData.role);
+    data.append("password", userData.password);
+
+    // Crucial: Only append image if a new file was actually selected
     if (selectedFile) {
       data.append("image", selectedFile);
     }
+
     return data;
   };
 
@@ -250,7 +260,6 @@ export const AddUser = ({
       await axios.post(`${BASE_URL}/api/admin/addUser`, data, {
         headers: {
           Authorization: token,
-          "Content-Type": "multipart/form-data",
         },
       });
       toast.success("User added successfully", { toastId: "user-success" });
@@ -293,12 +302,12 @@ export const AddUser = ({
       await axios.put(`${BASE_URL}/api/admin/updateUser/${id}`, data, {
         headers: {
           Authorization: token,
-          "Content-Type": "multipart/form-data",
         },
       });
       toast.success("User updated successfully", {
         toastId: "user-update-success",
       });
+     
       handlerGetUsers();
       onSuccesAction();
     } catch (error: unknown) {

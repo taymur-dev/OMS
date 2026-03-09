@@ -5,6 +5,7 @@ import Logo from "../assets/techmen.png";
 import BackgroundImg from "../assets/officepic.jpg";
 import { BASE_URL } from "../Content/URL";
 import { useAppDispatch, useAppSelector } from "../redux/Hooks";
+import { useNavigate } from "react-router-dom";
 import { authSuccess, authFailure } from "../redux/UserSlice";
 import setAuthToken from "../SetAuthToken";
 import { Navigate } from "react-router-dom";
@@ -30,13 +31,16 @@ export const Login = () => {
 
   const dispatch = useAppDispatch();
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     document.title = "Login | OMS";
     dispatch(navigationStart());
     dispatch(navigationSuccess("logIn"));
   }, [dispatch]);
 
-  if (currentUser?.role === "admin") return <Navigate to="/" />;
+  if (currentUser?.role === "admin" || currentUser?.role === "system-user")
+    return <Navigate to="/" />;
   if (currentUser?.role === "user") return <Navigate to="/User/dashboard" />;
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,19 +48,27 @@ export const Login = () => {
     setFormData({ ...formData, [name]: value.trim() });
   };
 
+  const toastId = "login-toast";
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     try {
       const res = await axios.post(`${BASE_URL}/api/login`, formData);
-      const { token } = res.data;
+      const { token, user } = res.data;
       setAuthToken(token);
       dispatch(authSuccess(res.data));
-      toast.success(res.data.message);
+
+      toast.success(res.data.message, { toastId });
+
+      if (user.role === "admin" || user.role === "system-user") {
+        navigate("/");
+      } else {
+        navigate("/User/dashboard");
+      }
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       dispatch(authFailure(axiosError.response?.data?.message ?? ""));
-      toast.error(axiosError.response?.data?.message ?? "");
     }
     setLoading(false);
   };
@@ -69,9 +81,7 @@ export const Login = () => {
       }}
     >
       <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]"
-        />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]" />
       </div>
 
       <div

@@ -29,6 +29,9 @@ export type ALLCONFIGT = {
   offDay: string;
   lateTime: string;
   halfLeave: string;
+  year: string;
+  month: string;
+  status: string;
 };
 
 interface AttendanceRuleProps {
@@ -134,12 +137,14 @@ export const AttendanceRule = ({
         <div className="min-w-[1000px]">
           {/* Header Section - Aligned with UsersDetails grid logic */}
           <div className="px-0.5 pt-0.5">
-            <div className="grid grid-cols-[60px_1.5fr_1.5fr_1fr_1.2fr_1.2fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm">
+            <div className="grid grid-cols-[60px_1.5fr_1fr_1fr_1fr_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm">
               <span className="text-left">Sr#</span>
               <span className="text-left">Shift Schedule</span>
               <span className="text-left">Off Day</span>
               <span className="text-left">Late Threshold</span>
               <span className="text-left">Half Leave</span>
+              <span className="text-left">Month</span>
+              <span className="text-left">Year</span>
               <span className="text-left">Status</span>
               <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
@@ -160,7 +165,7 @@ export const AttendanceRule = ({
                 {paginatedConfig.map((config, index) => (
                   <div
                     key={config.id}
-                    className="grid grid-cols-[60px_1.5fr_1.5fr_1fr_1.2fr_1.2fr_auto] items-center px-3 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
+                    className="grid grid-cols-[60px_1.5fr_1fr_1fr_1fr_1fr_1fr_1fr_auto] items-center px-3 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
                     {/* Column 1: Sr# */}
                     <span className="text-gray-500 font-medium">
@@ -190,9 +195,21 @@ export const AttendanceRule = ({
                     </div>
 
                     {/* Column 6: Status */}
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                      <span className="text-xs text-gray-500">Active</span>
+                    <div className="text-gray-600 truncate">{config.month}</div>
+
+                    <div className="text-gray-600 truncate">{config.year}</div>
+
+                    <div>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide
+      ${
+        config.status === "Active"
+          ? "bg-green-100 text-green-700 border border-green-200"
+          : "bg-red-100 text-red-700 border border-red-200"
+      }`}
+                      >
+                        {config.status}
+                      </span>
                     </div>
 
                     {/* Column 7: Actions - Aligned with UsersDetails width */}

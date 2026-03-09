@@ -2,22 +2,17 @@ import { useState } from "react";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
-import { AttendanceRule } from "./AttendanceRule";
-import { Holidays } from "./Holidays";
-import { AccessControl } from "./AccessControl";
+import { Roles } from "./Roles";
+import { SystemUsers } from "./SystemUsers";
 import { useAppSelector } from "../../redux/Hooks";
 import { Footer } from "../../Components/Footer";
 
 // Define Tab Types
-type TabType =
-  | "ATTENDANCE_RULES"
-  | "CONFIGURE_HOLIDAYS"
-  | "ACCESS_CONTROL"
-  | "";
+type TabType = "ROLES" | "SYSTEMUSERS" | "";
 const entriesOptions = [5, 10, 15, 20, 30];
 
-export const Assemble = () => {
-  const [activeTab, setActiveTab] = useState<TabType>("ATTENDANCE_RULES");
+export const UsersManagementHub = () => {
+  const [activeTab, setActiveTab] = useState<TabType>("ROLES");
   const { currentUser } = useAppSelector((state) => state.officeState);
   const isAdmin = currentUser?.role === "admin";
 
@@ -27,41 +22,32 @@ export const Assemble = () => {
   const [triggerModal, setTriggerModal] = useState<{
     tab: TabType;
     count: number;
-  }>({ tab: "ATTENDANCE_RULES", count: 0 });
+  }>({ tab: "ROLES", count: 0 });
 
   const handleActionClick = (tab: TabType) => {
-    setTriggerModal((prev) => ({
-      tab,
-      count: prev.tab === tab ? prev.count + 1 : 1,
-    }));
-  };
+  setTriggerModal((prev) => ({
+    tab,
+    count: prev.count + 1, // Always increment to trigger the useEffect
+  }));
+};
 
   return (
     <div className="flex flex-col flex-grow shadow-lg p-1 sm:p-1 rounded-lg bg-gray-100 overflow-hidden">
       <div className="min-h-screen w-full flex flex-col shadow-lg bg-white rounded-md">
-        {/* 1. Main Title Section */}
         <TableTitle
-          tileName="Configuration"
+          tileName="Users Management"
           rightElement={
             <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
-              {isAdmin && activeTab === "ATTENDANCE_RULES" && (
+              {isAdmin && activeTab === "ROLES" && (
                 <CustomButton
-                  label="Add Rule"
-                  handleToggle={() => handleActionClick("ATTENDANCE_RULES")}
+                  label="Add Role"
+                  handleToggle={() => handleActionClick("ROLES")}
                 />
               )}
-
-              {isAdmin && activeTab === "CONFIGURE_HOLIDAYS" && (
+              {isAdmin && activeTab === "SYSTEMUSERS" && (
                 <CustomButton
-                  label="Add Holiday"
-                  handleToggle={() => handleActionClick("CONFIGURE_HOLIDAYS")}
-                />
-              )}
-
-              {isAdmin && activeTab === "ACCESS_CONTROL" && (
-                <CustomButton
-                  label="Add Access Control"
-                  handleToggle={() => handleActionClick("ACCESS_CONTROL")}
+                  label="Add User"
+                  handleToggle={() => handleActionClick("SYSTEMUSERS")}
                 />
               )}
             </div>
@@ -69,14 +55,9 @@ export const Assemble = () => {
         />
 
         <div className="px-4 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
+          {/* Pill Styled Tabs */}
           <div className="flex w-full sm:w-auto p-1 bg-[#F1F5F9] rounded-xl border border-gray-200">
-            {(
-              [
-                "ATTENDANCE_RULES",
-                "CONFIGURE_HOLIDAYS",
-                "ACCESS_CONTROL",
-              ] as TabType[]
-            ).map((tab) => (
+            {(["ROLES", "SYSTEMUSERS"] as TabType[]).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -86,16 +67,12 @@ export const Assemble = () => {
                     : "text-[#64748B] hover:text-[#334155]"
                 }`}
               >
-                {tab === "ATTENDANCE_RULES"
-                  ? "Attendance Rules"
-                  : tab === "CONFIGURE_HOLIDAYS"
-                    ? "Configure Holidays"
-                    : "Access Control"}{" "}
+                {tab === "ROLES" ? "Roles" : "System Users"}
               </button>
             ))}
           </div>
 
-          {/* Search and Page Size Controls */}
+          {/* Search and Entries Select */}
           <div className="flex items-center flex-grow justify-end gap-3 max-w-2xl">
             <div className="flex-grow">
               <TableInputField
@@ -122,32 +99,19 @@ export const Assemble = () => {
 
         {/* 3. Content Area */}
         <div className="flex-grow sm:p-4 overflow-auto">
-          {activeTab === "ATTENDANCE_RULES" && (
-            <AttendanceRule
+          {activeTab === "ROLES" && (
+            <Roles
               triggerModal={
-                triggerModal.tab === "ATTENDANCE_RULES" ? triggerModal.count : 0
-              }
-              externalSearch={searchTerm}
-              externalPageSize={selectedValue}
-            />
-          )}
-          {activeTab === "CONFIGURE_HOLIDAYS" && (
-            <Holidays
-              triggerModal={
-                triggerModal.tab === "CONFIGURE_HOLIDAYS"
-                  ? triggerModal.count
-                  : 0
+                triggerModal.tab === "ROLES" ? triggerModal.count : 0
               }
               externalSearch={searchTerm}
               externalPageSize={selectedValue}
             />
           )}
 
-          {activeTab === "ACCESS_CONTROL" && (
-            <AccessControl
-              triggerModal={
-                triggerModal.tab === "ACCESS_CONTROL" ? triggerModal.count : 0
-              }
+          {activeTab === "SYSTEMUSERS" && (
+            <SystemUsers
+              triggerModal={triggerModal.tab === "SYSTEMUSERS" ? triggerModal.count : 0}
               externalSearch={searchTerm}
               externalPageSize={selectedValue}
             />
