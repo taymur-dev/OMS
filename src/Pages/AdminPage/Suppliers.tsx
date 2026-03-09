@@ -22,7 +22,7 @@ import {
 import { BASE_URL } from "../../Content/URL";
 
 // Icons to match UsersDetails style
-import { RiUserFill } from "react-icons/ri";
+import { RiUserFill, RiInboxArchiveLine } from "react-icons/ri";
 
 interface Supplier {
   supplierId: number;
@@ -158,8 +158,14 @@ export const Suppliers = ({
           {/* Table Body */}
           <div className="px-0.5 sm:px-1 py-2">
             {paginatedData.length === 0 ? (
-              <div className="text-center py-10 text-gray-500">
-                No records available!
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">
+                  No records available at the moment!
+                </p>
+                <p className="text-sm">
+                  Try adjusting your search term.
+                </p>
               </div>
             ) : (
               <div className="flex flex-col gap-2">

@@ -13,6 +13,7 @@ import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { AddAccessControl } from "../../Components/AccessControlModal/AddAccessControl";
 import { EditAccessControl } from "../../Components/AccessControlModal/EditAccessControl";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 type RoleType = {
   id: number;
@@ -63,7 +64,6 @@ export const AccessControl = ({
       );
     }
   }, [token, dispatch]);
-
 
   const handlerGetAccessControl = useCallback(
     async (role: RoleType) => {
@@ -139,8 +139,12 @@ export const AccessControl = ({
 
           <div className="px-0.5 sm:px-1 py-2">
             {paginatedRoles.length === 0 ? (
-              <div className="text-center py-10 text-gray-500">
-                No roles found for access management.
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">
+                  No records available at the moment!
+                </p>
+                <p className="text-sm">Try adjusting your search term.</p>
               </div>
             ) : (
               <div className="flex flex-col gap-2">

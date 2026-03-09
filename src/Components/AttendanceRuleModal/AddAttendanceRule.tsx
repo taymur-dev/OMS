@@ -112,7 +112,7 @@ export const AddAttendanceRule = ({
       toast.success("Configuration saved successfully");
     } catch (error) {
       console.error(error);
-      toast.error("Error saving configuration");
+      toast.error("Fill all required fields to save configuration");
     } finally {
       setLoading(false);
     }

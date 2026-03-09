@@ -149,7 +149,7 @@ export const ProjectsCatogries = ({
                   <div
                     key={category.id}
                     className="grid grid-cols-[90px_1fr_auto] 
-                  items-center px-4 py-1 gap-3 text-sm bg-white 
+                  items-center px-4 py-2 gap-3 text-sm bg-white 
                   border border-gray-100 rounded-lg 
                   hover:bg-blue-50/30 transition-colors shadow-sm" // px-4 matches header
                   >

@@ -144,7 +144,7 @@ export const ExpensesCatogries = ({
               <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
                 <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
                 <p className="text-lg font-medium">No records available!</p>
-                <p className="text-sm">Try adjusting your search or filters.</p>
+                <p className="text-sm">Try adjusting your search</p>
               </div>
             ) : (
               <div className="flex flex-col gap-2">

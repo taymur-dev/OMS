@@ -19,6 +19,7 @@ import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { AddSystemUser } from "../../Components/SystemUsersModal/AddSystemUser";
 import { EditSystemUser } from "../../Components/SystemUsersModal/EditSystemUser";
 import { ViewSystemUser } from "../../Components/SystemUsersModal/ViewSystemUser";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 type UserType = {
   id: number;
@@ -144,8 +145,12 @@ export const SystemUsers = ({
 
           <div className="px-0.5 sm:px-1 py-2">
             {paginatedUsers.length === 0 ? (
-              <div className="text-center py-10 text-gray-500">
-                No users found.
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">
+                  No records available at the moment!
+                </p>
+                <p className="text-sm">Try adjusting your search term.</p>
               </div>
             ) : (
               <div className="flex flex-col gap-2">

@@ -73,7 +73,7 @@ const StatusActionIcon = ({ status }: { status: string }) => {
         <BiLoaderCircle className="text-blue-400 text-lg md:text-xl animate-spin-slow" />
       );
     case "Complete":
-      return <BiCheckCircle className="text-blue-400 text-lg md:text-xl" />;
+      return <BiCheckCircle className="text-green-600 text-lg md:text-xl" />;
     default:
       return null;
   }

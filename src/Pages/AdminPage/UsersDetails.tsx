@@ -17,7 +17,7 @@ import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
-import { RiLockPasswordFill, RiUserFill } from "react-icons/ri";
+import { RiLockPasswordFill, RiUserFill , RiInboxArchiveLine } from "react-icons/ri";
 
 type UserType = {
   id: number;
@@ -174,15 +174,15 @@ export const UsersDetails = ({
   //   return `${BASE_URL}/${imagePath}`;
   // };
 
-const getImageUrl = (imagePath: string | undefined) => {
-  if (!imagePath) return null;
+  const getImageUrl = (imagePath: string | undefined) => {
+    if (!imagePath) return null;
 
-  if (imagePath.startsWith("http")) {
-    return imagePath;
-  }
+    if (imagePath.startsWith("http")) {
+      return imagePath;
+    }
 
-  return `${BASE_URL}/${imagePath}`;
-};
+    return `${BASE_URL}/${imagePath}`;
+  };
 
   return (
     <div className="flex flex-col flex-grow bg-white overflow-hidden">
@@ -204,8 +204,14 @@ const getImageUrl = (imagePath: string | undefined) => {
           </div>
           <div className="px-0.5 sm:px-1 py-2">
             {paginatedUsers.length === 0 ? (
-              <div className="text-center py-10 text-gray-500">
-                No users found.
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">
+                  No records available at the moment!
+                </p>
+                <p className="text-sm">
+                  Try adjusting your search term.
+                </p>
               </div>
             ) : (
               <div className="flex flex-col gap-2">

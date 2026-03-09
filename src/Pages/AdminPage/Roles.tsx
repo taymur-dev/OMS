@@ -15,6 +15,8 @@ import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { AddRole } from "../../Components/Roles/AddRole";
 import { EditRole } from "../../Components/Roles/EditRole";
+import { RiInboxArchiveLine } from "react-icons/ri";
+
 
 type RoleType = {
   id: number;
@@ -125,8 +127,14 @@ export const Roles = ({
 
           <div className="px-0.5 sm:px-1 py-2">
             {paginatedRoles.length === 0 ? (
-              <div className="text-center py-10 text-gray-500">
-                No roles found.
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">
+                  No records available at the moment!
+                </p>
+                <p className="text-sm">
+                  Try adjusting your date range or search term.
+                </p>
               </div>
             ) : (
               <div className="flex flex-col gap-2">

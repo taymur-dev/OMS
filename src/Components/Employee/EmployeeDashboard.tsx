@@ -137,8 +137,8 @@ export const EmployeeDashboard = () => {
   return (
     <div className="flex flex-col min-h-screen  bg-gray-50 w-full overflow-y-auto">
       <div className="flex-grow px-2 md:p-8 space-y-8 mx-auto w-full">
-        <div className="flex items-center justify-between mt-2">
-          <h1 className="text-2xl font-bold text-slate-800">Dashboard</h1>
+        <div className="flex items-center">
+          <h1 className="text-3xl font-bold text-slate-800">Dashboard</h1>
         </div>
         <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
           {CARD_CONFIG.map((card) => (

@@ -108,16 +108,16 @@ export const ViewLoan = ({ setIsOpenModal, viewLoan }: ViewLoanProps) => {
                                 .replace(/ /g, "-")
                             : "-"}
                         </td>
-                        <td className="px-4 py-2  font-medium text-blue-700">
+                        <td className="px-4 py-2  font-medium text-gray-800">
                           {loan.loanAmount}
                         </td>
-                        <td className="px-4 py-2  text-green-700">
+                        <td className="px-4 py-2  text-gray-800">
                           {loan.return_amount || 0}
                         </td>
-                        <td className="px-4 py-2  text-red-600">
+                        <td className="px-4 py-2  text-gray-800">
                           {loan.deduction || 0}
                         </td>
-                        <td className="px-4 py-2 font-bold">
+                        <td className="px-4 py-2 text-gray-800">
                           {loan.remainingAmount}
                         </td>
                       </tr>

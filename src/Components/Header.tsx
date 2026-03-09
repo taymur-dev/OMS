@@ -59,7 +59,6 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
     <div className="bg-white w-full h-16 px-2 sm:px-4 flex shadow-md z-40 items-center relative">
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-1 sm:gap-10">
-          {/* Logo Section */}
           <div
             className="flex items-center w-[180px] flex-shrink-0 cursor-pointer"
             onClick={handleLogoClick}
@@ -71,7 +70,6 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
             />
           </div>
 
-          {/* Toggle Button */}
           <button
             onClick={toggleSideBar}
             className="text-blue-400 hover:bg-gray-100 rounded-full transition-colors flex items-center 
@@ -105,8 +103,8 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
                 </>
               )}
               <CiBellOn
-                size={32} // Increased icon size
-                className="relative text-gray-700" // Removed sm:w-5 sm:h-5 to let size prop take over
+                size={32} 
+                className="relative text-gray-700" 
               />
               {isNotifOpen && (
                 <NotificationDropdown
@@ -116,7 +114,6 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
               )}
             </div>
 
-            {/* User Info */}
             <div className="hidden xs:block text-right min-w-[70px] sm:min-w-[90px] md:min-w-[100px]">
               <p className="text-blue-500 text-xs sm:text-sm font-semibold leading-none truncate">
                 {currentUser?.name || "User"}
@@ -126,7 +123,6 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
               </p>
             </div>
 
-            {/* User Avatar */}
             <div
               onClick={() => handleToggleViewModal()}
               className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-400 flex items-center justify-center

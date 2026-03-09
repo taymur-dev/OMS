@@ -82,7 +82,6 @@ export const ComfirmPasswordModal = ({ catchId, setModal }: PasswordProps) => {
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
       <div className="w-full max-w-lg sm:max-w-xl md:max-w-2xl overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
-        {/* Header */}
         <div className="bg-white rounded-xl px-4 border-t-5 border-blue-400 ">
           <Title
             setModal={setModal}
@@ -92,7 +91,6 @@ export const ComfirmPasswordModal = ({ catchId, setModal }: PasswordProps) => {
           </Title>
         </div>
 
-        {/* Body */}
         <div className="px-4 py-4 sm:px-6 sm:py-6 space-y-4">
           <InputField
             type="password"
@@ -111,7 +109,6 @@ export const ComfirmPasswordModal = ({ catchId, setModal }: PasswordProps) => {
           />
         </div>
 
-        {/* Footer */}
         <div className="flex justify-end gap-3 px-4 py-3 bg-white  border-indigo-900 rounded-b">
           <CancelBtn setModal={setModal} />
           <AddButton
