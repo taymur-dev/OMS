@@ -96,7 +96,7 @@ export const MarkAttendance = ({ triggerMark }: { triggerMark: number }) => {
   };
 
   const getAttendance = useCallback(
-    async (id: string | undefined) => {
+    async (id: string | number | undefined) => {
       try {
         const res = await axios.get(
           `${BASE_URL}/api/admin/getAttendance/${id}`,
@@ -114,7 +114,7 @@ export const MarkAttendance = ({ triggerMark }: { triggerMark: number }) => {
 
   // 2. FIX: Wrap handleMarkAttendance in useCallback
   const handleMarkAttendance = useCallback(
-    async (id: string | undefined) => {
+    async (id: string | number | undefined) => {
       try {
         const res = await axios.post(
           `${BASE_URL}/api/admin/markAttendance/${id}`,

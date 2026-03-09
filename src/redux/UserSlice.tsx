@@ -8,6 +8,10 @@ type UserT = {
   role?: string;
   token: string;
   userId: string | number;
+  profileImage?: string;
+  email?: string;
+  cnic?: string;
+  contact?: string;
 };
 
 type AuthState = {

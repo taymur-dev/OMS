@@ -17,6 +17,16 @@ interface DetailRowProps {
   value: string | number;
 }
 
+export interface UserT {
+  id: number;
+  name: string;
+  role: string;
+  email?: string;
+  cnic?: string;
+  contact?: string;
+  profileImage?: string | null;
+}
+
 export const Profile = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
 
