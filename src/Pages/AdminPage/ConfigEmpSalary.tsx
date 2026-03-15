@@ -34,6 +34,7 @@ interface Salary {
   effective_from: string;
   attendance_base: string;
   salary_month: string;
+  description: string;
 }
 
 interface ConfigEmpSalaryProps {
