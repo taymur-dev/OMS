@@ -43,7 +43,7 @@ export const OptionField = ({
           onChange={handlerChange}
           name={name}
           // 2. Added pl-10 for icon spacing and w-full for layout consistency
-          className={`w-full p-3 ${icon ? "pl-10" : "pl-3"} rounded-lg bg-white text-gray-900 border border-gray-200 shadow 
+          className={`w-full p-2.5 ${icon ? "pl-10" : "pl-3"} rounded-lg bg-white text-gray-900 border border-gray-200 shadow 
             transition duration-200 focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none`}
         >
           <option value="">{inital}</option>

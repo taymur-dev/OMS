@@ -101,7 +101,9 @@ const ProjectCard = ({
   // Truncate description for medium screens
   const truncateDescription = (text?: string, maxLength = 20) => {
     if (!text) return "In Progress...";
-    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+    return text.length > maxLength
+      ? `${text.substring(0, maxLength)}...`
+      : text;
   };
 
   return (
@@ -180,8 +182,8 @@ export const Columns = ({ colum, allProject }: columDataT) => {
       `}
     >
       <div className="flex items-center bg-white rounded-xl md:rounded-[16px] justify-between mb-3 md:mb-6 p-2 md:p-4 shadow-sm shrink-0">
-        <h2 className="text-[10px] md:text-[12px] font-black uppercase tracking-[1px] md:tracking-[1.5px] text-slate-700 ml-1 md:ml-2 truncate">
-          {colum.title}
+        <h2 className="text-[14px] md:text-[12px] font-black font-bold-500 uppercase tracking-[1px] md:tracking-[1.5px] text-gray-800 ml-1 md:ml-2 truncate">
+          {colum.title.replace(/PROJECT/gi, "").trim()}
         </h2>
         <span
           className={`px-2 md:px-3 py-0.5 rounded-full text-[10px] md:text-[12px] font-bold shrink-0 ml-2 ${columnHeaderBadge(colum.id)}`}

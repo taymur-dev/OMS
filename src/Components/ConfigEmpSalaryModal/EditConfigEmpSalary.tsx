@@ -6,6 +6,7 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 import { UserSelect, SelectOption } from "../InputFields/UserSelect";
 import { InputField } from "../InputFields/InputField";
+import { TextareaField } from "../InputFields/TextareaField";
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -21,6 +22,9 @@ type Salary = {
   total_salary: number;
   config_date: string;
   effective_from: string;
+  attendance_base: string;
+  salary_month: string;
+  description: string;
 };
 
 type EditSalaryProps = {
@@ -45,6 +49,9 @@ type SalaryState = {
   total_salary: string;
   config_date: string;
   effective_from: string;
+  attendance_base: string;
+  salary_month: string;
+  description: string;
 };
 
 const initialState: SalaryState = {
@@ -56,6 +63,9 @@ const initialState: SalaryState = {
   total_salary: "0",
   config_date: "",
   effective_from: "",
+  attendance_base: "Y",
+  salary_month: "",
+  description: "",
 };
 
 export const EditConfigEmpSalary = ({
@@ -92,12 +102,17 @@ export const EditConfigEmpSalary = ({
         total_salary: editData.total_salary?.toString() || "",
         config_date: formatForInput(editData.config_date),
         effective_from: formatForInput(editData.effective_from),
+        attendance_base: editData.attendance_base,
+        salary_month: editData.salary_month,
+        description: editData.description,
       });
     }
   }, [editData]);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value, type } = e.target;
 
@@ -166,11 +181,15 @@ export const EditConfigEmpSalary = ({
     if (
       !editConfigEmployee.employee_id ||
       !editConfigEmployee.salary_amount ||
-      !editConfigEmployee.config_date
+      !editConfigEmployee.config_date ||
+      !editConfigEmployee.salary_month
     ) {
-      return toast.error("Employee, Salary, and Config Date are required", {
-        toastId: "salary-update-required",
-      });
+      return toast.error(
+        "Employee, Salary Amount, Salary Month and Config Date are required",
+        {
+          toastId: "salary-update-required",
+        },
+      );
     }
 
     setLoading(true);
@@ -185,6 +204,9 @@ export const EditConfigEmpSalary = ({
         total_salary: Number(editConfigEmployee.total_salary),
         config_date: editConfigEmployee.config_date,
         effective_from: editConfigEmployee.effective_from,
+        attendance_base: editConfigEmployee.attendance_base,
+        salary_month: editConfigEmployee.salary_month,
+        description: editConfigEmployee.description,
       };
 
       await axios.put(
@@ -289,7 +311,7 @@ export const EditConfigEmpSalary = ({
             />
 
             <InputField
-              labelName="Date *"
+              labelName="Configured Date *"
               name="config_date"
               type="date"
               handlerChange={handlerChange}
@@ -297,12 +319,59 @@ export const EditConfigEmpSalary = ({
             />
 
             <InputField
-              labelName="Date *"
+              labelName="With Effect From Date *"
               name="effective_from"
               type="date"
               handlerChange={handlerChange}
               value={editConfigEmployee.effective_from}
             />
+
+            <InputField
+              labelName="Salary Month*"
+              name="salary_month"
+              type="month"
+              handlerChange={handlerChange}
+              value={editConfigEmployee.salary_month}
+            />
+
+            <div className="flex flex-col px-2 py-1">
+              <label className="text-sm font-bold text-gray-500 mb-1">
+                Attendance Base *
+              </label>
+              <div className="flex items-center gap-4 mt-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="attendance_base"
+                    value="Y"
+                    checked={editConfigEmployee.attendance_base === "Y"}
+                    onChange={handlerChange}
+                    className="w-4 h-4 text-blue-600"
+                  />
+                  <span className="text-sm text-gray-600">Yes</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="attendance_base"
+                    value="N"
+                    checked={editConfigEmployee.attendance_base === "N"}
+                    onChange={handlerChange}
+                    className="w-4 h-4 text-blue-600"
+                  />
+                  <span className="text-sm text-gray-600">No</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Description *"
+                name="description"
+                handlerChange={handlerChange}
+                inputVal={editConfigEmployee.description || ""}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">

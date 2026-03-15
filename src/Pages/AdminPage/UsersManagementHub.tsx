@@ -46,7 +46,7 @@ export const UsersManagementHub = () => {
               )}
               {isAdmin && activeTab === "SYSTEMUSERS" && (
                 <CustomButton
-                  label="Add User"
+                  label="Add System User"
                   handleToggle={() => handleActionClick("SYSTEMUSERS")}
                 />
               )}

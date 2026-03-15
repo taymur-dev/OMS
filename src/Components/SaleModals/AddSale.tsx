@@ -86,9 +86,9 @@ export const AddSale = ({ setModal, handleGetsales }: AddSaleProps) => {
 
   const addToCart = () => {
     if (!selectedProject) return toast.error("Select a project");
-    const project = allProjects.find(
-      (p) => p.id.toString() === selectedProject,
-    );
+
+    const project = allProjects.find((p) => p.id === Number(selectedProject));
+
     if (!project) return toast.error("Project not found");
 
     const isDuplicate = cart.find(
@@ -184,12 +184,11 @@ export const AddSale = ({ setModal, handleGetsales }: AddSaleProps) => {
               name="project"
               value={selectedProject}
               handlerChange={(e) => setSelectedProject(e.target.value)}
-              optionData={allProjects
-                .map((p) => ({
-                  id: p.id,
-                  label: p.projectName,
-                  value: p.id,
-                }))}
+              optionData={allProjects.map((p) => ({
+                id: p.id,
+                label: p.projectName,
+                value: p.id,
+              }))}
               inital="Select Project"
             />
             <InputField

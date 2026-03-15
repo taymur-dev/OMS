@@ -33,7 +33,7 @@ const NotificationDropdown = ({
       console.log("Current user role:", currentUser?.role);
 
       if (currentUser?.role?.toLowerCase() === "admin") {
-        navigate("/attendance");
+        navigate("/attendance?tab=LEAVE");
       } else if (currentUser?.role?.toLowerCase() === "user") {
         navigate("/users/leaveRequests");
       } else {

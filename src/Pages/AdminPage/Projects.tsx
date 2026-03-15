@@ -58,7 +58,7 @@ export const Projects = () => {
 
               {activeTab === "ASSIGN" && (
                 <CustomButton
-                  label="Assign"
+                  label="Assign Project"
                   handleToggle={() => handleActionClick("ASSIGN")}
                 />
               )}
@@ -85,7 +85,7 @@ export const Projects = () => {
                       : "text-[#64748B] hover:text-[#334155]"
                   }`}
                 >
-                  {tab === "DETAILS" ? "Details" : tab === "CATEGORY" ? "Categories" : "Assign"}
+                  {tab === "DETAILS" ? "Project Details" : tab === "CATEGORY" ? "Project Categories" : "Assign Projects"}
                 </button>
               );
             })}

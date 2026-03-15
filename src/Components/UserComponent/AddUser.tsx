@@ -307,7 +307,7 @@ export const AddUser = ({
       toast.success("User updated successfully", {
         toastId: "user-update-success",
       });
-     
+
       handlerGetUsers();
       onSuccesAction();
     } catch (error: unknown) {
@@ -358,6 +358,7 @@ export const AddUser = ({
               name="email"
               handlerChange={handlerChange}
               value={userData.email}
+              readOnly={viewType === "UPDATE"}
             />
             <InputField
               labelName="Phone Number *"
@@ -373,21 +374,24 @@ export const AddUser = ({
               handlerChange={handlerChange}
               value={userData.cnic}
             />
-
-            <InputField
-              labelName="Password *"
-              type="password"
-              name="password"
-              handlerChange={handlerChange}
-              value={userData.password}
-            />
-            <InputField
-              labelName="Confirm Password *"
-              type="password"
-              name="confirmPassword"
-              handlerChange={handlerChange}
-              value={userData.confirmPassword}
-            />
+            {viewType === "ADD" && (
+              <>
+                <InputField
+                  labelName="Password *"
+                  type="password"
+                  name="password"
+                  handlerChange={handlerChange}
+                  value={userData.password}
+                />
+                <InputField
+                  labelName="Confirm Password *"
+                  type="password"
+                  name="confirmPassword"
+                  handlerChange={handlerChange}
+                  value={userData.confirmPassword}
+                />
+              </>
+            )}
 
             <div className="md:col-span-2">
               <InputField

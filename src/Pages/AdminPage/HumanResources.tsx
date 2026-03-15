@@ -38,7 +38,7 @@ export const HumanResources = () => {
             <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
               {activeTab === "LIFELINE" && (
                 <CustomButton
-                  label="Add Lifeline"
+                  label="Add Employee Lifeline"
                   handleToggle={() => handleAddClick("LIFELINE")}
                 />
               )}
@@ -66,7 +66,7 @@ export const HumanResources = () => {
                     : "text-[#64748B] hover:text-[#334155]"
                 }`}
               >
-                {tab === "LIFELINE" ? "Lifeline" : "Withdraw"}
+                {tab === "LIFELINE" ? "Employee Lifeline" : "Employee Withdraw"}
               </button>
             ))}
           </div>

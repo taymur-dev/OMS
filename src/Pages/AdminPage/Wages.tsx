@@ -9,7 +9,7 @@ import { Footer } from "../../Components/Footer";
 import { Calendar } from "./Calendar";
 import { SalaryCycle } from "./SalaryCycle";
 import { OverTime } from "./OverTime";
-import { AdvanceSalary } from "./AdvanceSalary";
+// import { AdvanceSalary } from "./AdvanceSalary";
 import { Loan } from "./Loan";
 import { ConfigEmpSalary } from "./ConfigEmpSalary";
 
@@ -49,11 +49,11 @@ export const Wages = () => {
 
   const tabs: { id: TabType; label: string }[] = [
     { id: "CALENDAR", label: "Calendar" },
-    { id: "SALARY_CYCLE", label: "Cycle" },
+    { id: "SALARY_CYCLE", label: "Salary Cycle" },
     { id: "OVERTIME", label: "Overtime" },
-    { id: "ADVANCE_SALARY", label: "Advance" },
+    // { id: "ADVANCE_SALARY", label: "Advance Salary" },
     { id: "LOAN_MANAGEMENT", label: "Loan" },
-    { id: "CONFIG_SALARIES", label: "Salary" },
+    { id: "CONFIG_SALARIES", label: "Configure Salary" },
   ];
 
   return (
@@ -147,7 +147,7 @@ export const Wages = () => {
               externalPageSize={selectedValue}
             />
           )}
-          {activeTab === "ADVANCE_SALARY" && (
+          {/* {activeTab === "ADVANCE_SALARY" && (
             <AdvanceSalary
               triggerModal={
                 triggerModal.tab === "ADVANCE_SALARY" ? triggerModal.count : 0
@@ -155,7 +155,7 @@ export const Wages = () => {
               externalSearch={searchTerm}
               externalPageSize={selectedValue}
             />
-          )}
+          )} */}
           {activeTab === "LOAN_MANAGEMENT" && (
             <Loan
               triggerModal={

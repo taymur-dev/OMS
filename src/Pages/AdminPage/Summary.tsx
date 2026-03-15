@@ -9,6 +9,8 @@ import { AttendanceReports } from "./AttendanceReports";
 // import { PaymentsReports } from "./PaymentsReports";
 import { ProcessReports } from "./ProcessReports";
 import { ExpenseReports } from "./ExpenseReports";
+import { AccountReport } from "./AccountReport";
+import { ProfitLossReport } from "./ProfitLossReport";
 
 type TabType =
   | "SALE_REPORT"
@@ -16,7 +18,9 @@ type TabType =
   // | "PAYMENT_REPORT"
   | "TASK_REPORT"
   | "ATTENDANCE_REPORT"
-  | "EXPENSE_REPORT";
+  | "EXPENSE_REPORT"
+  | "ACCOUNT_REPORT"
+  | "PROFIT/LOSS_REPORT";
 
 const entriesOptions = [5, 10, 15, 20, 30];
 
@@ -26,12 +30,14 @@ export const Summary = () => {
   const [selectedValue, setSelectedValue] = useState(10);
 
   const tabs: { id: TabType; label: string }[] = [
-    { id: "SALE_REPORT", label: "Sale" },
-    { id: "PROGRESS_REPORT", label: "Progress" },
+    { id: "SALE_REPORT", label: "Sales Report" },
+    { id: "PROGRESS_REPORT", label: "Progress Report" },
     // { id: "PAYMENT_REPORT", label: "Payment" },
-    { id: "TASK_REPORT", label: "Task" },
-    { id: "ATTENDANCE_REPORT", label: "Attendance" },
-    { id: "EXPENSE_REPORT", label: "Expense" },
+    { id: "TASK_REPORT", label: "Task Report" },
+    { id: "ATTENDANCE_REPORT", label: "Attendance Report" },
+    { id: "EXPENSE_REPORT", label: "Expense Report" },
+    { id: "ACCOUNT_REPORT", label: "Accounts Report" },
+    { id: "PROFIT/LOSS_REPORT", label: "Profit / Loss Report" },
   ];
 
   return (
@@ -118,6 +124,15 @@ export const Summary = () => {
               externalPageSize={selectedValue}
             />
           )}
+
+          {activeTab === "ACCOUNT_REPORT" && (
+            <AccountReport
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
+            />
+          )}
+
+          {activeTab === "PROFIT/LOSS_REPORT" && <ProfitLossReport />}
         </div>
       </div>
 

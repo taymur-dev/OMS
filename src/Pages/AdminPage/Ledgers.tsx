@@ -47,19 +47,19 @@ export const Ledgers = () => {
             <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
               {isAdmin && activeTab === "EMPLOYEE" && (
                 <CustomButton
-                  label="Add Employee"
+                  label="Add Employee Account"
                   handleToggle={() => handleActionClick("EMPLOYEE")}
                 />
               )}
               {isAdmin && activeTab === "CUSTOMER" && (
                 <CustomButton
-                  label="Add Customer"
+                  label="Add Customer Account"
                   handleToggle={() => handleActionClick("CUSTOMER")}
                 />
               )}
               {isAdmin && activeTab === "SUPPLIER" && (
                 <CustomButton
-                  label="Add Supplier"
+                  label="Add Supplier Account"
                   handleToggle={() => handleActionClick("SUPPLIER")}
                 />
               )}

@@ -93,7 +93,6 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
             >
               {notifications.length > 0 && (
                 <>
-                  <span className="absolute inset-0 animate-ping rounded-full bg-sky-400 opacity-75"></span>
                   <span
                     className="absolute top-1 right-1 h-5 w-5 rounded-full bg-red-600 flex 
           items-center justify-center text-[10px] sm:text-[12px] text-white font-bold z-10"

@@ -8,6 +8,7 @@ import { Title } from "../Title";
 import { UserSelect } from "../InputFields/UserSelect";
 import { InputField } from "../InputFields/InputField";
 import { OptionField } from "../InputFields/OptionField";
+import { TextareaField } from "../InputFields/TextareaField";
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -46,6 +47,7 @@ const initialState = {
   amount: "",
   paymentMethod: "",
   paymentDate: currentDate,
+  description: "",
 };
 
 export const AddSupplierAccount = ({
@@ -60,7 +62,9 @@ export const AddSupplierAccount = ({
   const [loading, setLoading] = useState(false);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value, type } = e.target;
 
@@ -121,7 +125,8 @@ export const AddSupplierAccount = ({
       !form.paymentType ||
       !form.amount ||
       !form.paymentMethod ||
-      !form.paymentDate
+      !form.paymentDate ||
+      !form.description
     ) {
       return toast.error("Please fill all required fields", {
         toastId: "supplier-account-validation-supplier",
@@ -137,6 +142,7 @@ export const AddSupplierAccount = ({
         amount: Number(form.amount),
         paymentMethod: form.paymentMethod,
         paymentDate: form.paymentDate,
+        description: form.description,
       };
 
       await axios.post(`${BASE_URL}/api/admin/addSupplierAcc`, payload, {
@@ -235,6 +241,15 @@ export const AddSupplierAccount = ({
               value={form.paymentDate}
               handlerChange={handlerChange}
             />
+
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Description *"
+                name="description"
+                handlerChange={handlerChange}
+                inputVal={form.description || ""}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">

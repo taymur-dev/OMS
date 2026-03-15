@@ -8,6 +8,8 @@ import { Title } from "../Title";
 import { UserSelect } from "../InputFields/UserSelect";
 import { InputField } from "../InputFields/InputField";
 import { OptionField } from "../InputFields/OptionField";
+import { TextareaField } from "../InputFields/TextareaField";
+
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -41,6 +43,7 @@ const initialState = {
   amount: "",
   paymentMethod: "",
   paymentDate: currentDate,
+  description: "",
 };
 
 const paymentTypes = [
@@ -60,7 +63,7 @@ export const AddCustomerAccount = ({
   const [loading, setLoading] = useState(false);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement  | HTMLTextAreaElement>,
   ) => {
     const { name, value, type } = e.target;
 
@@ -119,7 +122,8 @@ export const AddCustomerAccount = ({
       !form.paymentType ||
       !form.amount ||
       !form.paymentMethod ||
-      !form.paymentDate
+      !form.paymentDate || 
+      !form.description
     ) {
       return toast.error("Please fill whole form", {
         toastId: "customer-account-validation-details",
@@ -234,6 +238,15 @@ export const AddCustomerAccount = ({
               value={form.paymentDate}
               handlerChange={handlerChange}
             />
+
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Description *"
+                name="description"
+                handlerChange={handlerChange}
+                inputVal={form.description || ""}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">

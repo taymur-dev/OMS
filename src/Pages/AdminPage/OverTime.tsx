@@ -6,12 +6,8 @@ import {
 } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import { AddOverTime } from "../../Components/OvertimeModals/AddOvertime";
-import { UpdateOverTime } from "../../Components/OvertimeModals/UpdateOverTime";
 import { ViewOverTimeModal } from "../../Components/OvertimeModals/ViewOverTime";
-import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
-import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
-import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import axios from "axios";
@@ -23,12 +19,12 @@ type OVERTIMET = {
   employee_id: number;
   name: string;
   date: string;
-  totalTime: string;
+  time: string;
+  overtime_amount: string;
   description: string;
-  approvalStatus: string;
 };
 
-type MODALT = "ADD" | "VIEW" | "UPDATE" | "DELETE" | "";
+type MODALT = "ADD" | "VIEW" | "";
 
 interface OverTimeProps {
   triggerModal: number;
@@ -49,19 +45,17 @@ export const OverTime = ({
 
   const [isOpenModal, setIsOpenModal] = useState<MODALT>("");
   const [allOvertime, setAllOvertime] = useState<OVERTIMET[]>([]);
-  const [selectedOvertime, setSelectedOvertime] = useState<OVERTIMET | null>(
-    null,
-  );
   const [viewOvertime, setViewOvertime] = useState<OVERTIMET | null>(null);
   const [pageNo, setPageNo] = useState(1);
 
   const handleGetOvertime = useCallback(async () => {
     if (!currentUser) return;
+
     try {
       const url =
         currentUser.role === "admin"
-          ? `${BASE_URL}/api/admin/getAllOvertime`
-          : `${BASE_URL}/api/user/getMyOvertime`;
+          ? `${BASE_URL}/api/getOvertime`
+          : `${BASE_URL}/api/getOvertime`;
 
       const res = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -70,33 +64,13 @@ export const OverTime = ({
       const sortedData = (res.data || []).sort(
         (a: OVERTIMET, b: OVERTIMET) => a.id - b.id,
       );
+
       setAllOvertime(sortedData);
     } catch (error) {
       console.error("Error fetching overtime:", error);
       setAllOvertime([]);
     }
   }, [currentUser, token]);
-
-  const handleDeleteOvertime = async () => {
-    if (!selectedOvertime || !currentUser) return;
-    try {
-      const url =
-        currentUser.role === "admin"
-          ? `${BASE_URL}/api/admin/deleteOvertime/${selectedOvertime.id}`
-          : `${BASE_URL}/api/user/deleteOvertime/${selectedOvertime.id}`;
-
-      await axios.delete(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setAllOvertime((prev) =>
-        prev.filter((o) => o.id !== selectedOvertime.id),
-      );
-      setIsOpenModal("");
-      setSelectedOvertime(null);
-    } catch (error) {
-      console.error("Error deleting overtime:", error);
-    }
-  };
 
   useEffect(() => {
     document.title = "(OMS) OVER TIME";
@@ -114,39 +88,20 @@ export const OverTime = ({
   }, [triggerModal]);
 
   const filteredOvertime = useMemo(() => {
-    return allOvertime.filter(
-      (o) =>
-        o.name.toLowerCase().includes(externalSearch.toLowerCase()) ||
-        o.approvalStatus.toLowerCase().includes(externalSearch.toLowerCase()),
+    return allOvertime.filter((o) =>
+      o.name.toLowerCase().includes(externalSearch.toLowerCase()),
     );
   }, [allOvertime, externalSearch]);
 
   const totalNum = filteredOvertime.length;
   const startIndex = (pageNo - 1) * externalPageSize;
+
   const paginatedOvertime = filteredOvertime.slice(
     startIndex,
     startIndex + externalPageSize,
   );
 
   if (loader) return <Loader />;
-
-  const getStatusColor = (status: string) => {
-    const base =
-      "px-2.5 py-0.5 rounded-full text-xs font-semibold w-fit inline-block whitespace-nowrap";
-
-    switch (status.toLowerCase()) {
-      case "approved":
-      case "accepted":
-        return `${base} bg-green-100 text-green-700 border border-green-200`;
-      case "pending":
-        return `${base} bg-yellow-100 text-yellow-700 border border-yellow-200`;
-      case "rejected":
-      case "declined":
-        return `${base} bg-red-100 text-red-700 border border-red-200`;
-      default:
-        return `${base} bg-gray-100 text-gray-600 border border-gray-200`;
-    }
-  };
 
   return (
     <div className="flex flex-col flex-grow bg-white overflow-hidden">
@@ -155,18 +110,20 @@ export const OverTime = ({
           <div className="px-0.5 pt-0.5">
             <div
               className={`grid ${
-                currentUser?.role === "admin"
+                isAdmin
                   ? "grid-cols-[60px_1fr_1fr_1fr_1fr_auto]"
                   : "grid-cols-[60px_1fr_1fr_1fr_auto]"
-              } bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm`}
+              } bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0
+               z-10 gap-3 px-3 py-3 shadow-sm`}
             >
               <span className="text-left">Sr#</span>
+
               {isAdmin && <span className="text-left">Employee Details</span>}
 
               <span className="text-left">Date</span>
               <span className="text-left">Over Time</span>
-              <span className="text-left">Status</span>
-              <span className="text-right w-[140px] pr-4">Actions</span>
+              <span className="text-left">OverTime Amount</span>
+              <span className="text-right w-[120px] pr-4">Actions</span>
             </div>
           </div>
 
@@ -185,12 +142,11 @@ export const OverTime = ({
                   <div
                     key={ot.id}
                     className={`grid ${
-                      currentUser?.role === "admin"
+                      isAdmin
                         ? "grid-cols-[60px_1fr_1fr_1fr_1fr_auto]"
                         : "grid-cols-[60px_1fr_1fr_1fr_auto]"
-                    } 
-                  items-center px-3 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30
-                   transition-colors shadow-sm`}
+                    } items-center px-3 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg
+                     hover:bg-blue-50/30 transition-colors shadow-sm`}
                   >
                     <span className="text-gray-500 font-medium">
                       {startIndex + index + 1}
@@ -198,7 +154,7 @@ export const OverTime = ({
 
                     {isAdmin && (
                       <div className="flex items-center gap-3 overflow-hidden">
-                        <span className="truncate  text-gray-800">
+                        <span className="truncate text-gray-800">
                           {ot.name}
                         </span>
                       </div>
@@ -214,37 +170,19 @@ export const OverTime = ({
                         .replace(/ /g, "-")}
                     </div>
 
-                    <div className="text-gray-600 truncate">{ot.totalTime}</div>
+                    <div className="text-gray-600 truncate">{ot.time}</div>
 
-                    <div
-                      className={`capitalize font-medium ${getStatusColor(ot.approvalStatus)}`}
-                    >
-                      {ot.approvalStatus}
+                    <div className="text-gray-600 font-medium">
+                      {ot.overtime_amount}
                     </div>
 
-                    <div className="flex items-center justify-end gap-1 w-[140px] pr-5">
+                    <div className="flex items-center justify-end gap-1 w-[120px] pr-3">
                       <ViewButton
                         handleView={() => {
                           setViewOvertime(ot);
                           setIsOpenModal("VIEW");
                         }}
                       />
-                      {isAdmin && (
-                        <>
-                          <EditButton
-                            handleUpdate={() => {
-                              setSelectedOvertime(ot);
-                              setIsOpenModal("UPDATE");
-                            }}
-                          />
-                          <DeleteButton
-                            handleDelete={() => {
-                              setSelectedOvertime(ot);
-                              setIsOpenModal("DELETE");
-                            }}
-                          />
-                        </>
-                      )}
                     </div>
                   </div>
                 ))}
@@ -261,6 +199,7 @@ export const OverTime = ({
           end={Math.min(startIndex + externalPageSize, totalNum)}
           total={totalNum}
         />
+
         <Pagination
           pageNo={pageNo}
           handleIncrementPageButton={() =>
@@ -281,32 +220,11 @@ export const OverTime = ({
           refreshOvertime={handleGetOvertime}
         />
       )}
-      {isOpenModal === "UPDATE" && selectedOvertime && (
-        <UpdateOverTime
-          setModal={() => setIsOpenModal("")}
-          EditOvertime={{
-            id: selectedOvertime.id,
-            employeeId: selectedOvertime.employee_id,
-            time: selectedOvertime.totalTime,
-            date: selectedOvertime.date,
-            description: selectedOvertime.description,
-            status: selectedOvertime.approvalStatus,
-          }}
-          refreshOvertimes={handleGetOvertime}
-        />
-      )}
+
       {isOpenModal === "VIEW" && viewOvertime && (
         <ViewOverTimeModal
           setModal={() => setIsOpenModal("")}
           data={viewOvertime}
-        />
-      )}
-      {isOpenModal === "DELETE" && selectedOvertime && (
-        <ConfirmationModal
-          isOpen={() => setIsOpenModal("")}
-          onClose={() => setIsOpenModal("")}
-          onConfirm={handleDeleteOvertime}
-          message="Are you sure you want to delete this overtime record?"
         />
       )}
     </div>

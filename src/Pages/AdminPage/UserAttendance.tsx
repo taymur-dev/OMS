@@ -79,7 +79,7 @@ export const UserAttendance = ({
       });
 
       setAllAttendance(
-        Array.isArray(res.data) ? res.data.sort((a, b) => b.id - a.id) : [],
+        Array.isArray(res.data) ? res.data.sort((a, b) => a.id - b.id) : [],
       );
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;

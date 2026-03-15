@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { TableTitle } from "../../Components/TableLayoutComponents/TableTitle";
 import { CustomButton } from "../../Components/TableLayoutComponents/CustomButton";
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField";
@@ -13,8 +14,20 @@ const entriesOptions = [5, 10, 15, 20, 30];
 
 export const AttendanceHub = () => {
   const [activeTab, setActiveTab] = useState<TabType>("MARK");
+  const [searchParams] = useSearchParams();
   const { currentUser } = useAppSelector((state) => state.officeState);
   const isAdmin = currentUser?.role === "admin";
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam === "LEAVE") {
+      setActiveTab("LEAVE");
+    } else if (tabParam === "USER") {
+      setActiveTab("USER");
+    } else if (tabParam === "MARK") {
+      setActiveTab("MARK");
+    }
+  }, [searchParams]);
 
   // States for search and pagination to match People.tsx header
   const [searchTerm, setSearchTerm] = useState("");
@@ -112,7 +125,6 @@ export const AttendanceHub = () => {
           )}
         </div>
 
-      
         <div className="flex-grow p-1 sm:p-4 overflow-auto">
           {activeTab === "MARK" && (
             <MarkAttendance

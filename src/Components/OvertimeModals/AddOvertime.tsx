@@ -27,6 +27,7 @@ type AddOvertimeType = {
   employee_id: string;
   date: string;
   time: string;
+  overtime_amount: string;
   description: string;
 };
 
@@ -36,6 +37,7 @@ type UserT = {
   name?: string;
   loginStatus?: string;
   role?: string;
+  contact?: string;
 };
 
 const currentDate = new Date().toLocaleDateString("sv-SE", {
@@ -46,6 +48,7 @@ const initialState: AddOvertimeType = {
   employee_id: "",
   date: currentDate,
   time: "00:00:00",
+  overtime_amount: "",
   description: "",
 };
 
@@ -161,6 +164,7 @@ export const AddOverTime = ({
         {
           date: addOvertime.date,
           time: addOvertime.time,
+          overtime_amount: addOvertime.overtime_amount,
           description: addOvertime.description,
           ...(isAdmin && { employee_id: addOvertime.employee_id }),
         },
@@ -198,8 +202,8 @@ export const AddOverTime = ({
     .map((u) => ({
       id: u.id,
       value: String(u.id),
-      label: u.employeeName || u.name || "User",
-      name: u.employeeName || u.name || "User",
+      label: `${u.employeeName || u.name || "User"} | ${u.contact || ""}`,
+      name: `${u.employeeName || u.name || "User"} | ${u.contact || ""}`,
       loginStatus: u.loginStatus || "Y",
       projectName: "",
     }));
@@ -249,6 +253,18 @@ export const AddOverTime = ({
               value={addOvertime.time}
               handlerChange={handlerChange}
             />
+
+            <div className="md:col-span-2">
+              {isAdmin && (
+                <InputField
+                  labelName="Overtime Amount *"
+                  type="hour"
+                  name="overtime_amount"
+                  value={addOvertime.overtime_amount}
+                  handlerChange={handlerChange}
+                />
+              )}
+            </div>
 
             <div className="md:col-span-2">
               <TextareaField

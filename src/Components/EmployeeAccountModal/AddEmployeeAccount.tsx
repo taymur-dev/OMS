@@ -8,6 +8,7 @@ import { Title } from "../Title";
 import { UserSelect } from "../InputFields/UserSelect";
 import { InputField } from "../InputFields/InputField";
 import { OptionField } from "../InputFields/OptionField";
+import { TextareaField } from "../InputFields/TextareaField";
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -48,6 +49,7 @@ const initialState = {
   amount: "",
   payment_method: "",
   payment_date: currentDate,
+  description: "",
 };
 
 export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
@@ -59,7 +61,9 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
   const [loading, setLoading] = useState(false);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value, type } = e.target;
 
@@ -119,6 +123,7 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
       employeeEmail,
       payment_type,
       amount,
+      description,
     } = form;
 
     // Validation
@@ -128,7 +133,8 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
       Number(amount) <= 0 ||
       !employee_name?.trim() ||
       !employeeContact?.trim() ||
-      !employeeEmail?.trim()
+      !employeeEmail?.trim() ||
+      !description
     ) {
       return toast.error("Please Fill in all fields", {
         toastId: "employee-account-validation-employee",
@@ -149,6 +155,7 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
           amount: Number(form.amount),
           payment_method: form.payment_method,
           payment_date: form.payment_date,
+          description: form.description,
         },
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -253,6 +260,15 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
               value={form.payment_date}
               handlerChange={handlerChange}
             />
+
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Description *"
+                name="description"
+                handlerChange={handlerChange}
+                inputVal={form.description || ""}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">

@@ -68,7 +68,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             className="px-6 py-2 text-sm font-bold text-white bg-red-600 rounded-lg hover:bg-red-500
              transform active:scale-95 transition-all shadow-lg"
           >
-            Confirm Delete
+            Delete
           </button>
         </div>
       </div>

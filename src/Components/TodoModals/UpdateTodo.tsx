@@ -21,6 +21,7 @@ export type TodoType = {
   startDate: string;
   endDate: string;
   completionStatus: string;
+  todoStatus: "Y" | "N";
   note: string;
   deadline: string;
 };

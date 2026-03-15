@@ -10,7 +10,6 @@ import { authSuccess, authFailure } from "../redux/UserSlice";
 import setAuthToken from "../SetAuthToken";
 import { Navigate } from "react-router-dom";
 import { navigationStart, navigationSuccess } from "../redux/NavigationSlice";
-import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
 
 // Icons
@@ -48,8 +47,6 @@ export const Login = () => {
     setFormData({ ...formData, [name]: value.trim() });
   };
 
-  const toastId = "login-toast";
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -58,8 +55,6 @@ export const Login = () => {
       const { token, user } = res.data;
       setAuthToken(token);
       dispatch(authSuccess(res.data));
-
-      toast.success(res.data.message, { toastId });
 
       if (user.role === "admin" || user.role === "system-user") {
         navigate("/");
@@ -158,7 +153,7 @@ export const Login = () => {
             className="w-full h-14 bg-blue-400 hover:bg-[#5198f6] text-white font-semibold rounded-2xl
               shadow-lg transition-all active:scale-[0.98] disabled:opacity-70"
           >
-            {loading ? <ClipLoader size={20} color="#fff" /> : "Get Started"}
+            {loading ? <ClipLoader size={20} color="#fff" /> : "Login"}
           </button>
         </form>
 

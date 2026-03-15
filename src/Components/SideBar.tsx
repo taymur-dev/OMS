@@ -104,7 +104,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
         onMouseLeave={handleMouseLeave}
         className={`
           fixed inset-y-0 left-0 bg-white shadow-2xl transition-all duration-300 ease-in-out
-          flex flex-col py-4 overflow-y-auto overflow-x-hidden flex-shrink-0
+          flex flex-col overflow-y-auto overflow-x-hidden flex-shrink-0
           z-50 md:z-30
           
           /* Blur Logic */

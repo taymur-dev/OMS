@@ -6,6 +6,7 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
 import { UserSelect, SelectOption } from "../InputFields/UserSelect";
 import { InputField } from "../InputFields/InputField";
+import { TextareaField } from "../InputFields/TextareaField";
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -36,6 +37,9 @@ type SalaryState = {
   total_salary: string;
   config_date: string;
   effective_from: string;
+  attendance_base: string;
+  salary_month: string;
+  description: string;
 };
 
 const initialState: SalaryState = {
@@ -48,6 +52,9 @@ const initialState: SalaryState = {
   total_salary: "0",
   config_date: currentDate,
   effective_from: currentDate,
+  attendance_base: "Y",
+  salary_month: "",
+  description: "",
 };
 
 export const AddConfigEmpSalary = ({
@@ -63,7 +70,9 @@ export const AddConfigEmpSalary = ({
   const [loading, setLoading] = useState(false);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value, type } = e.target;
 
@@ -127,11 +136,15 @@ export const AddConfigEmpSalary = ({
     if (
       !addConfigEmployee.employee_id ||
       !addConfigEmployee.salary_amount ||
-      !addConfigEmployee.config_date
+      !addConfigEmployee.config_date ||
+      !addConfigEmployee.salary_month
     ) {
-      return toast.error("Employee, Salary, and Config Date are required", {
-        toastId: "salary-required-fields",
-      });
+      return toast.error(
+        "Employee, Salary, Salary Month and Config Date are required",
+        {
+          toastId: "salary-required-fields",
+        },
+      );
     }
 
     setLoading(true);
@@ -146,6 +159,9 @@ export const AddConfigEmpSalary = ({
         total_salary: Number(addConfigEmployee.total_salary),
         config_date: addConfigEmployee.config_date,
         effective_from: addConfigEmployee.effective_from,
+        attendance_base: addConfigEmployee.attendance_base,
+        salary_month: addConfigEmployee.salary_month,
+        description: addConfigEmployee.description,
       };
 
       await axios.post(`${BASE_URL}/api/admin/addsalaries`, payload, {
@@ -244,7 +260,7 @@ export const AddConfigEmpSalary = ({
             />
 
             <InputField
-              labelName="Date *"
+              labelName="Configuration Date *"
               name="config_date"
               type="date"
               handlerChange={handlerChange}
@@ -258,6 +274,53 @@ export const AddConfigEmpSalary = ({
               handlerChange={handlerChange}
               value={addConfigEmployee.effective_from}
             />
+
+            <InputField
+              labelName="Salary Month *"
+              name="salary_month"
+              type="month"
+              handlerChange={handlerChange}
+              value={addConfigEmployee.salary_month}
+            />
+
+            <div className="flex flex-col gap-1 ml-1">
+              <label className="text-xs font-semibold text-gray-600">
+                Attendance Base
+              </label>
+              <div className="flex items-center gap-6 mt-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="attendance_base"
+                    value="Y"
+                    checked={addConfigEmployee.attendance_base === "Y"}
+                    onChange={handlerChange}
+                    className="w-4 h-4 text-blue-600"
+                  />
+                  <span className="text-sm text-gray-600">Yes</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="attendance_base"
+                    value="N"
+                    checked={addConfigEmployee.attendance_base === "N"}
+                    onChange={handlerChange}
+                    className="w-4 h-4 text-blue-600"
+                  />
+                  <span className="text-sm text-gray-600">No</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="md:col-span-2">
+              <TextareaField
+                labelName="Description*"
+                name="description"
+                handlerChange={handlerChange}
+                inputVal={addConfigEmployee.description || ""}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">

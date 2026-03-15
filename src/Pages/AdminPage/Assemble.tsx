@@ -46,7 +46,7 @@ export const Assemble = () => {
             <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
               {isAdmin && activeTab === "ATTENDANCE_RULES" && (
                 <CustomButton
-                  label="Add Rule"
+                  label="Add Attendance Rule"
                   handleToggle={() => handleActionClick("ATTENDANCE_RULES")}
                 />
               )}

@@ -2,16 +2,16 @@ import { Title } from "../Title";
 import {
   FaCalendarAlt,
   FaClock,
-  FaCheckCircle,
   FaInfoCircle,
+  FaMoneyBillWave,
 } from "react-icons/fa";
 
 type OVERTIMET = {
   id: number;
   name: string;
   date: string;
-  totalTime: string;
-  approvalStatus: string;
+  time: string;
+  overtime_amount: string;
 };
 
 type ViewOvertimeProps = {
@@ -36,6 +36,7 @@ export const ViewOverTimeModal = ({ setModal, data }: ViewOvertimeProps) => {
             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Time Information
             </h3>
+
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
@@ -51,11 +52,22 @@ export const ViewOverTimeModal = ({ setModal, data }: ViewOvertimeProps) => {
                     .replace(/ /g, "-")}
                 </p>
               </div>
+
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                   <FaClock className="text-gray-400" /> Overtime Duration
                 </label>
-                <p className="text-gray-800 font-medium">{data.totalTime}</p>
+                <p className="text-gray-800 font-medium">{data.time}</p>
+              </div>
+
+              {/* NEW FIELD */}
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaMoneyBillWave className="text-gray-400" /> Overtime Amount
+                </label>
+                <p className="text-gray-600">
+                {data.overtime_amount}
+                </p>
               </div>
             </div>
           </div>
@@ -65,21 +77,8 @@ export const ViewOverTimeModal = ({ setModal, data }: ViewOvertimeProps) => {
             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Status & Tracking
             </h3>
+
             <div className="grid grid-cols-2 gap-y-4 pt-2">
-              <div>
-                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaCheckCircle className="text-gray-400" /> Approval Status
-                </label>
-                <span
-                  className={`inline-block mt-1 px-3 py-0.5 rounded-full text-xs font-bold uppercase ${
-                    data.approvalStatus.toLowerCase() === "approved"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-amber-100 text-amber-700"
-                  }`}
-                >
-                  {data.approvalStatus}
-                </span>
-              </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                   <FaInfoCircle className="text-gray-400" /> Request ID

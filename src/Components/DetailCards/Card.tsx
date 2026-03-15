@@ -3,25 +3,26 @@ import { ReactNode } from "react";
 type CardProps = {
   titleName: string;
   totalNumber: number;
-  icon: ReactNode;
-  style?: string;
+  icon?: ReactNode; // Now optional to support different footer styles
+  footer?: ReactNode; 
   isCurrency?: boolean;
+  style?: string;
+  onClick?: () => void;
 };
 
 const Card = ({
   titleName,
   totalNumber,
-  icon,
-  style = "",
+  footer,
   isCurrency,
+  style = "bg-white border border-blue-400 hover:border-white",
+  onClick,
 }: CardProps) => {
   const formatCompact = (val: number) => {
     return Intl.NumberFormat("en-US", {
       notation: "compact",
       maximumFractionDigits: 1,
-    })
-      .format(val)
-      .toLowerCase();
+    }).format(val);
   };
 
   const formattedValue = isCurrency
@@ -30,34 +31,28 @@ const Card = ({
 
   return (
     <div
+      onClick={onClick}
       className={`
-        flex flex-col items-center justify-center
-        rounded-[12px] md:rounded-[24px] 
-        p-4
-        border border-blue-400 hover:border-gray-100 shadow-sm
-        transition-all duration-300 hover:shadow-md hover:-translate-y-1
-        w-full min-w-[100px] 
-        overflow-hidden
-        ${style || "bg-white text-slate-800"} /* Fallback to white bg if no style */
+        relative flex flex-col items-center justify-between
+        ${style} rounded-[18px] p-4 h-full w-full
+        shadow-[0_4px_20px_rgba(0,0,0,0.05)]  
+        transition-all duration-300 hover:shadow-lg 
       `}
     >
-      <div className="mb-1 md:mb-3 flex items-center justify-center w-10 h-10 md:w-14 md:h-14">
-        {/* Ensure the icon inherits the parent text color */}
-        <div className="text-2xl md:text-4xl transition-transform duration-300 hover:scale-110">
-          {icon}
-        </div>
+      {/* Top Section: Number and Title */}
+      <div className="flex flex-col items-center text-center space-y-1 mt-2">
+        <h2 className="text-3xl font-bold text-slate-800 tracking-tight">
+          {formattedValue}
+        </h2>
+        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+          {titleName}
+        </p>
       </div>
 
-      <p
-        className={`text-[10px] md:text-[11px] font-bold uppercase tracking-tight mb-0.5 md:mb-1 text-center whitespace-nowrap px-1 
-        ${style.includes("text-white") ? "text-white/80" : "text-gray-500"}`}
-      >
-        {titleName}
-      </p>
-
-      <h2 className="text-base md:text-2xl font-black tracking-tight text-center truncate w-full px-1">
-        {formattedValue}
-      </h2>
+      {/* Footer Section: Icons/Charts/Progress */}
+      <div className="w-full flex justify-center items-center min-h-[40px] mt-4">
+        {footer}
+      </div>
     </div>
   );
 };
