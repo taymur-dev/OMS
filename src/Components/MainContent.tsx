@@ -689,14 +689,14 @@ export const MainContent = () => {
       </div>
 
       <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-4 auto-rows-fr">
-        {/* 1. USERS - Sparkline */}
+        {/* 1. EMPLOYEES - Sparkline */}
 
         <div
-          onClick={() => navigate("/people?tab=USERS")}
+          onClick={() => navigate("/people?tab=EMPLOYEES")}
           className="group cursor-pointer"
         >
           <Card
-            titleName="Users"
+            titleName="Employees"
             totalNumber={activeUsers.length}
             footer={
               <div className="flex flex-col items-center w-full relative">

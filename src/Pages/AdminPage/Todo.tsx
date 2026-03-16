@@ -132,7 +132,7 @@ export const Todo = ({
             <div className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm">
               <span className="text-left">Sr#</span>
               <span className="text-left">
-                {currentUser?.role === "admin" ? "User" : "Task ID"}
+                {currentUser?.role === "admin" ? "Employee" : "Task ID"}
               </span>
               <span className="text-left">Task Detail</span>
               <span className="text-left">Start</span>

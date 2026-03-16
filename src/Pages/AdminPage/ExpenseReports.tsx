@@ -114,42 +114,70 @@ export const ExpenseReports = ({
     }
   }, [token]);
 
-  const printDiv = () => {
-    const printStyles = `
-      @page { size: A4 portrait; }
-      body { font-family: Arial, sans-serif; font-size: 11pt; color: #000; }
-      .print-container { width: 100%; padding: 0; }
-      .print-header { text-align: center; }
-      .print-header h1 { font-size: 25pt; font-weight: bold; }
-      .print-header h2 { font-size: 20pt; font-normal; }
-      .date-range { text-align: left; font-size: 14pt; display: flex; justify-content: space-between; }
-      table { width: 100%; border-collapse: collapse; border: 2px solid #000; }
-      thead { background-color: #ccc; color: #000; }
-      thead th, tbody td { border: 2px solid #000; font-size: 10pt; text-align: left; }
-      tbody tr:nth-child(even) { background-color: #f9f9f9; }
-      @media print { .no-print { display: none; } }
-    `;
-    const content = document.getElementById("myDiv")?.outerHTML || "";
-    document.body.innerHTML = `
-      <div class="print-container">
+ const printDiv = () => {
+  const printStyles = `
+    @page { size: A4 landscape; margin: 10mm; }
+    body { font-family: Arial, sans-serif; font-size: 10pt; }
+    .print-header { text-align: center; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #333; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; font-weight: bold; }
+  `;
+
+  const tableRows = filteredExpenses
+    .map(
+      (e, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${e.categoryName}</td>
+        <td>${e.expenseName}</td>
+        <td>${e.amount.toLocaleString()}</td>
+        <td>${e.date}</td>
+      </tr>
+    `
+    )
+    .join("");
+
+  const printWindow = window.open("", "_blank");
+
+  printWindow?.document.write(`
+    <html>
+      <head>
+        <title>Expense Report</title>
+        <style>${printStyles}</style>
+      </head>
+      <body>
         <div class="print-header">
           <h1>Office Management System</h1>
           <h2>Expense Report</h2>
+          <p>
+            <strong>From:</strong> ${appliedFilters.startDate}
+            <strong>To:</strong> ${appliedFilters.endDate}
+          </p>
         </div>
-        <div class="date-range">
-          <strong>From: ${appliedFilters.startDate}</strong>
-          <strong>To: ${appliedFilters.endDate}</strong>
-        </div>
-        ${content}
-      </div>
-    `;
-    const style = document.createElement("style");
-    style.type = "text/css";
-    style.appendChild(document.createTextNode(printStyles));
-    document.head.appendChild(style);
-    window.print();
-    location.reload();
-  };
+
+        <table>
+          <thead>
+            <tr>
+              <th>Sr#</th>
+              <th>Category</th>
+              <th>Expense Name</th>
+              <th>Amount</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+      </body>
+    </html>
+  `);
+
+  printWindow?.focus();
+  printWindow?.print();
+  printWindow?.close();
+};
 
   useEffect(() => {
     document.title = "(OMS) EXPENSE REPORTS";

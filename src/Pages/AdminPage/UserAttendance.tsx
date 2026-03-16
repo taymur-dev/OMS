@@ -90,7 +90,7 @@ export const UserAttendance = ({
   }, [token, currentUser, isAdmin]);
 
   useEffect(() => {
-    document.title = "(OMS) USER ATTENDANCE";
+    document.title = "(OMS) EMPLOYEE ATTENDANCE";
     handleGetAttendance();
     dispatch(navigationStart());
     setTimeout(() => {

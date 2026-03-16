@@ -1,6 +1,6 @@
 import { RxHamburgerMenu } from "react-icons/rx";
 import { RiUserFill } from "react-icons/ri";
-import headerLogo from "../assets/techmen.png";
+import headerLogo from "../assets/Desk_Logo.png";
 import { CiBellOn } from "react-icons/ci";
 import React, { useState, useEffect, useCallback } from "react";
 import { useAppSelector } from "../redux/Hooks";

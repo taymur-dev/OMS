@@ -32,6 +32,14 @@ interface SalesReportsProps {
   externalPageSize: number;
 }
 
+export interface BusinessVarType {
+  id: number;
+  name: string;
+  email: string;
+  contact: string;
+  logo?: string; // URL or base64 string
+}
+
 export const SalesReports = ({
   externalSearch,
   externalPageSize,
@@ -55,6 +63,7 @@ export const SalesReports = ({
     endDate: new Date().toLocaleDateString("sv-SE"),
     customerName: "",
   });
+  const [businessVar, setBusinessVar] = useState<BusinessVarType | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -110,11 +119,23 @@ export const SalesReports = ({
     }
   }, [dispatch, token]);
 
+  const fetchBusinessVariable = useCallback(async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/business-variables`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.data.length > 0) setBusinessVar(res.data[0]); // Assuming first is active/default
+    } catch (err) {
+      console.error("Failed to fetch business variable:", err);
+    }
+  }, [token]);
+
   useEffect(() => {
     handleGetALLCustomers();
     handleGetSalesReports();
+    fetchBusinessVariable();
     document.title = "(OMS) SALE REPORTS";
-  }, [handleGetALLCustomers, handleGetSalesReports]);
+  }, [handleGetALLCustomers, handleGetSalesReports, fetchBusinessVariable]);
 
   // Reset page on search/size change
   useEffect(() => {
@@ -154,13 +175,75 @@ export const SalesReports = ({
   );
 
   const printDiv = () => {
-    const content = document.getElementById("myDiv")?.outerHTML || "";
-    const printWindow = window.open("", "_blank");
-    printWindow?.document.write(
-      `<html><head><title>Print Report</title></head><body>${content}</body></html>`,
-    );
-    printWindow?.document.close();
+    const printStyles = `
+    @page { size: A4 portrait; margin: 10mm; }
+    body { font-family: Arial, sans-serif; font-size: 10pt; }
+    .print-header { text-align: center; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #333; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; font-weight: bold; }
+  `;
+
+    const tableRows = filteredReports
+      .map(
+        (item, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${item.customerName}</td>
+        <td>${item.projectName}</td>
+        <td>${item.saleDate}</td>
+      </tr>
+    `,
+      )
+      .join("");
+
+    const printWindow = window.open("", "_self");
+
+    const logoHtml = businessVar?.logo
+      ? `<img src="${businessVar.logo}" alt="Logo" style="max-height: 60px; display: block; margin: 0 auto 10px;" />`
+      : "";
+
+    const nameHtml = businessVar?.name
+      ? `<h1>${businessVar.name}</h1>`
+      : "<h1>Office Management System</h1>";
+
+    printWindow?.document.write(`
+    <html>
+      <head>
+        <title>Sale Report</title>
+        <style>${printStyles}</style>
+      </head>
+      <body>
+        <div class="print-header">
+          ${logoHtml}
+          ${nameHtml}
+          <h2>Sale Report</h2>
+          <p>
+            <strong>From:</strong> ${appliedFilters.startDate}
+            <strong>To:</strong> ${appliedFilters.endDate}
+          </p>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Sr#</th>
+              <th>Customer Name</th>
+              <th>Project Title</th>
+              <th>Sale Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+      </body>
+    </html>
+  `);
+
+    printWindow?.focus();
     printWindow?.print();
+    printWindow?.close();
   };
 
   if (loader) return <Loader />;
@@ -231,7 +314,7 @@ export const SalesReports = ({
           </div>
 
           {/* Body Rows */}
-          <div id="myDiv" className="px-0.5 sm:px-1 py-2">
+          <div id="saleDiv" className="px-0.5 sm:px-1 py-2">
             {paginatedReports.length === 0 ? (
               <div className="bg-gray-50 rounded-lg border-2 border p-12 flex flex-col items-center justify-center text-gray-400">
                 <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />

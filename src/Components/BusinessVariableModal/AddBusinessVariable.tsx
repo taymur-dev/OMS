@@ -1,0 +1,184 @@
+import React, { useState } from "react";
+import axios, { AxiosError } from "axios";
+import { toast } from "react-toastify";
+
+// Project Imports
+import { BASE_URL } from "../../Content/URL";
+import { useAppSelector } from "../../redux/Hooks";
+
+// UI Components
+import { Title } from "../Title";
+import { InputField } from "../InputFields/InputField";
+import { AddButton } from "../CustomButtons/AddButton";
+import { CancelBtn } from "../CustomButtons/CancelBtn";
+
+type AddBusinessVariableProps = {
+  setModal: () => void;
+  handleRefresh: () => void;
+};
+
+type BusinessVariableForm = {
+  name: string;
+  email: string;
+  contact: string;
+  logo: File | null;
+};
+
+const initialState: BusinessVariableForm = {
+  name: "",
+  email: "",
+  contact: "",
+  logo: null,
+};
+
+export const AddBusinessVariable = ({
+  setModal,
+  handleRefresh,
+}: AddBusinessVariableProps) => {
+  const { currentUser } = useAppSelector((state) => state.officeState);
+  const token = currentUser?.token;
+
+  const [formData, setFormData] = useState<BusinessVariableForm>(initialState);
+  const [loading, setLoading] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+
+  const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, files } = e.target;
+
+    if (name === "logo" && files && files[0]) {
+      const file = files[0];
+      setFormData((prev) => ({ ...prev, logo: file }));
+      setPreview(URL.createObjectURL(file)); // Create local preview URL
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Validation
+    if (!formData.name || !formData.email || !formData.contact) {
+      return toast.error("Please fill all required fields", {
+        toastId: "required-fields",
+      });
+    }
+
+    setLoading(true);
+
+    try {
+      // Using FormData for potential file upload (logo)
+      const data = new FormData();
+      data.append("name", formData.name);
+      data.append("email", formData.email);
+      data.append("contact", formData.contact);
+      if (formData.logo) {
+        data.append("logo", formData.logo);
+      }
+
+      await axios.post(`${BASE_URL}/api/admin/addBusinessVariable`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      toast.success("Business Variable added successfully!");
+      handleRefresh();
+      setModal();
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+      const message =
+        axiosError.response?.data?.message || "Failed to add data";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4 flex items-center justify-center z-50">
+      <div className="w-[40rem] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
+        <form onSubmit={handlerSubmitted}>
+          {/* Header */}
+          <div className="bg-white rounded-xl border-t-5 border-blue-400">
+            <Title
+              setModal={setModal}
+              className="text-white text-lg font-semibold"
+            >
+              ADD BUSINESS VARIABLE
+            </Title>
+          </div>
+
+          <div className="p-6 space-y-4">
+            {/* Logo Upload & Preview Section */}
+            <div className="flex items-center gap-4  pb-4">
+              <div className="w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-50">
+                {preview ? (
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-[10px] text-gray-400 text-center px-1">
+                    No Logo
+                  </span>
+                )}
+              </div>
+              <div className="flex-grow">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Company Logo
+                </label>
+                <input
+                  type="file"
+                  name="logo"
+                  accept="image/*"
+                  onChange={handlerChange}
+                  className="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <InputField
+                  labelName="Business Name*"
+                  name="name"
+                  type="text"
+                  handlerChange={handlerChange}
+                  value={formData.name}
+                />
+              </div>
+
+              <InputField
+                labelName="Email Address*"
+                name="email"
+                type="email"
+                handlerChange={handlerChange}
+                value={formData.email}
+              />
+
+              <InputField
+                labelName="Contact Number*"
+                name="contact"
+                type="text"
+                handlerChange={handlerChange}
+                value={formData.contact}
+              />
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 rounded-b-xl">
+            <CancelBtn setModal={setModal} />
+            <AddButton
+              loading={loading}
+              label={loading ? "Saving..." : "Save Business"}
+            />
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};

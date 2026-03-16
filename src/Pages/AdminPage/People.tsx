@@ -10,7 +10,7 @@ import { Suppliers } from "./Suppliers";
 import { useSearchParams } from "react-router-dom";
 import { Footer } from "../../Components/Footer";
 
-type TabType = "USERS" | "CUSTOMERS" | "SUPPLIERS";
+type TabType = "EMPLOYEES" | "CUSTOMERS" | "SUPPLIERS";
 const entriesOptions = [5, 10, 15, 20, 30];
 
 export const People = () => {
@@ -24,13 +24,13 @@ export const People = () => {
   const [activeTab, setActiveTab] = useState<TabType>(
     tabFromURL === "CUSTOMERS" || tabFromURL === "SUPPLIERS"
       ? tabFromURL
-      : "USERS",
+      : "EMPLOYEES",
   );
 
   const [triggerModal, setTriggerModal] = useState<{
     tab: TabType;
     count: number;
-  }>({ tab: "USERS", count: 0 });
+  }>({ tab: "EMPLOYEES", count: 0 });
 
   const handleActionClick = (tab: TabType) => {
     setTriggerModal((prev) => ({
@@ -41,7 +41,7 @@ export const People = () => {
 
   useEffect(() => {
     if (
-      tabFromURL === "USERS" ||
+      tabFromURL === "EMPLOYEES" ||
       tabFromURL === "CUSTOMERS" ||
       tabFromURL === "SUPPLIERS"
     ) {
@@ -57,10 +57,10 @@ export const People = () => {
           tileName="People"
           rightElement={
             <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
-              {activeTab === "USERS" && (
+              {activeTab === "EMPLOYEES" && (
                 <CustomButton
-                  label="Add User"
-                  handleToggle={() => handleActionClick("USERS")}
+                  label="Add Employee"
+                  handleToggle={() => handleActionClick("EMPLOYEES")}
                 />
               )}
               {activeTab === "CUSTOMERS" && (
@@ -81,7 +81,7 @@ export const People = () => {
 
         <div className="px-4 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
           <div className="flex w-full sm:w-auto p-1 bg-[#F1F5F9] rounded-xl  border border-gray-200">
-            {(["USERS", "CUSTOMERS", "SUPPLIERS"] as TabType[]).map((tab) => (
+            {(["EMPLOYEES", "CUSTOMERS", "SUPPLIERS"] as TabType[]).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -122,9 +122,9 @@ export const People = () => {
 
         {/* 3. Content Area */}
         <div className="flex-grow  sm:p-4 overflow-auto">
-          {activeTab === "USERS" && (
+          {activeTab === "EMPLOYEES" && (
             <UsersDetails
-              triggerAdd={triggerModal.tab === "USERS" ? triggerModal.count : 0}
+              triggerAdd={triggerModal.tab === "EMPLOYEES" ? triggerModal.count : 0}
               // Pass the lifted states down
               externalSearch={searchTerm}
               externalPageSize={selectedValue}

@@ -9,7 +9,7 @@ import { LeaveRequests } from "./LeaveRequests";
 import { useAppSelector } from "../../redux/Hooks";
 import { Footer } from "../../Components/Footer";
 
-type TabType = "MARK" | "USER" | "LEAVE";
+type TabType = "MARK" | "EMPLOYEE" | "LEAVE";
 const entriesOptions = [5, 10, 15, 20, 30];
 
 export const AttendanceHub = () => {
@@ -22,8 +22,8 @@ export const AttendanceHub = () => {
     const tabParam = searchParams.get("tab");
     if (tabParam === "LEAVE") {
       setActiveTab("LEAVE");
-    } else if (tabParam === "USER") {
-      setActiveTab("USER");
+    } else if (tabParam === "EMPLOYEE") {
+      setActiveTab("EMPLOYEE");
     } else if (tabParam === "MARK") {
       setActiveTab("MARK");
     }
@@ -53,10 +53,10 @@ export const AttendanceHub = () => {
           tileName="Attendance"
           rightElement={
             <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
-              {activeTab === "USER" && isAdmin && (
+              {activeTab === "EMPLOYEE" && isAdmin && (
                 <CustomButton
-                  label="Add User Attendance"
-                  handleToggle={() => handleActionClick("USER")}
+                  label="Add Employee Attendance"
+                  handleToggle={() => handleActionClick("EMPLOYEE")}
                 />
               )}
 
@@ -73,13 +73,13 @@ export const AttendanceHub = () => {
         {/* 2. Tabs and Controls Section (Styled like People.tsx) */}
         <div className="px-4 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
           <div className="flex w-full sm:w-auto p-1 bg-[#F1F5F9] rounded-xl border border-gray-200">
-            {(["MARK", "USER", "LEAVE"] as TabType[]).map((tab) => {
-              // Hide USER tab if not admin
-              if (tab === "USER" && !isAdmin) return null;
+            {(["MARK", "EMPLOYEE", "LEAVE"] as TabType[]).map((tab) => {
+              // Hide EMPLOYEE tab if not admin
+              if (tab === "EMPLOYEE" && !isAdmin) return null;
 
               const labels = {
                 MARK: "Mark Attendance",
-                USER: "User Attendance",
+                EMPLOYEE: "Employee Attendance",
                 LEAVE: "Leave Requests",
               };
 
@@ -132,9 +132,9 @@ export const AttendanceHub = () => {
             />
           )}
 
-          {activeTab === "USER" && isAdmin && (
+          {activeTab === "EMPLOYEE" && isAdmin && (
             <UserAttendance
-              triggerAdd={triggerModal.tab === "USER" ? triggerModal.count : 0}
+              triggerAdd={triggerModal.tab === "EMPLOYEE" ? triggerModal.count : 0}
               // Pass the search and pagination states here:
               externalSearch={searchTerm}
               externalPageSize={selectedValue}

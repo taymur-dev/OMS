@@ -140,8 +140,6 @@ export const ProfitLossReport = () => {
     }
   }, [token]);
 
-  
-
   useEffect(() => {
     document.title = "(OMS) PROFIT LOSS REPORT";
     getSales();
@@ -282,33 +280,46 @@ export const ProfitLossReport = () => {
 
   const netProfitLoss = incomeData.grandTotal - expenseData.grandTotal;
 
-  // --- PRINT FUNCTION ---
   const printDiv = () => {
     const printStyles = `
-      @page { size: A4 portrait; margin: 1cm; }
-      body { font-family: sans-serif; }
-      .header { text-align: center; margin-bottom: 20px; }
-      .report-box { border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
-      .row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
-      .total-row { font-weight: bold; font-size: 1.1rem; border-top: 2px solid #000; margin-top: 10px; padding-top: 10px; }
-      .green { color: green; } .red { color: red; }
+    @page { size: A4 portrait; margin: 10mm; }
+    body { font-family: Arial, sans-serif; font-size: 12pt; color: #333; }
+    .header { text-align: center; margin-bottom: 20px; }
+    .report-section { margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; padding: 15px; }
+    .section-title { font-weight: bold; background-color: #f0f0f0; padding: 5px 10px; border-radius: 6px; margin-bottom: 10px; }
+    .row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #ddd; }
+    .row:last-child { border-bottom: none; }
+    .total { font-weight: bold; margin-top: 10px; border-top: 2px solid #000; padding-top: 5px; }
+    .green { color: green; }
+    .red { color: red; }
+    .print-header { text-align: center; margin-bottom: 20px; }
+  `;
+
+    // Add print styles
+    const styleEl = document.createElement("style");
+    styleEl.innerHTML = printStyles;
+    document.head.appendChild(styleEl);
+
+    // Print only the report container
+    const reportElement = document.getElementById("printableReport");
+    if (reportElement) {
+      const originalContent = document.body.innerHTML;
+
+      // Optional: add a header before the report
+      const headerHTML = `
+      <div class="print-header">
+        <h1>Office Management System</h1>
+        <h2>Profit & Loss Report</h2>
+      </div>
     `;
-    const content = document.getElementById("printableReport")?.innerHTML || "";
-    const printWindow = window.open("", "_blank");
-    printWindow?.document.write(`
-      <html>
-        <head><style>${printStyles}</style></head>
-        <body>
-          <div class="header">
-            <h1>Profit & Loss Report</h1>
-            <p>Period: ${appliedFilters.startDate} to ${appliedFilters.endDate}</p>
-          </div>
-          <div class="report-box">${content}</div>
-        </body>
-      </html>
-    `);
-    printWindow?.document.close();
-    printWindow?.print();
+
+      document.body.innerHTML = headerHTML + reportElement.outerHTML;
+      window.print();
+
+      // Restore original content
+      document.body.innerHTML = originalContent;
+      document.head.removeChild(styleEl);
+    }
   };
 
   return (

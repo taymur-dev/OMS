@@ -164,16 +164,94 @@ export const AccountReport = ({
   );
 
   const printDiv = () => {
-    const content = document.getElementById("myDiv")?.outerHTML || "";
-    const printWindow = window.open("", "_blank");
+  const printStyles = `
+    @page { size: A4 landscape; margin: 10mm; }
+    body { font-family: Arial, sans-serif; font-size: 10pt; }
+    .print-header { text-align: center; margin-bottom: 20px; }
 
-    printWindow?.document.write(
-      `<html><head><title>Print Report</title></head><body>${content}</body></html>`,
-    );
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
 
-    printWindow?.document.close();
-    printWindow?.print();
-  };
+    th, td {
+      border: 1px solid #333;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    .debit { color: green; font-weight: bold; }
+    .credit { color: red; font-weight: bold; }
+  `;
+
+  const tableRows = filteredReports
+    .map(
+      (acc, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${acc.account_type}</td>
+        <td>${acc.name}</td>
+        <td>${acc.invoiceNo}</td>
+        <td>${acc.refNo}</td>
+        <td class="debit">${acc.debit}</td>
+        <td class="credit">${acc.credit}</td>
+        <td>${acc.paymentMethod}</td>
+        <td>${acc.paymentDate}</td>
+      </tr>
+    `,
+    )
+    .join("");
+
+  const printWindow = window.open("", "_blank");
+
+  printWindow?.document.write(`
+    <html>
+      <head>
+        <title>Account Report</title>
+        <style>${printStyles}</style>
+      </head>
+      <body>
+
+        <div class="print-header">
+          <h1>Office Management System</h1>
+          <h2>Account Report</h2>
+          <p>
+            <strong>From:</strong> ${appliedFilters.startDate}
+            <strong>To:</strong> ${appliedFilters.endDate}
+          </p>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Sr#</th>
+              <th>Type</th>
+              <th>Name</th>
+              <th>Invoice</th>
+              <th>RefNo</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Method</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${tableRows}
+          </tbody>
+
+        </table>
+
+      </body>
+    </html>
+  `);
+
+  printWindow?.focus();
+  printWindow?.print();
+  printWindow?.close();
+};
 
   if (loader) return <Loader />;
 

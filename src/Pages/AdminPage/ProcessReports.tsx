@@ -144,23 +144,69 @@ export const ProcessReports = ({
 
   const printDiv = () => {
     const printStyles = `
-      @page { size: A4 portrait; }
-      body { font-family: Arial, sans-serif; font-size: 11pt; color: #000; }
-      .print-container { width: 100%; padding: 0; }
-      .print-header { text-align: center; }
-      .print-header h1 { font-size: 25pt; font-weight: bold; }
-      .print-header h2 { font-size: 20pt; font-normal: normal; }
-      table { width: 100%; border-collapse: collapse; border: 2px solid #000; }
-      thead th, tbody td { border: 2px solid #000; font-size: 10pt; text-align: left; padding: 5px; }
-    `;
-    const content = document.getElementById("myDiv")?.outerHTML || "";
-    document.body.innerHTML = `<div class="print-container">${content}</div>`;
-    const style = document.createElement("style");
-    style.type = "text/css";
-    style.appendChild(document.createTextNode(printStyles));
-    document.head.appendChild(style);
-    window.print();
-    location.reload();
+    @page { size: A4 landscape; margin: 10mm; }
+    body { font-family: Arial, sans-serif; font-size: 10pt; }
+    .print-header { text-align: center; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #333; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; font-weight: bold; }
+  `;
+
+    const tableRows = filteredTasks
+      .map(
+        (item, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        ${isAdmin ? `<td>${item.employeeName}</td>` : ""}
+        <td>${item.task}</td>
+        <td>${item.startDate.slice(0, 10)}</td>
+        <td>${item.endDate.slice(0, 10)}</td>
+        <td>${item.deadline?.slice(0, 10) || "-"}</td>
+      </tr>
+    `,
+      )
+      .join("");
+
+    const printWindow = window.open("", "_blank");
+
+    printWindow?.document.write(`
+    <html>
+      <head>
+        <title>Process Report</title>
+        <style>${printStyles}</style>
+      </head>
+      <body>
+        <div class="print-header">
+          <h1>Office Management System</h1>
+          <h2>Process Report</h2>
+          <p>
+            <strong>From:</strong> ${appliedFilters.startDate}
+            <strong>To:</strong> ${appliedFilters.endDate}
+          </p>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Sr#</th>
+              ${isAdmin ? "<th>Employee</th>" : ""}
+              <th>Task Description</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Deadline</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+      </body>
+    </html>
+  `);
+
+    printWindow?.focus();
+    printWindow?.print();
+    printWindow?.close();
   };
 
   useEffect(() => {
@@ -233,7 +279,7 @@ export const ProcessReports = ({
               } bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm`}
             >
               <span className="text-left">Sr#</span>
-              {isAdmin && <span className="text-left">User</span>}
+              {isAdmin && <span className="text-left">Employee</span>}
               <span className="text-left">Task Description</span>
               <span className="text-left">Start Date</span>
               <span className="text-left">End Date</span>

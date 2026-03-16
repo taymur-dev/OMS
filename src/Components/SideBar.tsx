@@ -23,32 +23,17 @@ type SideBarProps = {
 };
 
 type TActivButton =
-  | "Dashboard"
-  | "People"
-  | "Attendance"
-  | "Human Resources"
-  | "Projects"
-  | "Performance"
-  | "Sales"
-  | "Expenses"
-  | "Payroll"
-  | "Assets"
-  | "Talent Acquisition"
-  | "Dynamics"
-  | "Accounts"
-  | "Reports"
-  | "Users Management"
-  | "Configuration"
-;
+  | "Dashboard" | "People" | "Attendance" | "Human Resources" | "Projects"
+  | "Performance" | "Sales" | "Expenses" | "Payroll" | "Assets"
+  | "Talent Acquisition" | "Dynamics" | "Accounts" | "Reports"
+  | "Users Management" | "Configuration";
 
 export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
-  const { currentUser, permissions } = useAppSelector(
-    (state) => state.officeState
-  );
+  const { currentUser, permissions } = useAppSelector((state) => state.officeState);
   const [activeBtns, setActiveBtns] = useState<TActivButton | "">("");
-  const [isHoverable, setIsHoverable] = useState(false);
   const [isBlurred, setIsBlurred] = useState(false);
 
+  // Modal detection logic
   useEffect(() => {
     const checkModal = () => {
       const hasModalClass = document.body.classList.contains("modal-open");
@@ -65,23 +50,18 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (isOpen) {
-      setIsHoverable(true);
-    } else {
-      setIsHoverable(false);
-    }
-  }, [isOpen]);
-
+  // ALTERNATED HOVER LOGIC:
+  // If the sidebar is closed (mini), hovering over it opens it.
   const handleMouseEnter = () => {
-    if (window.innerWidth >= 768 && isOpen && isHoverable) {
-      setIsOpen?.(false);
+    if (window.innerWidth >= 768 && !isOpen) {
+      setIsOpen?.(true);
     }
   };
 
+  // If the sidebar was opened via hover, leaving it closes it.
   const handleMouseLeave = () => {
-    if (window.innerWidth >= 768 && !isOpen && isHoverable) {
-      setIsOpen?.(true);
+    if (window.innerWidth >= 768 && isOpen) {
+      setIsOpen?.(false);
     }
   };
 
@@ -97,6 +77,27 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
     if (currentUser?.role === "admin") return true;
     return permissions?.includes(moduleName);
   };
+
+  // Configuration for menu items to keep the JSX clean
+  const menuItems = [
+    { title: "Dashboard", path: "/", icon: <MdOutlineDashboard size={20} />, access: "Dashboard" },
+    { title: "People", path: "/people", icon: <FaUserFriends size={20} />, access: "People" },
+    { title: "Attendance", path: "/attendance", icon: <PiFingerprintDuotone size={20} />, access: "Attendance" },
+    { title: "Human Resources", path: "/human-resources", icon: <FaUserCog size={20} />, access: "Human Resources" },
+    { title: "Talent Acquisition", path: "/talent-acquisition", icon: <HiOutlinePencilSquare size={20} />, access: "Talent Acquisition" },
+    { title: "Projects", path: "/projects", icon: <GoProjectRoadmap size={20} />, access: "Projects" },
+    { title: "Performance", path: "/performance", icon: <LuListTodo size={20} />, access: "Performance" },
+    { title: "Sales", path: "/sales", icon: <CiCalculator2 size={20} />, access: "Sales" },
+    { title: "Expenses", path: "/expenses", icon: <LiaProjectDiagramSolid size={20} />, access: "Expenses" },
+    { title: "Payroll", path: "/payroll", icon: <CiCreditCard1 size={20} />, access: "Payroll" },
+    { title: "Assets", path: "/assets", icon: <CiCreditCard1 size={20} />, access: "Assets" },
+    { title: "Dynamics", path: "/dynamics", icon: <RiUserCommunityLine size={20} />, access: "Dynamics" },
+    { title: "Accounts", path: "/accounts", icon: <CgCalculator size={20} />, access: "Accounts" },
+    { title: "Reports", path: "/reports", icon: <HiOutlineDocumentReport size={20} />, access: "Reports" },
+    { title: "Users Management", path: "/users-management", icon: <HiOutlineUsers size={20} />, access: "Users Management" },
+    { title: "Configuration", path: "/configuration", icon: <AiOutlineFieldTime size={20} />, access: "Configuration" },
+  ];
+
   return (
     <>
       <div
@@ -113,310 +114,34 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           /* MOBILE Behavior */
           ${isOpen ? "w-64 translate-x-0 visible" : "w-0 -translate-x-full invisible md:visible"}
           
-          /* DESKTOP Behavior */
+          /* DESKTOP Behavior (MODIFIED) */
           md:relative md:translate-x-0 md:shadow-lg md:visible
-          ${isOpen ? "md:w-20" : "md:w-64"}
+          ${isOpen ? "md:w-64" : "md:w-20"} 
         `}
       >
-        <nav className="flex-1 px-3 space-y-1">
-          <Link to="/" className="block">
-            <SideBarButton
-              isOpen={isOpen}
-              icon={<MdOutlineDashboard size={20} />}
-              title="Dashboard"
-              arrowIcon={<BiArrowBack />}
-              handlerClick={() => {
-                toggleButtonActive("Dashboard");
-                if (window.innerWidth < 768) setIsOpen?.(false);
-              }}
-              activeBtns={activeBtns}
-              activeBtn="Dashboard"
-            />
-          </Link>
-
-          {/* People */}
-
-          {hasAccess("People") && (
-            <Link to="/people" className="block">
-              <SideBarButton
-                isOpen={isOpen}
-                icon={<FaUserFriends size={20} />}
-                title="People"
-                arrowIcon={<BiArrowBack />}
-                handlerClick={() => {
-                  toggleButtonActive("People");
-                  if (window.innerWidth < 768) setIsOpen?.(false);
-                }}
-                activeBtns={activeBtns}
-                activeBtn="People"
-              />
-            </Link>
-          )}
-
-          {/* Attendance */}
-
-          {hasAccess("Attendance") && (
-            <Link to="/attendance" className="block">
-              <SideBarButton
-                isOpen={isOpen}
-                icon={<PiFingerprintDuotone size={20} />}
-                title="Attendance"
-                arrowIcon={<BiArrowBack />}
-                handlerClick={() => {
-                  toggleButtonActive("Attendance");
-                  // Add this line:
-                  if (window.innerWidth < 768) setIsOpen?.(false);
-                }}
-                activeBtns={activeBtns}
-                activeBtn="Attendance"
-              />
-            </Link>
-          )}
-
-          {/* Human Resources */}
-
-          {hasAccess("Human Resources") && (
-            <Link to="/human-resources" className="block">
-              <SideBarButton
-                isOpen={isOpen}
-                icon={<FaUserCog size={20} />}
-                title="Human Resources"
-                arrowIcon={<BiArrowBack />}
-                handlerClick={() => {
-                  toggleButtonActive("Human Resources");
-                  // Add this line:
-                  if (window.innerWidth < 768) setIsOpen?.(false);
-                }}
-                activeBtns={activeBtns}
-                activeBtn="Human Resources"
-              />
-            </Link>
-          )}
-
-          {/* Recruitment */}
-
-          {hasAccess("Talent Acquisition") && (
-            <Link to="/talent-acquisition" className="block">
-              <SideBarButton
-                isOpen={isOpen}
-                icon={<HiOutlinePencilSquare size={20} />}
-                title="Talent Acquisition"
-                arrowIcon={<BiArrowBack />}
-                handlerClick={() => {
-                  toggleButtonActive("Talent Acquisition");
-                  // Add this line:
-                  if (window.innerWidth < 768) setIsOpen?.(false);
-                }}
-                activeBtns={activeBtns}
-                activeBtn="Talent Acquisition"
-              />
-            </Link>
-          )}
-
-          {/* Projects */}
-          {hasAccess("Projects") && (
-            <Link to="/projects" className="block">
-              <SideBarButton
-                isOpen={isOpen}
-                icon={<GoProjectRoadmap size={20} />}
-                title="Projects"
-                arrowIcon={<BiArrowBack />}
-                handlerClick={() => {
-                  toggleButtonActive("Projects");
-                  if (window.innerWidth < 768) setIsOpen?.(false);
-                }}
-                activeBtns={activeBtns}
-                activeBtn="Projects"
-              />
-            </Link>
-          )}
-
-          {/* Performance */}
-          {hasAccess("Performance") && (
-            <Link to="/performance" className="block">
-              <SideBarButton
-                isOpen={isOpen}
-                icon={<LuListTodo size={20} />}
-                title="Performance"
-                arrowIcon={<BiArrowBack />}
-                handlerClick={() => {
-                  toggleButtonActive("Performance");
-                  // Add this line:
-                  if (window.innerWidth < 768) setIsOpen?.(false);
-                }}
-                activeBtns={activeBtns}
-                activeBtn="Performance"
-              />
-            </Link>
-          )}
-
-          {/* Sale */}
-          {hasAccess("Sales") && (
-            <Link to="/sales" className="block">
-              <SideBarButton
-                isOpen={isOpen}
-                icon={<CiCalculator2 size={20} />}
-                title="Sales"
-                arrowIcon={<BiArrowBack />}
-                handlerClick={() => {
-                  toggleButtonActive("Sales");
-                  if (window.innerWidth < 768) setIsOpen?.(false);
-                }}
-                activeBtns={activeBtns}
-                activeBtn="Sales"
-              />
-            </Link>
-          )}
-
-          {/* Manage Expense */}
-          {hasAccess("Expenses") && (
-            <Link to="/expenses" className="block">
-              <SideBarButton
-                isOpen={isOpen}
-                icon={<LiaProjectDiagramSolid size={20} />}
-                title="Expenses"
-                arrowIcon={<BiArrowBack />}
-                handlerClick={() => {
-                  toggleButtonActive("Expenses");
-                  if (window.innerWidth < 768) setIsOpen?.(false);
-                }}
-                activeBtns={activeBtns}
-                activeBtn="Expenses"
-              />
-            </Link>
-          )}
-
-          {/* Payroll */}
-          {hasAccess("Payroll") && (
-            <Link to="/payroll" className="block">
-              <SideBarButton
-                isOpen={isOpen}
-                icon={<CiCreditCard1 size={20} />}
-                title="Payroll"
-                arrowIcon={<BiArrowBack />}
-                handlerClick={() => {
-                  toggleButtonActive("Payroll");
-                  if (window.innerWidth < 768) setIsOpen?.(false);
-                }}
-                activeBtns={activeBtns}
-                activeBtn="Payroll"
-              />
-            </Link>
-          )}
-
-          {/* Assets */}
-          {hasAccess("Assets") && (
-            <Link to="/assets" className="block">
-              <SideBarButton
-                isOpen={isOpen}
-                icon={<CiCreditCard1 size={20} />}
-                title="Assets"
-                arrowIcon={<BiArrowBack />}
-                handlerClick={() => {
-                  toggleButtonActive("Assets");
-                  if (window.innerWidth < 768) setIsOpen?.(false);
-                }}
-                activeBtns={activeBtns}
-                activeBtn="Assets"
-              />
-            </Link>
-          )}
-
-          {/* Dynamic */}
-          {hasAccess("Dynamics") && (
-            <Link to="/dynamics" className="block">
-              <SideBarButton
-                isOpen={isOpen}
-                icon={<RiUserCommunityLine size={20} />}
-                title="Dynamics"
-                arrowIcon={<BiArrowBack />}
-                handlerClick={() => {
-                  toggleButtonActive("Dynamics");
-                  if (window.innerWidth < 768) setIsOpen?.(false);
-                }}
-                activeBtns={activeBtns}
-                activeBtn="Dynamics"
-              />
-            </Link>
-          )}
-
-          {/* Accounts */}
-          {hasAccess("Accounts") && (
-            <Link to="/accounts" className="block">
-              <SideBarButton
-                isOpen={isOpen}
-                icon={<CgCalculator size={20} />}
-                title="Accounts"
-                arrowIcon={<BiArrowBack />}
-                handlerClick={() => {
-                  toggleButtonActive("Accounts");
-                  if (window.innerWidth < 768) setIsOpen?.(false);
-                }}
-                activeBtns={activeBtns}
-                activeBtn="Accounts"
-              />
-            </Link>
-          )}
-
-          {/* Reports */}
-
-          {hasAccess("Reports") && (
-            <Link to="/reports" className="block">
-              <SideBarButton
-                isOpen={isOpen}
-                icon={<HiOutlineDocumentReport size={20} />}
-                title="Reports"
-                arrowIcon={<BiArrowBack />}
-                handlerClick={() => {
-                  toggleButtonActive("Reports");
-                  if (window.innerWidth < 768) setIsOpen?.(false);
-                }}
-                activeBtns={activeBtns}
-                activeBtn="Reports"
-              />
-            </Link>
-          )}
-
-          {/* Users Management */}
-
-          {hasAccess("Users Management") && (
-            <Link to="/users-management" className="block">
-              <SideBarButton
-                isOpen={isOpen}
-                icon={<HiOutlineUsers size={20} />}
-                title="Users Management"
-                arrowIcon={<BiArrowBack />}
-                handlerClick={() => {
-                  toggleButtonActive("Users Management");
-                  if (window.innerWidth < 768) setIsOpen?.(false);
-                }}
-                activeBtns={activeBtns}
-                activeBtn="Users Management"
-              />
-            </Link>
-          )}
-
-          {/* Configure Time */}
-
-          {hasAccess("Configuration") && (
-            <Link to="/configuration" className="block">
-              <SideBarButton
-                isOpen={isOpen}
-                icon={<AiOutlineFieldTime size={20} />}
-                title="Configuration"
-                arrowIcon={<BiArrowBack />}
-                handlerClick={() => {
-                  toggleButtonActive("Configuration");
-                  if (window.innerWidth < 768) setIsOpen?.(false);
-                }}
-                activeBtns={activeBtns}
-                activeBtn="Configuration"
-              />
-            </Link>
-          )}
+        <nav className="flex-1 px-3 space-y-1 mt-4">
+          {menuItems.map((item) => (
+            item.access === "Dashboard" || hasAccess(item.access) ? (
+              <Link key={item.title} to={item.path} className="block">
+                <SideBarButton
+                  isOpen={isOpen}
+                  icon={item.icon}
+                  title={item.title}
+                  arrowIcon={<BiArrowBack />}
+                  handlerClick={() => {
+                    toggleButtonActive(item.title as TActivButton);
+                    if (window.innerWidth < 768) setIsOpen?.(false);
+                  }}
+                  activeBtns={activeBtns}
+                  activeBtn={item.title as TActivButton}
+                />
+              </Link>
+            ) : null
+          ))}
         </nav>
       </div>
 
+      {/* Overlay for mobile when sidebar is expanded */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm transition-opacity md:hidden"

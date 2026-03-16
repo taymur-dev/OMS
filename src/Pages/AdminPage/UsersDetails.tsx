@@ -78,7 +78,7 @@ export const UsersDetails = ({
   }, [token, dispatch]);
 
   useEffect(() => {
-    document.title = "(OMS)ALL USERS";
+    document.title = "(OMS)ALL EMPLOYEES";
     handlerGetUsers();
   }, [handlerGetUsers]);
 
@@ -190,14 +190,14 @@ export const UsersDetails = ({
         <div className="min-w-[1000px] ">
           <div className="px-0.5 pt-0.5">
             <div
-              className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_auto] 
+              className="grid grid-cols-[60px_1fr_1fr_1fr_auto] 
     bg-blue-400 text-white rounded-lg items-center font-bold
     text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
               <span className="text-left">Sr#</span>
               <span className="text-left">Name & Email</span>
               <span className="text-left">Contact</span>
-              <span className="text-left">Role</span>
+              {/* <span className="text-left">Role</span> */}
               <span className="text-left">Joining Date</span>
               <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
@@ -218,7 +218,7 @@ export const UsersDetails = ({
                 {paginatedUsers.map((user, index) => (
                   <div
                     key={user.id}
-                    className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_auto] 
+                    className="grid grid-cols-[60px_1fr_1fr_1fr_auto] 
           items-center px-3 py-0.5 gap-3 text-sm bg-white 
           border border-gray-100 rounded-lg 
           hover:bg-blue-50/30 transition-colors shadow-sm"
@@ -250,7 +250,7 @@ export const UsersDetails = ({
                     </div>
 
                     <div className="text-gray-600 truncate">{user.contact}</div>
-                    <div className="text-gray-600 truncate">{user.role}</div>
+                    {/* <div className="text-gray-600 truncate">{user.role}</div> */}
                     <div className="text-gray-600 truncate">
                       {formatDate(user.date)}
                     </div>

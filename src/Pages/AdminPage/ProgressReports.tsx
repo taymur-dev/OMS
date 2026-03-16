@@ -148,23 +148,66 @@ export const ProgressReports = ({
 
   const printDiv = () => {
     const printStyles = `
-      @page { size: A4 portrait; }
-      body { font-family: Arial, sans-serif; font-size: 11pt; color: #000; }
-      .print-container { width: 100%; padding: 0; }
-      .print-header { text-align: center; }
-      .print-header h1 { font-size: 25pt; font-weight: bold; }
-      .print-header h2 { font-size: 20pt; font-normal; }
-      table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-      th, td { border: 1px solid #000; padding: 8px; text-align: left; }
-      @media print { .no-print { display: none; } }
-    `;
-    const content = document.getElementById("myDiv")?.innerHTML || "";
+    @page { size: A4 landscape; margin: 10mm; }
+    body { font-family: Arial, sans-serif; font-size: 10pt; }
+    .print-header { text-align: center; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #333; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; font-weight: bold; }
+  `;
+
+    const tableRows = filteredProgress
+      .map(
+        (item, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${item.employeeName}</td>
+        <td>${item.projectName}</td>
+        <td>${item.note}</td>
+      </tr>
+    `,
+      )
+      .join("");
+
     const printWindow = window.open("", "_blank");
-    printWindow?.document.write(
-      `<html><head><style>${printStyles}</style></head><body>${content}</body></html>`,
-    );
-    printWindow?.document.close();
+
+    printWindow?.document.write(`
+    <html>
+      <head>
+        <title>Progress Report</title>
+        <style>${printStyles}</style>
+      </head>
+      <body>
+        <div class="print-header">
+          <h1>Office Management System</h1>
+          <h2>Progress Report</h2>
+          <p>
+            <strong>From:</strong> ${appliedFilters.startDate}
+            <strong>To:</strong> ${appliedFilters.endDate}
+          </p>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Sr#</th>
+              <th>Employee</th>
+              <th>Project</th>
+              <th>Progress Note</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+      </body>
+    </html>
+  `);
+
+    printWindow?.focus();
     printWindow?.print();
+    printWindow?.close();
   };
 
   if (loader) return <Loader />;
@@ -230,7 +273,7 @@ export const ProgressReports = ({
             </div>
           </div>
 
-          <div className="px-0.5 sm:px-1 py-2" id="myDiv">
+          <div className="px-0.5 sm:px-1 py-2" id="progressDiv">
             {paginatedData.length === 0 ? (
               <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
                 <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />

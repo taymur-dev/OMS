@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { InputField } from "../Components/InputFields/InputField";
 import { useEffect, useState } from "react";
-import Logo from "../assets/techmen.png";
+import Logo from "../assets/Desk_Logo.png";
 import BackgroundImg from "../assets/officepic.jpg";
 import { BASE_URL } from "../Content/URL";
 import { useAppDispatch, useAppSelector } from "../redux/Hooks";
@@ -84,11 +84,11 @@ export const Login = () => {
         border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-10 text-center animate-[fadeIn_0.5s_ease-out]"
       >
         <div className="flex justify-center mb-6">
-          <div className="w-full h-14  flex items-center justify-center overflow-hidden ">
+          <div className="h-20 flex items-center justify-center">
             <img
               src={Logo}
               alt="Technic Mentors"
-              className="w-full h-full object-contain"
+              className="h-full w-auto object-contain"
             />
           </div>
         </div>

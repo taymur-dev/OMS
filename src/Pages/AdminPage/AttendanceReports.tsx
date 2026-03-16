@@ -157,38 +157,70 @@ export const AttendanceReports = ({
 
   const printDiv = () => {
     const printStyles = `
-      @page { size: A4 portrait; }
-      body { font-family: Arial, sans-serif; font-size: 11pt; color: #000; }
-      .print-container { width: 100%; padding: 0; }
-      .print-header { text-align: center; }
-      .print-header h1 { font-size: 25pt; font-weight: bold; }
-      .print-header h2 { font-size: 20pt; font-weight: normal; }
-      .date-range { text-align: left; font-size: 14pt; display: flex; justify-content: space-between; margin-bottom: 10px; }
-      table { width: 100%; border-collapse: collapse; border: 2px solid #000; }
-      thead { background-color: #ccc; color: #000; }
-      thead th, tbody td { border: 2px solid #000; font-size: 10pt; text-align: left; padding: 5px; }
-      tbody tr:nth-child(even) { background-color: #f9f9f9; }
-      @media print { .no-print { display: none; } }
-    `;
-    const content = document.getElementById("attendanceDiv")?.outerHTML || "";
-    document.body.innerHTML = `
-      <div class="print-container">
+    @page { size: A4 landscape; margin: 10mm; }
+    body { font-family: Arial, sans-serif; font-size: 10pt; }
+    .print-header { text-align: center; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #333; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; font-weight: bold; }
+    .status-present { color: green; font-weight: bold; }
+    .status-absent { color: red; font-weight: bold; }
+  `;
+
+    const tableRows = filteredAttendance
+      .map(
+        (item, index) => `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${item.date}<br/><small>${item.day}</small></td>
+      ${isAdmin ? `<td>${item.name}</td>` : ""}
+      <td>${item.clockIn || "--:--"}</td>
+      <td>${item.clockOut || "--:--"}</td>
+      <td>${item.workingHours || "0h 0m"}</td>
+      <td class="${item.attendanceStatus === "Present" ? "status-present" : "status-absent"}">
+        ${item.attendanceStatus}
+      </td>
+    </tr>
+  `,
+      )
+      .join("");
+
+    const printWindow = window.open("", "_blank");
+    printWindow?.document.write(`
+    <html>
+      <head>
+        <title>Attendance Report</title>
+        <style>${printStyles}</style>
+      </head>
+      <body>
         <div class="print-header">
           <h1>Office Management System</h1>
           <h2>Attendance Report</h2>
+          <p><strong>From:</strong> ${appliedFilters.startDate} <strong>To:</strong> ${appliedFilters.endDate}</p>
         </div>
-        <div class="date-range">
-          <strong>From: ${appliedFilters.startDate}</strong>
-          <strong>To: ${appliedFilters.endDate}</strong>
-        </div>
-        ${content}
-      </div>
-    `;
-    const style = document.createElement("style");
-    style.appendChild(document.createTextNode(printStyles));
-    document.head.appendChild(style);
-    window.print();
-    location.reload();
+        <table>
+          <thead>
+            <tr>
+              <th>Sr#</th>
+              <th>Date & Day</th>
+              ${isAdmin ? "<th>Employee Name</th>" : ""}
+              <th>Clock In</th>
+              <th>Clock Out</th>
+              <th>Working Hours</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+      </body>
+    </html>
+  `);
+
+    printWindow?.focus();
+    printWindow?.print();
+    printWindow?.close();
   };
 
   useEffect(() => {
@@ -223,7 +255,7 @@ export const AttendanceReports = ({
             />
             {isAdmin ? (
               <OptionField
-                labelName="User"
+                labelName="Employee"
                 name="userId"
                 value={reportData.userId}
                 optionData={users.map((u) => ({
@@ -231,7 +263,7 @@ export const AttendanceReports = ({
                   label: u.name,
                   value: u.id,
                 }))}
-                inital="Select User"
+                inital="Select Employee"
                 handlerChange={handleChange}
               />
             ) : (
@@ -261,7 +293,7 @@ export const AttendanceReports = ({
       </div>
 
       {/* --- TABLE AREA --- */}
-      <div className="overflow-auto px-3 sm:px-0 mt-2">
+      <div id="attendanceDiv" className="overflow-auto px-3 sm:px-0 mt-2">
         <div className="min-w-[1000px]">
           {/* Header Row */}
           <div className="px-0.5 pt-0.5">
@@ -274,7 +306,7 @@ export const AttendanceReports = ({
             >
               <span className="text-left">Sr#</span>
               <span className="text-left">Date & Day</span>
-              {isAdmin && <span className="text-left">User Name</span>}
+              {isAdmin && <span className="text-left">Employee Name</span>}
               <span className="text-left">Clock In</span>
               <span className="text-left">Clock Out</span>
               <span className="text-left">Working Hours</span>
@@ -283,7 +315,7 @@ export const AttendanceReports = ({
           </div>
 
           {/* Body Rows */}
-          <div id="attendanceDiv" className="px-0.5 sm:px-1 py-2">
+          <div className="px-0.5 sm:px-1 py-2">
             {filteredAttendance.length === 0 ? (
               <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
                 <RiInboxArchiveLine size={48} className="mb-3 text-gray-300" />
@@ -305,9 +337,7 @@ export const AttendanceReports = ({
                     </span>
 
                     <div className="flex flex-col min-w-0">
-                      <span className=" text-gray-800">
-                        {item.date}
-                      </span>
+                      <span className=" text-gray-800">{item.date}</span>
                       <span className="text-xs text-gray-400">{item.day}</span>
                     </div>
 

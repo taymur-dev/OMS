@@ -21,22 +21,36 @@ export const SideBarButton = ({
 }: SideBarButtonProps) => {
   const isActive = activeBtns === activeBtn;
 
+ 
+  const getBgClass = () => {
+    if (isActive) {
+      return isOpen ? "bg-blue-400 text-white" : "bg-white text-blue-400";
+    }
+    return "text-gray-600 hover:bg-blue-50 hover:text-blue-400";
+  };
+
   return (
     <button
       onClick={handlerClick}
       className={`
-        w-full flex items-center px-3 py-2.5 my-1 rounded-lg transition-all duration-300 group
-        ${isActive ? "bg-blue-400 text-white" : "text-gray-600 hover:bg-blue-50 hover:text-blue-600"}
+        w-full flex items-center px-3 py-2 rounded-lg transition-all duration-300 group
+        ${getBgClass()}
       `}
     >
-      <div className="flex items-center justify-center min-w-[24px] transition-transform duration-300 group-hover:scale-110">
+      {/* Icon Wrapper: Yahan color handle hoga */}
+      <div 
+        className={`
+          flex items-center justify-center min-w-[24px] transition-transform duration-300 group-hover:scale-110
+          ${isActive && !isOpen ? "text-blue-400" : ""}
+        `}
+      >
         {icon}
       </div>
 
       <div
         className={`
           flex items-center justify-between flex-1 ml-3 transition-all duration-300 ease-in-out overflow-hidden
-          ${isOpen ? "md:opacity-0 md:max-w-0" : "opacity-100 max-w-xs"}
+          ${isOpen ? "opacity-100 max-w-xs" : "opacity-0 max-w-0 pointer-events-none"}
         `}
       >
         <span className="text-sm font-medium whitespace-nowrap">{title}</span>
@@ -45,7 +59,8 @@ export const SideBarButton = ({
           <span
             className={`
               ml-2 transition-transform duration-300 text-gray-300
-              ${isActive ? "-rotate-90 text-white" : "rotate-0"}
+              ${isActive ? "-rotate-90" : "rotate-0"}
+              ${isActive && isOpen ? "text-white" : "text-gray-300"}
             `}
           >
             {arrowIcon}

@@ -5,6 +5,7 @@ import { TableInputField } from "../../Components/TableLayoutComponents/TableInp
 import { AttendanceRule } from "./AttendanceRule";
 import { Holidays } from "./Holidays";
 import { AccessControl } from "./AccessControl";
+import { BusinessVariables } from "./BusinessVariables";
 import { useAppSelector } from "../../redux/Hooks";
 import { Footer } from "../../Components/Footer";
 
@@ -13,6 +14,7 @@ type TabType =
   | "ATTENDANCE_RULES"
   | "CONFIGURE_HOLIDAYS"
   | "ACCESS_CONTROL"
+  | "BUSINESS_VARIABLE"
   | "";
 const entriesOptions = [5, 10, 15, 20, 30];
 
@@ -23,6 +25,7 @@ export const Assemble = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedValue, setSelectedValue] = useState(10);
+  const [hasBusinessVariable, setHasBusinessVariable] = useState(false);
 
   const [triggerModal, setTriggerModal] = useState<{
     tab: TabType;
@@ -64,6 +67,15 @@ export const Assemble = () => {
                   handleToggle={() => handleActionClick("ACCESS_CONTROL")}
                 />
               )}
+
+              {isAdmin &&
+                activeTab === "BUSINESS_VARIABLE" &&
+                !hasBusinessVariable && (
+                  <CustomButton
+                    label="Add Business Variable"
+                    handleToggle={() => handleActionClick("BUSINESS_VARIABLE")}
+                  />
+                )}
             </div>
           }
         />
@@ -75,6 +87,7 @@ export const Assemble = () => {
                 "ATTENDANCE_RULES",
                 "CONFIGURE_HOLIDAYS",
                 "ACCESS_CONTROL",
+                "BUSINESS_VARIABLE",
               ] as TabType[]
             ).map((tab) => (
               <button
@@ -90,7 +103,11 @@ export const Assemble = () => {
                   ? "Attendance Rules"
                   : tab === "CONFIGURE_HOLIDAYS"
                     ? "Configure Holidays"
-                    : "Access Control"}{" "}
+                    : tab === "ACCESS_CONTROL"
+                      ? "Access Control"
+                      : tab === "BUSINESS_VARIABLE"
+                        ? "Business Variables"
+                        : ""}
               </button>
             ))}
           </div>
@@ -150,6 +167,19 @@ export const Assemble = () => {
               }
               externalSearch={searchTerm}
               externalPageSize={selectedValue}
+            />
+          )}
+
+          {activeTab === "BUSINESS_VARIABLE" && (
+            <BusinessVariables
+              triggerModal={
+                triggerModal.tab === "BUSINESS_VARIABLE"
+                  ? triggerModal.count
+                  : 0
+              }
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
+              setHasBusinessVariable={setHasBusinessVariable}
             />
           )}
         </div>
