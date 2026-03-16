@@ -135,7 +135,7 @@ export const LeaveRequests = ({
       case "approved":
         return (
           <span
-            className={`${baseClasses} bg-green-200 text-green-800 border-green-600`}
+            className={`${baseClasses} bg-green-200 text-green-800 border-green-400`}
           >
             Approved
           </span>
@@ -143,7 +143,7 @@ export const LeaveRequests = ({
       case "rejected":
         return (
           <span
-            className={`${baseClasses} bg-red-200 text-red-700 border-red-600`}
+            className={`${baseClasses} bg-red-200 text-red-700 border-red-400`}
           >
             Rejected
           </span>
@@ -151,7 +151,7 @@ export const LeaveRequests = ({
       case "pending":
         return (
           <span
-            className={`${baseClasses} bg-orange-200 text-orange-700 border-orange-600`}
+            className={`${baseClasses} bg-orange-200 text-orange-700 border-orange-400`}
           >
             Pending
           </span>

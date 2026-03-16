@@ -51,7 +51,7 @@ export const Summary = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-2 sm:px-5 py-2 text-[12px] sm:text-sm font-bold transition-all duration-200 rounded-lg text-center ${
+                className={`px-2 sm:px-5 py-1 text-[12px] sm:text-sm font-bold transition-all duration-200 rounded-lg text-center ${
                   activeTab === tab.id
                     ? "bg-white text-[#334155] shadow-sm"
                     : "text-[#64748B] hover:text-[#334155]"
@@ -70,7 +70,7 @@ export const Summary = () => {
               />
             </div>
 
-            <div className="flex items-center border border-gray-200 rounded-lg px-3 py-3 bg-white shadow-sm min-w-[110px]">
+            <div className="flex items-center border border-gray-200 rounded-lg px-3 py-2 bg-white shadow-sm min-w-[110px]">
               <select
                 value={selectedValue}
                 onChange={(e) => setSelectedValue(Number(e.target.value))}

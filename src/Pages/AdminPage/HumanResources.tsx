@@ -60,7 +60,7 @@ export const HumanResources = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 text-sm font-bold transition-all duration-200 rounded-lg ${
+                className={`flex-1 sm:flex-none px-2 sm:px-6 py-1 text-sm font-bold transition-all duration-200 rounded-lg ${
                   activeTab === tab
                     ? "bg-white text-[#334155] shadow-sm"
                     : "text-[#64748B] hover:text-[#334155]"
@@ -80,7 +80,7 @@ export const HumanResources = () => {
               />
             </div>
 
-            <div className="flex items-center border border-gray-200 rounded-lg px-3 py-3 bg-white shadow-sm min-w-[110px]">
+            <div className="flex items-center border border-gray-200 rounded-lg px-3 py-2 bg-white shadow-sm min-w-[110px]">
               <select
                 value={selectedValue}
                 onChange={(e) => setSelectedValue(Number(e.target.value))}
