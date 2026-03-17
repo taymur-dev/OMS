@@ -46,6 +46,14 @@ type SupplierAccountEntry = {
   paymentDate: string;
 };
 
+type BusinessVarType = {
+  id: number;
+  name: string;
+  email: string;
+  contact: string;
+  logo?: string;
+};
+
 export const ProfitLossReport = () => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
@@ -61,6 +69,7 @@ export const ProfitLossReport = () => {
   const [supplierAccounts, setSupplierAccounts] = useState<
     SupplierAccountEntry[]
   >([]);
+  const [businessVar, setBusinessVar] = useState<BusinessVarType | null>(null);
 
   const [reportData, setReportData] = useState({
     startDate: today,
@@ -140,6 +149,20 @@ export const ProfitLossReport = () => {
     }
   }, [token]);
 
+  const fetchBusinessVariable = useCallback(async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/business-variables`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.data.length > 0) {
+        setBusinessVar(res.data[0]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch business variable:", err);
+    }
+  }, [token]);
+
   useEffect(() => {
     document.title = "(OMS) PROFIT LOSS REPORT";
     getSales();
@@ -147,12 +170,14 @@ export const ProfitLossReport = () => {
     getEmployeeData();
     getCustomerData();
     getSupplierData();
+    fetchBusinessVariable();
   }, [
     getSales,
     getExpenses,
     getEmployeeData,
     getCustomerData,
     getSupplierData,
+    fetchBusinessVariable,
   ]);
 
   // --- CALCULATIONS ---
@@ -284,7 +309,22 @@ export const ProfitLossReport = () => {
     const printStyles = `
     @page { size: A4 portrait; margin: 10mm; }
     body { font-family: Arial, sans-serif; font-size: 12pt; color: #333; }
-    .header { text-align: center; margin-bottom: 20px; }
+    
+    /* Updated centering styles */
+    .print-header { 
+      text-align: center; 
+      margin-bottom: 20px; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+    }
+    
+    .logo-container {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
     .report-section { margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; padding: 15px; }
     .section-title { font-weight: bold; background-color: #f0f0f0; padding: 5px 10px; border-radius: 6px; margin-bottom: 10px; }
     .row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #ddd; }
@@ -292,7 +332,6 @@ export const ProfitLossReport = () => {
     .total { font-weight: bold; margin-top: 10px; border-top: 2px solid #000; padding-top: 5px; }
     .green { color: green; }
     .red { color: red; }
-    .print-header { text-align: center; margin-bottom: 20px; }
   `;
 
     // Add print styles
@@ -305,11 +344,26 @@ export const ProfitLossReport = () => {
     if (reportElement) {
       const originalContent = document.body.innerHTML;
 
-      // Optional: add a header before the report
-      const headerHTML = `
+      const logoUrl = businessVar?.logo
+        ? businessVar.logo.startsWith("http")
+          ? businessVar.logo
+          : `${BASE_URL}/${businessVar.logo}`
+        : "";
+
+      const logoHtml = logoUrl
+      ? `<div class="logo-container"><img src="${logoUrl}" style="max-height:100px; display: inline-block;" /></div>`
+      : "";
+
+    const headerHTML = `
       <div class="print-header">
-        <h1>Office Management System</h1>
-        <h2>Profit & Loss Report</h2>
+        ${logoHtml}
+        <h2 style="margin: 5px 0;">${businessVar?.name || "Business Name"}</h2>
+        <p style="margin: 2px 0;">${businessVar?.email || ""} | ${businessVar?.contact || ""}</p>
+        <h1 style="margin: 10px 0 5px 0;">Profit & Loss Report</h1>
+        <p style="margin: 0;">
+          <strong>From:</strong> ${appliedFilters.startDate} 
+          <strong>To:</strong> ${appliedFilters.endDate}
+        </p>
       </div>
     `;
 

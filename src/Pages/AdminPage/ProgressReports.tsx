@@ -31,6 +31,14 @@ interface ProgressReportsProps {
   externalPageSize: number;
 }
 
+export interface BusinessVarType {
+  id: number;
+  name: string;
+  email: string;
+  contact: string;
+  logo?: string;
+}
+
 export const ProgressReports = ({
   externalSearch,
   externalPageSize,
@@ -40,6 +48,7 @@ export const ProgressReports = ({
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
+
   const currentDate = new Date().toLocaleDateString("sv-SE");
 
   // Input states
@@ -48,6 +57,7 @@ export const ProgressReports = ({
     endDate: currentDate,
     employeeId: "",
   });
+  const [businessVar, setBusinessVar] = useState<BusinessVarType | null>(null);
 
   // Filter states
   const [appliedFilters, setAppliedFilters] = useState({
@@ -80,10 +90,25 @@ export const ProgressReports = ({
     }
   }, [token, currentUser, dispatch]);
 
-  useEffect(() => {
-    document.title = "(OMS) PROGRESS REPORTS";
-    getProgressReport();
-  }, [getProgressReport]);
+  const fetchBusinessVariable = useCallback(async () => {
+  try {
+    const res = await axios.get(`${BASE_URL}/api/admin/business-variables`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res.data.length > 0) {
+      setBusinessVar(res.data[0]);
+    }
+  } catch (err) {
+    console.error("Failed to fetch business variable:", err);
+  }
+}, [token]);
+
+useEffect(() => {
+  document.title = "(OMS) PROGRESS REPORTS";
+  getProgressReport();
+  fetchBusinessVariable();
+}, [getProgressReport, fetchBusinessVariable]);
 
   useEffect(() => {
     setPageNo(1);
@@ -146,8 +171,8 @@ export const ProgressReports = ({
     setReportData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const printDiv = () => {
-    const printStyles = `
+ const printDiv = () => {
+  const printStyles = `
     @page { size: A4 landscape; margin: 10mm; }
     body { font-family: Arial, sans-serif; font-size: 10pt; }
     .print-header { text-align: center; margin-bottom: 20px; }
@@ -156,9 +181,9 @@ export const ProgressReports = ({
     th { background-color: #f2f2f2; font-weight: bold; }
   `;
 
-    const tableRows = filteredProgress
-      .map(
-        (item, index) => `
+  const tableRows = filteredProgress
+    .map(
+      (item, index) => `
       <tr>
         <td>${index + 1}</td>
         <td>${item.employeeName}</td>
@@ -166,21 +191,36 @@ export const ProgressReports = ({
         <td>${item.note}</td>
       </tr>
     `,
-      )
-      .join("");
+    )
+    .join("");
 
-    const printWindow = window.open("", "_blank");
+  const logoUrl = businessVar?.logo
+    ? businessVar.logo.startsWith("http")
+      ? businessVar.logo
+      : `${BASE_URL}/${businessVar.logo}`
+    : "";
 
-    printWindow?.document.write(`
+  const logoHtml = logoUrl
+    ? `<img src="${logoUrl}" style="max-height:120px; margin-bottom:15px;" />`
+    : "";
+
+  const printWindow = window.open("", "_blank");
+
+  printWindow?.document.write(`
     <html>
       <head>
         <title>Progress Report</title>
         <style>${printStyles}</style>
       </head>
+
       <body>
         <div class="print-header">
-          <h1>Office Management System</h1>
-          <h2>Progress Report</h2>
+          ${logoHtml}
+          <h2>${businessVar?.name ?? "Office Management System"}</h2>
+          <p>${businessVar?.email ?? ""} | ${businessVar?.contact ?? ""}</p>
+
+          <h3>Progress Report</h3>
+
           <p>
             <strong>From:</strong> ${appliedFilters.startDate}
             <strong>To:</strong> ${appliedFilters.endDate}
@@ -205,11 +245,14 @@ export const ProgressReports = ({
     </html>
   `);
 
+  printWindow?.document.close();
+
+  setTimeout(() => {
     printWindow?.focus();
     printWindow?.print();
     printWindow?.close();
-  };
-
+  }, 500);
+};
   if (loader) return <Loader />;
 
   return (

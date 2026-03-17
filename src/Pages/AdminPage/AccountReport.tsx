@@ -32,6 +32,14 @@ interface AccountReportProps {
   externalPageSize: number;
 }
 
+export interface BusinessVarType {
+  id: number;
+  name: string;
+  email: string;
+  contact: string;
+  logo?: string;
+}
+
 export const AccountReport = ({
   externalSearch,
   externalPageSize,
@@ -55,6 +63,8 @@ export const AccountReport = ({
     accountType: "",
     selectedName: "",
   });
+
+  const [businessVar, setBusinessVar] = useState<BusinessVarType | null>(null);
 
   const [accounts, setAccounts] = useState<AccountReportT[]>([]);
   const [pageNo, setPageNo] = useState(1);
@@ -119,10 +129,27 @@ export const AccountReport = ({
     }
   }, [dispatch, token]);
 
+  const fetchBusinessVariable = useCallback(async () => {
+    if (!token) return;
+
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/business-variables`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.data.length > 0) {
+        setBusinessVar(res.data[0]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch business variable:", err);
+    }
+  }, [token]);
+
   useEffect(() => {
     handleGetAccounts();
     document.title = "(OMS) ACCOUNT REPORT";
-  }, [handleGetAccounts]);
+    fetchBusinessVariable();
+  }, [handleGetAccounts, fetchBusinessVariable]);
 
   useEffect(() => {
     setPageNo(1);
@@ -164,7 +191,7 @@ export const AccountReport = ({
   );
 
   const printDiv = () => {
-  const printStyles = `
+    const printStyles = `
     @page { size: A4 landscape; margin: 10mm; }
     body { font-family: Arial, sans-serif; font-size: 10pt; }
     .print-header { text-align: center; margin-bottom: 20px; }
@@ -186,9 +213,9 @@ export const AccountReport = ({
     .credit { color: red; font-weight: bold; }
   `;
 
-  const tableRows = filteredReports
-    .map(
-      (acc, index) => `
+    const tableRows = filteredReports
+      .map(
+        (acc, index) => `
       <tr>
         <td>${index + 1}</td>
         <td>${acc.account_type}</td>
@@ -201,12 +228,22 @@ export const AccountReport = ({
         <td>${acc.paymentDate}</td>
       </tr>
     `,
-    )
-    .join("");
+      )
+      .join("");
 
-  const printWindow = window.open("", "_blank");
+    const printWindow = window.open("", "_blank");
 
-  printWindow?.document.write(`
+    const logoUrl = businessVar?.logo
+      ? businessVar.logo.startsWith("http")
+        ? businessVar.logo
+        : `${BASE_URL}/${businessVar.logo}`
+      : "";
+
+    const logoHtml = logoUrl
+      ? `<img src="${logoUrl}" style="max-height:120px; margin-bottom:10px;" />`
+      : "";
+
+    printWindow?.document.write(`
     <html>
       <head>
         <title>Account Report</title>
@@ -215,13 +252,17 @@ export const AccountReport = ({
       <body>
 
         <div class="print-header">
-          <h1>Office Management System</h1>
-          <h2>Account Report</h2>
-          <p>
-            <strong>From:</strong> ${appliedFilters.startDate}
-            <strong>To:</strong> ${appliedFilters.endDate}
-          </p>
-        </div>
+  ${logoHtml}
+  <h2>${businessVar?.name || "Office Management System"}</h2>
+  <p>${businessVar?.email || ""}</p>
+  <p>${businessVar?.contact || ""}</p>
+
+  <h3>Attendance Report</h3>
+  <p>
+    <strong>From:</strong> ${appliedFilters.startDate}
+    <strong>To:</strong> ${appliedFilters.endDate}
+  </p>
+</div>
 
         <table>
           <thead>
@@ -248,10 +289,14 @@ export const AccountReport = ({
     </html>
   `);
 
-  printWindow?.focus();
-  printWindow?.print();
-  printWindow?.close();
-};
+    printWindow?.document.close();
+
+    setTimeout(() => {
+      printWindow?.focus();
+      printWindow?.print();
+      printWindow?.close();
+    }, 500);
+  };
 
   if (loader) return <Loader />;
 

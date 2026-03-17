@@ -31,9 +31,9 @@ type TActivButton =
 
 export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
   const [activeBtns, setActiveBtns] = useState<TActivButton | "">("");
-  const [isHoverable, setIsHoverable] = useState(false);
   const [isBlurred, setIsBlurred] = useState(false);
 
+  // Detect modal blur
   useEffect(() => {
     const checkModal = () => {
       const hasModalClass = document.body.classList.contains("modal-open");
@@ -42,37 +42,30 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
     };
 
     const observer = new MutationObserver(checkModal);
+
     observer.observe(document.body, {
       attributes: true,
       attributeFilter: ["class", "style"],
     });
+
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    setIsHoverable(isOpen);
-  }, [isOpen]);
-
+  // SAME hover logic as Admin Sidebar
   const handleMouseEnter = () => {
-    if (window.innerWidth >= 768 && isOpen && isHoverable) {
-      setIsOpen?.(false);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (window.innerWidth >= 768 && !isOpen && isHoverable) {
+    if (window.innerWidth >= 768 && !isOpen) {
       setIsOpen?.(true);
     }
   };
 
-  // Centralized click handler
-  const handleItemClick = (btn: TActivButton, hasSubmenu: boolean = false) => {
-    setActiveBtns((prev) => (prev === btn ? "" : btn));
-
-    // Close sidebar on mobile if it's a direct link (no submenu)
-    if (!hasSubmenu && window.innerWidth < 768) {
+  const handleMouseLeave = () => {
+    if (window.innerWidth >= 768 && isOpen) {
       setIsOpen?.(false);
     }
+  };
+
+  const toggleButtonActive = (btn: TActivButton) => {
+    setActiveBtns((prev) => (prev === btn ? "" : btn));
   };
 
   useEffect(() => {
@@ -86,7 +79,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
         onMouseLeave={handleMouseLeave}
         className={`
           fixed inset-y-0 left-0 bg-white shadow-2xl transition-all duration-300 ease-in-out
-          flex flex-col py-4 overflow-y-auto overflow-x-hidden flex-shrink-0
+          flex flex-col overflow-y-auto overflow-x-hidden flex-shrink-0
           z-50 md:z-30
           
           ${isBlurred ? "blur-sm pointer-events-none scale-[0.99]" : "blur-0 pointer-events-auto"}
@@ -94,17 +87,20 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
           ${isOpen ? "w-64 translate-x-0 visible" : "w-0 -translate-x-full invisible md:visible"}
           
           md:relative md:translate-x-0 md:shadow-lg md:visible
-          ${isOpen ? "md:w-20" : "md:w-64"}
+          ${isOpen ? "md:w-64" : "md:w-20"}
         `}
       >
-        <nav className="flex-1 px-3 space-y-1">
+        <nav className="flex-1 px-3 space-y-1 mt-4">
           <Link to="/User/dashboard" className="block">
             <SideBarButton
               isOpen={isOpen}
               icon={<MdOutlineDashboard size={20} />}
               title="Dashboard"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => handleItemClick("Dashboard")}
+              handlerClick={() => {
+                toggleButtonActive("Dashboard");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
               activeBtns={activeBtns}
               activeBtn="Dashboard"
             />
@@ -116,7 +112,10 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<PiFingerprintDuotone size={20} />}
               title="Attendance"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => handleItemClick("Attendance")}
+              handlerClick={() => {
+                toggleButtonActive("Attendance");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
               activeBtns={activeBtns}
               activeBtn="Attendance"
             />
@@ -128,7 +127,10 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<LuListTodo size={20} />}
               title="Todo's"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => handleItemClick("Todo")}
+              handlerClick={() => {
+                toggleButtonActive("Todo");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
               activeBtns={activeBtns}
               activeBtn="Todo"
             />
@@ -140,7 +142,10 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<GiProgression size={20} />}
               title="Progress"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => handleItemClick("Progress")}
+              handlerClick={() => {
+                toggleButtonActive("Progress");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
               activeBtns={activeBtns}
               activeBtn="Progress"
             />
@@ -152,7 +157,10 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<GoProjectRoadmap size={20} />}
               title="Assigned Projects"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => handleItemClick("Assigned Projects")}
+              handlerClick={() => {
+                toggleButtonActive("Assigned Projects");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
               activeBtns={activeBtns}
               activeBtn="Assigned Projects"
             />
@@ -164,7 +172,10 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<FaUserSlash size={20} />}
               title="Apply Leave"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => handleItemClick("Leave")}
+              handlerClick={() => {
+                toggleButtonActive("Leave");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
               activeBtns={activeBtns}
               activeBtn="Leave"
             />
@@ -176,7 +187,10 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<FaMoneyCheck size={20} />}
               title="Salary"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => handleItemClick("Salary")}
+              handlerClick={() => {
+                toggleButtonActive("Salary");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
               activeBtns={activeBtns}
               activeBtn="Salary"
             />
@@ -188,7 +202,10 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<CiCreditCard1 size={20} />}
               title="Payroll"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => handleItemClick("Payroll")}
+              handlerClick={() => {
+                toggleButtonActive("Payroll");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
               activeBtns={activeBtns}
               activeBtn="Payroll"
             />
@@ -200,9 +217,12 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<RiUserCommunityLine size={20} />}
               title="Dynamics"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => handleItemClick("Dynamic")}
+              handlerClick={() => {
+                toggleButtonActive("Dynamic");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
               activeBtns={activeBtns}
-              activeBtn="Dynamics"
+              activeBtn="Dynamic"
             />
           </Link>
 
@@ -212,7 +232,10 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
               icon={<HiOutlineDocumentReport size={20} />}
               title="Reports"
               arrowIcon={<BiArrowBack />}
-              handlerClick={() => handleItemClick("Reports")}
+              handlerClick={() => {
+                toggleButtonActive("Reports");
+                if (window.innerWidth < 768) setIsOpen?.(false);
+              }}
               activeBtns={activeBtns}
               activeBtn="Reports"
             />
@@ -220,7 +243,6 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
         </nav>
       </div>
 
-      {/* Mobile Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm transition-opacity md:hidden"

@@ -197,15 +197,17 @@ export const SalesReports = ({
       )
       .join("");
 
-    const printWindow = window.open("", "_self");
+    const printWindow = window.open("", "_blank");
 
-    const logoHtml = businessVar?.logo
-      ? `<img src="${businessVar.logo}" alt="Logo" style="max-height: 60px; display: block; margin: 0 auto 10px;" />`
+    const logoUrl = businessVar?.logo
+      ? businessVar.logo.startsWith("http")
+        ? businessVar.logo
+        : `${BASE_URL}/${businessVar.logo}`
       : "";
 
-    const nameHtml = businessVar?.name
-      ? `<h1>${businessVar.name}</h1>`
-      : "<h1>Office Management System</h1>";
+    const logoHtml = logoUrl
+      ? `<img src="${logoUrl}" style="max-height:120px; margin-bottom:15px;" />`
+      : "";
 
     printWindow?.document.write(`
     <html>
@@ -216,8 +218,11 @@ export const SalesReports = ({
       <body>
         <div class="print-header">
           ${logoHtml}
-          ${nameHtml}
-          <h2>Sale Report</h2>
+          <h2>${businessVar?.name ?? "Office Management System"}</h2>
+          <p>${businessVar?.email ?? ""} | ${businessVar?.contact ?? ""}</p>
+
+          <h3>Sales Report</h3>
+
           <p>
             <strong>From:</strong> ${appliedFilters.startDate}
             <strong>To:</strong> ${appliedFilters.endDate}
@@ -241,9 +246,13 @@ export const SalesReports = ({
     </html>
   `);
 
-    printWindow?.focus();
-    printWindow?.print();
-    printWindow?.close();
+    printWindow?.document.close();
+
+    setTimeout(() => {
+      printWindow?.focus();
+      printWindow?.print();
+      printWindow?.close();
+    }, 500);
   };
 
   if (loader) return <Loader />;

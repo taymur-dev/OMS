@@ -32,6 +32,14 @@ interface ProcessReportsProps {
   externalPageSize: number;
 }
 
+export interface BusinessVarType {
+  id: number;
+  name: string;
+  email: string;
+  contact: string;
+  logo?: string;
+}
+
 export const ProcessReports = ({
   externalSearch,
   externalPageSize,
@@ -61,6 +69,8 @@ export const ProcessReports = ({
   const [allTasks, setAllTasks] = useState<PROCESST[]>([]);
   const [pageNo, setPageNo] = useState(1);
 
+  const [businessVar, setBusinessVar] = useState<BusinessVarType | null>(null);
+
   const getProcessReports = useCallback(async () => {
     if (!token || !currentUser) return;
 
@@ -83,6 +93,20 @@ export const ProcessReports = ({
       dispatch(navigationSuccess("PROCESS REPORTS"));
     }
   }, [token, currentUser, userId, dispatch]);
+
+  const fetchBusinessVariable = useCallback(async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/business-variables`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.data.length > 0) {
+        setBusinessVar(res.data[0]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch business variable:", err);
+    }
+  }, [token]);
 
   const handleSearch = () => {
     setAppliedFilters({
@@ -145,11 +169,56 @@ export const ProcessReports = ({
   const printDiv = () => {
     const printStyles = `
     @page { size: A4 landscape; margin: 10mm; }
-    body { font-family: Arial, sans-serif; font-size: 10pt; }
-    .print-header { text-align: center; margin-bottom: 20px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #333; padding: 8px; text-align: left; }
-    th { background-color: #f2f2f2; font-weight: bold; }
+
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 10pt;
+      color: #333;
+    }
+
+    .print-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .print-header img {
+      max-height: 120px;
+      margin-bottom: 10px;
+    }
+
+    .company-name {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .company-details {
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .report-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      border: 1px solid #333;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
   `;
 
     const tableRows = filteredTasks
@@ -169,18 +238,42 @@ export const ProcessReports = ({
 
     const printWindow = window.open("", "_blank");
 
+    const logoUrl = businessVar?.logo
+      ? businessVar.logo.startsWith("http")
+        ? businessVar.logo
+        : `${BASE_URL}/${businessVar.logo}`
+      : "";
+
+    const logoHtml = logoUrl ? `<img src="${logoUrl}" />` : "";
+
     printWindow?.document.write(`
     <html>
       <head>
         <title>Process Report</title>
         <style>${printStyles}</style>
       </head>
+
       <body>
+
         <div class="print-header">
-          <h1>Office Management System</h1>
-          <h2>Process Report</h2>
+          ${logoHtml}
+
+          <div class="company-name">
+            ${businessVar?.name || "Office Management System"}
+          </div>
+
+          <div class="company-details">
+            ${businessVar?.email || ""} 
+            ${businessVar?.contact ? " | " + businessVar.contact : ""}
+          </div>
+
+          <div class="report-title">
+            Process Report
+          </div>
+
           <p>
             <strong>From:</strong> ${appliedFilters.startDate}
+            &nbsp;&nbsp;
             <strong>To:</strong> ${appliedFilters.endDate}
           </p>
         </div>
@@ -196,23 +289,30 @@ export const ProcessReports = ({
               <th>Deadline</th>
             </tr>
           </thead>
+
           <tbody>
             ${tableRows}
           </tbody>
         </table>
+
       </body>
     </html>
   `);
 
-    printWindow?.focus();
-    printWindow?.print();
-    printWindow?.close();
+    printWindow?.document.close();
+
+    setTimeout(() => {
+      printWindow?.focus();
+      printWindow?.print();
+      printWindow?.close();
+    }, 500);
   };
 
   useEffect(() => {
     document.title = "(OMS) PROCESS REPORTS";
     getProcessReports();
-  }, [getProcessReports]);
+    fetchBusinessVariable();
+  }, [getProcessReports, fetchBusinessVariable]);
 
   if (loader) return <Loader />;
 

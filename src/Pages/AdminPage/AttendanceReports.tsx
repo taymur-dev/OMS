@@ -38,6 +38,14 @@ interface AttendanceReportsProps {
   externalPageSize: number;
 }
 
+export interface BusinessVarType {
+  id: number;
+  name: string;
+  email: string;
+  contact: string;
+  logo?: string;
+}
+
 export const AttendanceReports = ({
   externalSearch,
   externalPageSize,
@@ -65,6 +73,7 @@ export const AttendanceReports = ({
   const [attendance, setAttendance] = useState<AttendanceT[]>([]);
   const [users, setUsers] = useState<UserType[]>([]);
   const [pageNo, setPageNo] = useState(1);
+  const [businessVar, setBusinessVar] = useState<BusinessVarType | null>(null);
 
   /* ================= FETCH DATA ================= */
   const getAttendanceReport = useCallback(async () => {
@@ -105,6 +114,22 @@ export const AttendanceReports = ({
       console.error(error);
     }
   }, [token]);
+
+  const fetchBusinessVariable = useCallback(async () => {
+  if (!token) return;
+
+  try {
+    const res = await axios.get(`${BASE_URL}/api/admin/business-variables`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res.data.length > 0) {
+      setBusinessVar(res.data[0]);
+    }
+  } catch (err) {
+    console.error("Failed to fetch business variable:", err);
+  }
+}, [token]);
 
   /* ================= FILTER LOGIC ================= */
   const handleSearchClick = () => {
@@ -186,6 +211,17 @@ export const AttendanceReports = ({
       .join("");
 
     const printWindow = window.open("", "_blank");
+
+     const logoUrl = businessVar?.logo
+  ? businessVar.logo.startsWith("http")
+    ? businessVar.logo
+    : `${BASE_URL}/${businessVar.logo}`
+  : "";
+
+const logoHtml = logoUrl
+  ? `<img src="${logoUrl}" style="max-height:120px; margin-bottom:10px;" />`
+  : "";
+
     printWindow?.document.write(`
     <html>
       <head>
@@ -193,11 +229,18 @@ export const AttendanceReports = ({
         <style>${printStyles}</style>
       </head>
       <body>
-        <div class="print-header">
-          <h1>Office Management System</h1>
-          <h2>Attendance Report</h2>
-          <p><strong>From:</strong> ${appliedFilters.startDate} <strong>To:</strong> ${appliedFilters.endDate}</p>
-        </div>
+       <div class="print-header">
+  ${logoHtml}
+  <h2>${businessVar?.name || "Office Management System"}</h2>
+  <p>${businessVar?.email || ""}</p>
+  <p>${businessVar?.contact || ""}</p>
+
+  <h3>Attendance Report</h3>
+  <p>
+    <strong>From:</strong> ${appliedFilters.startDate}
+    <strong>To:</strong> ${appliedFilters.endDate}
+  </p>
+</div>
         <table>
           <thead>
             <tr>
@@ -218,18 +261,26 @@ export const AttendanceReports = ({
     </html>
   `);
 
-    printWindow?.focus();
-    printWindow?.print();
-    printWindow?.close();
+   printWindow?.document.close();
+
+    setTimeout(() => {
+      printWindow?.focus();
+      printWindow?.print();
+      printWindow?.close();
+    }, 500);
   };
 
+  
   useEffect(() => {
-    document.title = "(OMS) ATTENDANCE REPORTS";
-    dispatch(navigationStart());
-    getAttendanceReport();
-    if (isAdmin) getUsers();
-    setTimeout(() => dispatch(navigationSuccess("ATTENDANCE REPORTS")), 800);
-  }, [dispatch, getAttendanceReport, getUsers, isAdmin]);
+  document.title = "(OMS) ATTENDANCE REPORTS";
+  dispatch(navigationStart());
+
+  getAttendanceReport();
+  if (isAdmin) getUsers();
+  fetchBusinessVariable();
+
+  setTimeout(() => dispatch(navigationSuccess("ATTENDANCE REPORTS")), 800);
+}, [dispatch, getAttendanceReport, getUsers, fetchBusinessVariable, isAdmin]);
 
   if (loader) return <Loader />;
 

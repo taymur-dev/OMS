@@ -44,37 +44,37 @@ const CARD_CONFIG = [
   {
     key: "workingDays",
     titleName: "Working Days",
-    icon: <FaLaptopCode className="text-indigo-600" />,
+    icon: <FaLaptopCode size={24} className="text-indigo-600" />,
     path: "/user/reports",
   },
   {
     key: "holidays",
     titleName: "Holidays",
-    icon: <FaCalendarCheck className="text-yellow-500" />,
+    icon: <FaCalendarCheck size={24} className="text-yellow-500" />,
     path: "/user/reports",
   },
   {
     key: "presents",
     titleName: "Presents",
-    icon: <HiUserGroup className="text-green-600" />,
+    icon: <HiUserGroup size={24} className="text-green-600" />,
     path: "/user/reports",
   },
   {
     key: "absents",
     titleName: "Absent/Leave",
-    icon: <FaUserSlash className="text-orange-500" />,
+    icon: <FaUserSlash size={24} className="text-orange-500" />,
     path: "/users/leaveRequests",
   },
   {
     key: "totalTodos",
     titleName: "Todos",
-    icon: <RiFileList3Fill className="text-fuchsia-600" />,
+    icon: <RiFileList3Fill size={24} className="text-fuchsia-600" />,
     path: "/users/todo",
   },
   {
     key: "totalProgress",
     titleName: "Progress",
-    icon: <AiFillEdit className="text-cyan-600" />,
+    icon: <AiFillEdit size={24} className="text-cyan-600" />,
     path: "/users/progress",
   },
 ];
@@ -150,32 +150,33 @@ export const EmployeeDashboard = () => {
               <Card
                 titleName={card.titleName}
                 totalNumber={dashboardData[card.key as keyof DashboardDataT]}
-                icon={card.icon}
+                footer={card.icon}
               />
             </div>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col h-full min-h-[450px] overflow-hidden">
-            <div className="bg-blue-50/50 px-8 py-5 pb-6 flex justify-between items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col h-full min-h-[400px] overflow-hidden">
+            <div className="bg-blue-50/50 px-8 py-3 flex justify-between items-center">
               <div className="flex items-center gap-4">
-                <div className=" rounded-xl text-indigo-900">
-                  <CiViewList size={28} className="font-bold" />
+                <div className="rounded-xl text-blue-400">
+                  <CiViewList size={26} />
                 </div>
-                <h3 className="text-gray-900 font-extrabold text-xl tracking-tight">
+                <h3 className="text-gray-900 text-lg tracking-tight">
                   Todo List
                 </h3>
               </div>
+
               {!loading && (
-                <span className="bg-blue-200 text-black text-xs font-bold px-4 py-1.5 rounded-full shadow-sm">
+                <span className="bg-blue-200 text-black text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                   {todos.length}
                 </span>
               )}
             </div>
 
-            <div className="px-8 py-6  flex-grow">
-              <div className="flex justify-between text-[11px] font-bold  text-gray-400 uppercase tracking-widest mb-4">
+            <div className="px-8 py-4 flex-grow">
+              <div className="flex justify-between text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3">
                 <span>Task Name</span>
                 <span>Deadline</span>
               </div>
@@ -183,88 +184,94 @@ export const EmployeeDashboard = () => {
               {loading ? (
                 <div className="flex flex-col gap-2 animate-pulse mt-2">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-16 bg-gray-50 rounded-xl" />
+                    <div key={i} className="h-12 bg-gray-50 rounded-xl" />
                   ))}
                 </div>
               ) : (
                 <div className="divide-y divide-gray-50">
-                  {todos.slice(0, 4).map((todo, i) => (
-                    <div
-                      key={i}
-                      className="flex justify-between items-center py-3"
-                    >
-                      <div>
-                        <p className="text-gray-900 font-bold text-base">
+                  {[...todos]
+                    .sort(
+                      (a, b) =>
+                        new Date(a.deadline).getTime() -
+                        new Date(b.deadline).getTime(),
+                    )
+                    .slice(-5)
+                    .map((todo, i) => (
+                      <div
+                        key={i}
+                        className="flex justify-between items-center py-2"
+                      >
+                        <p className="text-gray-900 font-bold text-sm">
                           {todo.task}
                         </p>
+
+                        <span className="text-xs font-bold tracking-tight text-gray-500">
+                          {todo.deadline}
+                        </span>
                       </div>
-                      <span
-                        className={`text-sm font-bold tracking-tight ${i === 0 ? "text-gray-500" : "text-gray-500"}`}
-                      >
-                        {todo.deadline}
-                      </span>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               )}
             </div>
 
-            <div className="p-6">
+            <div className="p-4">
               <button
                 onClick={() => navigate("/users/todo")}
-                className="w-full bg-blue-400 text-white py-4 rounded-full font-bold flex items-center
-                 justify-center gap-3 transition-all shadow-lg shadow-indigo-100"
+                className="w-full bg-blue-400 text-white py-3 rounded-full font-bold flex items-center justify-center gap-3 transition-all shadow-lg shadow-indigo-100"
               >
                 View More Info <FaArrowRightLong />
               </button>
             </div>
           </div>
 
-          <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col h-full min-h-[450px] overflow-hidden">
-            <div className="bg-blue-50/50 px-8 py-5 pb-6 flex justify-between items-center">
+          <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col h-full min-h-[400px] overflow-hidden">
+            <div className="bg-blue-50/50 px-8 py-3 flex justify-between items-center">
               <div className="flex items-center gap-4">
-                <div className="rounded-xl text-indigo-900">
-                  <FaTasks size={24} />
+                <div className="rounded-xl text-blue-400">
+                  <FaTasks size={22} />
                 </div>
-                <h3 className="text-gray-900 font-extrabold text-xl tracking-tight">
+                <h3 className="text-gray-900 text-lg tracking-tight">
                   Assigned Projects
                 </h3>
               </div>
+
               {!loading && (
-                <span className="bg-blue-200 text-black text-xs font-bold px-4 py-1.5 rounded-full">
+                <span className="bg-blue-200 text-black text-xs font-bold px-3 py-1 rounded-full">
                   {projects.length}
                 </span>
               )}
             </div>
 
-            <div className="px-8 py-6 flex-grow">
-              <div className="flex justify-between text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-4">
+            <div className="px-8 py-4 flex-grow">
+              <div className="flex justify-between text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3">
                 <span>Project Name</span>
                 <span>Assigned Date</span>
               </div>
 
               {loading ? (
-                <div className="flex flex-col gap-4 animate-pulse mt-2">
+                <div className="flex flex-col gap-3 animate-pulse mt-2">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-20 bg-gray-50 rounded-xl" />
+                    <div key={i} className="h-14 bg-gray-50 rounded-xl" />
                   ))}
                 </div>
               ) : (
                 <div className="divide-y divide-gray-50">
-                  {projects.slice(0, 3).map((proj, i) => (
-                    <div
-                      key={proj.id || i}
-                      className="flex justify-between items-center py-3"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div>
-                          <p className="text-gray-900 font-bold text-base">
-                            {proj.projectName}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-gray-500 font-bold text-sm">
+                  {[...projects]
+                    .sort(
+                      (a, b) =>
+                        new Date(a.date).getTime() - new Date(b.date).getTime(),
+                    )
+                    .slice(0, 5)
+                    .map((proj, i) => (
+                      <div
+                        key={proj.id || i}
+                        className="flex justify-between items-center py-2"
+                      >
+                        <p className="text-gray-900 font-bold text-sm">
+                          {proj.projectName}
+                        </p>
+
+                        <p className="text-gray-500 font-bold text-xs">
                           {new Date(proj.date).toLocaleDateString("en-GB", {
                             day: "2-digit",
                             month: "short",
@@ -272,16 +279,15 @@ export const EmployeeDashboard = () => {
                           })}
                         </p>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               )}
             </div>
 
-            <div className="p-6">
+            <div className="p-4">
               <button
                 onClick={() => navigate("/users/assignedprojects")}
-                className="w-full bg-blue-400 text-white py-4 rounded-full font-bold flex items-center justify-center gap-3 transition-all shadow-lg shadow-indigo-100"
+                className="w-full bg-blue-400 text-white py-3 rounded-full font-bold flex items-center justify-center gap-3 transition-all shadow-lg shadow-indigo-100"
               >
                 Project Details <RiExternalLinkLine size={20} />
               </button>

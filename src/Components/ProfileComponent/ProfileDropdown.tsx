@@ -49,7 +49,7 @@ const ProfileDropdown = ({
       <div
         ref={dropdownRef}
         className="absolute right-0 mt-5 w-64 origin-top-right overflow-hidden rounded-xl border-1 
-        border-indigo-900 hover:border-white bg-white shadow-2xl  focus:outline-none"
+        border-blue-400 hover:border-white bg-white shadow-2xl  focus:outline-none"
       >
         {/* User Header Section */}
         <div className="bg-gray-50/50 px-4 py-4 border-b border-gray-100">

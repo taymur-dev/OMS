@@ -37,6 +37,22 @@ interface ExpenseReportsProps {
   externalPageSize: number;
 }
 
+export interface BusinessVarType {
+  id: number;
+  name: string;
+  email: string;
+  contact: string;
+  logo?: string;
+}
+
+export interface BusinessVarType {
+  id: number;
+  name: string;
+  email: string;
+  contact: string;
+  logo?: string;
+}
+
 export const ExpenseReports = ({
   externalSearch,
   externalPageSize,
@@ -52,6 +68,7 @@ export const ExpenseReports = ({
   const [pageNo, setPageNo] = useState(1);
   const [expenses, setExpenses] = useState<ExpenseT[]>([]);
   const [categories, setCategories] = useState<CategoryT[]>([]);
+  const [businessVar, setBusinessVar] = useState<BusinessVarType | null>(null);
 
   // Input states (Form values)
   const [reportData, setReportData] = useState({
@@ -114,8 +131,24 @@ export const ExpenseReports = ({
     }
   }, [token]);
 
- const printDiv = () => {
-  const printStyles = `
+  const fetchBusinessVariable = useCallback(async () => {
+    if (!token) return;
+
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/business-variables`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.data.length > 0) {
+        setBusinessVar(res.data[0]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch business variable:", err);
+    }
+  }, [token]);
+
+  const printDiv = () => {
+    const printStyles = `
     @page { size: A4 landscape; margin: 10mm; }
     body { font-family: Arial, sans-serif; font-size: 10pt; }
     .print-header { text-align: center; margin-bottom: 20px; }
@@ -124,9 +157,9 @@ export const ExpenseReports = ({
     th { background-color: #f2f2f2; font-weight: bold; }
   `;
 
-  const tableRows = filteredExpenses
-    .map(
-      (e, index) => `
+    const tableRows = filteredExpenses
+      .map(
+        (e, index) => `
       <tr>
         <td>${index + 1}</td>
         <td>${e.categoryName}</td>
@@ -134,27 +167,42 @@ export const ExpenseReports = ({
         <td>${e.amount.toLocaleString()}</td>
         <td>${e.date}</td>
       </tr>
-    `
-    )
-    .join("");
+    `,
+      )
+      .join("");
 
-  const printWindow = window.open("", "_blank");
+    const printWindow = window.open("", "_blank");
 
-  printWindow?.document.write(`
+    const logoUrl = businessVar?.logo
+      ? businessVar.logo.startsWith("http")
+        ? businessVar.logo
+        : `${BASE_URL}/${businessVar.logo}`
+      : "";
+
+    const logoHtml = logoUrl
+      ? `<img src="${logoUrl}" style="max-height:120px; margin-bottom:10px;" />`
+      : "";
+
+    printWindow?.document.write(`
     <html>
       <head>
         <title>Expense Report</title>
         <style>${printStyles}</style>
       </head>
       <body>
-        <div class="print-header">
-          <h1>Office Management System</h1>
-          <h2>Expense Report</h2>
-          <p>
-            <strong>From:</strong> ${appliedFilters.startDate}
-            <strong>To:</strong> ${appliedFilters.endDate}
-          </p>
-        </div>
+        
+      <div class="print-header">
+  ${logoHtml}
+  <h2>${businessVar?.name || "Office Management System"}</h2>
+  <p>${businessVar?.email || ""}</p>
+  <p>${businessVar?.contact || ""}</p>
+
+  <h3>Attendance Report</h3>
+  <p>
+    <strong>From:</strong> ${appliedFilters.startDate}
+    <strong>To:</strong> ${appliedFilters.endDate}
+  </p>
+</div>
 
         <table>
           <thead>
@@ -174,16 +222,21 @@ export const ExpenseReports = ({
     </html>
   `);
 
-  printWindow?.focus();
-  printWindow?.print();
-  printWindow?.close();
-};
+    printWindow?.document.close();
+
+    setTimeout(() => {
+      printWindow?.focus();
+      printWindow?.print();
+      printWindow?.close();
+    }, 500);
+  };
 
   useEffect(() => {
     document.title = "(OMS) EXPENSE REPORTS";
     getExpenses();
     getExpenseCategories();
-  }, [getExpenses, getExpenseCategories]);
+    fetchBusinessVariable();
+  }, [getExpenses, getExpenseCategories, fetchBusinessVariable]);
 
   // Reset page on search
   useEffect(() => {
