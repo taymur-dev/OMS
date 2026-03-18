@@ -48,12 +48,25 @@ export const AddBusinessVariable = ({
     if (name === "logo" && files && files[0]) {
       const file = files[0];
       setFormData((prev) => ({ ...prev, logo: file }));
-      setPreview(URL.createObjectURL(file)); // Create local preview URL
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setPreview(URL.createObjectURL(file));
+      return;
     }
-  };
 
+    let updatedValue = value;
+
+    if (updatedValue.startsWith(" ")) return;
+
+    if (name === "contact") {
+      updatedValue = updatedValue.replace(/\D/g, "");
+
+      if (updatedValue.length > 11) return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: updatedValue,
+    }));
+  };
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -62,6 +75,18 @@ export const AddBusinessVariable = ({
       return toast.error("Please fill all required fields", {
         toastId: "required-fields",
       });
+    }
+
+    if (
+      !formData.name.trim() ||
+      !formData.email.trim() ||
+      !formData.contact.trim()
+    ) {
+      return toast.error("Fields cannot be empty or spaces only");
+    }
+
+    if (!/^\d{11}$/.test(formData.contact)) {
+      return toast.error("Contact must be exactly 11 digits");
     }
 
     setLoading(true);

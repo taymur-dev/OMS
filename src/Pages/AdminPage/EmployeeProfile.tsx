@@ -26,8 +26,8 @@ export const EmployeeProfile = () => {
       border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors px-4 rounded-xl"
     >
       <div className="flex items-center gap-3 mb-1 sm:mb-0">
-        <div className="p-2 bg-indigo-50 rounded-lg">
-          <Icon className="w-4 h-4 text-indigo-600" />
+        <div className="p-2 bg-blue-50 rounded-lg">
+          <Icon className="w-4 h-4 text-blue-600" />
         </div>
         <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
           {label}
@@ -47,11 +47,11 @@ export const EmployeeProfile = () => {
         <hr className="border-b border-gray-200 mb-8" />
 
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-xl shadow-indigo-100/50 border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-3xl shadow-xl shadow-blue-100/50 border border-gray-100 overflow-hidden">
             {/* Banner Background */}
             <div
-              className="h-32 bg-indigo-900 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))]
-              from-indigo-800 via-indigo-900 to-slate-900"
+              className="h-32 bg-blue-400 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))]
+              from-blue-800 via-blue-900 to-slate-900"
             />
 
             <div className="px-8 pb-10">
@@ -60,17 +60,17 @@ export const EmployeeProfile = () => {
                 <div className="relative">
                   <div
                     className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-white shadow-2xl
-                    bg-indigo-900 flex items-center justify-center overflow-hidden bg-cover bg-center"
+                    bg-blue-400 flex items-center justify-center overflow-hidden bg-cover bg-center"
                     style={{
-                      backgroundImage: !currentUser?.profileImage
+                      backgroundImage: !currentUser?.image
                         ? `url(${Avatar})`
                         : "none",
                     }}
                   >
-                    {currentUser?.profileImage ? (
+                    {currentUser?.image ? (
                       <img
                         className="w-full h-full object-cover"
-                        src={currentUser.profileImage}
+                        src={currentUser.image}
                         alt="Profile"
                       />
                     ) : (
@@ -89,7 +89,7 @@ export const EmployeeProfile = () => {
                     {currentUser?.name ?? "Guest Employee"}
                   </h2>
                   <div
-                    className="inline-flex items-center gap-2 px-3 py-1 mt-2 bg-indigo-50 text-indigo-700
+                    className="inline-flex items-center gap-2 px-3 py-1 mt-2 bg-blue-50 text-blue-700
                     rounded-full text-sm font-bold"
                   >
                     <ShieldCheck className="w-4 h-4" />
@@ -102,7 +102,7 @@ export const EmployeeProfile = () => {
               <div className="space-y-6">
                 <div>
                   <h3 className="text-sm font-bold text-gray-900 mb-4 px-2 flex items-center gap-2">
-                    <User className="w-4 h-4 text-indigo-500" />
+                    <User className="w-4 h-4 text-blue-500" />
                     Personal Information
                   </h3>
                   <div className="bg-gray-50/50 rounded-2xl p-2 border border-gray-100">

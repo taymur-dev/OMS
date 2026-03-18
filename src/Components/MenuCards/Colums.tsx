@@ -29,7 +29,7 @@ const columnBgStyles = (id: string) => {
       return "bg-blue-50";
     case "Working":
       return "bg-blue-100";
-    case "Complete":
+    case "Completed":
       return "bg-green-200";
     default:
       return "bg-slate-50";
@@ -42,7 +42,7 @@ const columnHeaderBadge = (id: string) => {
       return "bg-blue-50 text-[#000000]";
     case "Working":
       return "bg-blue-100 text-[#000000]";
-    case "Complete":
+    case "Completed":
       return "bg-green-200 text-[#000000]";
     default:
       return "bg-gray-200 text-gray-600";
@@ -57,7 +57,7 @@ const ProjectIcon = ({ name, status }: { name: string; status: string }) => {
   switch (status) {
     case "Working":
       return <BiCog className={`${iconClass} text-blue-600`} />;
-    case "Complete":
+    case "Completed":
       return <BiCheckDouble className={`${iconClass} text-green-600`} />;
     default:
       return <BiRocket className={`${iconClass} text-blue-500`} />;
@@ -72,7 +72,7 @@ const StatusActionIcon = ({ status }: { status: string }) => {
       return (
         <BiLoaderCircle className="text-blue-400 text-lg md:text-xl animate-spin-slow" />
       );
-    case "Complete":
+    case "Completed":
       return <BiCheckCircle className="text-green-600 text-lg md:text-xl" />;
     default:
       return null;
@@ -152,7 +152,7 @@ const ProjectCard = ({
                   </>
                 )}
 
-                {project.completionStatus === "Complete" && (
+                {project.completionStatus === "Completed" && (
                   <>
                     <span className="truncate max-w-[80px] md:max-w-[120px]">
                       {formatDate(project.endDate)}

@@ -8,7 +8,7 @@ type UserT = {
   role?: string;
   token: string;
   userId: string | number;
-  profileImage?: string;
+  image?: string;
   email?: string;
   cnic?: string;
   contact?: string;

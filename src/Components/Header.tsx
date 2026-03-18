@@ -101,10 +101,7 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
                   </span>
                 </>
               )}
-              <CiBellOn
-                size={32} 
-                className="relative text-gray-700" 
-              />
+              <CiBellOn size={32} className="relative text-gray-700" />
               {isNotifOpen && (
                 <NotificationDropdown
                   notifications={notifications}
@@ -125,10 +122,18 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
             <div
               onClick={() => handleToggleViewModal()}
               className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-400 flex items-center justify-center
-                        text-white flex-shrink-0 overflow-hidden border-2 border-gray-100 shadow-sm 
-                        cursor-pointer active:scale-95 transition duration-200 hover:border-blue-400"
+             text-white flex-shrink-0 overflow-hidden border-2 border-gray-100 shadow-sm 
+             cursor-pointer active:scale-95 transition duration-200 hover:border-blue-400"
             >
-              <RiUserFill size={28} />
+              {currentUser?.image ? (
+                <img
+                  src={currentUser.image}
+                  alt="Profile"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <RiUserFill size={28} />
+              )}
             </div>
           </div>
         </div>

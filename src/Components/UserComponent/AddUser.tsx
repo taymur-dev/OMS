@@ -286,15 +286,7 @@ export const AddUser = ({
   ): Promise<void> => {
     if (!id) return;
 
-    const { password } = userData;
-
-    if (password.length < 8 || password.length > 20) {
-      toast.error("Password must be between 8 and 20 characters", {
-        toastId: "password-length-update",
-      });
-      return;
-    }
-
+    
     const data = prepareFormData();
 
     setLoading(true);
@@ -304,7 +296,7 @@ export const AddUser = ({
           Authorization: token,
         },
       });
-      toast.success("User updated successfully", {
+      toast.success("Employee updated successfully", {
         toastId: "user-update-success",
       });
 
@@ -337,7 +329,7 @@ export const AddUser = ({
           {/* ===== Header ===== */}
           <div className="bg-white rounded-xl border-t-5 border-blue-400">
             <div className="text-black font-bold">
-              <Title setModal={setModal}>{viewType} USER</Title>
+              <Title setModal={setModal}>{viewType} EMPLOYEE</Title>
             </div>
           </div>
 

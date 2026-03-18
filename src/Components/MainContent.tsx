@@ -69,7 +69,7 @@ type TodoT = {
   deadline: string;
 };
 
-type completionStatus = "New" | "Working" | "Complete";
+type completionStatus = "New" | "Working" | "Completed";
 
 type ProjectT = {
   id: string;
@@ -158,7 +158,7 @@ interface CustomTooltipProps {
 const columsData = [
   { id: "New", title: "New Project" },
   { id: "Working", title: "Working Project" },
-  { id: "Complete", title: "Complete Project" },
+  { id: "Completed", title: "Completed Project" },
 ];
 
 export const MainContent = () => {
@@ -508,8 +508,8 @@ export const MainContent = () => {
       color: "#3b82f6", // Orange
     },
     {
-      name: "Complete",
-      value: allAssignProjects.filter((p) => p.completionStatus === "Complete")
+      name: "Completed",
+      value: allAssignProjects.filter((p) => p.completionStatus === "Completed")
         .length,
       color: "#16a34a", // Soft Pink/Coral
     },
@@ -652,7 +652,7 @@ export const MainContent = () => {
   ).length;
 
   const completeProjects = allAssignProjects.filter(
-    (p) => p.completionStatus === "Complete",
+    (p) => p.completionStatus === "Completed",
   ).length;
 
   const newPercent = totalProjects ? (newProjects / totalProjects) * 100 : 0;
@@ -769,7 +769,7 @@ export const MainContent = () => {
                 <div className="flex justify-between text-[8px] font-bold text-slate-400">
                   <span className="text-blue-300">● New</span>
                   <span className="text-blue-500">● Working</span>
-                  <span className="text-green-600">● Complete</span>
+                  <span className="text-green-600">● Completed</span>
                 </div>
               </div>
             }
@@ -920,6 +920,74 @@ export const MainContent = () => {
             }
           />
         </div>
+      </div>
+
+      <div className="w-full bg-white p-6 rounded-xl shadow-sm border border-slate-100 space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-slate-800">Projects</h2>
+        </div>
+
+        <div className="w-full bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+          <form
+            className="flex flex-col md:flex-row items-end gap-4 w-full"
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <div className="flex-1 min-w-0 w-full">
+              <OptionField
+                labelName="CATEGORY"
+                name="categoryName"
+                icon={<Shapes className="w-4 h-4 text-black" />}
+                handlerChange={handleChange}
+                value={formData.categoryName}
+                optionData={allCategory?.map((category) => ({
+                  id: category.id,
+                  label: category.categoryName,
+                  value: category.categoryName,
+                }))}
+                inital="All Categories"
+              />
+            </div>
+
+            <div className="flex-1 min-w-0 text-black w-full">
+              <InputField
+                type="date"
+                className="[color-scheme:light] ..."
+                labelName="FROM"
+                name="fromDate"
+                icon={<Calendar className="w-4 h-4 text-black" />}
+                value={formData.fromDate}
+                handlerChange={handleChange}
+              />
+            </div>
+
+            <div className="flex-1 min-w-0 text-black w-full">
+              <InputField
+                type="date"
+                className="[color-scheme:light] ..."
+                labelName="TO"
+                name="toDate"
+                icon={<Calendar className="w-4 h-4 text-black" />}
+                value={formData.toDate}
+                handlerChange={handleChange}
+              />
+            </div>
+          </form>
+        </div>
+
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="grid grid-cols-1 lg:grid-cols-3 w-full gap-6">
+            {columsData.map((column) => (
+              <div key={column.id} className="min-h-[400px]">
+                <Columns
+                  colum={column}
+                  allProject={filteredProjects.filter(
+                    (project) => project.completionStatus === column.id,
+                  )}
+                />
+              </div>
+            ))}
+          </div>
+        </DragDropContext>
       </div>
 
       {/* Profit Loss Trend Chart */}
@@ -1139,13 +1207,11 @@ export const MainContent = () => {
         </div>
       </div>
 
-      <div className="w-full bg-white p-6 rounded-xl shadow-sm border border-slate-100 space-y-6">
-        {/* Top Left Heading */}
+      {/* <div className="w-full bg-white p-6 rounded-xl shadow-sm border border-slate-100 space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-slate-800">Projects:</h2>
+          <h2 className="text-xl font-bold text-slate-800">Projects</h2>
         </div>
 
-        {/* Filter Bar Container */}
         <div className="w-full bg-white p-5 rounded-xl shadow-sm border border-slate-100">
           <form
             className="flex flex-col md:flex-row items-end gap-4 w-full"
@@ -1155,7 +1221,7 @@ export const MainContent = () => {
               <OptionField
                 labelName="CATEGORY"
                 name="categoryName"
-                icon={<Shapes className="w-4 h-4 text-black" />} // Added Category Icon
+                icon={<Shapes className="w-4 h-4 text-black" />} 
                 handlerChange={handleChange}
                 value={formData.categoryName}
                 optionData={allCategory?.map((category) => ({
@@ -1207,7 +1273,7 @@ export const MainContent = () => {
             ))}
           </div>
         </DragDropContext>
-      </div>
+      </div> */}
     </div>
   );
 };

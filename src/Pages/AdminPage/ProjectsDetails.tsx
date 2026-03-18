@@ -123,7 +123,7 @@ export const ProjectsDetails = ({
     const baseClasses =
       "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm";
     switch (status?.toLowerCase()) {
-      case "complete":
+      case "completed":
         return `${baseClasses} bg-green-100 text-green-600 border border-green-400`;
       case "new":
         return `${baseClasses} bg-blue-100 text-blue-600 border border-blue-400`;

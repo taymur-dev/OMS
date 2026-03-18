@@ -24,7 +24,7 @@ export interface UserT {
   email?: string;
   cnic?: string;
   contact?: string;
-  profileImage?: string | null;
+  image?: string | null;
 }
 
 export const Profile = () => {
@@ -71,10 +71,10 @@ export const Profile = () => {
               <div className="relative flex flex-col sm:flex-row items-center sm:items-end gap-6 -mt-20 mb-10">
                 <div className="relative group">
                   <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-full border-4 border-white shadow-2xl bg-blue-400 flex items-center justify-center overflow-hidden transition-transform duration-300 group-hover:scale-105">
-                    {currentUser?.profileImage ? (
+                    {currentUser?.image ? (
                       <img
                         className="w-full h-full object-cover"
-                        src={currentUser.profileImage}
+                        src={currentUser.image}
                         alt="Profile"
                       />
                     ) : Avatar ? (

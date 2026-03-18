@@ -356,7 +356,7 @@ export const ExpenseReports = ({
                 {paginatedExpenses.map((e, index) => (
                   <div
                     key={e.id}
-                    className="grid grid-cols-[60px_1fr_1fr_1fr_auto] items-center px-4 py-3 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
+                    className="grid grid-cols-[60px_1fr_1fr_1fr_auto] items-center px-4 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
                     <span className="text-gray-500 font-medium">
                       {startIndex + index + 1}

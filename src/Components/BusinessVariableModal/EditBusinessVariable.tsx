@@ -14,7 +14,7 @@ import { CancelBtn } from "../CustomButtons/CancelBtn";
 
 type EditBusinessVariableProps = {
   setModal: () => void;
-  refreshAssets: () => void; 
+  refreshAssets: () => void;
   businessData: {
     id: number;
     name: string;
@@ -69,9 +69,23 @@ export const EditBusinessVariable = ({
       const file = files[0];
       setFormData((prev) => ({ ...prev, logo: file }));
       setPreview(URL.createObjectURL(file));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      return;
     }
+
+    let updatedValue = value;
+
+    if (updatedValue.startsWith(" ")) return;
+
+    if (name === "contact") {
+      updatedValue = updatedValue.replace(/\D/g, "");
+
+      if (updatedValue.length > 11) return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: updatedValue,
+    }));
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -79,6 +93,18 @@ export const EditBusinessVariable = ({
 
     if (!formData.name || !formData.email || !formData.contact) {
       return toast.error("Required fields cannot be empty");
+    }
+
+    if (
+      !formData.name.trim() ||
+      !formData.email.trim() ||
+      !formData.contact.trim()
+    ) {
+      return toast.error("Fields cannot be empty or spaces only");
+    }
+
+    if (!/^\d{11}$/.test(formData.contact)) {
+      return toast.error("Contact must be exactly 11 digits");
     }
 
     setLoading(true);
@@ -124,10 +150,7 @@ export const EditBusinessVariable = ({
         <form onSubmit={handlerSubmitted}>
           {/* Header */}
           <div className="bg-white rounded-xl border-t-5 border-blue-400">
-            <Title
-              setModal={setModal}
-              className="text-lg font-semibold"
-            >
+            <Title setModal={setModal} className="text-lg font-semibold">
               UPDATE BUSINESS VARIABLE
             </Title>
           </div>

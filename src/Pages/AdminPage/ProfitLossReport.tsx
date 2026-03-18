@@ -351,10 +351,10 @@ export const ProfitLossReport = () => {
         : "";
 
       const logoHtml = logoUrl
-      ? `<div class="logo-container"><img src="${logoUrl}" style="max-height:100px; display: inline-block;" /></div>`
-      : "";
+        ? `<div class="logo-container"><img src="${logoUrl}" style="max-height:100px; display: inline-block;" /></div>`
+        : "";
 
-    const headerHTML = `
+      const headerHTML = `
       <div class="print-header">
         ${logoHtml}
         <h2 style="margin: 5px 0;">${businessVar?.name || "Business Name"}</h2>
@@ -383,14 +383,14 @@ export const ProfitLossReport = () => {
         <div className="flex flex-wrap items-end gap-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-grow">
             <InputField
-              labelName="From Date"
+              labelName="From"
               type="date"
               name="startDate"
               value={reportData.startDate}
               handlerChange={handleChange}
             />
             <InputField
-              labelName="To Date"
+              labelName="To"
               type="date"
               name="endDate"
               value={reportData.endDate}
@@ -415,98 +415,148 @@ export const ProfitLossReport = () => {
       </div>
 
       {/* REPORT CONTENT */}
-      <div id="printableReport" className="flex flex-col gap-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div id="printableReport" className="flex flex-col gap-3">
+        {" "}
+        {/* Reduced gap from 8 to 3 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {" "}
+          {/* Reduced gap from 8 to 4 */}
           {/* INCOME CARD */}
-          <div className="bg-white rounded-lg shadow border">
-            <div className="bg-gray-100 px-4 py-3 font-semibold">💰 INCOME</div>
-            <div className="p-4 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>Sales Amount</span>
-                <span className="font-semibold text-gray-600">
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border-t-4 border-green-500 transition-all hover:shadow-lg">
+            {/* Reduced vertical padding from py-4 to py-2 */}
+            <div className="bg-green-50 px-4 py-2 flex justify-between items-center">
+              <h3 className="font-bold text-green-800 flex items-center gap-2 text-sm">
+                <span className="bg-green-200 p-1.5 rounded-lg text-green-700">
+                  💰
+                </span>
+                INCOME STREAMS
+              </h3>
+            </div>
+
+            {/* Reduced padding from p-6 to p-3 and space-y from 4 to 2 */}
+            <div className="p-3 space-y-2">
+              <div className="flex justify-between items-center group">
+                <span className="text-xs text-gray-500 group-hover:text-gray-800 transition-colors">
+                  Sales Revenue
+                </span>
+                <span className="font-bold text-sm text-gray-800 bg-gray-50 px-2 py-0.5 rounded">
                   {incomeData.sTotal.toLocaleString()}
                 </span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span>Employee Receivables</span>
-                <span className="font-semibold text-gray-600">
+              <div className="flex justify-between items-center group">
+                <span className="text-xs text-gray-500 group-hover:text-gray-800 transition-colors">
+                  Employee Receivables
+                </span>
+                <span className="font-bold text-sm text-gray-800 bg-gray-50 px-2 py-0.5 rounded">
                   {incomeData.rTotal.toLocaleString()}
                 </span>
               </div>
-
-              <div className="flex justify-between text-sm">
-                <span>Customer Receivables</span>
-                <span className="font-semibold text-gray-600">
+              <div className="flex justify-between items-center group">
+                <span className="text-xs text-gray-500 group-hover:text-gray-800 transition-colors">
+                  Customer Receivables
+                </span>
+                <span className="font-bold text-sm text-gray-800 bg-gray-50 px-2 py-0.5 rounded">
                   {incomeData.cTotal.toLocaleString()}
                 </span>
               </div>
-
-              <div className="flex justify-between text-sm">
-                <span>Supplier Receivables</span>
-                <span className="font-semibold text-gray-600">
+              <div className="flex justify-between items-center group border-b pb-2">
+                <span className="text-xs text-gray-500 group-hover:text-gray-800 transition-colors">
+                  Supplier Receivables
+                </span>
+                <span className="font-bold text-sm text-gray-800 bg-gray-50 px-2 py-0.5 rounded">
                   {incomeData.suppRecTotal.toLocaleString()}
                 </span>
               </div>
-            </div>
-            <div className="border-t px-4 py-3 flex justify-between font-bold">
-              <span>Total Income</span>
-              <span className="text-green-600">
-                {incomeData.grandTotal.toLocaleString()}
-              </span>
+
+              <div className="pt-1 flex justify-between items-center">
+                <span className="text-sm font-semibold text-gray-700">
+                  Total Income
+                </span>
+                <span className="text-xl font-black text-green-600">
+                  {incomeData.grandTotal.toLocaleString()}
+                </span>
+              </div>
             </div>
           </div>
-
           {/* EXPENSE CARD */}
-          <div className="bg-white rounded-lg shadow border">
-            <div className="bg-gray-100 px-4 py-3 font-semibold">
-              💸 EXPENSES
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border-t-4 border-red-500 transition-all hover:shadow-lg">
+            {/* Reduced vertical padding from py-4 to py-2 */}
+            <div className="bg-red-50 px-4 py-2 flex justify-between items-center">
+              <h3 className="font-bold text-red-800 flex items-center gap-2 text-sm">
+                <span className="bg-red-200 p-1.5 rounded-lg text-red-700">
+                  💸
+                </span>
+                EXPENSE BREAKDOWN
+              </h3>
             </div>
-            <div className="p-4 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>General Expenses</span>
-                <span className="font-semibold text-gray-600">
+
+            {/* Reduced padding from p-6 to p-3 and space-y from 4 to 2 */}
+            <div className="p-3 space-y-2">
+              <div className="flex justify-between items-center group">
+                <span className="text-xs text-gray-500 group-hover:text-gray-800 transition-colors">
+                  General Expenses
+                </span>
+                <span className="font-bold text-sm text-gray-800 bg-gray-50 px-2 py-0.5 rounded">
                   {expenseData.eTotal.toLocaleString()}
                 </span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span>Employee Payables</span>
-                <span className="font-semibold text-gray-600">
+              <div className="flex justify-between items-center group">
+                <span className="text-xs text-gray-500 group-hover:text-gray-800 transition-colors">
+                  Employee Payables
+                </span>
+                <span className="font-bold text-sm text-gray-800 bg-gray-50 px-2 py-0.5 rounded">
                   {expenseData.pTotal.toLocaleString()}
                 </span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span>Customer Payables</span>
-                <span className="font-semibold text-gray-600">
+              <div className="flex justify-between items-center group">
+                <span className="text-xs text-gray-500 group-hover:text-gray-800 transition-colors">
+                  Customer Payables
+                </span>
+                <span className="font-bold text-sm text-gray-800 bg-gray-50 px-2 py-0.5 rounded">
                   {expenseData.cpTotal.toLocaleString()}
                 </span>
               </div>
-
-              <div className="flex justify-between text-sm">
-                <span>Supplier Payables</span>
-                <span className="font-semibold text-gray-600">
+              <div className="flex justify-between items-center group border-b pb-2">
+                <span className="text-xs text-gray-500 group-hover:text-gray-800 transition-colors">
+                  Supplier Payables
+                </span>
+                <span className="font-bold text-sm text-gray-800 bg-gray-50 px-2 py-0.5 rounded">
                   {expenseData.suppPayTotal.toLocaleString()}
                 </span>
               </div>
-            </div>
-            <div className="border-t px-4 py-3 flex justify-between font-bold">
-              <span>Total Expenses</span>
-              <span className="text-red-600">
-                {expenseData.grandTotal.toLocaleString()}
-              </span>
+
+              <div className="pt-1 flex justify-between items-center">
+                <span className="text-sm font-semibold text-gray-700">
+                  Total Expenses
+                </span>
+                <span className="text-xl font-black text-red-600">
+                  {expenseData.grandTotal.toLocaleString()}
+                </span>
+              </div>
             </div>
           </div>
         </div>
-
         {/* SUMMARY CARD */}
-        <div className="bg-white border rounded-lg shadow px-6 py-4 flex justify-between text-lg font-bold">
-          <span>Net {netProfitLoss >= 0 ? "Profit" : "Loss"}</span>
-          <span
-            className={netProfitLoss >= 0 ? "text-green-600" : "text-red-600"}
-          >
-            {netProfitLoss > 0
-              ? `+${netProfitLoss.toLocaleString()}`
-              : netProfitLoss.toLocaleString()}
-          </span>
+        {/* Reduced py-3 to py-2 and text sizes */}
+        <div
+          className={`rounded-xl border-2 px-6 py-2 flex flex-col sm:flex-row justify-between items-center transition-all ${
+            netProfitLoss >= 0
+              ? "bg-green-600 border-green-700 shadow-green-200"
+              : "bg-red-600 border-red-700 shadow-red-200"
+          } shadow-lg`}
+        >
+          <div className="text-white">
+            <p className="text-[10px] uppercase tracking-widest opacity-80 font-bold">
+              Net Result
+            </p>
+            <h2 className="text-xl font-black uppercase leading-tight">
+              {netProfitLoss >= 0 ? "Net Profit" : "Net Loss"}
+            </h2>
+          </div>
+          <div className="text-white text-2xl font-black mt-2 sm:mt-0 bg-white/20 px-4 py-1 rounded-lg backdrop-blur-sm">
+            {netProfitLoss > 0 ? "+" : ""}
+            {netProfitLoss.toLocaleString()}
+          </div>
         </div>
       </div>
     </div>

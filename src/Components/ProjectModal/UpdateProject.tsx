@@ -193,7 +193,7 @@ export const UpdateProject = ({
                 optionData={[
                   { id: 1, label: "New", value: "New" },
                   { id: 2, label: "Working", value: "Working" },
-                  { id: 3, label: "Complete", value: "Complete" },
+                  { id: 3, label: "Completed", value: "Completed" },
                 ]}
                 inital="Select Status"
               />

@@ -18,6 +18,7 @@ export const AddButton = <T,>({
   return (
     <div>
       <button
+        type="submit"
         disabled={loading}
         className="bg-blue-500 text-white py-1 px-4 rounded-lg duration-300 
                hover:cursor-pointer hover:scale-105 active:scale-95

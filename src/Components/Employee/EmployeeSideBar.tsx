@@ -10,7 +10,6 @@ import { HiOutlineDocumentReport } from "react-icons/hi";
 import { MdOutlineDashboard } from "react-icons/md";
 import { GiProgression } from "react-icons/gi";
 import { RiUserCommunityLine } from "react-icons/ri";
-import { CiCreditCard1 } from "react-icons/ci";
 
 type SideBarProps = {
   isOpen: boolean;
@@ -23,7 +22,6 @@ type TActivButton =
   | "Assigned Projects"
   | "Progress"
   | "Todo"
-  | "Payroll"
   | "Leave"
   | "Salary"
   | "Dynamic"
@@ -196,20 +194,7 @@ export const EmployeeSideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
             />
           </Link>
 
-          <Link to="/user/payroll" className="block">
-            <SideBarButton
-              isOpen={isOpen}
-              icon={<CiCreditCard1 size={20} />}
-              title="Payroll"
-              arrowIcon={<BiArrowBack />}
-              handlerClick={() => {
-                toggleButtonActive("Payroll");
-                if (window.innerWidth < 768) setIsOpen?.(false);
-              }}
-              activeBtns={activeBtns}
-              activeBtn="Payroll"
-            />
-          </Link>
+         
 
           <Link to="/user/dynamics" className="block">
             <SideBarButton

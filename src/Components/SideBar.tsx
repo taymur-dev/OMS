@@ -7,7 +7,7 @@ import { FaUserFriends, FaUserCog } from "react-icons/fa";
 import { PiFingerprintDuotone } from "react-icons/pi";
 import { GoProjectRoadmap } from "react-icons/go";
 import { LuListTodo } from "react-icons/lu";
-import { CiCalculator2, CiCreditCard1 } from "react-icons/ci";
+import { CiCalculator2, CiCreditCard1, CiVault } from "react-icons/ci";
 import { LiaProjectDiagramSolid } from "react-icons/lia";
 import { AiOutlineFieldTime } from "react-icons/ai";
 import { CgCalculator } from "react-icons/cg";
@@ -90,7 +90,7 @@ export const SideBar = ({ isOpen, setIsOpen }: SideBarProps) => {
     { title: "Sales", path: "/sales", icon: <CiCalculator2 size={20} />, access: "Sales" },
     { title: "Expenses", path: "/expenses", icon: <LiaProjectDiagramSolid size={20} />, access: "Expenses" },
     { title: "Payroll", path: "/payroll", icon: <CiCreditCard1 size={20} />, access: "Payroll" },
-    { title: "Assets", path: "/assets", icon: <CiCreditCard1 size={20} />, access: "Assets" },
+    { title: "Assets", path: "/assets", icon: <CiVault size={20} />, access: "Assets" },
     { title: "Dynamics", path: "/dynamics", icon: <RiUserCommunityLine size={20} />, access: "Dynamics" },
     { title: "Accounts", path: "/accounts", icon: <CgCalculator size={20} />, access: "Accounts" },
     { title: "Reports", path: "/reports", icon: <HiOutlineDocumentReport size={20} />, access: "Reports" },

@@ -405,7 +405,7 @@ export const ProcessReports = ({
                       isAdmin
                         ? "grid-cols-[60px_1fr_2fr_1fr_1fr_1fr]"
                         : "grid-cols-[60px_2fr_1fr_1fr_1fr]"
-                    } items-center px-3 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm`}
+                    } items-center px-3 py-1 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm`}
                   >
                     <span className="text-gray-500 font-medium">
                       {startIndex + index + 1}

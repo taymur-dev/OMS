@@ -4,12 +4,12 @@ import { CustomButton } from "../../Components/TableLayoutComponents/CustomButto
 import { TableInputField } from "../../Components/TableLayoutComponents/TableInputField"; // Added this
 import { Promotion } from "./Promotion";
 import { Resignation } from "./Resignation";
-import { Rejoin } from "./Rejoin";
+// import { Rejoin } from "./Rejoin";
 import { useAppSelector } from "../../redux/Hooks";
 import { Footer } from "../../Components/Footer";
 
 // Define Tab Types
-type TabType = "PROMOTION" | "RESIGNATION" | "REJOIN";
+type TabType = "PROMOTION" | "RESIGNATION" | "";
 const entriesOptions = [5, 10, 15, 20, 30];
 
 export const UserPropulsive = () => {
@@ -55,12 +55,12 @@ export const UserPropulsive = () => {
                 />
               )}
 
-              {activeTab === "REJOIN" && (
+              {/* {activeTab === "REJOIN" && (
                 <CustomButton
                   label="Add Rejoining"
                   handleToggle={() => handleActionClick("REJOIN")}
                 />
-              )}
+              )} */}
             </div>
           }
         />
@@ -69,7 +69,7 @@ export const UserPropulsive = () => {
         <div className="px-4 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
           {/* Pill-style Tab Navigation */}
           <div className="flex w-full sm:w-auto p-1 bg-[#F1F5F9] rounded-xl border border-gray-200">
-            {(["PROMOTION", "RESIGNATION", "REJOIN"] as TabType[]).map(
+            {(["PROMOTION", "RESIGNATION"] as TabType[]).map(
               (tab) => (
                 <button
                   key={tab}
@@ -133,7 +133,7 @@ export const UserPropulsive = () => {
             />
           )}
 
-          {activeTab === "REJOIN" && (
+          {/* {activeTab === "REJOIN" && (
             <Rejoin
               triggerModal={
                 triggerModal.tab === "REJOIN" ? triggerModal.count : 0
@@ -141,7 +141,7 @@ export const UserPropulsive = () => {
               externalSearch={searchTerm}
               externalPageSize={selectedValue}
             />
-          )}
+          )} */}
         </div>
       </div>
 
