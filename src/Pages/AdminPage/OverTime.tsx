@@ -41,7 +41,6 @@ export const OverTime = ({
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
-  const isAdmin = currentUser?.role === "admin";
 
   const [isOpenModal, setIsOpenModal] = useState<MODALT>("");
   const [allOvertime, setAllOvertime] = useState<OVERTIMET[]>([]);
@@ -52,12 +51,7 @@ export const OverTime = ({
     if (!currentUser) return;
 
     try {
-      const url =
-        currentUser.role === "admin"
-          ? `${BASE_URL}/api/getOvertime`
-          : `${BASE_URL}/api/getOvertime`;
-
-      const res = await axios.get(url, {
+      const res = await axios.get(`${BASE_URL}/api/getOvertime`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -109,16 +103,12 @@ export const OverTime = ({
         <div className="min-w-[1000px]">
           <div className="px-0.5 pt-0.5">
             <div
-              className={`grid ${
-                isAdmin
-                  ? "grid-cols-[60px_1fr_1fr_1fr_1fr_auto]"
-                  : "grid-cols-[60px_1fr_1fr_1fr_auto]"
-              } bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0
+              className={`grid ${"grid-cols-[60px_1fr_1fr_1fr_1fr_auto]"} bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0
                z-10 gap-3 px-3 py-3 shadow-sm`}
             >
               <span className="text-left">Sr#</span>
 
-              {isAdmin && <span className="text-left">Employee Details</span>}
+              <span className="text-left">Employee Details</span>
 
               <span className="text-left">Date</span>
               <span className="text-left">Over Time</span>
@@ -141,24 +131,16 @@ export const OverTime = ({
                 {paginatedOvertime.map((ot, index) => (
                   <div
                     key={ot.id}
-                    className={`grid ${
-                      isAdmin
-                        ? "grid-cols-[60px_1fr_1fr_1fr_1fr_auto]"
-                        : "grid-cols-[60px_1fr_1fr_1fr_auto]"
-                    } items-center px-3 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg
+                    className={`grid ${"grid-cols-[60px_1fr_1fr_1fr_1fr_auto]"} items-center px-3 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg
                      hover:bg-blue-50/30 transition-colors shadow-sm`}
                   >
                     <span className="text-gray-500 font-medium">
                       {startIndex + index + 1}
                     </span>
 
-                    {isAdmin && (
-                      <div className="flex items-center gap-3 overflow-hidden">
-                        <span className="truncate text-gray-800">
-                          {ot.name}
-                        </span>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-3 overflow-hidden">
+                      <span className="truncate text-gray-800">{ot.name}</span>
+                    </div>
 
                     <div className="text-gray-600 truncate">
                       {new Date(ot.date)
