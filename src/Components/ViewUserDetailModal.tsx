@@ -46,7 +46,7 @@ export const ViewUserDetailModal = ({
       <div className="w-full max-w-4xl bg-white rounded-xl overflow-hidden shadow-2xl border border-gray-300">
         <div className="bg-white rounded-xl border-t-5 border-blue-400">
           <div className="text-white">
-            <Title setModal={setModal}>VIEW USER</Title>
+            <Title setModal={setModal}>VIEW EMPLOYEE DETAILS</Title>
           </div>
         </div>
 

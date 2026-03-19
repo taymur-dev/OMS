@@ -23,6 +23,8 @@ export type ALLASSIGNPROJECTT = {
   projectName: string;
   projectId: number;
   date: string;
+  description: string;
+  completionStatus: string;
 };
 
 export type GROUPED_PROJECT = {

@@ -15,16 +15,12 @@ export const ViewAssignProject = ({
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      {/* Container with fixed width and max-height */}
       <div className="w-full max-w-md bg-white rounded-xl shadow-2xl flex flex-col max-h-[85vh]">
-        {/* Header - Fixed */}
         <div className="border-b">
           <Title setModal={setIsOpenModal}>VIEW PROJECTS</Title>
         </div>
 
-        {/* Scrollable Content */}
         <div className="p-4 overflow-y-auto custom-scrollbar">
-          {/* Employee Info Card */}
           <div className="bg-gray-50 border border-gray-200 p-3 rounded-lg mb-4 flex justify-between items-center">
             <div>
               <p className="flex items-center gap-2 font-semibold text-gray-800">
@@ -39,7 +35,6 @@ export const ViewAssignProject = ({
             </div>
           </div>
 
-          {/* Projects List */}
           <div className="space-y-2">
             <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
               Assigned List
@@ -54,6 +49,17 @@ export const ViewAssignProject = ({
                   <div>
                     <p className="font-medium text-gray-700 leading-tight">
                       {proj.projectName}
+                    </p>
+
+                    <p className="text-xs text-gray-500 mt-1">
+                      {proj.description}
+                    </p>
+
+                    <p className="text-[11px] text-gray-400 mt-1">
+                      Status:{" "}
+                      <span className="font-semibold text-gray-600">
+                        {proj.completionStatus}
+                      </span>
                     </p>
                     <p className="text-[11px] text-gray-400 mt-1">
                       {new Date(proj.date).toLocaleDateString("en-GB", {

@@ -149,6 +149,16 @@ type ProfitChartData = {
   profit: number;
 };
 
+type AttendanceT = {
+  attendanceStatus: "Present" | "Absent" | "Leave";
+};
+
+type AttendanceChartT = {
+  name: string;
+  value: number;
+  color: string;
+};
+
 interface CustomTooltipProps {
   active?: boolean;
   payload?: { value: number }[];
@@ -183,6 +193,8 @@ export const MainContent = () => {
   const [supplierAccounts, setSupplierAccounts] = useState<
     SupplierAccountEntry[]
   >([]);
+  const [attendanceData, setAttendanceData] = useState<AttendanceChartT[]>([]);
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -312,6 +324,42 @@ export const MainContent = () => {
     }
   }, [token]);
 
+  const getAttendanceStats = useCallback(async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/getAllAttendances`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data: AttendanceT[] = res.data;
+
+      const present = data.filter(
+        (a) => a.attendanceStatus === "Present",
+      ).length;
+      const absent = data.filter((a) => a.attendanceStatus === "Absent").length;
+      const leave = data.filter((a) => a.attendanceStatus === "Leave").length;
+
+      setAttendanceData([
+        { name: "Present", value: present, color: "#4cd47e" },
+        { name: "Absent", value: absent, color: "#d84343" },
+        { name: "Leave", value: leave, color: "#f59e0b" },
+      ]);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [token]);
+
+  const totalAttendance = attendanceData.reduce(
+    (sum, item) => sum + item.value,
+    0,
+  );
+
+  const presentValue =
+    attendanceData.find((a) => a.name === "Present")?.value || 0;
+
+  const presentPercent = totalAttendance
+    ? Math.round((presentValue / totalAttendance) * 100)
+    : 0;
+
   const getEmployeeAccounts = useCallback(async () => {
     try {
       const res = await axios.get(
@@ -417,6 +465,7 @@ export const MainContent = () => {
     getEmployeeAccounts();
     getCustomerAccounts();
     getSupplierAccounts();
+    getAttendanceStats();
   }, [
     getAllUsers,
     handleGetAssignProjects,
@@ -431,6 +480,7 @@ export const MainContent = () => {
     getEmployeeAccounts,
     getCustomerAccounts,
     getSupplierAccounts,
+    getAttendanceStats,
   ]);
 
   const activeUsers = allUsers.filter((user) => user.loginStatus === "Y");
@@ -991,37 +1041,114 @@ export const MainContent = () => {
       </div>
 
       {/* Profit Loss Trend Chart */}
-      <div className="bg-white p-6 rounded-xl shadow-md">
-        <h2 className="text-black font-semibold mb-4">Profitability Trend</h2>
 
-        <div className="h-[260px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={profitLossTrend}>
-              <defs>
-                <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#60A5FA" stopOpacity={0.4} />
-                  <stop offset="95%" stopColor="#60A5FA" stopOpacity={0} />
-                </linearGradient>
-              </defs>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* LEFT: Attendance Pie */}
+        {/* ATTENDANCE SECTION */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+          <h2 className="text-lg font-bold text-slate-800 mb-6">
+            Attendance Trend
+          </h2>
 
-              <CartesianGrid strokeDasharray="3 3" stroke="#D1D5DB" />
+          <div className="flex flex-col items-center">
+            {/* DONUT CHART CONTAINER */}
+            <div className="relative w-48 h-48 mb-8">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={attendanceData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="70%" // Slightly thinner donut
+                    outerRadius="90%"
+                    paddingAngle={2} // Adds small gaps between segments
+                    dataKey="value"
+                  >
+                    {attendanceData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
 
-              <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 12 }} />
+              {/* CENTER TEXT OVERLAY */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <p className="text-3xl font-extrabold text-slate-800">
+                  {presentPercent}%
+                </p>
+                <p className="text-slate-400 text-sm font-medium">Attendance</p>
+              </div>
+            </div>
 
-              <YAxis tick={{ fill: "#94a3b8", fontSize: 12 }} />
+            {/* DATA LIST GRID (Matching your reference image) */}
+            <div className="grid grid-cols-2 gap-x-8 gap-y-6 w-full max-w-md">
+              {attendanceData.map((item, index) => (
+                <div key={index} className="space-y-1">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="font-semibold text-slate-700">
+                      {item.name}
+                    </span>
+                    <span className="text-slate-400 font-medium">
+                      {item.value}%
+                    </span>
+                  </div>
+                  {/* Progress Bar under the text */}
+                  <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${item.value}%`,
+                        backgroundColor: item.color,
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
 
-              <Tooltip content={<CustomTooltip />} />
+        {/* RIGHT: Profitability Trend */}
+        <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
+          <h2 className="text-black font-semibold mb-4">Profitability Trend</h2>
 
-              <Area
-                type="monotone"
-                dataKey="profit"
-                stroke="#60A5FA"
-                strokeWidth={3}
-                fillOpacity={1}
-                fill="url(#profitGradient)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          <div className="h-[260px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={profitLossTrend}>
+                <defs>
+                  <linearGradient
+                    id="profitGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop offset="5%" stopColor="#60A5FA" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#60A5FA" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+
+                <CartesianGrid strokeDasharray="3 3" stroke="#D1D5DB" />
+
+                <XAxis
+                  dataKey="name"
+                  tick={{ fill: "#94a3b8", fontSize: 12 }}
+                />
+                <YAxis tick={{ fill: "#94a3b8", fontSize: 12 }} />
+
+                <Tooltip content={<CustomTooltip />} />
+
+                <Area
+                  type="monotone"
+                  dataKey="profit"
+                  stroke="#60A5FA"
+                  strokeWidth={3}
+                  fillOpacity={1}
+                  fill="url(#profitGradient)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 

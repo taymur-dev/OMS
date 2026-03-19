@@ -1,5 +1,3 @@
-
-
 import { useEffect } from "react";
 import {
   FaUser,
@@ -9,8 +7,8 @@ import {
   FaCalendarAlt,
 } from "react-icons/fa";
 
+import { RiUserFill } from "react-icons/ri";
 import { Title } from "../Title";
-import profilePicture from "../../assets/vector.png";
 
 type LifeLine = {
   id: number;
@@ -19,6 +17,7 @@ type LifeLine = {
   contact: string;
   position: string;
   date: string;
+  image?: string; // ✅ added image field
 };
 
 type ViewEmployeeLifeLineProps = {
@@ -35,6 +34,7 @@ export const ViewEmployeeLifeLine = ({
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
       <div className="w-full max-w-4xl overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
+
         {/* Header */}
         <div className="bg-white rounded-xl border-t-5 border-blue-400">
           <div className="text-white">
@@ -43,17 +43,25 @@ export const ViewEmployeeLifeLine = ({
         </div>
 
         <div className="p-4 space-y-4">
-          {/* Section 1: Profile & Identity */}
+
+          {/* Section 1 */}
           <div className="border border-gray-200 rounded-md p-4 relative flex flex-col sm:flex-row gap-6 items-center">
             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Profile Information
             </h3>
 
-            <img
-              className="w-20 h-20 rounded-full border-4 border-blue-400 object-cover"
-              src={profilePicture}
-              alt="Profile"
-            />
+            {/* ✅ Profile Image (Header style) */}
+            <div className="h-20 w-20 rounded-full bg-blue-400 flex items-center justify-center overflow-hidden border-2 border-gray-200 shadow-sm">
+              {employeeData.image ? (
+                <img
+                  src={employeeData.image}
+                  alt="Profile"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <RiUserFill size={30} className="text-white" />
+              )}
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1 w-full">
               <div>
@@ -76,7 +84,7 @@ export const ViewEmployeeLifeLine = ({
             </div>
           </div>
 
-          {/* Section 2: Employment Details */}
+          {/* Section 2 */}
           <div className="border border-gray-200 rounded-md p-4 relative">
             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Employment Details
@@ -128,6 +136,7 @@ export const ViewEmployeeLifeLine = ({
             Close
           </button>
         </div>
+
       </div>
     </div>
   );

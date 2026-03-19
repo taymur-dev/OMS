@@ -41,7 +41,7 @@ export const ViewAttendance = ({
         {/* Header Section */}
         <div className="bg-white rounded-xl border-t-5 border-blue-400">
           <div className="text-white">
-            <Title setModal={setIsOpenModal}>USER ATTENDANCE DETAILS</Title>
+            <Title setModal={setIsOpenModal}>EMPLOYEE ATTENDANCE DETAILS</Title>
           </div>
         </div>
 
