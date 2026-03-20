@@ -6,6 +6,7 @@ import { AttendanceRule } from "./AttendanceRule";
 import { Holidays } from "./Holidays";
 import { AccessControl } from "./AccessControl";
 import { BusinessVariables } from "./BusinessVariables";
+import { ConfigOvertime } from "./ConfigOvertime";
 import { useAppSelector } from "../../redux/Hooks";
 import { Footer } from "../../Components/Footer";
 
@@ -15,6 +16,7 @@ type TabType =
   | "CONFIGURE_HOLIDAYS"
   | "ACCESS_CONTROL"
   | "BUSINESS_VARIABLE"
+  | "OVERTIME"
   | "";
 const entriesOptions = [5, 10, 15, 20, 30];
 
@@ -26,6 +28,8 @@ export const Assemble = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedValue, setSelectedValue] = useState(10);
   const [hasBusinessVariable, setHasBusinessVariable] = useState(false);
+  const [hasOvertime, setHasOvertime] = useState(false);
+
 
   const [triggerModal, setTriggerModal] = useState<{
     tab: TabType;
@@ -76,6 +80,13 @@ export const Assemble = () => {
                     handleToggle={() => handleActionClick("BUSINESS_VARIABLE")}
                   />
                 )}
+
+              {isAdmin && activeTab === "OVERTIME" && !hasOvertime && (
+                <CustomButton
+                  label="Add Overtime"
+                  handleToggle={() => handleActionClick("OVERTIME")}
+                />
+              )}
             </div>
           }
         />
@@ -88,6 +99,7 @@ export const Assemble = () => {
                 "CONFIGURE_HOLIDAYS",
                 "ACCESS_CONTROL",
                 "BUSINESS_VARIABLE",
+                "OVERTIME",
               ] as TabType[]
             ).map((tab) => (
               <button
@@ -107,7 +119,9 @@ export const Assemble = () => {
                       ? "Access Control"
                       : tab === "BUSINESS_VARIABLE"
                         ? "Business Variables"
-                        : ""}
+                        : tab === "OVERTIME"
+                          ? "Overtime"
+                          : ""}
               </button>
             ))}
           </div>
@@ -180,6 +194,17 @@ export const Assemble = () => {
               externalSearch={searchTerm}
               externalPageSize={selectedValue}
               setHasBusinessVariable={setHasBusinessVariable}
+            />
+          )}
+
+          {activeTab === "OVERTIME" && (
+            <ConfigOvertime
+              triggerModal={
+                triggerModal.tab === "OVERTIME" ? triggerModal.count : 0
+              }
+              externalSearch={searchTerm}
+              externalPageSize={selectedValue}
+              setHasOvertime={setHasOvertime}
             />
           )}
         </div>
