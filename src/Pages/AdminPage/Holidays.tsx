@@ -114,7 +114,7 @@ export const Holidays = ({
   const filteredHolidays = useMemo(
     () =>
       [...allHoliday]
-        .sort((a, b) => b.id - a.id) // Sorting by newest first
+        .sort((a, b) => a.id - b.id) // Sorting by newest first
         .filter((holiday) =>
           holiday.holiday.toLowerCase().includes(externalSearch.toLowerCase()),
         ),
@@ -204,8 +204,13 @@ export const Holidays = ({
 
                     {/* Icon removed, text styles aligned to user name style */}
                     <div className="flex items-center overflow-hidden">
-                      <span className="truncate  text-gray-800">
-                        {holi.holiday}
+                      <span
+                        className="truncate text-gray-800"
+                        title={holi.holiday}
+                      >
+                        {holi.holiday.length > 20
+                          ? holi.holiday.slice(0, 20) + "..."
+                          : holi.holiday}
                       </span>
                     </div>
 

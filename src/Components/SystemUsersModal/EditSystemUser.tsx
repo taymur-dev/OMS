@@ -223,6 +223,8 @@ export const EditSystemUser = ({
                 name="name"
                 value={formData.name}
                 handlerChange={handlerChange}
+                minLength={3}
+                maxLength={50}
               />
             </div>
 
@@ -248,6 +250,8 @@ export const EditSystemUser = ({
               name="email"
               value={formData.email}
               handlerChange={handlerChange}
+              minLength={3}
+              maxLength={250}
             />
 
             <div className="flex flex-col gap-1">

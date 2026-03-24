@@ -13,6 +13,8 @@ type InputFieldProps = {
   className?: string;
   min?: string;
   icon?: ReactNode;
+  minLength?: number;
+  maxLength?: number;
 };
 
 export const InputField = ({
@@ -27,12 +29,12 @@ export const InputField = ({
   className,
   readOnly,
   icon,
+  minLength,
+  maxLength,
 }: InputFieldProps) => {
   return (
     <div className="flex flex-col">
-      <label className="text-gray-600 text-xs font-semibold">
-        {labelName}
-      </label>
+      <label className="text-gray-600 text-xs font-semibold">{labelName}</label>
 
       <div className="relative flex items-center w-full">
         {icon && (
@@ -55,6 +57,8 @@ export const InputField = ({
           value={value}
           disabled={disabled}
           readOnly={readOnly}
+          minLength={minLength}
+          maxLength={maxLength}
         />
       </div>
     </div>

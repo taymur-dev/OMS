@@ -228,6 +228,8 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
               name="task"
               value={addTodo.task}
               handlerChange={handleChange}
+              minLength={3} 
+              maxLength={50}
             />
 
             <InputField
@@ -260,6 +262,8 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
                 name="note"
                 inputVal={addTodo.note}
                 handlerChange={handleChange}
+                 minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

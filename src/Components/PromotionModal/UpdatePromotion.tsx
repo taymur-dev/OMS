@@ -203,6 +203,8 @@ export const UpdatePromotion = ({
                 inputVal={promotion.note}
                 handlerChange={handleChange}
                 readOnly={isAdmin}
+                minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

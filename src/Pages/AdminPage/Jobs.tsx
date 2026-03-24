@@ -167,7 +167,9 @@ export const Jobs = ({
 
                     <div className="flex items-center min-w-0">
                       <span className="truncate text-gray-800">
-                        {job.description}
+                        {job.description.length > 20
+                          ? job.description.slice(0, 20) + "..."
+                          : job.description}
                       </span>
                     </div>
 

@@ -10,7 +10,6 @@ import { InputField } from "../InputFields/InputField";
 import { OptionField } from "../InputFields/OptionField";
 import { TextareaField } from "../InputFields/TextareaField";
 
-
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 
@@ -63,7 +62,9 @@ export const AddCustomerAccount = ({
   const [loading, setLoading] = useState(false);
 
   const handlerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement  | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value, type } = e.target;
 
@@ -122,7 +123,7 @@ export const AddCustomerAccount = ({
       !form.paymentType ||
       !form.amount ||
       !form.paymentMethod ||
-      !form.paymentDate || 
+      !form.paymentDate ||
       !form.description
     ) {
       return toast.error("Please fill whole form", {
@@ -220,6 +221,8 @@ export const AddCustomerAccount = ({
               type="number"
               value={form.amount}
               handlerChange={handlerChange}
+              minLength={3}
+                maxLength={12}
             />
 
             <OptionField
@@ -245,6 +248,8 @@ export const AddCustomerAccount = ({
                 name="description"
                 handlerChange={handlerChange}
                 inputVal={form.description || ""}
+                minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

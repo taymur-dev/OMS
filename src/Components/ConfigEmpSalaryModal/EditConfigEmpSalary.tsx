@@ -275,6 +275,8 @@ export const EditConfigEmpSalary = ({
               type="number"
               handlerChange={handlerChange}
               value={editConfigEmployee.salary_amount}
+              minLength={3}
+              maxLength={12}
             />
 
             <InputField
@@ -283,6 +285,8 @@ export const EditConfigEmpSalary = ({
               type="number"
               handlerChange={handlerChange}
               value={editConfigEmployee.emp_of_mon_allowance}
+              minLength={3}
+              maxLength={12}
             />
 
             <InputField
@@ -291,6 +295,8 @@ export const EditConfigEmpSalary = ({
               type="number"
               handlerChange={handlerChange}
               value={editConfigEmployee.transport_allowance}
+              minLength={3}
+              maxLength={12}
             />
 
             <InputField
@@ -299,6 +305,8 @@ export const EditConfigEmpSalary = ({
               type="number"
               handlerChange={handlerChange}
               value={editConfigEmployee.medical_allowance}
+              minLength={3}
+              maxLength={12}
             />
 
             <InputField
@@ -308,6 +316,8 @@ export const EditConfigEmpSalary = ({
               value={editConfigEmployee.total_salary}
               handlerChange={() => {}}
               disabled
+              minLength={3}
+              maxLength={12}
             />
 
             <InputField
@@ -370,6 +380,8 @@ export const EditConfigEmpSalary = ({
                 name="description"
                 handlerChange={handlerChange}
                 inputVal={editConfigEmployee.description || ""}
+                minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

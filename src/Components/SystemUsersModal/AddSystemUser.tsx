@@ -71,7 +71,8 @@ export const AddSystemUser = ({
     value = value.replace(/^\s+/, "");
 
     if (name === "name") {
-      value = value.replace(/[^a-zA-Z\s]/g, "");
+      value = value.replace(/[^a-zA-Z0-9 _-]/g, "");
+
       value = value
         .split(" ")
         .map((word) =>
@@ -121,7 +122,15 @@ export const AddSystemUser = ({
     const { name, email, password, confirmPassword, phone, cnic, role } =
       formData;
 
-    if (!name || !phone || !cnic || !email || !password || !confirmPassword || !role) {
+    if (
+      !name ||
+      !phone ||
+      !cnic ||
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !role
+    ) {
       toast.error("Please fill all required fields", {
         toastId: "required-fields",
       });
@@ -228,6 +237,8 @@ export const AddSystemUser = ({
                 name="name"
                 value={formData.name}
                 handlerChange={handlerChange}
+                minLength={3}
+                maxLength={50}
               />
             </div>
 

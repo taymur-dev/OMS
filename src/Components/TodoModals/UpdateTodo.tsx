@@ -261,6 +261,8 @@ export const UpdateTodo = ({
               name="task"
               handlerChange={handlerChange}
               value={todo?.task}
+              minLength={3} 
+              maxLength={50}
             />
 
             <InputField
@@ -302,6 +304,8 @@ export const UpdateTodo = ({
                 name="note"
                 inputVal={todo?.note || ""}
                 handlerChange={handlerChange}
+                 minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

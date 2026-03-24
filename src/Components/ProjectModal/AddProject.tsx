@@ -164,6 +164,8 @@ export const AddProject = ({
               name="projectName"
               value={addProject.projectName}
               handlerChange={handlerChange}
+              minLength={3} 
+              maxLength={50}
             />
 
             <InputField
@@ -204,6 +206,8 @@ export const AddProject = ({
                 handlerChange={handlerChange}
                 inputVal={addProject.description}
                 className="col-span-1 md:col-span-2"
+                 minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

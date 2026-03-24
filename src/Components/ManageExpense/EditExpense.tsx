@@ -137,6 +137,8 @@ export const EditExpense = ({
               name="expenseName"
               handlerChange={handlerChange}
               value={expense?.expenseName ?? ""}
+              minLength={3} 
+              maxLength={50}
             />
 
             <InputField
@@ -145,6 +147,8 @@ export const EditExpense = ({
               type="number"
               handlerChange={handlerChange}
               value={expense?.amount ? String(expense.amount) : ""}
+              minLength={3} 
+              maxLength={12}
             />
 
             <InputField
@@ -152,6 +156,8 @@ export const EditExpense = ({
               name="addedBy"
               handlerChange={handlerChange}
               value={expense?.addedBy ?? ""}
+              maxLength={50}
+
             />
             <div className="md:col-span-2">
               <InputField

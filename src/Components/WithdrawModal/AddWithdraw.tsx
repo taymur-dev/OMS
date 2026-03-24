@@ -176,6 +176,8 @@ export const AddWithdraw = ({
                 name="withdrawReason"
                 inputVal={addWithdraw.withdrawReason}
                 handlerChange={handlerChange}
+                minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

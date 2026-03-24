@@ -87,8 +87,8 @@ export const AddHoliday = ({
       return;
     }
 
-    if (holiday.holiday.trim().length > 30) {
-      toast.error("Holiday name must be 30 characters or less", {
+    if (holiday.holiday.trim().length > 50) {
+      toast.error("Holiday name must be 50 characters or less", {
         toastId: "holiday-length-error",
       });
 

@@ -97,6 +97,8 @@ export const AddRole = ({ handlerGetRoles, setModal }: AddRoleProps) => {
               name="roleName"
               value={roleData.roleName}
               handlerChange={handlerChange}
+              minLength={3}
+              maxLength={50}
             />
           </div>
 

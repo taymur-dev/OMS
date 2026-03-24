@@ -211,6 +211,8 @@ export const UpdateCustomer = ({
                 name="customerAddress"
                 handlerChange={handlerChange}
                 inputVal={customerData?.customerAddress || ""}
+                minLength={3} // Add this
+                maxLength={250}
               />
             </div>
 
@@ -220,6 +222,8 @@ export const UpdateCustomer = ({
                 name="companyAddress"
                 handlerChange={handlerChange}
                 inputVal={customerData?.companyAddress || ""}
+                minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

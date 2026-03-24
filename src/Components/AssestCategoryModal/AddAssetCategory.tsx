@@ -35,7 +35,7 @@ export const AddAssetCategory = ({
     let updatedValue = value;
 
     if (name === "category_name") {
-      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+      updatedValue = value.replace(/[^a-zA-Z0-9 _-]/g, "").slice(0, 50);
     }
 
     setAddCategory({ ...addCategory, [name]: updatedValue });
@@ -125,6 +125,8 @@ export const AddAssetCategory = ({
                 name="category_name"
                 value={addCategory.category_name}
                 handlerChange={handlerChange}
+                minLength={3}
+                maxLength={50}
               />
             </div>
 

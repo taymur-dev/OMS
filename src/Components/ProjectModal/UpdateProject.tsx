@@ -166,6 +166,8 @@ export const UpdateProject = ({
               name="projectName"
               value={updateProject?.projectName}
               handlerChange={handlerChange}
+              minLength={3} 
+              maxLength={50}
             />
 
             <InputField
@@ -205,6 +207,8 @@ export const UpdateProject = ({
                 name="description"
                 handlerChange={handlerChange}
                 inputVal={updateProject?.description ?? ""}
+                 minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

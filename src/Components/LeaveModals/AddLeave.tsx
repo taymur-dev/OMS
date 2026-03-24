@@ -200,6 +200,8 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
                 name="leaveSubject"
                 value={addLeave.leaveSubject}
                 handlerChange={handlerChange}
+                minLength={3}
+                maxLength={50}
               />
             </div>
 
@@ -225,6 +227,8 @@ export const AddLeave = ({ setModal, refreshLeaves }: AddLeaveProps) => {
                 name="leaveReason"
                 inputVal={addLeave.leaveReason}
                 handlerChange={handlerChange}
+                minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

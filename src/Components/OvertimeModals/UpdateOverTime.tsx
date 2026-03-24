@@ -288,6 +288,8 @@ export const UpdateOverTime = ({
                   name="description"
                   inputVal={formData.description}
                   handlerChange={handleChange}
+                   minLength={3} // Add this
+                maxLength={250}
                 />
               </div>
             </div>

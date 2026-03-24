@@ -18,7 +18,11 @@ const initialState = {
   categoryName: "",
 };
 
-export const AddCategory = ({ setModal, refreshTable , existingCategories }: AddCategoryProps) => {
+export const AddCategory = ({
+  setModal,
+  refreshTable,
+  existingCategories,
+}: AddCategoryProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
@@ -33,7 +37,7 @@ export const AddCategory = ({ setModal, refreshTable , existingCategories }: Add
     let updatedValue = value;
 
     if (name === "categoryName") {
-      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+      updatedValue = value.replace(/[^a-zA-Z0-9 _-]/g, "").slice(0, 50);
     }
 
     setAddCategory({ ...addCategory, [name]: updatedValue });
@@ -108,6 +112,8 @@ export const AddCategory = ({ setModal, refreshTable , existingCategories }: Add
                 name="categoryName"
                 value={addCategory.categoryName}
                 handlerChange={handlerChange}
+                minLength={3}
+                maxLength={50}
               />
             </div>
             <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">

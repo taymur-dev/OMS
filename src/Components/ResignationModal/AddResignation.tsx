@@ -220,6 +220,7 @@ export const AddResignation = ({
               value={formData.designation}
               handlerChange={handlerChange}
               readOnly
+             
             />
 
             <InputField
@@ -236,6 +237,8 @@ export const AddResignation = ({
                 name="note"
                 inputVal={formData.note}
                 handlerChange={handlerChange}
+                minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

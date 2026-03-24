@@ -286,7 +286,6 @@ export const AddUser = ({
   ): Promise<void> => {
     if (!id) return;
 
-    
     const data = prepareFormData();
 
     setLoading(true);
@@ -343,6 +342,8 @@ export const AddUser = ({
               name="name"
               handlerChange={handlerChange}
               value={userData.name}
+              minLength={3} 
+              maxLength={50}
             />
             <InputField
               labelName="Email *"
@@ -401,6 +402,8 @@ export const AddUser = ({
                 name="address"
                 handlerChange={handlerChange}
                 inputVal={userData.address}
+                minLength={3} // Add this
+                maxLength={250}
               />
             </div>
 

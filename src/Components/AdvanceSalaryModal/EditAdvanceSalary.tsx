@@ -225,6 +225,8 @@ export const EditAdvanceSalary = ({
                 name="description"
                 inputVal={updateAdvance.description}
                 handlerChange={handleChange}
+                minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

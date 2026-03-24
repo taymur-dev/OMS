@@ -256,6 +256,8 @@ export const EditProgress = ({
                 name="note"
                 handlerChange={handlerChange}
                 inputVal={updateProgress.note}
+                 minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

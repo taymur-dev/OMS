@@ -1,10 +1,5 @@
 import { Title } from "../Title";
-import {
-  FaUser,
-  FaCalendarAlt,
-  FaFileAlt,
-  FaHashtag,
-} from "react-icons/fa";
+import { FaUser, FaCalendarAlt, FaFileAlt, FaHashtag } from "react-icons/fa";
 
 type WithdrawEmployeeT = {
   withdrawalId: number;
@@ -17,6 +12,14 @@ type WithdrawEmployeeT = {
 type CustomerDetailProps = {
   setIsOpenModal: () => void;
   viewReason: WithdrawEmployeeT | null;
+};
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 };
 
 export const ViewReasonWithDraw = ({
@@ -46,9 +49,7 @@ export const ViewReasonWithDraw = ({
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                   <FaUser className="text-gray-400" /> Employee Name
                 </label>
-                <p className="text-gray-800 font-medium">
-                  {viewReason.name}
-                </p>
+                <p className="text-gray-800 font-medium">{viewReason.name}</p>
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
@@ -72,7 +73,7 @@ export const ViewReasonWithDraw = ({
                   <FaCalendarAlt className="text-gray-400" /> Date of Withdrawal
                 </label>
                 <p className="text-gray-800 font-medium">
-                  {viewReason.withdrawDate.slice(0, 10)}
+                  {formatDate(viewReason.withdrawDate)}
                 </p>
               </div>
               <div>

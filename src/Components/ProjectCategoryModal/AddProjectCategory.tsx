@@ -31,7 +31,7 @@ export const AddProjectCategory = ({
     e.preventDefault();
     const { name, value } = e.target;
 
-    const updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    const updatedValue = value.replace(/[^a-zA-Z0-9 _-]/g, "").slice(0, 50);
 
     setAddCategory({ ...addCategory, [name]: updatedValue });
   };
@@ -106,6 +106,8 @@ export const AddProjectCategory = ({
                 name="categoryName"
                 value={addCategory.categoryName}
                 handlerChange={handlerChange}
+                minLength={3}
+                maxLength={50}
               />
             </div>
 

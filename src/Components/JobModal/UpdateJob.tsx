@@ -55,11 +55,11 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({
     let updatedValue = value;
 
     if (name === "description") {
-      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 20);
+      updatedValue = value.replace(/[^a-zA-Z0-9 _-]/g, "").slice(0, 250);
     }
 
     if (name === "job_title") {
-      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+      updatedValue = value.replace(/[^a-zA-Z0-9 _-]/g, "").slice(0, 50);
     }
     setFormData((prev) => ({ ...prev, [name]: updatedValue }));
   };
@@ -139,6 +139,8 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({
                 name="job_title"
                 value={formData.job_title}
                 handlerChange={handleChange}
+                minLength={3}
+                maxLength={50}
               />
             </div>
 
@@ -148,6 +150,8 @@ export const UpdateJob: React.FC<UpdateJobProps> = ({
                 name="description"
                 inputVal={formData.description}
                 handlerChange={handleChange}
+                minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

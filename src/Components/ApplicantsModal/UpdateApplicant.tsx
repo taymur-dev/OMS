@@ -72,32 +72,32 @@ export const UpdateApplicant = ({
   });
 
   useEffect(() => {
-  if (applicant) {
-    // This helper ensures we get YYYY-MM-DD without timezone shifting
-    const formatDate = (dateInput: string) => {
-      if (!dateInput) return "";
-      const date = new Date(dateInput);
-      const year = date.getFullYear();
-      // getMonth() is 0-indexed, so we add 1
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    };
+    if (applicant) {
+      // This helper ensures we get YYYY-MM-DD without timezone shifting
+      const formatDate = (dateInput: string) => {
+        if (!dateInput) return "";
+        const date = new Date(dateInput);
+        const year = date.getFullYear();
+        // getMonth() is 0-indexed, so we add 1
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      };
 
-    setUpdateApplicant({
-      ...defaultState,
-      id: applicant.id,
-      applicant_name: applicant.applicant_name,
-      fatherName: applicant.fatherName || "",
-      email: applicant.email || "",
-      applicant_contact: applicant.applicant_contact,
-      applied_date: formatDate(applicant.applied_date), // Use the helper here
-      job: applicant.job,
-      interviewPhase: applicant.interviewPhase || "",
-      applicant_status: applicant.status,
-    });
-  }
-}, [applicant]);
+      setUpdateApplicant({
+        ...defaultState,
+        id: applicant.id,
+        applicant_name: applicant.applicant_name,
+        fatherName: applicant.fatherName || "",
+        email: applicant.email || "",
+        applicant_contact: applicant.applicant_contact,
+        applied_date: formatDate(applicant.applied_date), // Use the helper here
+        job: applicant.job,
+        interviewPhase: applicant.interviewPhase || "",
+        applicant_status: applicant.status,
+      });
+    }
+  }, [applicant]);
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -277,19 +277,27 @@ export const UpdateApplicant = ({
             />
 
             <div className="flex flex-col gap-1 md:col-span-1">
-              <label className="text-xs font-semibold">
+              <label className="text-xs font-semibold text-gray-700">
                 Applicant Status *
               </label>
+
               <select
                 name="applicant_status"
                 value={updateApplicant.applicant_status}
                 onChange={handlerChange}
-                className="border rounded-md p-2 text-sm"
                 required
+                className="rounded-md px-2 py-3 text-sm
+             bg-white text-gray-900 shadow-md"
               >
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
+                <option value="pending" className="bg-white text-black">
+                  Pending
+                </option>
+                <option value="approved" className="bg-white text-black">
+                  Approved
+                </option>
+                <option value="rejected" className="bg-white text-black">
+                  Rejected
+                </option>
               </select>
             </div>
           </div>

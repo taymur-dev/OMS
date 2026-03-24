@@ -172,6 +172,8 @@ export const AddCustomer = ({
               name="customerName"
               handlerChange={handlerChange}
               value={customerData.customerName}
+              minLength={3} 
+              maxLength={50}
             />
 
             <InputField
@@ -189,6 +191,8 @@ export const AddCustomer = ({
                 name="companyName"
                 handlerChange={handlerChange}
                 value={customerData.companyName}
+                minLength={3} 
+              maxLength={50}
               />
             </div>
 
@@ -198,6 +202,8 @@ export const AddCustomer = ({
                 name="customerAddress"
                 handlerChange={handlerChange}
                 inputVal={customerData.customerAddress}
+                minLength={3} // Add this
+                maxLength={250}
               />
             </div>
 
@@ -207,6 +213,8 @@ export const AddCustomer = ({
                 name="companyAddress"
                 handlerChange={handlerChange}
                 inputVal={customerData.companyAddress}
+                minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

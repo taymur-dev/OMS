@@ -63,11 +63,11 @@ export const AddAsset = ({
     let updatedValue = value;
 
     if (name === "asset_name") {
-      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+      updatedValue = value.replace(/[^a-zA-Z0-9 _-]/g, "").slice(0, 50);
     }
 
     if (name === "description") {
-      updatedValue = value.replace(/[^a-zA-Z0-9., ]/g, "").slice(0, 250);
+      updatedValue = value.replace(/[^a-zA-Z0-9., - _ ]/g, "").slice(0, 250);
     }
 
     setAddAsset({ ...addAsset, [name]: updatedValue });
@@ -212,6 +212,8 @@ export const AddAsset = ({
                 name="asset_name"
                 value={addAsset.asset_name}
                 handlerChange={handlerChange}
+                minLength={3}
+                maxLength={50}
               />
 
               <div className="md:col-span-2">
@@ -230,6 +232,8 @@ export const AddAsset = ({
                   name="description"
                   inputVal={addAsset.description}
                   handlerChange={handlerChange}
+                  minLength={3} // Add this
+                  maxLength={250}
                 />
               </div>
             </div>

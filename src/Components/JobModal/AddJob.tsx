@@ -47,11 +47,11 @@ export const AddJob = ({
     let updatedValue = value;
 
     if (name === "description") {
-      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 20);
+      updatedValue = value.replace(/[^a-zA-Z0-9 _-]/g, "").slice(0, 250);
     }
 
     if (name === "job_title") {
-      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+      updatedValue = value.replace(/[^a-zA-Z0-9 _-]/g, "").slice(0, 50);
     }
 
     setAddJob({ ...addJob, [name]: updatedValue });
@@ -124,6 +124,8 @@ export const AddJob = ({
                 name="job_title"
                 value={addJob.job_title}
                 handlerChange={handlerChange}
+                minLength={3}
+                maxLength={50}
               />
             </div>
 
@@ -133,6 +135,8 @@ export const AddJob = ({
                 name="description"
                 inputVal={addJob.description}
                 handlerChange={handlerChange}
+                minLength={0} // Add this
+                maxLength={250}
               />
             </div>
           </div>

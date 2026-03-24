@@ -264,6 +264,8 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
               name="loanAmount"
               value={addLoan.loanAmount}
               handlerChange={handleInputChange}
+              minLength={3}
+              maxLength={12}
             />
 
             <div className="md:col-span-2">
@@ -273,6 +275,8 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
                 name="deduction"
                 value={addLoan.deduction}
                 handlerChange={handleInputChange}
+                minLength={3}
+                maxLength={12}
               />
             </div>
 

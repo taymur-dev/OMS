@@ -102,7 +102,7 @@ export const EditRole = ({
         `${BASE_URL}/api/admin/updateRole/${updateRole.id}`,
         { roleName: trimmedRoleName },
         {
-          headers: {Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
 
@@ -150,14 +150,13 @@ export const EditRole = ({
                 name="roleName"
                 value={updateRole?.roleName}
                 handlerChange={handlerChange}
+                minLength={3}
+                maxLength={50}
               />
 
               {updateRole?.roleName &&
                 updateRole.roleName.trim() !== selectRole?.roleName &&
-                isDuplicateRole(
-                  updateRole.roleName.trim(),
-                  updateRole.id,
-                ) && (
+                isDuplicateRole(updateRole.roleName.trim(), updateRole.id) && (
                   <p className="text-red-500 text-sm mt-1 ml-1">
                     This role name already exists
                   </p>

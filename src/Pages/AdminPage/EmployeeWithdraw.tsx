@@ -57,9 +57,7 @@ export const EmployeeWithdraw = ({
     try {
       const res = await axios.get(
         `${BASE_URL}/api/admin/getWithdrawEmployees`,
-        {
-          headers: { Authorization: token },
-        },
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setAllWithdrawEmployees(res.data);
     } catch (error) {
@@ -92,9 +90,7 @@ export const EmployeeWithdraw = ({
       await axios.put(
         `${BASE_URL}/api/admin/reActiveEmployee/${id}`,
         {},
-        {
-          headers: { Authorization: token },
-        },
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       toast.success("Employee Reactivated Successfully");
       handlegetwithDrawEmployeess();
@@ -107,9 +103,14 @@ export const EmployeeWithdraw = ({
   // ====== FILTERED + PAGINATED DATA ======
   const filteredEmployees = useMemo(() => {
     if (!allWithdrawEmployees) return [];
-    return allWithdrawEmployees.filter((emp) =>
-      emp.name.toLowerCase().includes(externalSearch.toLowerCase()),
-    );
+
+    return allWithdrawEmployees
+      .filter((emp) =>
+        emp.name.toLowerCase().includes(externalSearch.toLowerCase()),
+      )
+      .sort(
+        (a, b) => a.withdrawalId - b.withdrawalId, // Sort by ID (newest at bottom)
+      );
   }, [allWithdrawEmployees, externalSearch]);
 
   const startIndex = (pageNo - 1) * externalPageSize;

@@ -107,8 +107,8 @@ export const UpdateHoliday = ({
       return;
     }
 
-    if (holidayName.length > 30) {
-      toast.error("Holiday name cannot exceed 30 characters", {
+    if (holidayName.length > 50) {
+      toast.error("Holiday name cannot exceed 50 characters", {
         toastId: "holiday-length-error",
       });
       return;

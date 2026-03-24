@@ -89,9 +89,9 @@ export const ViewApplicant = ({ setModal, applicant }: ViewApplicantProps) => {
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaBriefcase className="text-orange-400" /> Applied Position
+                  <FaBriefcase className="text-gray-800" /> Applied Position
                 </label>
-                <p className="text-gray-400 font-medium">{applicant.job}</p>
+                <p className="text-gray-600 font-medium">{applicant.job}</p>
               </div>
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">

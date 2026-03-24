@@ -166,6 +166,8 @@ export const UpdateLeave = ({
               name="leaveSubject"
               value={updateLeave.leaveSubject}
               handlerChange={handleChange}
+              minLength={3}
+              maxLength={50}
             />
 
             <InputField
@@ -202,6 +204,8 @@ export const UpdateLeave = ({
                 name="leaveReason"
                 inputVal={updateLeave.leaveReason}
                 handlerChange={handleChange}
+                minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

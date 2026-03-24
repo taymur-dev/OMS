@@ -262,6 +262,8 @@ export const AddOverTime = ({
                   name="overtime_amount"
                   value={addOvertime.overtime_amount}
                   handlerChange={handlerChange}
+                  minLength={3}
+                maxLength={12}
                 />
               )}
             </div>
@@ -272,6 +274,8 @@ export const AddOverTime = ({
                 name="description"
                 inputVal={addOvertime.description}
                 handlerChange={handlerChange}
+                 minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

@@ -268,6 +268,8 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
                 name="note"
                 handlerChange={handlerChange}
                 inputVal={addProgress.note}
+                 minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

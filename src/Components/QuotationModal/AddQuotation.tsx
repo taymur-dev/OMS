@@ -421,6 +421,8 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
                 name="description"
                 handlerChange={handlerChange}
                 inputVal={addQuotation.description}
+                 minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

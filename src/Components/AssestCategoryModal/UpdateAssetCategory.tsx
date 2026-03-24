@@ -81,18 +81,18 @@ export const UpdateAssetCategory = ({
     }
 
     if (!nameTrimmed) {
-    return toast.error("Category name is required");
-  }
+      return toast.error("Category name is required");
+    }
 
-  const isDuplicate = existingCategories.some(
-    (cat) => 
-      cat.category_name.toLowerCase() === nameTrimmed.toLowerCase() && 
-      cat.id !== categoryId
-  );
+    const isDuplicate = existingCategories.some(
+      (cat) =>
+        cat.category_name.toLowerCase() === nameTrimmed.toLowerCase() &&
+        cat.id !== categoryId,
+    );
 
-  if (isDuplicate) {
-    return toast.error("Another category with this name already exists");
-  }
+    if (isDuplicate) {
+      return toast.error("Another category with this name already exists");
+    }
 
     setLoading(true);
 
@@ -152,6 +152,8 @@ export const UpdateAssetCategory = ({
               name="category_name"
               value={updateCategory.category_name}
               handlerChange={handlerChange}
+              minLength={3}
+              maxLength={50}
             />
           </div>
           <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">

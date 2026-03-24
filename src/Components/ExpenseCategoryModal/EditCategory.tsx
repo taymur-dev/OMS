@@ -31,7 +31,7 @@ export const EditCategory = ({
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    const updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+    const updatedValue = value.replace(/[^a-zA-Z0-9 _-]/g, "").slice(0, 50);
 
     setUpdateCategory({ ...updateCategory, [name]: updatedValue });
   };
@@ -111,6 +111,8 @@ export const EditCategory = ({
               name="expenseCategory"
               value={updateCategory.expenseCategory}
               handlerChange={handlerChange}
+              minLength={3}
+              maxLength={50}
             />
           </div>
 

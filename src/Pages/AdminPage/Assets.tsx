@@ -23,6 +23,7 @@ import {
 } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import { RiInboxArchiveLine } from "react-icons/ri";
+import { toast } from "react-toastify";
 
 type AssetT = "ADD" | "VIEW" | "EDIT" | "DELETE" | "";
 
@@ -100,10 +101,15 @@ export const Assets = ({
   const handleDeleteAsset = async (id: number) => {
     try {
       await axios.delete(`${BASE_URL}/api/admin/deleteassets/${id}`);
+
+      toast.success("Asset deleted successfully");
+
       fetchAssets();
       setIsOpenModal("");
     } catch (err) {
       console.error("Failed to delete asset:", err);
+
+      toast.error("Failed to delete asset ");
     }
   };
 

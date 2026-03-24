@@ -155,6 +155,39 @@ export const AddApplicant = ({
       });
     }
 
+    if (applicant_name.length < 3) {
+      return toast.error("Applicant Name must be minimum 3 characters long");
+    }
+
+    if (fatherName.length < 3) {
+      return toast.error("Father Name must be at minimum 3 characters long");
+    }
+
+    if (interviewPhase.length < 3) {
+      return toast.error("Interview Phase must be minimum 3 characters long");
+    }
+
+    if (applicant_name.length < 3 || fatherName.length < 3) {
+      return toast.error(
+        "Name, Father Name  must be at least 3 characters long",
+      );
+    }
+
+    if (fatherName.length < 3 || interviewPhase.length < 3) {
+      return toast.error(
+        "Father Name, and Interview Phase must be at least 3 characters long",
+      );
+    }
+
+    if (
+      applicant_name.length < 3 ||
+      fatherName.length < 3 ||
+      interviewPhase.length < 3
+    ) {
+      return toast.error(
+        "Name, Father Name, and Interview Phase must be at least 3 characters long",
+      );
+    }
     setLoading(true);
 
     try {
@@ -228,6 +261,8 @@ export const AddApplicant = ({
                 name="applicant_name"
                 value={addApplicant.applicant_name}
                 handlerChange={handlerChange}
+                minLength={3}
+                maxLength={50}
               />
 
               <InputField
@@ -236,6 +271,8 @@ export const AddApplicant = ({
                 name="fatherName"
                 value={addApplicant.fatherName}
                 handlerChange={handlerChange}
+                minLength={3}
+                maxLength={50}
               />
 
               <InputField
@@ -271,7 +308,9 @@ export const AddApplicant = ({
               />
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold">Job Title *</label>
+                <label className="text-xs font-semibold text-gray-700 dark:text-gray-700">
+                  Job Title *
+                </label>
 
                 <select
                   name="job_id"
@@ -279,7 +318,10 @@ export const AddApplicant = ({
                   onChange={(e) =>
                     setAddApplicant({ ...addApplicant, job_id: e.target.value })
                   }
-                  className="border rounded-md p-2 text-sm"
+                  className="border rounded-md px-2 py-3 shadow-md text-sm 
+             bg-white 
+             text-gray-800 
+             border-gray-300 "
                   required
                 >
                   <option value="">Select Job</option>
@@ -300,6 +342,8 @@ export const AddApplicant = ({
                   name="interviewPhase"
                   value={addApplicant.interviewPhase}
                   handlerChange={handlerChange}
+                  minLength={3}
+                  maxLength={50}
                 />
               </div>
             </div>

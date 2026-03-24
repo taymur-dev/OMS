@@ -180,6 +180,7 @@ export const UpdateResignation = ({
               value={updateResignation.designation}
               handlerChange={handleChange}
               disabled
+              
             />
 
             <div className="md:col-span-2">
@@ -214,6 +215,8 @@ export const UpdateResignation = ({
                 name="note"
                 inputVal={updateResignation.note}
                 handlerChange={handleChange}
+                 minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

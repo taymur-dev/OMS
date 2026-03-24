@@ -107,23 +107,30 @@ export const AddAttendance = ({
     const { selectUser, date, attendanceStatus, clockIn, clockOut } =
       addUserAttendance;
 
-    if (
-      !selectUser ||
-      !date ||
-      !attendanceStatus ||
-      (!isAbsentOrLeave && (!clockIn || !clockOut))
-    ) {
-      toast.error("Please fill all required fields", {
-        toastId: "attendance-required",
-      });
+    // Validation
+    if (!selectUser || !date || !attendanceStatus) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
+    if (attendanceStatus === "present" && (!clockIn || !clockOut)) {
+      toast.error("Clock In and Clock Out are required for Present status");
       return;
     }
 
     setLoading(true);
     try {
+      // Make sure we're sending only the fields the backend expects
+      const attendanceData = {
+        date,
+        clockIn: attendanceStatus === "present" ? clockIn : null,
+        clockOut: attendanceStatus === "present" ? clockOut : null,
+        attendanceStatus,
+      };
+
       const res = await axios.post(
-        `${BASE_URL}/api/admin/addAttendance/${addUserAttendance?.selectUser}`,
-        addUserAttendance,
+        `${BASE_URL}/api/admin/addAttendance/${selectUser}`,
+        attendanceData, // Send only required data
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -131,23 +138,21 @@ export const AddAttendance = ({
         },
       );
 
-      console.log(res.data);
-      toast.success("Attendance added successfully", {
-        toastId: "attendance-success",
-      });
+      console.log("Response:", res.data);
+      toast.success("Attendance added successfully");
       setModal();
       handleGetALLattendance();
-      setLoading(false);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
+      console.error("Error details:", axiosError.response?.data); // Log full error response
       toast.error(
         axiosError?.response?.data?.message || "Something went wrong",
-        { toastId: "attendance-error" },
       );
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     handlerGetUsers();
   }, [handlerGetUsers]);

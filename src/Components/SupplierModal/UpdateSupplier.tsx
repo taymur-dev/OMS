@@ -146,6 +146,8 @@ export const UpdateSupplier = ({
               name="supplierName"
               handlerChange={handlerChange}
               value={updateSupplier.supplierName}
+              minLength={3} 
+              maxLength={50}
             />
             <InputField
               labelName="Supplier Email *"
@@ -171,6 +173,8 @@ export const UpdateSupplier = ({
                 name="supplierAddress"
                 handlerChange={handlerChange}
                 inputVal={updateSupplier.supplierAddress}
+                 minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

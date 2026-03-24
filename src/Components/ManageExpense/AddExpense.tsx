@@ -152,6 +152,8 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
                 name="expenseName"
                 handlerChange={handlerChange}
                 value={addExpense.expenseName}
+                minLength={3}
+                maxLength={50}
               />
 
               <InputField
@@ -160,6 +162,8 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
                 type="number"
                 handlerChange={handlerChange}
                 value={addExpense.amount}
+                minLength={3}
+                maxLength={12}
               />
 
               <InputField
@@ -167,6 +171,8 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
                 name="addedBy"
                 handlerChange={handlerChange}
                 value={addExpense.addedBy}
+                minLength={3}
+                maxLength={50}
               />
 
               <div className="md:col-span-2">

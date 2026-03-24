@@ -236,6 +236,8 @@ export const AddPromotion = ({
               handlerChange={handlerChange}
               value={addPromotion.current_designation}
               readOnly
+              minLength={3}
+                maxLength={50}
             />
 
             <InputField
@@ -244,6 +246,8 @@ export const AddPromotion = ({
               name="requested_designation"
               handlerChange={handlerChange}
               value={addPromotion.requested_designation}
+              minLength={3}
+                maxLength={50}
             />
 
             <div className="md:col-span-2">
@@ -262,6 +266,8 @@ export const AddPromotion = ({
                 handlerChange={handlerChange}
                 name="note"
                 inputVal={addPromotion.note}
+                 minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

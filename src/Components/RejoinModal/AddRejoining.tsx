@@ -325,6 +325,7 @@ export const AddRejoining = ({
               name="designation"
               handlerChange={handlerChange}
               value={addRejoin.designation}
+              
             />
 
             <InputField
@@ -349,6 +350,8 @@ export const AddRejoining = ({
                 handlerChange={handlerChange}
                 name="note"
                 inputVal={addRejoin.note}
+                 minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

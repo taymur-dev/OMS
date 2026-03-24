@@ -278,6 +278,8 @@ export const UpdateRejoining = ({
                 handlerChange={handlerChange}
                 name="note"
                 inputVal={updateData.note}
+                 minLength={3} // Add this
+                maxLength={250}
               />
             </div>
           </div>

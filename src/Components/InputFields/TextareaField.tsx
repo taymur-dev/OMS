@@ -7,6 +7,8 @@ type TextareaFieldProps = {
   disabled?: boolean;
   className?: string;
   readOnly?: boolean;
+  minLength: number;
+  maxLength: number;
 };
 
 export const TextareaField = ({
@@ -16,6 +18,8 @@ export const TextareaField = ({
   name,
   inputVal,
   readOnly,
+  minLength,
+  maxLength,
 }: TextareaFieldProps) => {
   return (
     <div>
@@ -30,6 +34,8 @@ export const TextareaField = ({
           name={name}
           value={inputVal}
           readOnly={readOnly}
+          minLength={minLength}
+          maxLength={maxLength}
         />
       </div>
     </div>
