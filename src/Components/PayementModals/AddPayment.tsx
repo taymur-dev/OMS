@@ -211,6 +211,8 @@ export const AddPayment = ({
                 name="description"
                 handlerChange={handlerChange}
                 inputVal={addProgress.description}
+                minLength={3}
+                maxLength={250}
               />
             </div>
 

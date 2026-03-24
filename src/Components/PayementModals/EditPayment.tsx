@@ -12,14 +12,13 @@ import { useAppSelector } from "../../redux/Hooks";
 
 type PAYMENTMETHODT = {
   id: number;
-  customerId: number;    
-  customerName: string;    
+  customerId: number;
+  customerName: string;
   amount: string;
   paymentMethod: string;
   description: string;
   date: string;
 };
-
 
 type CustomerT = {
   id: number;
@@ -212,6 +211,8 @@ export const EditPayment = ({
               name="description"
               inputVal={updatePayment.description}
               handlerChange={handlerChange}
+              minLength={3}
+              maxLength={250}
             />
           </div>
 
