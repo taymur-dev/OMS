@@ -92,17 +92,50 @@ export const AddPromotion = ({
     }
   }, [token]);
 
-  useEffect(() => {
-    if (isAdmin) {
-      getAllUsers();
-      getEmployeeLifeLine();
-    } else {
+  // Add this function to fetch current user's lifeline
+  const getMyLifeLine = useCallback(async () => {
+    if (!token || isAdmin) return;
+    try {
+      const res = await axios.get(`${BASE_URL}/api/user/getMyLifeLine`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const myLifeLineData = Array.isArray(res.data) ? res.data : [];
+      
+      // Get the latest lifeline entry for current user
+      const latestLifeLine = myLifeLineData
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+      
+      if (latestLifeLine) {
+        setAddPromotion((prev) => ({
+          ...prev,
+          id: String(currentUser?.id),
+          current_designation: latestLifeLine.position || "",
+        }));
+      } else {
+        setAddPromotion((prev) => ({
+          ...prev,
+          id: String(currentUser?.id),
+        }));
+      }
+    } catch (error) {
+      console.error("Failed to fetch my lifeline:", error);
+      // Even if lifeline fetch fails, set the ID
       setAddPromotion((prev) => ({
         ...prev,
         id: String(currentUser?.id),
       }));
     }
-  }, [isAdmin, getAllUsers, getEmployeeLifeLine, currentUser]);
+  }, [token, isAdmin, currentUser]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      getAllUsers();
+      getEmployeeLifeLine();
+    } else {
+      // For non-admin users, fetch their lifeline data
+      getMyLifeLine();
+    }
+  }, [isAdmin, getAllUsers, getEmployeeLifeLine, getMyLifeLine, currentUser]);
 
   const handlerChange = (
     e: React.ChangeEvent<

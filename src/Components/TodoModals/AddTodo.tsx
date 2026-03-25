@@ -57,10 +57,10 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
   const [allUsers, setAllUsers] = useState<UserT[]>([]);
 
   useEffect(() => {
-    if (!isAdmin && currentUser?.id) {
+    if (!isAdmin && currentUser?.userId) {
       setAddTodo((prev) => ({
         ...prev,
-        employee_id: currentUser.id.toString(),
+        employee_id: currentUser.userId.toString(),
       }));
     }
   }, [currentUser, isAdmin]);

@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState} from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 
 // UI Components
-import { AddButton } from "../CustomButtons/AddButton";
+import { AddButton } from "../CustomButtons/AddButton"; // Using AddButton style for "Update"
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { InputField } from "../InputFields/InputField";
 import { Title } from "../Title";
@@ -17,15 +17,11 @@ type allOvertimeT = {
   amount: number | string;
 };
 
-type AddOvertimeProps = {
+type EditOvertimeProps = {
   setModal: () => void;
   refreshOvertime: () => void;
   existingOvertime: allOvertimeT[];
-};
-
-const initialState = {
-  overtimeType: "",
-  amount: "",
+  data: allOvertimeT; // The specific record being edited
 };
 
 const hourOptions = [
@@ -43,24 +39,25 @@ const hourOptions = [
   { id: 12, label: "12 Hour", value: "12 Hour" },
 ];
 
-export const AddConfigOvertime = ({
+export const EditConfigOvertime = ({
   setModal,
   refreshOvertime,
   existingOvertime,
-}: AddOvertimeProps) => {
+  data,
+}: EditOvertimeProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
-  const [formState, setFormState] = useState(initialState);
+  const [formState, setFormState] = useState({
+    overtimeType: data.overtimeType,
+    amount: data.amount.toString(),
+  });
   const [loading, setLoading] = useState(false);
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
-
-    // Remove logic that was hardcoding (hours * 1000)
-    // Now we just update the specific field that changed
     setFormState((prev) => ({
       ...prev,
       [name]: name === "amount" ? value.replace(/[^0-9]/g, "") : value,
@@ -74,8 +71,10 @@ export const AddConfigOvertime = ({
       return toast.error("Please fill in all fields");
     }
 
+    // Check for duplicates, but exclude the current item being edited
     const isDuplicate = existingOvertime.some(
-      (item) => item.overtimeType === formState.overtimeType,
+      (item) => 
+        item.overtimeType === formState.overtimeType && item.id !== data.id
     );
 
     if (isDuplicate) {
@@ -84,19 +83,20 @@ export const AddConfigOvertime = ({
 
     setLoading(true);
     try {
-      const res = await axios.post(
-        `${BASE_URL}/api/admin/createOvertimeConfig`,
+      // Adjusted to use data.id in the URL for the update request
+      const res = await axios.put(
+        `${BASE_URL}/api/admin/updateOvertimeConfig/${data.id}`,
         formState,
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
-      toast.success(res.data.message || "Overtime config added successfully");
+      toast.success(res.data.message || "Overtime config updated successfully");
       refreshOvertime();
       setModal();
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         toast.error(
-          error.response?.data?.message || "Failed to add configuration",
+          error.response?.data?.message || "Failed to update configuration",
         );
       }
     } finally {
@@ -108,12 +108,12 @@ export const AddConfigOvertime = ({
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50">
       <div className="w-[30rem] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form onSubmit={handlerSubmitted}>
-          <div className="bg-white rounded-xl border-t-5 border-indigo-600">
+          <div className="bg-white rounded-xl border-t-5 border-blue-500">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              ADD OVERTIME CONFIG
+              EDIT OVERTIME CONFIG
             </Title>
           </div>
 
@@ -140,7 +140,7 @@ export const AddConfigOvertime = ({
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}
-              label={loading ? "Saving..." : "Save Config"}
+              label={loading ? "Updating..." : "Update Config"}
             />
           </div>
         </form>

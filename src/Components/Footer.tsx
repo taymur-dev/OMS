@@ -2,7 +2,7 @@ export const Footer = () => {
   return (
     <footer className="w-full p-2 bg-white">
       <div className="flex justify-center bg-white md:justify-end">
-        <h1 className="font-sans text-black font-semibold bg-white text-sm md:text-base flex items-center">
+        <h1 className="font-sans text-gray-500 font-semibold bg-white text-sm md:text-base flex items-center">
           Developed With 
           <span className="inline-block mx-1 animate-pulse text-red-500">
           ❤️

@@ -66,8 +66,7 @@ export const MarkAttendance = ({ triggerMark }: { triggerMark: number }) => {
     null,
   );
 
-  const OFFICE_START_HOUR = 9;
-  const ABSENT_HOUR = 12;
+
 
   const getAttendanceStatus = (
     clockIn: string | null,
@@ -76,23 +75,19 @@ export const MarkAttendance = ({ triggerMark }: { triggerMark: number }) => {
   ) => {
     if (attendanceStatus && attendanceStatus !== "Present") {
       if (attendanceStatus === "Holiday") return "Holiday 🎉";
+      if (attendanceStatus === "Present") return "In Office";
       return attendanceStatus;
     }
 
-    const now = new Date();
 
     if (!clockIn) {
-      if (now.getHours() >= ABSENT_HOUR) return "Absent";
       return "Not Marked";
     }
 
-    const [clockInHour, clockInMinute] = clockIn.split(":").map(Number);
-    const clockInDate = new Date();
-    clockInDate.setHours(clockInHour, clockInMinute, 0, 0);
-    const officeStartDate = new Date();
-    officeStartDate.setHours(OFFICE_START_HOUR, 0, 0, 0);
+    return "In Office";
 
-    return clockInDate > officeStartDate ? "Late" : "In Office";
+ 
+
   };
 
   const getAttendance = useCallback(

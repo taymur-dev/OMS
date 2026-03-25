@@ -232,22 +232,25 @@ export const Promotion = ({
                         }}
                       />
 
-                      {promotion.approval !== "ACCEPTED" && (
-                        <EditButton
-                          handleUpdate={() => {
-                            setSelectedPromotion(promotion);
-                            setIsOpenModal("EDIT");
-                          }}
-                        />
-                      )}
+                      {isAdmin && (
+                        <>
+                          {/* Edit tabhi dikhega jab promotion accept na hui ho */}
+                          {promotion.approval !== "ACCEPTED" && (
+                            <EditButton
+                              handleUpdate={() => {
+                                setSelectedPromotion(promotion);
+                                setIsOpenModal("EDIT");
+                              }}
+                            />
+                          )}
 
-                      {!isAdmin && (
-                        <DeleteButton
-                          handleDelete={() => {
-                            setSelectedId(promotion.id);
-                            setIsOpenModal("DELETE");
-                          }}
-                        />
+                          <DeleteButton
+                            handleDelete={() => {
+                              setSelectedId(promotion.id);
+                              setIsOpenModal("DELETE");
+                            }}
+                          />
+                        </>
                       )}
                     </div>
                   </div>

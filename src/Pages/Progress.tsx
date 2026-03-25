@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../redux/Hooks";
 import { navigationStart, navigationSuccess } from "../redux/NavigationSlice";
@@ -11,6 +11,7 @@ import { EditButton } from "../Components/CustomButtons/EditButton";
 import { DeleteButton } from "../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../Components/CustomButtons/ViewButton";
 import { Loader } from "../Components/LoaderComponent/Loader";
+import { InputField } from "../Components/InputFields/InputField";
 
 // Modals
 import { AddProgress } from "../Components/ProgressModal/AddProgress";
@@ -47,6 +48,7 @@ export const Progress = ({
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
   const token = currentUser?.token;
+  const getCurrentDate = () => new Date().toISOString().split("T")[0];
 
   const [allProgress, setAllProgress] = useState<ALLPROGRESST[]>([]);
   const [isOpenModal, setIsOpenModal] = useState<
@@ -62,6 +64,8 @@ export const Progress = ({
     null,
   );
   const [pageNo, setPageNo] = useState(1);
+  const [fromDate, setFromDate] = useState<string>(getCurrentDate());
+  const [toDate, setToDate] = useState<string>(getCurrentDate());
 
   const handleGetAllProgress = useCallback(async () => {
     if (!token || !currentUser) return;
@@ -76,7 +80,7 @@ export const Progress = ({
       });
 
       setAllProgress(
-        Array.isArray(res.data) ? res.data.sort((a, b) => b.id - a.id) : [],
+        Array.isArray(res.data) ? res.data.sort((a, b) => a.id - b.id) : [],
       );
     } catch (error) {
       console.error("Failed to fetch progress:", error);
@@ -100,15 +104,30 @@ export const Progress = ({
     setPageNo(1);
   }, [externalSearch, externalPageSize]);
 
-  if (loader) return <Loader />;
-
   // Logic for filtering and pagination
-  const filteredProgress = allProgress.filter(
-    (p) =>
-      p.employeeName?.toLowerCase().includes(externalSearch.toLowerCase()) ||
-      p.projectName?.toLowerCase().includes(externalSearch.toLowerCase()) ||
-      p.note?.toLowerCase().includes(externalSearch.toLowerCase()),
-  );
+  const filteredProgress = useMemo(() => {
+    return allProgress.filter((p) => {
+      // 1. Text Search Filter
+      const matchesSearch =
+        p.employeeName?.toLowerCase().includes(externalSearch.toLowerCase()) ||
+        p.projectName?.toLowerCase().includes(externalSearch.toLowerCase()) ||
+        p.note?.toLowerCase().includes(externalSearch.toLowerCase());
+
+      // 2. Date Range Filter
+      const progressDateStr = new Date(p.date).toISOString().split("T")[0];
+      let matchesDate = true;
+
+      if (fromDate && toDate) {
+        matchesDate = progressDateStr >= fromDate && progressDateStr <= toDate;
+      } else if (fromDate) {
+        matchesDate = progressDateStr >= fromDate;
+      } else if (toDate) {
+        matchesDate = progressDateStr <= toDate;
+      }
+
+      return matchesSearch && matchesDate;
+    });
+  }, [allProgress, externalSearch, fromDate, toDate]);
 
   const totalItems = filteredProgress.length;
   const startIndex = (pageNo - 1) * externalPageSize;
@@ -137,6 +156,7 @@ export const Progress = ({
       );
       toast.success("Progress deleted successfully");
       handleGetAllProgress();
+      setSelectedId(null); 
       setIsOpenModal("");
     } catch (error) {
       console.log(error);
@@ -145,8 +165,39 @@ export const Progress = ({
     }
   };
 
+  if (loader) return <Loader />;
+
   return (
-    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+    <div className="flex flex-col h-full bg-white overflow-hidden">
+     
+     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 px-3 py-4">
+      <div className="w-full sm:w-[220px]">
+        <InputField
+          labelName="From"
+          type="date"
+          value={fromDate}
+          handlerChange={(e) => {
+            setFromDate(e.target.value);
+            setPageNo(1);
+          }}
+          className="!shadow-none border-gray-300 focus:ring-blue-400"
+        />
+      </div>
+
+      <div className="w-full sm:w-[220px]">
+        <InputField
+          labelName="To"
+          type="date"
+          value={toDate}
+          handlerChange={(e) => {
+            setToDate(e.target.value);
+            setPageNo(1);
+          }}
+          className="!shadow-none border-gray-300 focus:ring-blue-400"
+        />
+      </div>
+    </div>
+
       <div className="overflow-auto px-3 sm:px-0">
         <div className="min-w-[900px]">
           {/* HEADER SECTION - Matches UsersDetails */}

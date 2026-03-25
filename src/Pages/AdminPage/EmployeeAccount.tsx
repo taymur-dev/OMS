@@ -189,7 +189,7 @@ export const EmployeeAccount = ({
                     <div className="text-gray-600 truncate">{emp.email}</div>
 
                     <div className="text-gray-600 truncate">{emp.contact}</div>
-                    <div className="text-gray-600 truncate">User</div>
+                    <div className="text-gray-600 truncate">Employee</div>
 
                     {/* Action Buttons aligned with UsersDetails width */}
                     <div className="flex items-center justify-end gap-1 w-[140px] pr-5">

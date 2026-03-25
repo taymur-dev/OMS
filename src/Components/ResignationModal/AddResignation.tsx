@@ -94,6 +94,43 @@ export const AddResignation = ({
     }
   }, [token, isAdmin]);
 
+  // New function to fetch current user's lifeline for non-admin users
+  const getMyLifeLine = useCallback(async () => {
+    if (!token || isAdmin) return;
+    
+    try {
+      const res = await axios.get(`${BASE_URL}/api/user/getMyLifeLine`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      const myLifeLineData = Array.isArray(res.data) ? res.data : [];
+      
+      // Get the latest lifeline entry for current user
+      const latestLifeLine = myLifeLineData
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+      
+      if (latestLifeLine) {
+        setFormData((prev) => ({
+          ...prev,
+          id: String(currentUser?.id),
+          designation: latestLifeLine.position || "",
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          id: String(currentUser?.id),
+        }));
+      }
+    } catch (error) {
+      console.error("Failed to fetch my lifeline:", error);
+      // Even if lifeline fetch fails, set the ID
+      setFormData((prev) => ({
+        ...prev,
+        id: String(currentUser?.id),
+      }));
+    }
+  }, [token, isAdmin, currentUser]);
+
   const handlerChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -131,12 +168,10 @@ export const AddResignation = ({
       getAllUsers();
       fetchUserDesignation();
     } else {
-      setFormData((prev) => ({
-        ...prev,
-        id: String(currentUser?.id),
-      }));
+      // For non-admin users, fetch their own lifeline data
+      getMyLifeLine();
     }
-  }, [isAdmin, getAllUsers, fetchUserDesignation, currentUser]);
+  }, [isAdmin, getAllUsers, fetchUserDesignation, getMyLifeLine, currentUser]);
 
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -220,7 +255,6 @@ export const AddResignation = ({
               value={formData.designation}
               handlerChange={handlerChange}
               readOnly
-             
             />
 
             <InputField
@@ -237,7 +271,7 @@ export const AddResignation = ({
                 name="note"
                 inputVal={formData.note}
                 handlerChange={handlerChange}
-                minLength={3} // Add this
+                minLength={3}
                 maxLength={250}
               />
             </div>

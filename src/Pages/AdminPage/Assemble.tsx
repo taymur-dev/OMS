@@ -16,7 +16,7 @@ type TabType =
   | "CONFIGURE_HOLIDAYS"
   | "ACCESS_CONTROL"
   | "BUSINESS_VARIABLE"
-  | "OVERTIME"
+  | "CONFIGURE_OVERTIME"
   | "";
 const entriesOptions = [5, 10, 15, 20, 30];
 
@@ -29,7 +29,6 @@ export const Assemble = () => {
   const [selectedValue, setSelectedValue] = useState(10);
   const [hasBusinessVariable, setHasBusinessVariable] = useState(false);
   const [hasOvertime, setHasOvertime] = useState(false);
-
 
   const [triggerModal, setTriggerModal] = useState<{
     tab: TabType;
@@ -81,12 +80,14 @@ export const Assemble = () => {
                   />
                 )}
 
-              {isAdmin && activeTab === "OVERTIME" && !hasOvertime && (
-                <CustomButton
-                  label="Add Overtime"
-                  handleToggle={() => handleActionClick("OVERTIME")}
-                />
-              )}
+              {isAdmin &&
+                activeTab === "CONFIGURE_OVERTIME" &&
+                !hasOvertime && (
+                  <CustomButton
+                    label="Add Overtime"
+                    handleToggle={() => handleActionClick("CONFIGURE_OVERTIME")}
+                  />
+                )}
             </div>
           }
         />
@@ -99,7 +100,7 @@ export const Assemble = () => {
                 "CONFIGURE_HOLIDAYS",
                 "ACCESS_CONTROL",
                 "BUSINESS_VARIABLE",
-                "OVERTIME",
+                "CONFIGURE_OVERTIME",
               ] as TabType[]
             ).map((tab) => (
               <button
@@ -119,8 +120,8 @@ export const Assemble = () => {
                       ? "Access Control"
                       : tab === "BUSINESS_VARIABLE"
                         ? "Business Variables"
-                        : tab === "OVERTIME"
-                          ? "Overtime"
+                        : tab === "CONFIGURE_OVERTIME"
+                          ? "Configure Overtime"
                           : ""}
               </button>
             ))}
@@ -197,10 +198,12 @@ export const Assemble = () => {
             />
           )}
 
-          {activeTab === "OVERTIME" && (
+          {activeTab === "CONFIGURE_OVERTIME" && (
             <ConfigOvertime
               triggerModal={
-                triggerModal.tab === "OVERTIME" ? triggerModal.count : 0
+                triggerModal.tab === "CONFIGURE_OVERTIME"
+                  ? triggerModal.count
+                  : 0
               }
               externalSearch={searchTerm}
               externalPageSize={selectedValue}

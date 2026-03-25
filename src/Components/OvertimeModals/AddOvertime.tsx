@@ -8,6 +8,7 @@ import { Title } from "../Title";
 import { UserSelect } from "../InputFields/UserSelect";
 import { InputField } from "../InputFields/InputField";
 import { TextareaField } from "../InputFields/TextareaField";
+import { OptionField } from "../InputFields/OptionField";
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
@@ -40,6 +41,12 @@ type UserT = {
   contact?: string;
 };
 
+type OvertimeConfigT = {
+  id: number;
+  overtimeType: string;
+  amount: number;
+};
+
 const currentDate = new Date().toLocaleDateString("sv-SE", {
   timeZone: "Asia/Karachi",
 });
@@ -47,7 +54,7 @@ const currentDate = new Date().toLocaleDateString("sv-SE", {
 const initialState: AddOvertimeType = {
   employee_id: "",
   date: currentDate,
-  time: "00:00:00",
+  time: "",
   overtime_amount: "",
   description: "",
 };
@@ -65,6 +72,7 @@ export const AddOverTime = ({
   const [loading, setLoading] = useState(false);
 
   const [allUsers, setAllUsers] = useState<UserT[]>([]);
+  const [overtimeOptions, setOvertimeOptions] = useState<OvertimeConfigT[]>([]);
 
   const getAllUsers = useCallback(async () => {
     if (!token) return;
@@ -79,6 +87,22 @@ export const AddOverTime = ({
       console.error(err);
     }
   }, [token]);
+
+  const getOvertimeOptions = useCallback(async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/getOvertimeConfig`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setOvertimeOptions(res.data.data || []);
+    } catch (err) {
+      console.error("Failed to fetch overtime options", err);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (token) getOvertimeOptions();
+  }, [token, getOvertimeOptions]);
 
   useEffect(() => {
     if (!currentUser || !token) return;
@@ -135,27 +159,7 @@ export const AddOverTime = ({
       });
     }
 
-    const validateTime = (time: string) => {
-      const regex = /^(\d{1,2}):([0-5]?\d):([0-5]?\d)$/;
-      const match = time.match(regex);
-
-      if (!match) return false;
-
-      const hours = parseInt(match[1], 10);
-      const minutes = parseInt(match[2], 10);
-      const seconds = parseInt(match[3], 10);
-
-      // hours must be 0-24, minutes 0-59, seconds 0-59
-      if (hours > 24) return false;
-      if (minutes > 59) return false;
-      if (seconds > 59) return false;
-
-      // Reject 00:00:00
-      if (hours === 0 && minutes === 0 && seconds === 0) return false;
-
-      return true;
-    };
-
+    
     setLoading(true);
 
     try {
@@ -172,14 +176,6 @@ export const AddOverTime = ({
           headers: { Authorization: `Bearer ${token}` },
         },
       );
-
-      if (!validateTime(addOvertime.time)) {
-        toast.error(
-          "Invalid overtime! Hours: 0-24, Minutes/Seconds: 0-59, cannot be 00:00:00",
-        );
-        setLoading(false);
-        return;
-      }
 
       toast.success("Overtime added successfully");
       refreshOvertime?.();
@@ -247,11 +243,35 @@ export const AddOverTime = ({
               handlerChange={handlerChange}
             />
 
-            <InputField
-              labelName="Overtime (HH:MM:SS) *"
+            <OptionField
+              labelName="Overtime *"
               name="time"
-              value={addOvertime.time}
-              handlerChange={handlerChange}
+              // Look for the ID that matches the current time string in state
+              value={
+                overtimeOptions
+                  .find((opt) => opt.overtimeType === addOvertime.time)
+                  ?.id.toString() || ""
+              }
+              handlerChange={(e) => {
+                const selectedId = e.target.value;
+                const selected = overtimeOptions.find(
+                  (opt) => String(opt.id) === selectedId,
+                );
+
+                if (selected) {
+                  setAddOvertime((prev) => ({
+                    ...prev,
+                    time: selected.overtimeType,
+                    overtime_amount: String(selected.amount),
+                  }));
+                }
+              }}
+              optionData={overtimeOptions.map((opt) => ({
+                id: opt.id,
+                value: String(opt.id), // The value is the ID
+                label: `${opt.overtimeType}`,
+              }))}
+              inital="Select Overtime"
             />
 
             <div className="md:col-span-2">
@@ -263,7 +283,8 @@ export const AddOverTime = ({
                   value={addOvertime.overtime_amount}
                   handlerChange={handlerChange}
                   minLength={3}
-                maxLength={12}
+                  maxLength={12}
+                  disabled
                 />
               )}
             </div>
@@ -274,7 +295,7 @@ export const AddOverTime = ({
                 name="description"
                 inputVal={addOvertime.description}
                 handlerChange={handlerChange}
-                 minLength={3} // Add this
+                minLength={3} // Add this
                 maxLength={250}
               />
             </div>

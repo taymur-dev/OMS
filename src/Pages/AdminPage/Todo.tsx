@@ -13,6 +13,7 @@ import { UpdateTodo, TodoType } from "../../Components/TodoModals/UpdateTodo";
 import { ViewTodo } from "../../Components/TodoModals/ViewTodo";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { Loader } from "../../Components/LoaderComponent/Loader";
+import { InputField } from "../../Components/InputFields/InputField";
 
 import { BASE_URL } from "../../Content/URL";
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
@@ -38,6 +39,12 @@ export const Todo = ({
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
+  const getMonthStartDate = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    return `${year}-${month}-01`;
+  };
 
   const [allTodos, setAllTodos] = useState<ALLTODOT[]>([]);
   const [selectedTodo, setSelectedTodo] = useState<ALLTODOT | null>(null);
@@ -45,6 +52,8 @@ export const Todo = ({
   const [catchId, setCatchId] = useState<number | null>(null);
   const [pageNo, setPageNo] = useState(1);
   const [viewTodo, setViewTodo] = useState<ALLTODOT | null>(null);
+  const [fromDate, setFromDate] = useState<string>(getMonthStartDate());
+  const [toDate, setToDate] = useState<string>("");
 
   const token = currentUser?.token;
   const id = currentUser?.userId;
@@ -85,17 +94,34 @@ export const Todo = ({
   }, [triggerModal]);
 
   const filteredTodos = useMemo(() => {
-    return allTodos.filter(
-      (todo) =>
+    return allTodos.filter((todo) => {
+      // 1. Text Search Filter
+      const matchesSearch =
         todo.task.toLowerCase().includes(externalSearch.toLowerCase()) ||
         todo.employeeName
           ?.toLowerCase()
           .includes(externalSearch.toLowerCase()) ||
         todo.completionStatus
           ?.toLowerCase()
-          .includes(externalSearch.toLowerCase()),
-    );
-  }, [allTodos, externalSearch]);
+          .includes(externalSearch.toLowerCase());
+
+      // 2. Date Range Filter (checking against startDate)
+      const taskDateStr = todo.startDate
+        ? new Date(todo.startDate).toISOString().split("T")[0]
+        : "";
+
+      let matchesDate = true;
+      if (fromDate && toDate) {
+        matchesDate = taskDateStr >= fromDate && taskDateStr <= toDate;
+      } else if (fromDate) {
+        matchesDate = taskDateStr >= fromDate;
+      } else if (toDate) {
+        matchesDate = taskDateStr <= toDate;
+      }
+
+      return matchesSearch && matchesDate;
+    });
+  }, [allTodos, externalSearch, fromDate, toDate]);
 
   const totalNum = filteredTodos.length;
   const startIndex = (pageNo - 1) * externalPageSize;
@@ -125,6 +151,35 @@ export const Todo = ({
 
   return (
     <div className="flex flex-col flex-grow bg-white overflow-hidden">
+           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 px-3 py-4">
+
+        <div className="w-full sm:w-[220px]">
+          <InputField
+            labelName="From"
+            type="date"
+            value={fromDate}
+            handlerChange={(e) => {
+              setFromDate(e.target.value);
+              setPageNo(1);
+            }}
+            className="!shadow-none border-gray-300 focus:ring-blue-400"
+          />
+        </div>
+
+        <div className="w-full sm:w-[220px]">
+          <InputField
+            labelName="To"
+            type="date"
+            value={toDate}
+            handlerChange={(e) => {
+              setToDate(e.target.value);
+              setPageNo(1);
+            }}
+            className="!shadow-none border-gray-300 focus:ring-blue-400"
+          />
+        </div>
+      </div>
+
       <div className="overflow-auto px-3 sm:px-0">
         <div className="min-w-[1000px]">
           {/* Header Section aligned with UsersDetails */}
@@ -203,7 +258,7 @@ export const Todo = ({
                             ? "bg-green-100 text-green-600 border border-green-200"
                             : todo.completionStatus === "Defer"
                               ? "bg-blue-100 text-blue-600 border border-blue-200"
-                              :"bg-orange-100 text-orange-600 border border-orange-200"
+                              : "bg-orange-100 text-orange-600 border border-orange-200"
                         }`}
                       >
                         {todo.completionStatus || "Pending"}

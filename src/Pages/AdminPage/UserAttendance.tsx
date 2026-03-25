@@ -17,6 +17,7 @@ import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { BASE_URL } from "../../Content/URL";
+import { InputField } from "../../Components/InputFields/InputField";
 
 // Icons for consistent UI
 import { RiInboxArchiveLine } from "react-icons/ri";
@@ -54,18 +55,22 @@ export const UserAttendance = ({
 
   const token = currentUser?.token;
   const isAdmin = currentUser?.role === "admin";
+  const getCurrentDate = () => new Date().toISOString().split("T")[0];
 
   const [allAttendance, setAllAttendance] = useState<AttendanceT[]>([]);
   const [pageNo, setPageNo] = useState(1);
   const [viewAttendance, setViewAttendance] = useState<AttendanceT | null>(
     null,
   );
+
   const [isOpenModal, setIsOpenModal] = useState<
     "ADDATTENDANCE" | "EDITATTENDANCE" | "DELETE" | ""
   >("");
   const [updatedAttendance, setUpdatedAttendance] =
     useState<AttendanceT | null>(null);
   const [recordToDelete, setRecordToDelete] = useState<number | null>(null);
+  const [fromDate, setFromDate] = useState<string>(getCurrentDate());
+  const [toDate, setToDate] = useState<string>(getCurrentDate());
 
   const handleGetAttendance = useCallback(async () => {
     if (!token || !currentUser) return;
@@ -109,15 +114,33 @@ export const UserAttendance = ({
   }, [triggerAdd, isAdmin]);
 
   const filteredAttendance = useMemo(() => {
-    return allAttendance.filter(
-      (att) =>
+    return allAttendance.filter((att) => {
+      // 1. Text Search Filter
+      const matchesSearch =
         att.name?.toLowerCase().includes(externalSearch.toLowerCase()) ||
         att.date.includes(externalSearch) ||
         att.attendanceStatus
           ?.toLowerCase()
-          .includes(externalSearch.toLowerCase()),
-    );
-  }, [allAttendance, externalSearch]);
+          .includes(externalSearch.toLowerCase());
+
+      // 2. Date Range Filter Logic
+      // API se aane wali date string ko sirf date part tak mehdood karein comparison ke liye
+      const attendanceDateStr = new Date(att.date).toISOString().split("T")[0];
+
+      let matchesDate = true;
+
+      if (fromDate && toDate) {
+        matchesDate =
+          attendanceDateStr >= fromDate && attendanceDateStr <= toDate;
+      } else if (fromDate) {
+        matchesDate = attendanceDateStr >= fromDate;
+      } else if (toDate) {
+        matchesDate = attendanceDateStr <= toDate;
+      }
+
+      return matchesSearch && matchesDate;
+    });
+  }, [allAttendance, externalSearch, fromDate, toDate]);
 
   const totalNum = filteredAttendance.length;
   const startIndex = (pageNo - 1) * externalPageSize;
@@ -159,7 +182,35 @@ export const UserAttendance = ({
   // Column configuration for Admin vs User
 
   return (
-    <div className="flex flex-col flex-grow bg-white overflow-hidden">
+    <div className="flex flex-col flex-grow overflow-hidden">
+      {/* Centered Date Filters */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 px-3 py-4">
+        <div className="w-full sm:w-[220px]">
+          <InputField
+            labelName="From"
+            type="date"
+            value={fromDate}
+            handlerChange={(e) => {
+              setFromDate(e.target.value);
+              setPageNo(1);
+            }}
+            className="!shadow-none border-gray-300 focus:ring-blue-400"
+          />
+        </div>
+
+        <div className="w-full  sm:w-[220px]">
+          <InputField
+            labelName="To"
+            type="date"
+            value={toDate}
+            handlerChange={(e) => {
+              setToDate(e.target.value);
+              setPageNo(1);
+            }}
+            className="!shadow-none border-gray-300 focus:ring-blue-400"
+          />
+        </div>
+      </div>
       <div className="overflow-auto px-3 sm:px-0">
         <div className="min-w-[1100px]">
           {/* Header Section */}

@@ -111,7 +111,7 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
 
     setAddProgress((prev) => ({
       ...prev,
-      employee_id: String(currentUser.id),
+      employee_id: String(currentUser.id || currentUser.userId || ""),
     }));
     fetchMyProjects();
   }, [currentUser, token, isAdmin]);
@@ -156,7 +156,13 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
     try {
       await axios.post(
         `${BASE_URL}/api/admin/addProgress`,
-        { ...addProgress, projectId: Number(addProgress.projectId) },
+        {
+          ...addProgress,
+          projectId: Number(addProgress.projectId),
+          date: addProgress.date,
+          note: addProgress.note,
+          ...(isAdmin && { employee_id: addProgress.employee_id }),
+        },
         { headers: { Authorization: `Bearer ${token}` } },
       );
       toast.success("Progress added successfully!", {
@@ -268,7 +274,7 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
                 name="note"
                 handlerChange={handlerChange}
                 inputVal={addProgress.note}
-                 minLength={3} // Add this
+                minLength={3} // Add this
                 maxLength={250}
               />
             </div>
