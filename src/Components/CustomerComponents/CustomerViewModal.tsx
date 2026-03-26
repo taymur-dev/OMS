@@ -4,6 +4,7 @@ import {
   FaMapMarkerAlt,
   FaPhoneAlt,
   FaBuilding,
+  FaEnvelope,
 } from "react-icons/fa";
 
 type CustomerDetailT = {
@@ -12,6 +13,7 @@ type CustomerDetailT = {
   customerName: string;
   customerAddress: string;
   customerContact: string;
+  email: string;
   companyName: string;
   companyAddress: string;
 };
@@ -46,10 +48,18 @@ export const CustomerViewModal = ({
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                  <FaUser className="text-gray-400" /> Customer Name
+                  <FaUser className="text-gray-400" /> Contact Name
                 </label>
                 <p className="text-gray-800 font-medium">
                   {customerDetail.customerName}
+                </p>
+              </div>
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaEnvelope className="text-gray-400" /> Email
+                </label>
+                <p className="text-gray-800 font-medium break-words">
+                  {customerDetail.email}
                 </p>
               </div>
             </div>

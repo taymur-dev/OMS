@@ -12,12 +12,18 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faPrint } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSearch,
+  faPrint,
+  faEnvelope,
+} from "@fortawesome/free-solid-svg-icons";
 import { RiInboxArchiveLine } from "react-icons/ri";
+import { toast } from "react-toastify";
 
 type CustomerT = {
   id: number;
   customerName: string;
+  email: string;
 };
 
 type SaleReportT = {
@@ -293,17 +299,61 @@ export const SalesReports = ({
           <div className="flex gap-2 w-full lg:w-auto">
             <button
               onClick={handleSearch}
-              className="bg-[#334155] text-white px-6 py-3 rounded-lg shadow-sm flex-1 flex items-center 
-            justify-center font-bold text-sm transition-hover "
+              className="bg-slate-700 text-white px-6 py-3 rounded-lg shadow-sm flex-1 flex items-center justify-center font-bold text-sm transition-hover "
             >
               <FontAwesomeIcon icon={faSearch} className="mr-2" /> Search
             </button>
+
             <button
               onClick={printDiv}
-              className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-sm flex-1 flex items-center justify-center 
-            font-bold text-sm transition-hover "
+              className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-sm flex-1 flex items-center justify-center font-bold text-sm transition-hover "
             >
               <FontAwesomeIcon icon={faPrint} className="mr-2" /> Print
+            </button>
+
+            {/* ✅ NEW: Email Report Button */}
+
+            <button
+              onClick={async () => {
+                try {
+                  const selectedCustomer = getCustomers?.find(
+                    (c) => c.id.toString() === reportData.customerName,
+                  );
+
+                  const targetEmail = selectedCustomer?.email;
+
+                  console.log("Sending email to:", targetEmail);
+
+                  await axios.post(
+                    `${BASE_URL}/api/admin/send-report`,
+                    {
+                      email: targetEmail,
+                      reportData: filteredReports,
+                      business: businessVar,
+                    },
+                    {
+                      headers: { Authorization: `Bearer ${token}` },
+                    },
+                  );
+
+                  toast.success("Report emailed successfully", {
+                    toastId: "email-report-success",
+                  });
+                } catch (err) {
+                  console.error(err);
+
+                  toast.error("Failed to send report. Please try again.", {
+                    toastId: "email-report-error",
+                  });
+                }
+              }}
+              disabled={filteredReports.length === 0}
+              className={`bg-blue-800 text-white px-6  py-3 whitespace-nowrap rounded-lg shadow-sm flex-1 flex items-center justify-center 
+    font-bold text-sm transition-hover
+    `}
+            >
+              <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
+              Email Report
             </button>
           </div>
         </div>

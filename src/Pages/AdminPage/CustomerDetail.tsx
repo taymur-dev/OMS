@@ -30,6 +30,7 @@ type AllcustomerT = {
   customerName: string;
   customerAddress: string;
   customerContact: string;
+  email: string;
   companyName: string;
   companyAddress: string;
 };
@@ -130,11 +131,12 @@ export const CustomerDetail = ({
           {/* Header Grid */}
           <div className="px-0.5 pt-0.5">
             <div
-              className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold
+              className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold
             text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
               <span className="text-left">Sr#</span>
               <span className="text-left">Name & Contact</span>
+              <span className="text-left">Email</span>
               <span className="text-left">Address</span>
               <span className="text-left">Company</span>
               <span className="text-left">Comp. Address</span>
@@ -155,7 +157,7 @@ export const CustomerDetail = ({
                 {paginatedCustomers.map((customer, index) => (
                   <div
                     key={customer.id}
-                    className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_auto] items-center px-3 py-0.5 gap-3 text-sm bg-white 
+                    className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_1fr_auto] items-center px-3 py-0.5 gap-3 text-sm bg-white 
                   border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
                     {/* Column 1: Sr# */}
@@ -180,6 +182,10 @@ export const CustomerDetail = ({
                           {customer.customerContact}
                         </span>
                       </div>
+                    </div>
+
+                    <div className="text-gray-600 truncate">
+                      {customer.email}
                     </div>
 
                     {/* Column 3: Address */}

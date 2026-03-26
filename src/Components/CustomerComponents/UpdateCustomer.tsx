@@ -16,6 +16,7 @@ type CustomerT = {
   customerName: string;
   customerAddress: string;
   customerContact: string;
+  email: string;
   companyName: string;
   companyAddress: string;
 };
@@ -104,6 +105,7 @@ export const UpdateCustomer = ({
       customerName,
       customerAddress,
       customerContact,
+      email,
       companyName,
       companyAddress,
     } = customerData;
@@ -112,6 +114,7 @@ export const UpdateCustomer = ({
       !customerName ||
       !customerAddress ||
       !customerContact ||
+      !email ||
       !companyName ||
       !companyAddress
     ) {
@@ -195,15 +198,21 @@ export const UpdateCustomer = ({
               value={customerData?.customerContact || ""}
             />
 
-            <div className="md:col-span-2">
-              <InputField
-                labelName="Company Name *"
-                type="text"
-                name="companyName"
-                handlerChange={handlerChange}
-                value={customerData?.companyName || ""}
-              />
-            </div>
+            <InputField
+              labelName="Email *"
+              type="email"
+              name="email"
+              handlerChange={handlerChange}
+              value={customerData?.email || ""}
+            />
+
+            <InputField
+              labelName="Company Name *"
+              type="text"
+              name="companyName"
+              handlerChange={handlerChange}
+              value={customerData?.companyName || ""}
+            />
 
             <div className="md:col-span-2">
               <TextareaField

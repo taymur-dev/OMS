@@ -19,6 +19,7 @@ const initialState = {
   customerName: "",
   customerAddress: "",
   customerContact: "",
+  email: "",
   companyName: "",
   companyAddress: "",
 };
@@ -87,6 +88,7 @@ export const AddCustomer = ({
       customerName: customerData.customerName.trim(),
       customerAddress: customerData.customerAddress.trim(),
       customerContact: customerData.customerContact.trim(),
+      email: customerData.email.trim(),
       companyName: customerData.companyName.trim(),
       companyAddress: customerData.companyAddress.trim(),
     };
@@ -94,11 +96,15 @@ export const AddCustomer = ({
     if (
       !cleanedData.customerName ||
       !cleanedData.customerAddress ||
-      !cleanedData.customerContact
+      !cleanedData.customerContact ||
+      !cleanedData.email
     ) {
-      return toast.error("Customer Name, Address and Contact are required", {
-        toastId: "required-fields",
-      });
+      return toast.error(
+        "Customer Name, Address , Email and Contact are required",
+        {
+          toastId: "required-fields",
+        },
+      );
     }
 
     if (!/^\d{11}$/.test(cleanedData.customerContact)) {
@@ -172,7 +178,7 @@ export const AddCustomer = ({
               name="customerName"
               handlerChange={handlerChange}
               value={customerData.customerName}
-              minLength={3} 
+              minLength={3}
               maxLength={50}
             />
 
@@ -184,17 +190,23 @@ export const AddCustomer = ({
               value={customerData.customerContact}
             />
 
-            <div className="md:col-span-2">
-              <InputField
-                labelName="Company Name *"
-                type="text"
-                name="companyName"
-                handlerChange={handlerChange}
-                value={customerData.companyName}
-                minLength={3} 
+            <InputField
+              labelName="Email *"
+              type="email"
+              name="email"
+              handlerChange={handlerChange}
+              value={customerData.email}
+            />
+
+            <InputField
+              labelName="Company Name *"
+              type="text"
+              name="companyName"
+              handlerChange={handlerChange}
+              value={customerData.companyName}
+              minLength={3}
               maxLength={50}
-              />
-            </div>
+            />
 
             <div className="md:col-span-2">
               <TextareaField
