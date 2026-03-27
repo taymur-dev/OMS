@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-
 import { useAppSelector } from "../redux/Hooks";
 
 interface LeaveNotification {
@@ -13,34 +12,36 @@ interface LeaveNotification {
 
 interface NotificationDropdownProps {
   notifications: LeaveNotification[];
-
   onClose: () => void;
 }
 
 const NotificationDropdown = ({
   notifications,
-
   onClose,
 }: NotificationDropdownProps) => {
   const navigate = useNavigate();
-
   const { currentUser } = useAppSelector((state) => state?.officeState);
+
+  // Jab kisi specific notification par click ho
+  const handleNotificationClick = (item: LeaveNotification) => {
+    onClose();
+    const role = currentUser?.role?.toLowerCase();
+
+    // Determine the base path
+    const basePath = role === "admin" ? "/attendance" : "/users/leaveRequests";
+
+    // Navigate with tab and specific viewId
+    // localhost:5173/attendance?tab=LEAVE&viewId=12
+    navigate(`${basePath}?tab=LEAVE&viewId=${item.id}`);
+  };
 
   const handleViewAll = () => {
     onClose();
-
-    try {
-      console.log("Current user role:", currentUser?.role);
-
-      if (currentUser?.role?.toLowerCase() === "admin") {
-        navigate("/attendance?tab=LEAVE");
-      } else if (currentUser?.role?.toLowerCase() === "user") {
-        navigate("/users/leaveRequests");
-      } else {
-        console.log("Unknown role:", currentUser?.role);
-      }
-    } catch (error) {
-      console.error("Navigation error:", error);
+    const role = currentUser?.role?.toLowerCase();
+    if (role === "admin") {
+      navigate("/attendance?tab=LEAVE");
+    } else if (role === "user") {
+      navigate("/users/leaveRequests");
     }
   };
 
@@ -48,31 +49,7 @@ const NotificationDropdown = ({
     <>
       <div className="fixed inset-0 z-40" onClick={onClose}></div>
 
-      <div
-        className="
-
-    fixed md:absolute
-
-    top-4 md:top-full
-
-    left-1/2 md:left-auto
-
-    right-auto md:right-0
-
-    -translate-x-1/2 md:translate-x-0
-
-    mt-0 md:mt-2
-
-    w-[90%] sm:w-80
-
-    bg-white rounded-lg shadow-xl
-
-    border border-gray-200
-
-    z-50 overflow-hidden
-
-  "
-      >
+      <div className="fixed md:absolute top-4 md:top-full left-1/2 md:left-auto right-auto md:right-0 -translate-x-1/2 md:translate-x-0 mt-0 md:mt-2 w-[90%] sm:w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden">
         <div className="bg-blue-400 p-3">
           <h3 className="text-white font-semibold text-sm">Notifications</h3>
         </div>
@@ -87,7 +64,7 @@ const NotificationDropdown = ({
               <div
                 key={item.id}
                 className="p-3 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
-                onClick={handleViewAll}
+                onClick={() => handleNotificationClick(item)} // Yahan click handle hoga
               >
                 <div className="flex justify-between items-start">
                   <p className="text-xs font-bold text-gray-800">{item.name}</p>
@@ -113,7 +90,6 @@ const NotificationDropdown = ({
                   {(() => {
                     const from = item.fromDate.split("T")[0];
                     const to = item.toDate.split("T")[0];
-
                     return from === to ? from : `${from} - ${to}`;
                   })()}
                 </p>

@@ -240,13 +240,20 @@ export const Resignation = ({
 
                     <div className="flex items-center justify-end gap-1 w-[140px]">
                       <ViewButton handleView={() => handleViewClick(res)} />
-                      <EditButton handleUpdate={() => handleEditClick(res)} />
-                      <DeleteButton
-                        handleDelete={() => {
-                          setSelectedId(res.id);
-                          handleToggleViewModal("DELETE");
-                        }}
-                      />
+
+                      {isAdmin && (
+                        <>
+                          <EditButton
+                            handleUpdate={() => handleEditClick(res)}
+                          />
+                          <DeleteButton
+                            handleDelete={() => {
+                              setSelectedId(res.id);
+                              handleToggleViewModal("DELETE");
+                            }}
+                          />
+                        </>
+                      )}
                     </div>
                   </div>
                 ))}

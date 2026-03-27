@@ -17,6 +17,7 @@ import { Pagination } from "../../Components/Pagination/Pagination";
 import axios from "axios";
 import { BASE_URL } from "../../Content/URL";
 import { RiInboxArchiveLine } from "react-icons/ri";
+import { useLocation } from "react-router-dom";
 
 type ADDLEAVET = {
   id: number;
@@ -46,6 +47,7 @@ export const LeaveRequests = ({
   const token = currentUser?.token;
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
+  const location = useLocation();
 
   const [isOpenModal, setIsOpenModal] = useState<ISOPENMODALT | "">("");
   const [EditLeave, setEditLeave] = useState<ADDLEAVET | null>(null);
@@ -53,6 +55,19 @@ export const LeaveRequests = ({
   const [pageNo, setPageNo] = useState(1);
   const [viewLeave, setViewLeave] = useState<ADDLEAVET | null>(null);
   const [selectedLeave, setSelectedLeave] = useState<ADDLEAVET | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const viewId = params.get("viewId");
+
+    if (viewId && allLeaves.length > 0) {
+      const leaveToView = allLeaves.find((l) => l.id === Number(viewId));
+      if (leaveToView) {
+        setViewLeave(leaveToView);
+        setIsOpenModal("VIEW");
+      }
+    }
+  }, [allLeaves, location.search]);
 
   const handleGetAllLeaves = useCallback(async () => {
     if (!currentUser) return;
@@ -231,8 +246,6 @@ export const LeaveRequests = ({
                     {/* Employee Info (Admin Only) - No Icons */}
                     {currentUser?.role === "admin" && (
                       <div className="flex items-center gap-3 overflow-hidden">
-                        
-
                         <div className="flex flex-col min-w-0">
                           <span className="truncate text-gray-800 text-sm">
                             {leave.name}

@@ -1334,73 +1334,7 @@ export const MainContent = () => {
         </div>
       </div>
 
-      {/* <div className="w-full bg-white p-6 rounded-xl shadow-sm border border-slate-100 space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-slate-800">Projects</h2>
-        </div>
-
-        <div className="w-full bg-white p-5 rounded-xl shadow-sm border border-slate-100">
-          <form
-            className="flex flex-col md:flex-row items-end gap-4 w-full"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <div className="flex-1 min-w-0 w-full">
-              <OptionField
-                labelName="CATEGORY"
-                name="categoryName"
-                icon={<Shapes className="w-4 h-4 text-black" />} 
-                handlerChange={handleChange}
-                value={formData.categoryName}
-                optionData={allCategory?.map((category) => ({
-                  id: category.id,
-                  label: category.categoryName,
-                  value: category.categoryName,
-                }))}
-                inital="All Categories"
-              />
-            </div>
-
-            <div className="flex-1 min-w-0 text-black w-full">
-              <InputField
-                type="date"
-                className="[color-scheme:light] ..."
-                labelName="FROM"
-                name="fromDate"
-                icon={<Calendar className="w-4 h-4 text-black" />}
-                value={formData.fromDate}
-                handlerChange={handleChange}
-              />
-            </div>
-
-            <div className="flex-1 min-w-0 text-black w-full">
-              <InputField
-                type="date"
-                className="[color-scheme:light] ..."
-                labelName="TO"
-                name="toDate"
-                icon={<Calendar className="w-4 h-4 text-black" />}
-                value={formData.toDate}
-                handlerChange={handleChange}
-              />
-            </div>
-          </form>
-        </div>
-
-        <DragDropContext onDragEnd={onDragEnd}>
-          <div className="grid grid-cols-1 lg:grid-cols-3 w-full gap-6">
-            {columsData.map((column) => (
-              <div key={column.id} className="min-h-[400px]">
-                <Columns
-                  colum={column}
-                  allProject={filteredProjects.filter(
-                    (project) => project.completionStatus === column.id,
-                  )}
-                />
-              </div>
-            ))}
-          </div>
-        </DragDropContext>
-      </div> */}
+      
     </div>
   );
 };
