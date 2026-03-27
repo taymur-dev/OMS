@@ -14,6 +14,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPrint } from "@fortawesome/free-solid-svg-icons";
 import { RiInboxArchiveLine } from "react-icons/ri";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 
 type AccountReportT = {
   id: number;
@@ -26,6 +28,40 @@ type AccountReportT = {
   paymentMethod: string;
   paymentDate: string;
 };
+
+type UserType = {
+  id: number;
+  name: string;
+  email: string;
+  contact: string;
+  cnic: string;
+  address: string;
+  date: string;
+  password: string;
+  confirmPassword: string;
+  role: string;
+  loginStatus: string;
+  image?: string; // Add image field
+};
+
+type AllcustomerT = {
+  id: number;
+  customerStatus: string;
+  customerName: string;
+  customerAddress: string;
+  customerContact: string;
+  email: string;
+  companyName: string;
+  companyAddress: string;
+};
+
+interface Supplier {
+  supplierId: number;
+  supplierName: string;
+  supplierEmail: string;
+  supplierContact: string;
+  supplierAddress: string;
+}
 
 interface AccountReportProps {
   externalSearch: string;
@@ -309,6 +345,100 @@ export const AccountReport = ({
     }, 500);
   };
 
+  const handleEmailReport = async () => {
+    try {
+      if (!filteredReports.length) {
+        toast.error("No data available to send");
+        return;
+      }
+
+      if (!appliedFilters.accountType) {
+        toast.error("Please select account type");
+        return;
+      }
+
+      if (!appliedFilters.selectedName) {
+        toast.error(`Please select ${appliedFilters.accountType}`);
+        return;
+      }
+
+      // ✅ Get Email based on Account Type
+      let emailToSend = "";
+
+      if (appliedFilters.accountType === "Employee") {
+        const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
+          headers: { Authorization: token },
+        });
+
+        const user = res.data.users.find(
+          (u: UserType) => u.name === appliedFilters.selectedName,
+        );
+
+        emailToSend = user?.email || "";
+      }
+
+      if (appliedFilters.accountType === "Customer") {
+        const res = await axios.get(`${BASE_URL}/api/admin/getAllCustomers`, {
+          headers: { Authorization: token },
+        });
+
+        const customer = res.data.find(
+          (c: AllcustomerT) => c.customerName === appliedFilters.selectedName,
+        );
+
+        emailToSend = customer?.email || "";
+      }
+
+      if (appliedFilters.accountType === "Supplier") {
+        const res = await axios.get(`${BASE_URL}/api/admin/getSuppliers`, {
+          headers: { Authorization: token },
+        });
+
+        const supplier = res.data.data.find(
+          (s: Supplier) => s.supplierName === appliedFilters.selectedName,
+        );
+
+        emailToSend = supplier?.supplierEmail || "";
+      }
+
+      if (!emailToSend) {
+        toast.error("No email found for selected account");
+        return;
+      }
+
+      // ✅ Columns for PDF
+      const columns = [
+        { label: "Sr#", key: "__index" },
+        { label: "Type", key: "account_type" },
+        { label: "Name", key: "name" },
+        { label: "Invoice", key: "invoiceNo" },
+        { label: "RefNo", key: "refNo" },
+        { label: "Debit", key: "debit" },
+        { label: "Credit", key: "credit" },
+        { label: "Method", key: "paymentMethod" },
+        { label: "Date", key: "paymentDate" },
+      ];
+
+      await axios.post(
+        `${BASE_URL}/api/admin/send-report`,
+        {
+          email: emailToSend,
+          reportData: filteredReports,
+          business: businessVar,
+          columns,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      toast.success(`${appliedFilters.accountType} report sent successfully`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to send report");
+    }
+  };
+
   if (loader) return <Loader />;
 
   return (
@@ -379,6 +509,16 @@ export const AccountReport = ({
             >
               <FontAwesomeIcon icon={faPrint} className="mr-2" />
               Print
+            </button>
+
+            <button
+              onClick={handleEmailReport}
+              disabled={filteredReports.length === 0}
+              className="bg-blue-800 text-white px-6 py-3 rounded-lg shadow-sm flex-1 flex items-center 
+  justify-center font-bold text-sm"
+            >
+              <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
+              Email
             </button>
           </div>
         </div>
