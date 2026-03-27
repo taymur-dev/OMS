@@ -228,7 +228,7 @@ export const Todo = ({
                     </div>
 
                     <div className="text-gray-600 truncate">
-                      {todo.employeeEmail || "-"}
+                      {todo.email || "-"}
                     </div>
 
                     {/* Task Detail */}
