@@ -151,8 +151,7 @@ export const Todo = ({
 
   return (
     <div className="flex flex-col flex-grow bg-white overflow-hidden">
-           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 px-3 py-4">
-
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 px-3 py-4">
         <div className="w-full sm:w-[220px]">
           <InputField
             labelName="From"
@@ -184,11 +183,12 @@ export const Todo = ({
         <div className="min-w-[1000px]">
           {/* Header Section aligned with UsersDetails */}
           <div className="px-0.5 pt-0.5">
-            <div className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm">
+            <div className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm">
               <span className="text-left">Sr#</span>
               <span className="text-left">
                 {currentUser?.role === "admin" ? "Employee" : "Task ID"}
               </span>
+              <span className="text-left">Email</span>
               <span className="text-left">Task Detail</span>
               <span className="text-left">Start</span>
               <span className="text-left">End</span>
@@ -210,7 +210,7 @@ export const Todo = ({
                 {paginatedTodos.map((todo, index) => (
                   <div
                     key={todo.id}
-                    className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_1fr_1fr_auto] items-center px-3 py-2 gap-3 text-sm bg-white
+                    className="grid grid-cols-[60px_1fr_1fr_1fr_1fr_1fr_1fr_1fr_auto] items-center px-3 py-2 gap-3 text-sm bg-white
                      border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
                     {/* Sr# */}
@@ -225,6 +225,10 @@ export const Todo = ({
                           ? todo.employeeName || "Unassigned"
                           : `#${todo.id}`}
                       </span>
+                    </div>
+
+                    <div className="text-gray-600 truncate">
+                      {todo.employeeEmail || "-"}
                     </div>
 
                     {/* Task Detail */}

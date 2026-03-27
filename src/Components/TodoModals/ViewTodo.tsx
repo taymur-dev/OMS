@@ -9,6 +9,7 @@ import {
   FaClock,
   FaClipboardList,
 } from "react-icons/fa";
+import { FaEnvelope } from "react-icons/fa";
 
 type ViewTodoProps = {
   setIsOpenModal: () => void;
@@ -54,6 +55,16 @@ export const ViewTodo = ({ setIsOpenModal, viewTodo }: ViewTodoProps) => {
                   {viewTodo.employee_id || "Unassigned"}
                 </p>
               </div>
+
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaEnvelope className="text-gray-400" /> Email
+                </label>
+                <p className="text-gray-800 font-medium">
+                  {viewTodo.employeeEmail || "-"}
+                </p>
+              </div>
+
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                   <FaTasks className="text-gray-400" /> Task Title

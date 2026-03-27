@@ -9,6 +9,8 @@ import { Pagination } from "../../Components/Pagination/Pagination";
 import { InputField } from "../../Components/InputFields/InputField";
 import { OptionField } from "../../Components/InputFields/OptionField";
 import { Loader } from "../../Components/LoaderComponent/Loader";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
@@ -314,6 +316,50 @@ export const ProcessReports = ({
     fetchBusinessVariable();
   }, [getProcessReports, fetchBusinessVariable]);
 
+  const handleEmailReport = async () => {
+    try {
+      if (!filteredTasks.length) {
+        toast.error("No data available to send");
+        return;
+      }
+
+      const columns = [
+        { label: "Sr#", key: "__index" },
+        ...(isAdmin ? [{ label: "Employee", key: "employeeName" }] : []),
+        { label: "Task", key: "task" },
+        { label: "Start Date", key: "startDate" },
+        { label: "End Date", key: "endDate" },
+        { label: "Deadline", key: "deadline" },
+      ];
+
+      // decide email
+      const emailToSend = currentUser?.email;
+
+      if (!emailToSend) {
+        toast.error("No email found");
+        return;
+      }
+
+      await axios.post(
+        `${BASE_URL}/api/admin/send-todo-report`,
+        {
+          email: emailToSend,
+          reportData: filteredTasks,
+          business: businessVar,
+          columns,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      toast.success("Task report sent successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to send task report");
+    }
+  };
+
   if (loader) return <Loader />;
 
   return (
@@ -362,6 +408,14 @@ export const ProcessReports = ({
             >
               <FontAwesomeIcon icon={faPrint} className="mr-2" />
               Print
+            </button>
+            <button
+              onClick={handleEmailReport}
+              disabled={filteredTasks.length === 0}
+              className="bg-blue-800 text-white px-6 py-3 rounded-lg shadow-sm flex-1 flex items-center justify-center whitespace-nowrap transition-all"
+            >
+              <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
+              Email Report
             </button>
           </div>
         </div>
