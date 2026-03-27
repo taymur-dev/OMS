@@ -75,7 +75,10 @@ export const AccountReport = ({
     const filtered = accounts.filter(
       (acc) => acc.account_type === reportData.accountType,
     );
-    const uniqueNames = Array.from(new Set(filtered.map((acc) => acc.name)));
+
+    const uniqueNames = Array.from(
+      new Set(filtered.map((acc) => acc.name).filter(Boolean)),
+    );
 
     return uniqueNames.map((name, index) => ({
       id: index,
@@ -119,6 +122,8 @@ export const AccountReport = ({
       setAccounts(
         res.data.report.map((acc: AccountReportT) => ({
           ...acc,
+          name: acc.name ?? "",
+          invoiceNo: acc.invoiceNo ?? "",
           paymentDate: new Date(acc.paymentDate).toLocaleDateString("sv-SE"),
         })),
       );
@@ -160,9 +165,15 @@ export const AccountReport = ({
       accounts
         .filter(
           (acc) =>
-            acc.name.toLowerCase().includes(externalSearch.toLowerCase()) ||
-            acc.refNo.toLowerCase().includes(externalSearch.toLowerCase()) ||
-            acc.invoiceNo.toLowerCase().includes(externalSearch.toLowerCase()),
+            (acc.name ?? "")
+              .toLowerCase()
+              .includes(externalSearch.toLowerCase()) ||
+            (acc.refNo ?? "")
+              .toLowerCase()
+              .includes(externalSearch.toLowerCase()) ||
+            (acc.invoiceNo ?? "")
+              .toLowerCase()
+              .includes(externalSearch.toLowerCase()),
         )
         .filter((acc) =>
           appliedFilters.accountType
