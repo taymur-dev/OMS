@@ -14,6 +14,7 @@ import { BASE_URL } from "../../Content/URL";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPrint } from "@fortawesome/free-solid-svg-icons";
 import { RiInboxArchiveLine } from "react-icons/ri";
+import { toast } from "react-toastify";
 
 type UserType = {
   id: number;
@@ -25,6 +26,7 @@ type AttendanceT = {
   id: number;
   userId: number;
   name: string;
+  email: string;
   date: string;
   clockIn: string;
   clockOut: string;
@@ -116,20 +118,20 @@ export const AttendanceReports = ({
   }, [token]);
 
   const fetchBusinessVariable = useCallback(async () => {
-  if (!token) return;
+    if (!token) return;
 
-  try {
-    const res = await axios.get(`${BASE_URL}/api/admin/business-variables`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/business-variables`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    if (res.data.length > 0) {
-      setBusinessVar(res.data[0]);
+      if (res.data.length > 0) {
+        setBusinessVar(res.data[0]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch business variable:", err);
     }
-  } catch (err) {
-    console.error("Failed to fetch business variable:", err);
-  }
-}, [token]);
+  }, [token]);
 
   /* ================= FILTER LOGIC ================= */
   const handleSearchClick = () => {
@@ -212,15 +214,15 @@ export const AttendanceReports = ({
 
     const printWindow = window.open("", "_blank");
 
-     const logoUrl = businessVar?.logo
-  ? businessVar.logo.startsWith("http")
-    ? businessVar.logo
-    : `${BASE_URL}/${businessVar.logo}`
-  : "";
+    const logoUrl = businessVar?.logo
+      ? businessVar.logo.startsWith("http")
+        ? businessVar.logo
+        : `${BASE_URL}/${businessVar.logo}`
+      : "";
 
-const logoHtml = logoUrl
-  ? `<img src="${logoUrl}" style="max-height:120px; margin-bottom:10px;" />`
-  : "";
+    const logoHtml = logoUrl
+      ? `<img src="${logoUrl}" style="max-height:120px; margin-bottom:10px;" />`
+      : "";
 
     printWindow?.document.write(`
     <html>
@@ -261,7 +263,7 @@ const logoHtml = logoUrl
     </html>
   `);
 
-   printWindow?.document.close();
+    printWindow?.document.close();
 
     setTimeout(() => {
       printWindow?.focus();
@@ -270,17 +272,78 @@ const logoHtml = logoUrl
     }, 500);
   };
 
-  
   useEffect(() => {
-  document.title = "(OMS) ATTENDANCE REPORTS";
-  dispatch(navigationStart());
+    document.title = "(OMS) ATTENDANCE REPORTS";
+    dispatch(navigationStart());
 
-  getAttendanceReport();
-  if (isAdmin) getUsers();
-  fetchBusinessVariable();
+    getAttendanceReport();
+    if (isAdmin) getUsers();
+    fetchBusinessVariable();
 
-  setTimeout(() => dispatch(navigationSuccess("ATTENDANCE REPORTS")), 800);
-}, [dispatch, getAttendanceReport, getUsers, fetchBusinessVariable, isAdmin]);
+    setTimeout(() => dispatch(navigationSuccess("ATTENDANCE REPORTS")), 800);
+  }, [dispatch, getAttendanceReport, getUsers, fetchBusinessVariable, isAdmin]);
+
+  const handleEmailReport = async () => {
+    try {
+      if (!filteredAttendance.length) {
+        toast.error("No data available to send");
+        return;
+      }
+
+      const columns = [
+        { label: "Sr#", key: "__index" },
+        { label: "Date", key: "date" },
+        ...(isAdmin ? [{ label: "Employee", key: "name" }] : []),
+        { label: "Clock In", key: "clockIn" },
+        { label: "Clock Out", key: "clockOut" },
+        { label: "Working Hours", key: "workingHours" },
+        { label: "Status", key: "attendanceStatus" },
+      ];
+
+      // ✅ Admin must select employee
+      const selectedEmployeeId = isAdmin ? reportData.userId : currentUser?.id;
+
+      if (isAdmin && !selectedEmployeeId) {
+        toast.error("Please select an employee");
+        return;
+      }
+
+      // ✅ find email from attendance list
+      const selectedEmployee = attendance.find(
+        (a) => a.userId === Number(selectedEmployeeId),
+      );
+
+      let emailToSend = selectedEmployee?.email;
+
+      // fallback for logged-in user
+      if (!emailToSend) {
+        emailToSend = currentUser?.email;
+      }
+
+      if (!emailToSend) {
+        toast.error("Email not found");
+        return;
+      }
+
+      await axios.post(
+        `${BASE_URL}/api/admin/send-report`,
+        {
+          email: emailToSend,
+          reportData: filteredAttendance,
+          business: businessVar,
+          columns,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      toast.success("Attendance report sent successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to send attendance report");
+    }
+  };
 
   if (loader) return <Loader />;
 
@@ -338,6 +401,14 @@ const logoHtml = logoUrl
             >
               <FontAwesomeIcon icon={faPrint} className="mr-2" />
               Print
+            </button>
+
+            <button
+              onClick={handleEmailReport}
+              className="bg-green-500 text-white px-6 py-3 rounded-lg shadow flex-1 flex items-center
+ justify-center whitespace-nowrap transition"
+            >
+              Email Report
             </button>
           </div>
         </div>

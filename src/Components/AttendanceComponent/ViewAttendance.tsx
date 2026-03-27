@@ -18,6 +18,7 @@ type AttendanceT = {
   leaveStatus: string | null;
   leaveReason: string | null;
   name: string;
+  email: string;
   role: string;
   status: string;
   userId: number;
@@ -60,6 +61,16 @@ export const ViewAttendance = ({
                   {viewAttendance.name}
                 </p>
               </div>
+
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaUser className="text-gray-400" /> Employee Email
+                </label>
+                <p className="text-gray-800 font-medium">
+                  {viewAttendance.email}
+                </p>
+              </div>
+
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                   <FaTag className="text-gray-400" /> Role

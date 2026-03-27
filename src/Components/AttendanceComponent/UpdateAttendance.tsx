@@ -20,6 +20,7 @@ type UpdateAttendanceT = {
   leaveStatus: string | null;
   leaveReason: string | null;
   name: string;
+  email: string;
   role: string;
   status: string;
   userId: number;

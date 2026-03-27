@@ -32,6 +32,7 @@ export type AttendanceT = {
   leaveStatus: string | null;
   leaveReason: string | null;
   name: string;
+  email: string;
   role: string;
   status: string;
   userId: number;
@@ -218,12 +219,13 @@ export const UserAttendance = ({
             <div
               className={`grid ${
                 isAdmin
-                  ? "grid-cols-[60px_1.5fr_1fr_1fr_1fr_1fr_1fr_auto]"
+                  ? "grid-cols-[60px_1.5fr_1.5fr_1fr_1fr_1fr_1fr_1fr_auto]"
                   : "grid-cols-[60px_1fr_1fr_1fr_1fr_1fr_auto]"
               } bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm`}
             >
               <span className="text-left">Sr#</span>
               {isAdmin && <span className="text-left">Employee</span>}
+              {isAdmin && <span className="text-left">Email</span>}
               <span className="text-left">Clock In</span>
               <span className="text-left">Clock Out</span>
               <span className="text-left">Working Hours</span>
@@ -247,7 +249,7 @@ export const UserAttendance = ({
                     key={att.id}
                     className={`grid ${
                       isAdmin
-                        ? "grid-cols-[60px_1.5fr_1fr_1fr_1fr_1fr_1fr_auto]"
+                        ? "grid-cols-[60px_1.5fr_1.5fr_1fr_1fr_1fr_1fr_1fr_auto]"
                         : "grid-cols-[60px_1fr_1fr_1fr_1fr_1fr_auto]"
                     } items-center px-3 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm`}
                   >
@@ -261,6 +263,10 @@ export const UserAttendance = ({
                           {att.name}
                         </span>
                       </div>
+                    )}
+
+                    {isAdmin && (
+                      <div className="text-gray-600 truncate">{att.email}</div>
                     )}
 
                     <div className="text-green-600 truncate">
