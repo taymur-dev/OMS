@@ -19,6 +19,7 @@ type EditProgressProps = {
     id: number;
     employee_id: number;
     employeeName: string;
+    email: string;
     projectId: number;
     projectName: string;
     date: string;
@@ -30,6 +31,7 @@ type EditProgressProps = {
 type UserT = {
   id: number;
   employeeName?: string;
+  email?: string;
   name?: string;
   loginStatus: string;
   role: string;
@@ -37,6 +39,7 @@ type UserT = {
 
 type UpdateProgressState = {
   employee_id: string;
+  email: string;
   project: string;
   date: string;
   note: string;
@@ -59,6 +62,7 @@ export const EditProgress = ({
 
   const [updateProgress, setUpdateProgress] = useState<UpdateProgressState>({
     employee_id: "",
+    email: "",
     project: "",
     date: "",
     note: "",
@@ -77,6 +81,7 @@ export const EditProgress = ({
 
       setUpdateProgress({
         employee_id: String(progressData.employee_id),
+        email: progressData.email,
         project: progressData.projectName,
         date: formattedDate,
         note: progressData.note,
@@ -95,6 +100,19 @@ export const EditProgress = ({
 
     if (name === "note") {
       updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+    }
+
+    if (name === "employee_id") {
+      const selectedUser = allUsers.find((u) => String(u.id) === value);
+
+      setUpdateProgress((prev) => ({
+        ...prev,
+        employee_id: value,
+        email: selectedUser?.email || "",
+        project: "",
+      }));
+
+      return;
     }
 
     setUpdateProgress((prev) => ({ ...prev, [name]: updatedValue }));
@@ -155,6 +173,7 @@ export const EditProgress = ({
         `${BASE_URL}/api/admin/updateProgress/${progressData.id}`,
         {
           employee_id: updateProgress.employee_id,
+          email: updateProgress.email, 
           projectId: selectedProject.projectId,
           date: updateProgress.date,
           note: updateProgress.note,
@@ -256,7 +275,7 @@ export const EditProgress = ({
                 name="note"
                 handlerChange={handlerChange}
                 inputVal={updateProgress.note}
-                 minLength={3} // Add this
+                minLength={3} // Add this
                 maxLength={250}
               />
             </div>

@@ -44,6 +44,16 @@ export const ViewProgress = ({
                   {viewProgress.employeeName || "N/A"}
                 </p>
               </div>
+
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaUser className="text-gray-400" /> Employee Email
+                </label>
+                <p className="text-gray-800 font-medium">
+                  {viewProgress.email || "N/A"}
+                </p>
+              </div>
+
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                   <FaProjectDiagram className="text-gray-400" /> Project

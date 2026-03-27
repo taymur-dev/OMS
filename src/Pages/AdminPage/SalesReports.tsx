@@ -324,12 +324,20 @@ export const SalesReports = ({
 
                   console.log("Sending email to:", targetEmail);
 
+                  const columns = [
+                    { label: "Sr#", key: "__index" },
+                    { label: "Customer", key: "customerName" },
+                    { label: "Project", key: "projectName" },
+                    { label: "Date", key: "saleDate" },
+                  ];
+
                   await axios.post(
                     `${BASE_URL}/api/admin/send-report`,
                     {
                       email: targetEmail,
                       reportData: filteredReports,
                       business: businessVar,
+                      columns,
                     },
                     {
                       headers: { Authorization: `Bearer ${token}` },

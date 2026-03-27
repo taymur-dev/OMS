@@ -27,6 +27,7 @@ export type ALLPROGRESST = {
   id: number;
   employee_id: number;
   employeeName: string;
+  email: string;
   projectId: number;
   projectName: string;
   date: string;
@@ -111,7 +112,8 @@ export const Progress = ({
       const matchesSearch =
         p.employeeName?.toLowerCase().includes(externalSearch.toLowerCase()) ||
         p.projectName?.toLowerCase().includes(externalSearch.toLowerCase()) ||
-        p.note?.toLowerCase().includes(externalSearch.toLowerCase());
+        p.note?.toLowerCase().includes(externalSearch.toLowerCase()) ||
+        p.email?.toLowerCase().includes(externalSearch.toLowerCase());
 
       // 2. Date Range Filter
       const progressDateStr = new Date(p.date).toISOString().split("T")[0];
@@ -156,7 +158,7 @@ export const Progress = ({
       );
       toast.success("Progress deleted successfully");
       handleGetAllProgress();
-      setSelectedId(null); 
+      setSelectedId(null);
       setIsOpenModal("");
     } catch (error) {
       console.log(error);
@@ -169,45 +171,45 @@ export const Progress = ({
 
   return (
     <div className="flex flex-col h-full bg-white overflow-hidden">
-     
-     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 px-3 py-4">
-      <div className="w-full sm:w-[220px]">
-        <InputField
-          labelName="From"
-          type="date"
-          value={fromDate}
-          handlerChange={(e) => {
-            setFromDate(e.target.value);
-            setPageNo(1);
-          }}
-          className="!shadow-none border-gray-300 focus:ring-blue-400"
-        />
-      </div>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 px-3 py-4">
+        <div className="w-full sm:w-[220px]">
+          <InputField
+            labelName="From"
+            type="date"
+            value={fromDate}
+            handlerChange={(e) => {
+              setFromDate(e.target.value);
+              setPageNo(1);
+            }}
+            className="!shadow-none border-gray-300 focus:ring-blue-400"
+          />
+        </div>
 
-      <div className="w-full sm:w-[220px]">
-        <InputField
-          labelName="To"
-          type="date"
-          value={toDate}
-          handlerChange={(e) => {
-            setToDate(e.target.value);
-            setPageNo(1);
-          }}
-          className="!shadow-none border-gray-300 focus:ring-blue-400"
-        />
+        <div className="w-full sm:w-[220px]">
+          <InputField
+            labelName="To"
+            type="date"
+            value={toDate}
+            handlerChange={(e) => {
+              setToDate(e.target.value);
+              setPageNo(1);
+            }}
+            className="!shadow-none border-gray-300 focus:ring-blue-400"
+          />
+        </div>
       </div>
-    </div>
 
       <div className="overflow-auto px-3 sm:px-0">
         <div className="min-w-[900px]">
           {/* HEADER SECTION - Matches UsersDetails */}
           <div className="px-0.5 pt-0.5">
             <div
-              className={`grid ${currentUser?.role === "admin" ? "grid-cols-[60px_1.5fr_1fr_1fr_auto]" : "grid-cols-[60px_1.5fr_1fr_auto]"} 
+              className={`grid ${currentUser?.role === "admin" ? "grid-cols-[60px_1.5fr_1.5fr_1fr_1fr_auto]" : "grid-cols-[60px_1.5fr_1fr_auto]"} 
               bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm`}
             >
               <span>Sr#</span>
               {currentUser?.role === "admin" && <span>Employee</span>}
+              {currentUser?.role === "admin" && <span>Email</span>}
               <span>Project Name</span>
               <span>Submission Date</span>
               <span className="text-right pr-10">Actions</span>
@@ -230,7 +232,7 @@ export const Progress = ({
                     key={item.id}
                     className={`grid ${
                       currentUser?.role === "admin"
-                        ? "grid-cols-[60px_1.5fr_1fr_1fr_auto]"
+                        ? "grid-cols-[60px_1.5fr_1.5fr_1fr_1fr_auto]"
                         : "grid-cols-[60px_1.5fr_1fr_auto]"
                     } 
                     items-center p-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30
@@ -241,9 +243,15 @@ export const Progress = ({
                     </span>
 
                     {currentUser?.role === "admin" && (
-                      <div className="flex items-center gap-2   text-gray-700">
-                        {item.employeeName}
-                      </div>
+                      <>
+                        <div className="flex items-center gap-2 text-gray-700">
+                          {item.employeeName}
+                        </div>
+
+                        <div className="flex items-center gap-2 text-gray-600">
+                          {item.email}
+                        </div>
+                      </>
                     )}
 
                     <div className="flex items-center gap-2 text-gray-600">

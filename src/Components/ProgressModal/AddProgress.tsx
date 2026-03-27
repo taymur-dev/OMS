@@ -19,6 +19,7 @@ type AddProgressProps = {
 type UserT = {
   id: number | string;
   employeeName?: string;
+  email: string;
   name?: string;
   loginStatus?: string;
   role: string;
@@ -36,6 +37,7 @@ const currentDate = today.toLocaleDateString("en-CA");
 
 type AddProgressType = {
   employee_id: string;
+  email?: string;
   projectId: string;
   date: string;
   note: string;
@@ -43,6 +45,7 @@ type AddProgressType = {
 
 const initialState: AddProgressType = {
   employee_id: "",
+  email: "",
   projectId: "",
   date: currentDate,
   note: "",
@@ -131,9 +134,18 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
 
     setAddProgress((prev) => ({ ...prev, [name]: updatedValue }));
 
-    if (name === "employee_id" && value) {
+    if (name === "employee_id") {
+      const selectedUser = allUsers.find((u) => String(u.id) === value);
+
+      setAddProgress((prev) => ({
+        ...prev,
+        employee_id: value,
+        email: selectedUser?.email || "", // ✅ SET EMAIL
+        projectId: "",
+      }));
+
       fetchProjectsByUser(value);
-      setAddProgress((prev) => ({ ...prev, projectId: "" }));
+      return;
     }
   };
 
@@ -158,6 +170,7 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
         `${BASE_URL}/api/admin/addProgress`,
         {
           ...addProgress,
+
           projectId: Number(addProgress.projectId),
           date: addProgress.date,
           note: addProgress.note,

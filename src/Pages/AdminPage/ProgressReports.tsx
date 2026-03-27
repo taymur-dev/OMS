@@ -8,6 +8,8 @@ import { Loader } from "../../Components/LoaderComponent/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPrint } from "@fortawesome/free-solid-svg-icons";
 import { RiInboxArchiveLine } from "react-icons/ri";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 
 import { useAppDispatch, useAppSelector } from "../../redux/Hooks";
 import {
@@ -20,6 +22,7 @@ export type ALLPROGRESST = {
   id: number;
   employee_id: number;
   employeeName: string;
+  email: string;
   projectId: number;
   projectName: string;
   date: string;
@@ -47,7 +50,6 @@ export const ProgressReports = ({
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
-
 
   const currentDate = new Date().toLocaleDateString("sv-SE");
 
@@ -91,24 +93,24 @@ export const ProgressReports = ({
   }, [token, currentUser, dispatch]);
 
   const fetchBusinessVariable = useCallback(async () => {
-  try {
-    const res = await axios.get(`${BASE_URL}/api/admin/business-variables`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    try {
+      const res = await axios.get(`${BASE_URL}/api/admin/business-variables`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    if (res.data.length > 0) {
-      setBusinessVar(res.data[0]);
+      if (res.data.length > 0) {
+        setBusinessVar(res.data[0]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch business variable:", err);
     }
-  } catch (err) {
-    console.error("Failed to fetch business variable:", err);
-  }
-}, [token]);
+  }, [token]);
 
-useEffect(() => {
-  document.title = "(OMS) PROGRESS REPORTS";
-  getProgressReport();
-  fetchBusinessVariable();
-}, [getProgressReport, fetchBusinessVariable]);
+  useEffect(() => {
+    document.title = "(OMS) PROGRESS REPORTS";
+    getProgressReport();
+    fetchBusinessVariable();
+  }, [getProgressReport, fetchBusinessVariable]);
 
   useEffect(() => {
     setPageNo(1);
@@ -171,8 +173,8 @@ useEffect(() => {
     setReportData((prev) => ({ ...prev, [name]: value }));
   };
 
- const printDiv = () => {
-  const printStyles = `
+  const printDiv = () => {
+    const printStyles = `
     @page { size: A4 landscape; margin: 10mm; }
     body { font-family: Arial, sans-serif; font-size: 10pt; }
     .print-header { text-align: center; margin-bottom: 20px; }
@@ -181,9 +183,9 @@ useEffect(() => {
     th { background-color: #f2f2f2; font-weight: bold; }
   `;
 
-  const tableRows = filteredProgress
-    .map(
-      (item, index) => `
+    const tableRows = filteredProgress
+      .map(
+        (item, index) => `
       <tr>
         <td>${index + 1}</td>
         <td>${item.employeeName}</td>
@@ -191,22 +193,22 @@ useEffect(() => {
         <td>${item.note}</td>
       </tr>
     `,
-    )
-    .join("");
+      )
+      .join("");
 
-  const logoUrl = businessVar?.logo
-    ? businessVar.logo.startsWith("http")
-      ? businessVar.logo
-      : `${BASE_URL}/${businessVar.logo}`
-    : "";
+    const logoUrl = businessVar?.logo
+      ? businessVar.logo.startsWith("http")
+        ? businessVar.logo
+        : `${BASE_URL}/${businessVar.logo}`
+      : "";
 
-  const logoHtml = logoUrl
-    ? `<img src="${logoUrl}" style="max-height:120px; margin-bottom:15px;" />`
-    : "";
+    const logoHtml = logoUrl
+      ? `<img src="${logoUrl}" style="max-height:120px; margin-bottom:15px;" />`
+      : "";
 
-  const printWindow = window.open("", "_blank");
+    const printWindow = window.open("", "_blank");
 
-  printWindow?.document.write(`
+    printWindow?.document.write(`
     <html>
       <head>
         <title>Progress Report</title>
@@ -245,14 +247,78 @@ useEffect(() => {
     </html>
   `);
 
-  printWindow?.document.close();
+    printWindow?.document.close();
 
-  setTimeout(() => {
-    printWindow?.focus();
-    printWindow?.print();
-    printWindow?.close();
-  }, 500);
-};
+    setTimeout(() => {
+      printWindow?.focus();
+      printWindow?.print();
+      printWindow?.close();
+    }, 500);
+  };
+
+  const handleEmailReport = async () => {
+    try {
+      if (!filteredProgress.length) {
+        toast.error("No data available to send");
+        return;
+      }
+
+      const columns = [
+        { label: "Sr#", key: "__index" },
+        { label: "Employee", key: "employeeName" },
+        { label: "Project", key: "projectName" },
+        { label: "Note", key: "note" },
+        { label: "Date", key: "date" },
+      ];
+
+      // ✅ Ensure employee is selected (for admin)
+      if (currentUser?.role === "admin" && !appliedFilters.employeeId) {
+        toast.error("Please select an employee");
+        return;
+      }
+
+      // ✅ Get email of selected employee
+      const selectedEmployeeId =
+        currentUser?.role === "admin"
+          ? appliedFilters.employeeId
+          : currentUser?.id;
+
+      const selectedEmployeeData = allProgress.find(
+        (item) => item.employee_id === Number(selectedEmployeeId),
+      );
+
+      let emailToSend = selectedEmployeeData?.email;
+
+      // ✅ Fallback (for user login case)
+      if (!emailToSend && currentUser?.email) {
+        emailToSend = currentUser.email;
+      }
+
+      if (!emailToSend) {
+        toast.error("No email found for selected employee");
+        return;
+      }
+
+      await axios.post(
+        `${BASE_URL}/api/admin/send-report`,
+        {
+          email: emailToSend, // ✅ single email
+          reportData: filteredProgress,
+          business: businessVar,
+          columns,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      toast.success("Progress report sent successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to send progress report");
+    }
+  };
+
   if (loader) return <Loader />;
 
   return (
@@ -298,6 +364,14 @@ useEffect(() => {
               className="bg-blue-400 text-white px-6 py-3 rounded-lg shadow flex-1 lg:flex-none flex items-center justify-center transition"
             >
               <FontAwesomeIcon icon={faPrint} className="mr-2" /> Print
+            </button>
+            <button
+              onClick={handleEmailReport}
+              disabled={filteredProgress.length === 0}
+              className="bg-blue-800 text-white px-6 py-3 rounded-lg shadow flex-1 lg:flex-none flex items-center justify-center transition"
+            >
+              <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
+              Email Report
             </button>
           </div>
         </div>
