@@ -403,13 +403,15 @@ export const AttendanceReports = ({
               Print
             </button>
 
-            <button
-              onClick={handleEmailReport}
-              className="bg-green-500 text-white px-6 py-3 rounded-lg shadow flex-1 flex items-center
+            {isAdmin && (
+              <button
+                onClick={handleEmailReport}
+                className="bg-green-500 text-white px-6 py-3 rounded-lg shadow flex-1 flex items-center
  justify-center whitespace-nowrap transition"
-            >
-              Email Report
-            </button>
+              >
+                Email Report
+              </button>
+            )}
           </div>
         </div>
       </div>

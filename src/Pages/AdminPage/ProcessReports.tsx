@@ -53,6 +53,7 @@ export const ProcessReports = ({
 
   const token = currentUser?.token;
   const userId = currentUser?.userId;
+  const isAdmin = currentUser?.role === "admin";
 
   const currentDate = new Date().toLocaleDateString("sv-SE");
 
@@ -68,7 +69,6 @@ export const ProcessReports = ({
     employeeId: "",
   });
 
-  const isAdmin = currentUser?.role === "admin";
   const [allTasks, setAllTasks] = useState<PROCESST[]>([]);
   const [pageNo, setPageNo] = useState(1);
 
@@ -422,14 +422,17 @@ export const ProcessReports = ({
               <FontAwesomeIcon icon={faPrint} className="mr-2" />
               Print
             </button>
-            <button
-              onClick={handleEmailReport}
-              disabled={filteredTasks.length === 0}
-              className="bg-blue-800 text-white px-6 py-3 rounded-lg shadow-sm flex-1 flex items-center justify-center whitespace-nowrap transition-all"
-            >
-              <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
-              Email Report
-            </button>
+
+            {isAdmin && (
+              <button
+                onClick={handleEmailReport}
+                disabled={filteredTasks.length === 0}
+                className="bg-blue-800 text-white px-6 py-3 rounded-lg shadow-sm flex-1 flex items-center justify-center whitespace-nowrap transition-all"
+              >
+                <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
+                Email Report
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -50,6 +50,7 @@ export const ProgressReports = ({
   const { loader } = useAppSelector((state) => state.NavigateState);
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
+  const isAdmin = currentUser?.role === "admin";
 
   const currentDate = new Date().toLocaleDateString("sv-SE");
 
@@ -365,14 +366,16 @@ export const ProgressReports = ({
             >
               <FontAwesomeIcon icon={faPrint} className="mr-2" /> Print
             </button>
-            <button
-              onClick={handleEmailReport}
-              disabled={filteredProgress.length === 0}
-              className="bg-blue-800 text-white px-6 py-3 rounded-lg shadow flex-1 lg:flex-none flex items-center justify-center transition"
-            >
-              <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
-              Email Report
-            </button>
+            {isAdmin && (
+              <button
+                onClick={handleEmailReport}
+                disabled={filteredProgress.length === 0}
+                className="bg-blue-800 text-white px-6 py-3 rounded-lg shadow flex-1 lg:flex-none flex items-center justify-center transition"
+              >
+                <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
+                Email Report
+              </button>
+            )}
           </div>
         </div>
       </div>
