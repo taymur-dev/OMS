@@ -61,7 +61,7 @@ export const ViewTodo = ({ setIsOpenModal, viewTodo }: ViewTodoProps) => {
                   <FaEnvelope className="text-gray-400" /> Email
                 </label>
                 <p className="text-gray-800 font-medium">
-                  {viewTodo.employeeEmail || "-"}
+                  {viewTodo.email || "-"}
                 </p>
               </div>
 

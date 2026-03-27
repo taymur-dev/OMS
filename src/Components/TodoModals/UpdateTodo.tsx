@@ -16,7 +16,7 @@ export type TodoType = {
   id: number;
   employee_id: number;
   employeeName?: string;
-  employeeEmail?: string; 
+  email?: string; 
   name: string;
   task: string;
   startDate: string;
