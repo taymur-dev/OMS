@@ -341,7 +341,7 @@ export const ProcessReports = ({
       }
 
       await axios.post(
-        `${BASE_URL}/api/admin/send-todo-report`,
+        `${BASE_URL}/api/admin/send-report`,
         {
           email: emailToSend,
           reportData: filteredTasks,
