@@ -23,6 +23,7 @@ export type PROCESST = {
   id: number;
   employee_id: number;
   employeeName: string;
+  email: string;
   task: string;
   startDate: string;
   endDate: string;
@@ -332,11 +333,24 @@ export const ProcessReports = ({
         { label: "Deadline", key: "deadline" },
       ];
 
-      // decide email
-      const emailToSend = currentUser?.email;
+      let emailToSend: string | undefined;
+
+      // ✅ CASE 1: Admin selected an employee
+      if (isAdmin && reportData.employeeId) {
+        const selectedEmployee = filteredTasks.find(
+          (t) => t.employee_id === Number(reportData.employeeId),
+        );
+
+        emailToSend = selectedEmployee?.email;
+      }
+
+      // ✅ CASE 2: Non-admin OR fallback → current user email
+      if (!emailToSend) {
+        emailToSend = currentUser?.email;
+      }
 
       if (!emailToSend) {
-        toast.error("No email found");
+        toast.error("No email found for selected employee");
         return;
       }
 
@@ -359,7 +373,6 @@ export const ProcessReports = ({
       toast.error("Failed to send task report");
     }
   };
-
   if (loader) return <Loader />;
 
   return (
