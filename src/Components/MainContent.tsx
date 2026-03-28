@@ -138,12 +138,6 @@ type SupplierAccountEntry = {
   paymentDate: string;
 };
 
-type ProfitMapEntry = {
-  date: string;
-  income: number;
-  expense: number;
-};
-
 type ProfitChartData = {
   name: string;
   profit: number;
@@ -614,16 +608,18 @@ export const MainContent = () => {
   }, [allSales, allExpenses]);
 
   const profitLossTrend = useMemo(() => {
-    const map: Record<string, ProfitMapEntry> = {};
+    const map: Record<string, { income: number; expense: number }> = {};
 
     const addAmount = (dateStr: string, amount: number) => {
+      if (!dateStr) return;
       const date = new Date(dateStr);
       if (isNaN(date.getTime())) return;
 
-      const key = date.toISOString().slice(0, 10);
+      // Month-based key (e.g., "2026-01") taaki sorting sahi rahay
+      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 
       if (!map[key]) {
-        map[key] = { date: key, income: 0, expense: 0 };
+        map[key] = { income: 0, expense: 0 };
       }
 
       if (amount >= 0) {
@@ -633,40 +629,43 @@ export const MainContent = () => {
       }
     };
 
-    // SALES
-    allSales.forEach((s) => {
-      addAmount(s.saleDate, s.QTY * s.UnitPrice);
-    });
+    // 1. Data Processing
+    allSales.forEach((s) => addAmount(s.saleDate, s.QTY * s.UnitPrice));
+    allExpenses.forEach((e) => addAmount(e.date, -Number(e.amount)));
 
-    // EXPENSES
-    allExpenses.forEach((e) => {
-      addAmount(e.date, -Number(e.amount));
-    });
-
-    // EMPLOYEE
     employeeAccounts.forEach((a) => {
       addAmount(a.payment_date, Number(a.debit || 0));
       addAmount(a.payment_date, -Number(a.credit || 0));
     });
 
-    // CUSTOMER
     customerAccounts.forEach((a) => {
       addAmount(a.paymentDate, Number(a.debit || 0));
       addAmount(a.paymentDate, -Number(a.credit || 0));
     });
 
-    // SUPPLIER
     supplierAccounts.forEach((a) => {
       addAmount(a.paymentDate, Number(a.debit || 0));
       addAmount(a.paymentDate, -Number(a.credit || 0));
     });
 
-    return Object.values(map).map(
-      (d): ProfitChartData => ({
-        name: d.date,
-        profit: d.income - d.expense,
-      }),
-    );
+    // 2. Format for Recharts
+    return Object.keys(map)
+      .sort() // Monthly order ensure karne ke liye
+      .map((key): ProfitChartData => {
+        const [year, month] = key.split("-");
+        // Display Name: "Jan" or "Jan 26"
+        const name = new Date(Number(year), Number(month) - 1).toLocaleString(
+          "default",
+          {
+            month: "short",
+          },
+        );
+
+        return {
+          name: name, // Ye XAxis dataKey="name" se link hoga
+          profit: map[key].income - map[key].expense,
+        };
+      });
   }, [
     allSales,
     allExpenses,
@@ -1333,8 +1332,6 @@ export const MainContent = () => {
           </ResponsiveContainer>
         </div>
       </div>
-
-      
     </div>
   );
 };

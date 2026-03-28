@@ -57,7 +57,9 @@ export const CustomerAccount = ({
       const response = await axios.get(`${BASE_URL}/api/admin/getCustomerAcc`, {
         headers: { Authorization: `Bearer ${currentUser?.token}` },
       });
-      setCustomers(response.data || []);
+
+      setCustomers((response.data || []).reverse());
+
       dispatch(navigationSuccess("Customer Account"));
     } catch (error) {
       console.error("Error fetching customer accounts:", error);

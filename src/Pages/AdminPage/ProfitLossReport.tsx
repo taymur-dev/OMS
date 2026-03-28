@@ -51,6 +51,7 @@ type BusinessVarType = {
   name: string;
   email: string;
   contact: string;
+  address: string;
   logo?: string;
 };
 
@@ -308,25 +309,20 @@ export const ProfitLossReport = () => {
   const printDiv = () => {
     const printStyles = `
     @page { size: A4 portrait; margin: 10mm; }
-    body { font-family: Arial, sans-serif; font-size: 12pt; color: #333; }
+    body { font-family: Arial, sans-serif; font-size: 12pt; color: #333; background-color: white !important; }
     
-    /* Updated centering styles */
+    /* Ensure header has no background and is centered */
     .print-header { 
       text-align: center; 
       margin-bottom: 20px; 
       display: flex; 
       flex-direction: column; 
-      align-items: center; 
+      align-items: center;
+      background-color: transparent !important; /* Removes any inherited gray */
     }
     
-    .logo-container {
-      width: 100%;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .report-section { margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; padding: 15px; }
-    .section-title { font-weight: bold; background-color: #f0f0f0; padding: 5px 10px; border-radius: 6px; margin-bottom: 10px; }
+    .report-section { margin-bottom: 20px; border-radius: 8px; padding: 15px; }
+    .section-title { font-weight: bold; padding: 5px 10px; border-radius: 6px; margin-bottom: 10px; }
     .row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #ddd; }
     .row:last-child { border-bottom: none; }
     .total { font-weight: bold; margin-top: 10px; border-top: 2px solid #000; padding-top: 5px; }
@@ -334,48 +330,44 @@ export const ProfitLossReport = () => {
     .red { color: red; }
   `;
 
-    // Add print styles
     const styleEl = document.createElement("style");
     styleEl.innerHTML = printStyles;
     document.head.appendChild(styleEl);
 
-    // Print only the report container
     const reportElement = document.getElementById("printableReport");
     if (reportElement) {
       const originalContent = document.body.innerHTML;
 
-      const logoUrl = businessVar?.logo
-        ? businessVar.logo.startsWith("http")
-          ? businessVar.logo
-          : `${BASE_URL}/${businessVar.logo}`
-        : "";
-
-      const logoHtml = logoUrl
-        ? `<div class="logo-container"><img src="${logoUrl}" style="max-height:100px; display: inline-block;" /></div>`
-        : "";
-
+      // Added "background-color: white" to the inline style for extra safety
       const headerHTML = `
-      <div class="print-header">
-        ${logoHtml}
-        <h2 style="margin: 5px 0;">${businessVar?.name || "Business Name"}</h2>
-        <p style="margin: 2px 0;">${businessVar?.email || ""} | ${businessVar?.contact || ""}</p>
-        <h1 style="margin: 10px 0 5px 0;">Profit & Loss Report</h1>
-        <p style="margin: 0;">
-          <strong>From:</strong> ${appliedFilters.startDate} 
-          <strong>To:</strong> ${appliedFilters.endDate}
-        </p>
+      <div class="print-header" style="text-align: center; padding-bottom: 10px; margin-bottom: 15px; background-color: white;">
+        <h2 style="margin: 0; font-size: 26px; font-weight: bold; color: black;">
+          ${businessVar?.name || "Business Name"}
+        </h2>
+        <div class="business-info" style="margin-top: 5px; font-size: 11pt; color: #555;">
+          <p style="margin: 2px 0;"> ${businessVar?.contact || "N/A"}</p>
+          <p style="margin: 2px 0;">${businessVar?.address || "N/A"}</p>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 10px; background-color: white;">
+        <h3 style="margin: 0; font-weight: bold;">Profit & Loss Report</h3>
+      </div>
+
+      <div class="report-meta" style="text-align: left; margin-bottom: 10px; font-size: 10pt; padding-bottom: 5px; background-color: white;">
+        <strong>From:</strong> ${appliedFilters.startDate} &nbsp;&nbsp;&nbsp;
+        <strong>To:</strong> ${appliedFilters.endDate}
       </div>
     `;
 
       document.body.innerHTML = headerHTML + reportElement.outerHTML;
       window.print();
 
-      // Restore original content
       document.body.innerHTML = originalContent;
       document.head.removeChild(styleEl);
+      window.location.reload(); // Recommended to restore JS listeners after overwriting innerHTML
     }
   };
-
   return (
     <div className="flex flex-col gap-6 p-4 bg-gray-50 min-h-screen">
       {/* FILTER SECTION */}
@@ -539,21 +531,27 @@ export const ProfitLossReport = () => {
         {/* SUMMARY CARD */}
         {/* Reduced py-3 to py-2 and text sizes */}
         <div
-          className={`rounded-xl border-2 px-6 py-2 flex flex-col sm:flex-row justify-between items-center transition-all ${
-            netProfitLoss >= 0
-              ? "bg-green-600 border-green-700 shadow-green-200"
-              : "bg-red-600 border-red-700 shadow-red-200"
-          } shadow-lg`}
+          className={`rounded-xl border-2 px-6 py-2 flex flex-col sm:flex-row justify-between items-center transition-all shadow-lg ${
+            netProfitLoss >= 0 ? "border-gray-200" : "border-gray-200"
+          }`}
         >
-          <div className="text-white">
-            <p className="text-[10px] uppercase tracking-widest opacity-80 font-bold">
+          <div className="text-black">
+            <p className="text-[10px] uppercase tracking-widest opacity-80">
               Net Result
             </p>
-            <h2 className="text-xl font-black uppercase leading-tight">
+            <h2
+              className={`font-black leading-tight ${
+                netProfitLoss >= 0 ? "text-green-600" : "text-red-600"
+              }`}
+            >
               {netProfitLoss >= 0 ? "Net Profit" : "Net Loss"}
             </h2>
           </div>
-          <div className="text-white text-2xl font-black mt-2 sm:mt-0 bg-white/20 px-4 py-1 rounded-lg backdrop-blur-sm">
+          <div
+            className={`font-black mt-2 sm:mt-0 bg-white/20 px-4 py-1 rounded-lg backdrop-blur-sm ${
+              netProfitLoss >= 0 ? "text-green-600" : "text-red-600"
+            }`}
+          >
             {netProfitLoss > 0 ? "+" : ""}
             {netProfitLoss.toLocaleString()}
           </div>

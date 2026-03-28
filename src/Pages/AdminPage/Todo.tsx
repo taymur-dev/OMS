@@ -46,6 +46,11 @@ export const Todo = ({
     return `${year}-${month}-01`;
   };
 
+  const getTodayDate = () => {
+    const date = new Date();
+    return date.toISOString().split("T")[0]; // YYYY-MM-DD
+  };
+
   const [allTodos, setAllTodos] = useState<ALLTODOT[]>([]);
   const [selectedTodo, setSelectedTodo] = useState<ALLTODOT | null>(null);
   const [modalType, setModalType] = useState<TODOT>("");
@@ -53,7 +58,7 @@ export const Todo = ({
   const [pageNo, setPageNo] = useState(1);
   const [viewTodo, setViewTodo] = useState<ALLTODOT | null>(null);
   const [fromDate, setFromDate] = useState<string>(getMonthStartDate());
-  const [toDate, setToDate] = useState<string>("");
+  const [toDate, setToDate] = useState<string>(getTodayDate());
 
   const token = currentUser?.token;
   const id = currentUser?.userId;

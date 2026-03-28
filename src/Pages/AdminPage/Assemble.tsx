@@ -93,7 +93,7 @@ export const Assemble = () => {
         />
 
         <div className="px-4 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex w-full sm:w-auto p-1 bg-[#F1F5F9] rounded-xl border border-gray-200">
+          <div className="flex w-full sm:w-auto p-1 bg-[#F1F5F9] rounded-xl border border-gray-200 overflow-x-auto no-scrollbar">
             {(
               [
                 "ATTENDANCE_RULES",

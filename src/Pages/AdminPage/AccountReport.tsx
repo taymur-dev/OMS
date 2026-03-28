@@ -73,6 +73,7 @@ export interface BusinessVarType {
   name: string;
   email: string;
   contact: string;
+  address: string;
   logo?: string;
 }
 
@@ -239,23 +240,19 @@ export const AccountReport = ({
 
   const printDiv = () => {
     const printStyles = `
-    @page { size: A4 landscape; margin: 10mm; }
-    body { font-family: Arial, sans-serif; font-size: 10pt; }
-    .print-header { text-align: center; margin-bottom: 20px; }
-
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-
-    th, td {
-      border: 1px solid #333;
-      padding: 8px;
-      text-align: left;
-    }
-
-    th {
-      background-color: #f2f2f2;
-      font-weight: bold;
-    }
-
+    @page { size: A4 portrait; margin: 10mm; }
+    body { font-family: Arial, sans-serif; font-size: 10pt; color: #333; }
+    .print-header { text-align: center; margin-bottom: 10px; }
+    
+    .business-info { line-height: 1.2; margin-bottom: 10px; color: #555; font-size: 9pt; }
+    .info-item { display: inline-flex; align-items: center; margin: 0 10px; }
+    .info-icon { width: 12px; height: 12px; margin-right: 5px; fill: #666; vertical-align: middle; }
+    
+    .report-meta { text-align: left; margin-bottom: 5px; font-size: 9pt; }
+    table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+    th, td { border: 1px solid #333; padding: 4px 8px; text-align: left; }
+    th { background-color: #f2f2f2; font-weight: bold; }
+    
     .debit { color: green; font-weight: bold; }
     .credit { color: red; font-weight: bold; }
   `;
@@ -263,32 +260,26 @@ export const AccountReport = ({
     const tableRows = filteredReports
       .map(
         (acc, index) => `
-      <tr>
-        <td>${index + 1}</td>
-        <td>${acc.account_type}</td>
-        <td>${acc.name}</td>
-        <td>${acc.invoiceNo}</td>
-        <td>${acc.refNo}</td>
-        <td class="debit">${acc.debit}</td>
-        <td class="credit">${acc.credit}</td>
-        <td>${acc.paymentMethod}</td>
-        <td>${acc.paymentDate}</td>
-      </tr>
-    `,
+    <tr>
+      <td>${index + 1}</td>
+      <td>${acc.account_type}</td>
+      <td>${acc.name}</td>
+      <td>${acc.invoiceNo}</td>
+      <td>${acc.refNo}</td>
+      <td class="debit">${acc.debit}</td>
+      <td class="credit">${acc.credit}</td>
+      <td>${acc.paymentMethod}</td>
+      <td>${acc.paymentDate}</td>
+    </tr>
+  `,
       )
       .join("");
 
     const printWindow = window.open("", "_blank");
 
-    const logoUrl = businessVar?.logo
-      ? businessVar.logo.startsWith("http")
-        ? businessVar.logo
-        : `${BASE_URL}/${businessVar.logo}`
-      : "";
-
-    const logoHtml = logoUrl
-      ? `<img src="${logoUrl}" style="max-height:120px; margin-bottom:10px;" />`
-      : "";
+    // SVG Icons from Sales Report
+    const addressIcon = `<svg class="info-icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>`;
+    const phoneIcon = `<svg class="info-icon" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>`;
 
     printWindow?.document.write(`
     <html>
@@ -297,24 +288,36 @@ export const AccountReport = ({
         <style>${printStyles}</style>
       </head>
       <body>
+        <div class="print-header" style="display: flex; justify-content: center; gap: 20px; margin-bottom: 20px;">
+          <div class="header-details" style="text-align: center;">
+            <h2 style="margin: 0; font-size: 30px; font-weight: bold;">
+              ${businessVar?.name ?? "Office Management System"}
+            </h2>
+            
+            <div class="business-info" style="margin-top: 5px; font-size: 14px;">
+              <span class="info-item" style="display: block; margin-bottom: 3px;">
+                ${phoneIcon} ${businessVar?.contact ?? "N/A"}
+              </span>
+              <span class="info-item" style="display: block;">
+                ${addressIcon} ${businessVar?.address ?? "N/A"}
+              </span>
+            </div>
+          </div>
+        </div>
 
-        <div class="print-header">
-  ${logoHtml}
-  <h2>${businessVar?.name || "Office Management System"}</h2>
-  <p>${businessVar?.email || ""}</p>
-  <p>${businessVar?.contact || ""}</p>
+        <div style="text-align: center; padding-top: 10px;">
+          <h3 style="margin: 0;">Account Report</h3>
+        </div>
 
-  <h3>Attendance Report</h3>
-  <p>
-    <strong>From:</strong> ${appliedFilters.startDate}
-    <strong>To:</strong> ${appliedFilters.endDate}
-  </p>
-</div>
+        <div class="report-meta" style="margin-top: 10px; font-size: 13px;">
+          <strong>From:</strong> ${appliedFilters.startDate} &nbsp;&nbsp;
+          <strong>To:</strong> ${appliedFilters.endDate}
+        </div>
 
         <table>
           <thead>
             <tr>
-              <th>Sr#</th>
+              <th style="width: 40px;">Sr#</th>
               <th>Type</th>
               <th>Name</th>
               <th>Invoice</th>
@@ -325,13 +328,10 @@ export const AccountReport = ({
               <th>Date</th>
             </tr>
           </thead>
-
           <tbody>
             ${tableRows}
           </tbody>
-
         </table>
-
       </body>
     </html>
   `);
@@ -344,7 +344,6 @@ export const AccountReport = ({
       printWindow?.close();
     }, 500);
   };
-
   const handleEmailReport = async () => {
     try {
       if (!filteredReports.length) {

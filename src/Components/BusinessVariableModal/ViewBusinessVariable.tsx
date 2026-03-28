@@ -1,4 +1,9 @@
-import { RiContactsBookLine, RiMailLine, RiPhoneLine } from "react-icons/ri";
+import {
+  RiContactsBookLine,
+  RiMailLine,
+  RiPhoneLine,
+  RiMapPinLine,
+} from "react-icons/ri";
 
 import { Title } from "../Title";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
@@ -7,6 +12,7 @@ export type BusinessDetailT = {
   name: string;
   email: string;
   contact: string;
+  address: string;
   logo?: string;
 };
 
@@ -49,7 +55,6 @@ export const ViewBusinessVariable = ({
               )}
             </div>
             <h3 className="text-xl font-bold text-gray-800">{viewData.name}</h3>
-           
           </div>
 
           {/* Details List */}
@@ -78,6 +83,20 @@ export const ViewBusinessVariable = ({
                 </span>
                 <span className="text-sm text-gray-700 font-medium">
                   {viewData.contact}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-100">
+              <div className="bg-green-100 p-2 rounded-lg text-yellow-600 mr-4">
+                <RiMapPinLine size={20} />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] uppercase text-gray-400 font-bold">
+                  Address
+                </span>
+                <span className="text-sm text-gray-700 font-medium">
+                  {viewData.address}
                 </span>
               </div>
             </div>

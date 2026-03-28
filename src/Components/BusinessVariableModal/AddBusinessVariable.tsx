@@ -21,6 +21,7 @@ type BusinessVariableForm = {
   name: string;
   email: string;
   contact: string;
+  address: string;
   logo: File | null;
 };
 
@@ -28,6 +29,7 @@ const initialState: BusinessVariableForm = {
   name: "",
   email: "",
   contact: "",
+  address: "",
   logo: null,
 };
 
@@ -80,7 +82,8 @@ export const AddBusinessVariable = ({
     if (
       !formData.name.trim() ||
       !formData.email.trim() ||
-      !formData.contact.trim()
+      !formData.contact.trim() ||
+      !formData.address.trim()
     ) {
       return toast.error("Fields cannot be empty or spaces only");
     }
@@ -97,6 +100,7 @@ export const AddBusinessVariable = ({
       data.append("name", formData.name);
       data.append("email", formData.email);
       data.append("contact", formData.contact);
+      data.append("address", formData.address);
       if (formData.logo) {
         data.append("logo", formData.logo);
       }
@@ -192,6 +196,14 @@ export const AddBusinessVariable = ({
                 type="text"
                 handlerChange={handlerChange}
                 value={formData.contact}
+              />
+
+              <InputField
+                labelName="Address *"
+                name="address"
+                type="text"
+                handlerChange={handlerChange}
+                value={formData.address}
               />
             </div>
           </div>

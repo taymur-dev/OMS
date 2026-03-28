@@ -80,7 +80,7 @@ export const AttendanceHub = () => {
               const labels = {
                 MARK: "Mark Attendance",
                 EMPLOYEE: "Employee Attendance",
-                LEAVE: "Leave Requests",
+                LEAVE: "Leave",
               };
 
               return (

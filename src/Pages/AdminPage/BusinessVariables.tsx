@@ -31,6 +31,7 @@ export interface BusinessVarType {
   name: string;
   email: string;
   contact: string;
+  address: string;
   logo?: string; // URL or base64 string
 }
 
@@ -119,12 +120,13 @@ export const BusinessVariables = ({
         <div className="min-w-[1000px]">
           {/* Table Header */}
           <div className="px-0.5 pt-0.5">
-            <div className="grid grid-cols-[60px_80px_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm">
+            <div className="grid grid-cols-[60px_80px_1fr_1fr_1fr_1fr_auto] bg-blue-400 text-white rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm">
               <span>Sr#</span>
               <span>Logo</span>
               <span>Name</span>
               <span>Email</span>
               <span>Contact</span>
+              <span>Address</span>
               <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
           </div>
@@ -141,7 +143,7 @@ export const BusinessVariables = ({
                 {paginatedData.map((item, index) => (
                   <div
                     key={item.id}
-                    className="grid grid-cols-[60px_80px_1fr_1fr_1fr_auto] items-center px-3 py-1 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
+                    className="grid grid-cols-[60px_80px_1fr_1fr_1fr_1fr_auto] items-center px-3 py-1 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
                     <span className="text-gray-500 font-medium">
                       {startIndex + index + 1}
@@ -165,6 +167,8 @@ export const BusinessVariables = ({
                     </div>
                     <div className="truncate text-gray-600">{item.email}</div>
                     <div className="truncate text-gray-600">{item.contact}</div>
+
+                    <div className="truncate text-gray-600">{item.address}</div>
 
                     <div className="flex items-center justify-end gap-1 w-[140px]">
                       <ViewButton

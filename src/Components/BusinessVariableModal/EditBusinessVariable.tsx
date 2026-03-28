@@ -20,6 +20,7 @@ type EditBusinessVariableProps = {
     name: string;
     email: string;
     contact: string;
+    address: string;
     logo?: string;
   };
 };
@@ -28,6 +29,7 @@ type FormDataType = {
   name: string;
   email: string;
   contact: string;
+  address: string;
   logo: File | null;
 };
 
@@ -43,6 +45,7 @@ export const EditBusinessVariable = ({
     name: businessData.name,
     email: businessData.email,
     contact: businessData.contact,
+    address: businessData.address,
     logo: null,
   });
 
@@ -57,6 +60,7 @@ export const EditBusinessVariable = ({
       name: businessData.name,
       email: businessData.email,
       contact: businessData.contact,
+      address: businessData.address,
       logo: null,
     });
     setPreview(businessData.logo || null);
@@ -114,6 +118,7 @@ export const EditBusinessVariable = ({
       data.append("name", formData.name);
       data.append("email", formData.email);
       data.append("contact", formData.contact);
+      data.append("address", formData.address);
 
       // Only append logo if a new file was selected
       if (formData.logo) {
@@ -207,9 +212,17 @@ export const EditBusinessVariable = ({
               <InputField
                 labelName="Contact Number*"
                 name="contact"
-                type="text"
+                type="phone"
                 handlerChange={handlerChange}
                 value={formData.contact}
+              />
+
+              <InputField
+                labelName="Address*"
+                name="address"
+                type="text"
+                handlerChange={handlerChange}
+                value={formData.address}
               />
             </div>
           </div>

@@ -79,7 +79,7 @@ export const SupplierAccount = ({
           Authorization: `Bearer ${currentUser?.token}`,
         },
       });
-      setSuppliers(res.data || []);
+      setSuppliers((res.data || []).reverse());
       dispatch(navigationSuccess("Supplier Account"));
     } catch (error) {
       console.error("Error fetching supplier accounts:", error);
