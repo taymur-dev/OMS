@@ -115,8 +115,13 @@ export const Progress = ({
         p.note?.toLowerCase().includes(externalSearch.toLowerCase()) ||
         p.email?.toLowerCase().includes(externalSearch.toLowerCase());
 
-      // 2. Date Range Filter
-      const progressDateStr = new Date(p.date).toISOString().split("T")[0];
+      // 2. Date Range Filter - FIXED LOGIC
+      const dateObj = new Date(p.date);
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      const progressDateStr = `${year}-${month}-${day}`; // Format: YYYY-MM-DD
+
       let matchesDate = true;
 
       if (fromDate && toDate) {
