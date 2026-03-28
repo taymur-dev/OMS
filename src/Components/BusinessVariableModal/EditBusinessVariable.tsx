@@ -189,17 +189,15 @@ export const EditBusinessVariable = ({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:col-span-2">
-                <InputField
-                  labelName="Business Name*"
-                  name="name"
-                  type="text"
-                  handlerChange={handlerChange}
-                  value={formData.name}
-                  minLength={3}
-                  maxLength={50}
-                />
-              </div>
+              <InputField
+                labelName="Business Name*"
+                name="name"
+                type="text"
+                handlerChange={handlerChange}
+                value={formData.name}
+                minLength={3}
+                maxLength={50}
+              />
 
               <InputField
                 labelName="Email Address*"
