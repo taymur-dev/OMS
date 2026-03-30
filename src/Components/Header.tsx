@@ -100,7 +100,7 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
       });
 
       const allLeaves = Array.isArray(res.data) ? res.data : [];
-      
+
       // Get last 5 leaves and add type
       const leavesWithType = allLeaves
         .slice(-5)
@@ -131,7 +131,7 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
       });
 
       const allPromotions = Array.isArray(res.data) ? res.data : [];
-      
+
       // Get last 5 promotions and add type
       const promotionsWithType = allPromotions
         .slice(-5)
@@ -164,7 +164,7 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
       });
 
       const allResignations = Array.isArray(res.data) ? res.data : [];
-      
+
       // Get last 5 resignations and add type
       const resignationsWithType = allResignations
         .slice(-5)
@@ -273,13 +273,14 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
               className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 cursor-pointer hover:bg-gray-100 rounded-full transition-colors"
               onClick={() => setIsNotifOpen(!isNotifOpen)}
             >
+              {" "}
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-5 min-w-[20px] rounded-full bg-red-600 flex items-center justify-center text-[10px] sm:text-[11px] text-white font-bold z-10 px-1.5">
-                  {unreadCount > 99 ? "99+" : unreadCount}
+                <span className="absolute top-1 right-1 h-5 w-5 rounded-full bg-red-600 flex items-center justify-center text-[10px] sm:text-[12px] text-white font-bold z-10">
+                  {" "}
+                  {unreadCount > 100 ? "99+" : unreadCount}{" "}
                 </span>
-              )}
-              <CiBellOn size={28} className="relative text-gray-700" />
-
+              )}{" "}
+              <CiBellOn size={32} className="relative text-gray-700" />
               {isNotifOpen && (
                 <NotificationDropdown
                   notifications={notifications}
