@@ -1,14 +1,52 @@
+// Header.tsx (updated with resignations)
 import { RxHamburgerMenu } from "react-icons/rx";
 import { RiUserFill } from "react-icons/ri";
 import headerLogo from "../assets/Desk_Logo.png";
 import { CiBellOn } from "react-icons/ci";
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAppSelector } from "../redux/Hooks";
+import { useNavigate } from "react-router-dom";
 import ProfileDropdown from "./ProfileComponent/ProfileDropdown";
 import NotificationDropdown from "./NotificationDropdown";
-import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../Content/URL";
+import { LeaveNotification } from "./LeaveNotification";
+import { PromotionNotificationModal } from "./PromotionNotificationModal";
+import { ResignationNotificationModal } from "./ResignationNotificationModal"; // Create this
 import axios from "axios";
+import { BASE_URL } from "../Content/URL";
+
+// Define interfaces
+interface ILeaveData {
+  id: number;
+  name: string;
+  leaveStatus: string;
+  leaveSubject: string;
+  fromDate: string;
+  toDate: string;
+  type?: "leave";
+}
+
+interface IPromotionData {
+  id: number;
+  employee_name: string;
+  current_designation: string;
+  requested_designation: string;
+  approval: string;
+  note: string;
+  date: string;
+  type?: "promotion";
+}
+
+interface IResignationData {
+  id: number;
+  employee_name: string;
+  designation: string;
+  resignation_date: string;
+  note: string;
+  approval_status: string;
+  type?: "resignation";
+}
+
+type NotificationItem = ILeaveData | IPromotionData | IResignationData;
 
 export interface IHeaderProps extends React.ComponentPropsWithoutRef<"div"> {
   toggleSideBar: () => void;
@@ -21,7 +59,25 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
 
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [readIds, setReadIds] = useState<number[]>([]);
+
+  const [selectedLeave, setSelectedLeave] = useState<ILeaveData | null>(null);
+  const [selectedPromotion, setSelectedPromotion] =
+    useState<IPromotionData | null>(null);
+  const [selectedResignation, setSelectedResignation] =
+    useState<IResignationData | null>(null);
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
+  const [isPromotionModalOpen, setIsPromotionModalOpen] = useState(false);
+  const [isResignationModalOpen, setIsResignationModalOpen] = useState(false);
+
+  // Sync read status from localStorage
+  const syncReadStatus = useCallback(() => {
+    const savedReadItems = localStorage.getItem("readNotifications");
+    if (savedReadItems) {
+      setReadIds(JSON.parse(savedReadItems));
+    }
+  }, []);
 
   const handleLogoClick = () => {
     const role = currentUser?.role?.toLowerCase();
@@ -30,8 +86,9 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
     else navigate("/");
   };
 
-  const fetchNotifications = useCallback(async () => {
-    if (!currentUser) return;
+  // Fetch leaves
+  const fetchLeaves = useCallback(async (): Promise<ILeaveData[]> => {
+    if (!currentUser) return [];
     try {
       const url =
         currentUser.role === "admin"
@@ -41,19 +98,138 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
       const res = await axios.get(url, {
         headers: { Authorization: `Bearer ${currentUser?.token}` },
       });
-      setNotifications(res.data.slice(-5).reverse());
+
+      const leavesWithType = (Array.isArray(res.data) ? res.data : [])
+        .slice(-5)
+        .reverse()
+        .map((leave: ILeaveData) => ({
+          ...leave,
+          type: "leave" as const,
+        }));
+
+      return leavesWithType;
     } catch (error) {
-      console.error("Error fetching notifications", error);
+      console.error("Error fetching leaves", error);
+      return [];
     }
   }, [currentUser]);
 
-  const handleToggleViewModal = () => {
-    setIsOpenModal(true);
-  };
+  // Fetch promotions
+  const fetchPromotions = useCallback(async (): Promise<IPromotionData[]> => {
+    if (!currentUser) return [];
+    try {
+      const url =
+        currentUser.role === "admin"
+          ? `${BASE_URL}/api/admin/getPromotions`
+          : `${BASE_URL}/api/user/getMyPromotions`;
+
+      const res = await axios.get(url, {
+        headers: { Authorization: `Bearer ${currentUser?.token}` },
+      });
+
+      const allPromotions = Array.isArray(res.data) ? res.data : [];
+      const promotionsWithType = allPromotions
+        .slice(-5)
+        .map((promo: IPromotionData) => ({
+          ...promo,
+          type: "promotion" as const,
+        }));
+
+      return promotionsWithType;
+    } catch (error) {
+      console.error("Error fetching promotions", error);
+      return [];
+    }
+  }, [currentUser]);
+
+  // Fetch resignations
+  const fetchResignations = useCallback(async (): Promise<
+    IResignationData[]
+  > => {
+    if (!currentUser) return [];
+    try {
+      const url =
+        currentUser.role === "admin"
+          ? `${BASE_URL}/api/admin/getResignations`
+          : `${BASE_URL}/api/user/getMyResignations`;
+
+      const res = await axios.get(url, {
+        headers: { Authorization: `Bearer ${currentUser?.token}` },
+      });
+
+      const allResignations = Array.isArray(res.data) ? res.data : [];
+      const resignationsWithType = allResignations
+        .slice(-5)
+        .reverse()
+        .map((resignation: IResignationData) => ({
+          ...resignation,
+          type: "resignation" as const,
+        }));
+
+      return resignationsWithType;
+    } catch (error) {
+      console.error("Error fetching resignations", error);
+      return [];
+    }
+  }, [currentUser]);
+
+  // Fetch all notifications
+  const fetchAllNotifications = useCallback(async () => {
+    const [leaves, promotions, resignations] = await Promise.all([
+      fetchLeaves(),
+      fetchPromotions(),
+      fetchResignations(),
+    ]);
+
+    // Combine all notifications
+    const allNotifications = [...leaves, ...promotions, ...resignations];
+
+    // Sort by date (most recent first)
+    allNotifications.sort((a, b) => {
+      let dateA: string, dateB: string;
+
+      if (a.type === "leave") {
+        dateA = (a as ILeaveData).fromDate;
+      } else if (a.type === "promotion") {
+        dateA = (a as IPromotionData).date;
+      } else {
+        dateA = (a as IResignationData).resignation_date;
+      }
+
+      if (b.type === "leave") {
+        dateB = (b as ILeaveData).fromDate;
+      } else if (b.type === "promotion") {
+        dateB = (b as IPromotionData).date;
+      } else {
+        dateB = (b as IResignationData).resignation_date;
+      }
+
+      return new Date(dateB).getTime() - new Date(dateA).getTime();
+    });
+
+    setNotifications(allNotifications);
+  }, [fetchLeaves, fetchPromotions, fetchResignations]);
 
   useEffect(() => {
-    if (currentUser) fetchNotifications();
-  }, [currentUser, fetchNotifications]);
+    if (currentUser) {
+      fetchAllNotifications();
+      syncReadStatus();
+    }
+
+    const handleFocus = () => {
+      fetchAllNotifications();
+      syncReadStatus();
+    };
+
+    window.addEventListener("focus", handleFocus);
+
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [currentUser, fetchAllNotifications, syncReadStatus]);
+
+  // Calculate unread count
+  const unreadCount = notifications.filter(
+    (n) => !readIds.includes(n.id),
+  ).length;
 
   return (
     <div className="bg-white w-full h-16 px-2 sm:px-4 flex shadow-md z-40 items-center relative">
@@ -72,8 +248,7 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
 
           <button
             onClick={toggleSideBar}
-            className="text-blue-400 hover:bg-gray-100 rounded-full transition-colors flex items-center 
-            justify-center w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0"
+            className="text-blue-400 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12"
             aria-label="Toggle sidebar"
           >
             <RxHamburgerMenu
@@ -85,32 +260,36 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
 
         <div className="flex items-center gap-2 sm:gap-3 md:gap-6">
           <div className="flex items-center gap-2 sm:gap-3 relative">
-            {/* Notification Bell */}
+            {/* Notification Bell Container */}
             <div
-              className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 cursor-pointer
-       hover:bg-gray-100 rounded-full transition-colors"
+              className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 cursor-pointer hover:bg-gray-100 rounded-full transition-colors"
               onClick={() => setIsNotifOpen(!isNotifOpen)}
             >
-              {notifications.length > 0 && (
-                <>
-                  <span
-                    className="absolute top-1 right-1 h-5 w-5 rounded-full bg-red-600 flex 
-          items-center justify-center text-[10px] sm:text-[12px] text-white font-bold z-10"
-                  >
-                    {notifications.length > 5 ? "5+" : notifications.length}
-                  </span>
-                </>
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 h-5 w-5 rounded-full bg-red-600 flex items-center justify-center text-[10px] sm:text-[12px] text-white font-bold z-10">
+                  {unreadCount > 100 ? "99+" : unreadCount}
+                </span>
               )}
               <CiBellOn size={32} className="relative text-gray-700" />
+
               {isNotifOpen && (
                 <NotificationDropdown
                   notifications={notifications}
-                  onClose={() => setIsNotifOpen(false)}
+                  onClose={() => {
+                    setIsNotifOpen(false);
+                    syncReadStatus();
+                  }}
+                  setSelectedLeave={setSelectedLeave}
+                  setSelectedPromotion={setSelectedPromotion}
+                  setSelectedResignation={setSelectedResignation}
+                  setIsLeaveModalOpen={setIsLeaveModalOpen}
+                  setIsPromotionModalOpen={setIsPromotionModalOpen}
+                  setIsResignationModalOpen={setIsResignationModalOpen}
                 />
               )}
             </div>
 
-            <div className="hidden xs:block text-right min-w-[70px] sm:min-w-[90px] md:min-w-[100px]">
+            <div className="hidden xs:block text-right min-w-[70px] sm:min-w-[90px]">
               <p className="text-blue-500 text-xs sm:text-sm font-semibold leading-none truncate">
                 {currentUser?.name || "User"}
               </p>
@@ -120,10 +299,8 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
             </div>
 
             <div
-              onClick={() => handleToggleViewModal()}
-              className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-400 flex items-center justify-center
-             text-white flex-shrink-0 overflow-hidden border-2 border-gray-100 shadow-sm 
-             cursor-pointer active:scale-95 transition duration-200 hover:border-blue-400"
+              onClick={() => setIsOpenModal(true)}
+              className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-400 flex items-center justify-center text-white overflow-hidden border-2 border-gray-100 shadow-sm cursor-pointer hover:border-blue-400 transition duration-200"
             >
               {currentUser?.image ? (
                 <img
@@ -146,6 +323,33 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
             />
           </div>
         )}
+
+        <LeaveNotification
+          isOpen={isLeaveModalOpen}
+          onClose={() => {
+            setIsLeaveModalOpen(false);
+            syncReadStatus();
+          }}
+          data={selectedLeave}
+        />
+
+        <PromotionNotificationModal
+          isOpen={isPromotionModalOpen}
+          onClose={() => {
+            setIsPromotionModalOpen(false);
+            syncReadStatus();
+          }}
+          data={selectedPromotion}
+        />
+
+        <ResignationNotificationModal
+          isOpen={isResignationModalOpen}
+          onClose={() => {
+            setIsResignationModalOpen(false);
+            syncReadStatus();
+          }}
+          data={selectedResignation}
+        />
       </div>
     </div>
   );
