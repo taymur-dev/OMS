@@ -1,4 +1,4 @@
-// Header.tsx (updated with resignations)
+// Header.tsx (updated with resignations and last 5 values)
 import { RxHamburgerMenu } from "react-icons/rx";
 import { RiUserFill } from "react-icons/ri";
 import headerLogo from "../assets/Desk_Logo.png";
@@ -86,7 +86,7 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
     else navigate("/");
   };
 
-  // Fetch leaves
+  // Fetch last 5 leaves
   const fetchLeaves = useCallback(async (): Promise<ILeaveData[]> => {
     if (!currentUser) return [];
     try {
@@ -99,7 +99,10 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
         headers: { Authorization: `Bearer ${currentUser?.token}` },
       });
 
-      const leavesWithType = (Array.isArray(res.data) ? res.data : [])
+      const allLeaves = Array.isArray(res.data) ? res.data : [];
+      
+      // Get last 5 leaves and add type
+      const leavesWithType = allLeaves
         .slice(-5)
         .reverse()
         .map((leave: ILeaveData) => ({
@@ -114,7 +117,7 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
     }
   }, [currentUser]);
 
-  // Fetch promotions
+  // Fetch last 5 promotions
   const fetchPromotions = useCallback(async (): Promise<IPromotionData[]> => {
     if (!currentUser) return [];
     try {
@@ -128,8 +131,11 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
       });
 
       const allPromotions = Array.isArray(res.data) ? res.data : [];
+      
+      // Get last 5 promotions and add type
       const promotionsWithType = allPromotions
         .slice(-5)
+        .reverse()
         .map((promo: IPromotionData) => ({
           ...promo,
           type: "promotion" as const,
@@ -142,7 +148,7 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
     }
   }, [currentUser]);
 
-  // Fetch resignations
+  // Fetch last 5 resignations
   const fetchResignations = useCallback(async (): Promise<
     IResignationData[]
   > => {
@@ -158,6 +164,8 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
       });
 
       const allResignations = Array.isArray(res.data) ? res.data : [];
+      
+      // Get last 5 resignations and add type
       const resignationsWithType = allResignations
         .slice(-5)
         .reverse()
@@ -173,7 +181,7 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
     }
   }, [currentUser]);
 
-  // Fetch all notifications
+  // Fetch all notifications (last 5 from each module)
   const fetchAllNotifications = useCallback(async () => {
     const [leaves, promotions, resignations] = await Promise.all([
       fetchLeaves(),
@@ -226,7 +234,7 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
     return () => window.removeEventListener("focus", handleFocus);
   }, [currentUser, fetchAllNotifications, syncReadStatus]);
 
-  // Calculate unread count
+  // Calculate unread count - exactly equal to number of unread notifications
   const unreadCount = notifications.filter(
     (n) => !readIds.includes(n.id),
   ).length;
@@ -266,11 +274,11 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
               onClick={() => setIsNotifOpen(!isNotifOpen)}
             >
               {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 h-5 w-5 rounded-full bg-red-600 flex items-center justify-center text-[10px] sm:text-[12px] text-white font-bold z-10">
-                  {unreadCount > 100 ? "99+" : unreadCount}
+                <span className="absolute -top-1 -right-1 h-5 min-w-[20px] rounded-full bg-red-600 flex items-center justify-center text-[10px] sm:text-[11px] text-white font-bold z-10 px-1.5">
+                  {unreadCount > 99 ? "99+" : unreadCount}
                 </span>
               )}
-              <CiBellOn size={32} className="relative text-gray-700" />
+              <CiBellOn size={28} className="relative text-gray-700" />
 
               {isNotifOpen && (
                 <NotificationDropdown

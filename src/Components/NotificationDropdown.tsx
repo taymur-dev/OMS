@@ -150,7 +150,7 @@ const NotificationDropdown = ({
           text: "Promotion Request",
           icon: Briefcase,
           bgColor: "bg-indigo-50",
-          textColor: "text-blue-500",
+          textColor: "text-indigo-700",
           borderColor: "border-indigo-100",
           hoverBg: "hover:bg-indigo-50",
         };
@@ -207,14 +207,11 @@ const NotificationDropdown = ({
         <div
           key={item.id}
           className={`group p-3 border-b border-gray-100 transition-all duration-200 cursor-pointer ${
-            isRead ? "bg-white" : "bg-blue-100"
+            isRead ? "bg-white" : "bg-blue-50"
           }`}
           onClick={() => handleNotificationClick(item)}
         >
-          {/* Unread indicator dot */}
-
           <div className="flex items-start gap-2">
-            {/* Content - No icons */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2 mb-1">
                 <span
@@ -251,14 +248,11 @@ const NotificationDropdown = ({
         <div
           key={promotion.id}
           className={`group p-3 border-b border-gray-100 transition-all duration-200 cursor-pointer ${
-            isRead
-              ? "bg-white hover:bg-gray-50"
-              : "bg-blue-50/40 hover:bg-blue-50"
+            isRead ? "bg-white" : "bg-blue-50"
           }`}
           onClick={() => handleNotificationClick(promotion)}
         >
           <div className="flex items-start gap-2">
-            {/* Content - No icons */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2 mb-1">
                 <span
@@ -296,14 +290,11 @@ const NotificationDropdown = ({
         <div
           key={resignation.id}
           className={`group p-3 border-b border-gray-100 transition-all duration-200 cursor-pointer ${
-            isRead
-              ? "bg-white hover:bg-gray-50"
-              : "bg-blue-50/40 hover:bg-blue-50"
+            isRead ? "bg-white" : "bg-blue-50"
           }`}
           onClick={() => handleNotificationClick(resignation)}
         >
           <div className="flex items-start gap-2">
-            {/* Content - No icons */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2 mb-1">
                 <span
@@ -347,18 +338,18 @@ const NotificationDropdown = ({
       {/* 2. Responsive Container: Fixed on mobile, Absolute on desktop */}
       <div
         ref={dropdownRef}
-        className="fixed md:absolute top-0 md:top-full right-0 left-0 md:left-auto w-full md:w-[320px] z-50 p-4 md:p-0 md:mt-2"
+        className="fixed md:absolute top-0 md:top-full right-0 left-0 md:left-auto w-full md:w-[300px] z-50 p-4 md:p-0 md:mt-2"
       >
         <div className="bg-white w-full rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col animate-in slide-in-from-top-2 duration-200 max-h-[70vh] md:max-h-[400px]">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-400 to-blue-500 p-3 sticky top-0 z-10">
+          <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 sticky top-0 z-10">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-white">
-                <h3 className="font-semibold text-sm">Notifications</h3>
+                <h3 className="font-semibold text-base">Notifications</h3>
               </div>
               <button
                 onClick={handleMarkAllRead}
-                className="text-xs bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded-lg transition-all"
+                className="text-xs bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg transition-all font-medium"
               >
                 Mark all read
               </button>
@@ -368,9 +359,14 @@ const NotificationDropdown = ({
           {/* Notifications List - Added overscroll-contain for better mobile UX */}
           <div className="overflow-y-auto overscroll-contain">
             {notifications.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 px-4">
-                <Bell className="w-12 h-12 text-gray-200 mb-2" />
-                <p className="text-gray-500 text-sm">No notifications</p>
+              <div className="flex flex-col items-center justify-center py-16 px-4">
+                <Bell className="w-14 h-14 text-gray-200 mb-3" />
+                <p className="text-gray-500 text-sm font-medium">
+                  No notifications
+                </p>
+                <p className="text-gray-400 text-xs mt-1">
+                  You're all caught up!
+                </p>
               </div>
             ) : (
               notifications.map((item) => renderNotificationContent(item))
@@ -378,10 +374,10 @@ const NotificationDropdown = ({
           </div>
 
           {/* Footer - Mobile Close Button */}
-          <div className="md:hidden border-t border-gray-100 p-2 bg-gray-50">
+          <div className="md:hidden border-t border-gray-100 p-3 bg-gray-50">
             <button
               onClick={onClose}
-              className="w-full py-2 text-sm font-semibold text-gray-500 active:bg-gray-100 rounded-xl"
+              className="w-full py-2.5 text-sm font-semibold text-gray-600 active:bg-gray-100 rounded-xl transition-colors"
             >
               Close
             </button>
