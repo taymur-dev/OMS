@@ -1,13 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  Bell,
-  Calendar,
-  Briefcase,
-  LogOut,
-  ChevronRight,
-  Circle,
-  CheckCircle2,
-} from "lucide-react";
+import { Bell, Calendar, Briefcase, LogOut, ChevronRight } from "lucide-react";
 
 interface LeaveNotificationType {
   id: number;
@@ -148,17 +140,17 @@ const NotificationDropdown = ({
         return {
           text: "Leave Request",
           icon: Calendar,
-          bgColor: "bg-purple-50",
-          textColor: "text-purple-700",
-          borderColor: "border-purple-100",
-          hoverBg: "hover:bg-purple-50",
+          bgColor: "bg-yellow-50",
+          textColor: "text-yellow-700",
+          borderColor: "border-yellow-100",
+          hoverBg: "hover:bg-yellow-50",
         };
       case "promotion":
         return {
           text: "Promotion Request",
           icon: Briefcase,
           bgColor: "bg-indigo-50",
-          textColor: "text-indigo-700",
+          textColor: "text-blue-500",
           borderColor: "border-indigo-100",
           hoverBg: "hover:bg-indigo-50",
         };
@@ -180,35 +172,6 @@ const NotificationDropdown = ({
           borderColor: "border-gray-100",
           hoverBg: "hover:bg-gray-50",
         };
-    }
-  };
-
-  const getStatusConfig = (status: string) => {
-    const statusLower = status.toLowerCase();
-    if (statusLower === "approved" || statusLower === "accepted") {
-      return {
-        text: status,
-        bgColor: "bg-green-50",
-        textColor: "text-green-700",
-        borderColor: "border-green-200",
-        icon: CheckCircle2,
-      };
-    } else if (statusLower === "pending") {
-      return {
-        text: status,
-        bgColor: "bg-orange-50",
-        textColor: "text-orange-700",
-        borderColor: "border-orange-200",
-        icon: Circle,
-      };
-    } else {
-      return {
-        text: status,
-        bgColor: "bg-red-50",
-        textColor: "text-red-700",
-        borderColor: "border-red-200",
-        icon: Circle,
-      };
     }
   };
 
@@ -236,37 +199,22 @@ const NotificationDropdown = ({
   const renderNotificationContent = (item: NotificationItem) => {
     const isRead = readNotifications.includes(item.id);
     const requestConfig = getRequestTypeConfig(item.type || "default");
-    const RequestIcon = requestConfig.icon;
 
     if (item.type === "leave") {
       const leave = item as LeaveNotificationType;
-      const statusConfig = getStatusConfig(leave.leaveStatus);
-      const StatusIcon = statusConfig.icon;
 
       return (
         <div
-          key={leave.id}
-          className={`group relative p-4 border-b border-gray-100 transition-all duration-200 cursor-pointer ${
-            isRead
-              ? "bg-white hover:bg-gray-50"
-              : "bg-gradient-to-r from-blue-50/50 to-white hover:from-blue-50 hover:to-blue-50/50"
+          key={item.id}
+          className={`group p-3 border-b border-gray-100 transition-all duration-200 cursor-pointer ${
+            isRead ? "bg-white" : "bg-blue-100"
           }`}
-          onClick={() => handleNotificationClick(leave)}
+          onClick={() => handleNotificationClick(item)}
         >
-          {/* Unread indicator */}
-          {!isRead && (
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-600" />
-          )}
+          {/* Unread indicator dot */}
 
-          <div className="flex items-start gap-3">
-            {/* Icon */}
-            <div
-              className={`flex-shrink-0 w-10 h-10 rounded-xl ${requestConfig.bgColor} flex items-center justify-center transition-transform group-hover:scale-105`}
-            >
-              <RequestIcon className={`w-5 h-5 ${requestConfig.textColor}`} />
-            </div>
-
-            {/* Content */}
+          <div className="flex items-start gap-2">
+            {/* Content - No icons */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2 mb-1">
                 <span
@@ -274,14 +222,9 @@ const NotificationDropdown = ({
                 >
                   {requestConfig.text}
                 </span>
-                <div
-                  className={`flex items-center gap-1 px-2 py-0.5 rounded-full ${statusConfig.bgColor} ${statusConfig.textColor}`}
-                >
-                  <StatusIcon className="w-3 h-3" />
-                  <span className="text-[10px] font-medium">
-                    {statusConfig.text}
-                  </span>
-                </div>
+                <span className="text-[10px] text-gray-400">
+                  {formatDate(leave.fromDate)}
+                </span>
               </div>
 
               <p
@@ -295,49 +238,27 @@ const NotificationDropdown = ({
               >
                 {leave.leaveSubject}
               </p>
-
-              <div className="flex items-center gap-2 mt-2">
-                <Calendar className="w-3 h-3 text-gray-400" />
-                <span className="text-[11px] text-gray-400">
-                  {(() => {
-                    const from = leave.fromDate.split("T")[0];
-                    const to = leave.toDate.split("T")[0];
-                    return from === to ? from : `${from} - ${to}`;
-                  })()}
-                </span>
-              </div>
             </div>
 
-            <ChevronRight className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <ChevronRight className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
           </div>
         </div>
       );
     } else if (item.type === "promotion") {
       const promotion = item as PromotionNotificationType;
-      const statusConfig = getStatusConfig(promotion.approval);
-      const StatusIcon = statusConfig.icon;
 
       return (
         <div
           key={promotion.id}
-          className={`group relative p-4 border-b border-gray-100 transition-all duration-200 cursor-pointer ${
+          className={`group p-3 border-b border-gray-100 transition-all duration-200 cursor-pointer ${
             isRead
               ? "bg-white hover:bg-gray-50"
-              : "bg-gradient-to-r from-blue-50/50 to-white hover:from-blue-50 hover:to-blue-50/50"
+              : "bg-blue-50/40 hover:bg-blue-50"
           }`}
           onClick={() => handleNotificationClick(promotion)}
         >
-          {!isRead && (
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-600" />
-          )}
-
-          <div className="flex items-start gap-3">
-            <div
-              className={`flex-shrink-0 w-10 h-10 rounded-xl ${requestConfig.bgColor} flex items-center justify-center transition-transform group-hover:scale-105`}
-            >
-              <RequestIcon className={`w-5 h-5 ${requestConfig.textColor}`} />
-            </div>
-
+          <div className="flex items-start gap-2">
+            {/* Content - No icons */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2 mb-1">
                 <span
@@ -345,14 +266,9 @@ const NotificationDropdown = ({
                 >
                   {requestConfig.text}
                 </span>
-                <div
-                  className={`flex items-center gap-1 px-2 py-0.5 rounded-full ${statusConfig.bgColor} ${statusConfig.textColor}`}
-                >
-                  <StatusIcon className="w-3 h-3" />
-                  <span className="text-[10px] font-medium">
-                    {statusConfig.text}
-                  </span>
-                </div>
+                <span className="text-[10px] text-gray-400">
+                  {formatDate(promotion.date)}
+                </span>
               </div>
 
               <p
@@ -367,45 +283,27 @@ const NotificationDropdown = ({
                 {promotion.current_designation} →{" "}
                 {promotion.requested_designation}
               </p>
-
-              <div className="flex items-center gap-2 mt-2">
-                <Calendar className="w-3 h-3 text-gray-400" />
-                <span className="text-[11px] text-gray-400">
-                  {formatDate(promotion.date)}
-                </span>
-              </div>
             </div>
 
-            <ChevronRight className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <ChevronRight className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
           </div>
         </div>
       );
     } else {
       const resignation = item as ResignationNotificationType;
-      const statusConfig = getStatusConfig(resignation.approval_status);
-      const StatusIcon = statusConfig.icon;
 
       return (
         <div
           key={resignation.id}
-          className={`group relative p-4 border-b border-gray-100 transition-all duration-200 cursor-pointer ${
+          className={`group p-3 border-b border-gray-100 transition-all duration-200 cursor-pointer ${
             isRead
               ? "bg-white hover:bg-gray-50"
-              : "bg-gradient-to-r from-blue-50/50 to-white hover:from-blue-50 hover:to-blue-50/50"
+              : "bg-blue-50/40 hover:bg-blue-50"
           }`}
           onClick={() => handleNotificationClick(resignation)}
         >
-          {!isRead && (
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-600" />
-          )}
-
-          <div className="flex items-start gap-3">
-            <div
-              className={`flex-shrink-0 w-10 h-10 rounded-xl ${requestConfig.bgColor} flex items-center justify-center transition-transform group-hover:scale-105`}
-            >
-              <RequestIcon className={`w-5 h-5 ${requestConfig.textColor}`} />
-            </div>
-
+          <div className="flex items-start gap-2">
+            {/* Content - No icons */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2 mb-1">
                 <span
@@ -413,14 +311,9 @@ const NotificationDropdown = ({
                 >
                   {requestConfig.text}
                 </span>
-                <div
-                  className={`flex items-center gap-1 px-2 py-0.5 rounded-full ${statusConfig.bgColor} ${statusConfig.textColor}`}
-                >
-                  <StatusIcon className="w-3 h-3" />
-                  <span className="text-[10px] font-medium">
-                    {statusConfig.text}
-                  </span>
-                </div>
+                <span className="text-[10px] text-gray-400">
+                  {formatDate(resignation.resignation_date)}
+                </span>
               </div>
 
               <p
@@ -434,25 +327,14 @@ const NotificationDropdown = ({
               >
                 {resignation.designation}
               </p>
-
-              <div className="flex items-center gap-2 mt-2">
-                <Calendar className="w-3 h-3 text-gray-400" />
-                <span className="text-[11px] text-gray-400">
-                  {formatDate(resignation.resignation_date)}
-                </span>
-              </div>
             </div>
 
-            <ChevronRight className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <ChevronRight className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
           </div>
         </div>
       );
     }
   };
-
-  const unreadCount = notifications.filter(
-    (item) => !readNotifications.includes(item.id),
-  ).length;
 
   return (
     <>
@@ -465,24 +347,18 @@ const NotificationDropdown = ({
       {/* 2. Responsive Container: Fixed on mobile, Absolute on desktop */}
       <div
         ref={dropdownRef}
-        className="fixed md:absolute top-0 md:top-full right-0 left-0 md:left-auto w-full md:w-[380px] z-50 p-4 md:p-0 md:mt-2"
+        className="fixed md:absolute top-0 md:top-full right-0 left-0 md:left-auto w-full md:w-[320px] z-50 p-4 md:p-0 md:mt-2"
       >
-        <div className="bg-white w-full rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col animate-in slide-in-from-top-2 duration-200 max-h-[85vh] md:max-h-[600px]">
+        <div className="bg-white w-full rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col animate-in slide-in-from-top-2 duration-200 max-h-[70vh] md:max-h-[400px]">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-4 sticky top-0 z-10">
+          <div className="bg-gradient-to-r from-blue-400 to-blue-500 p-3 sticky top-0 z-10">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-white">
-                <Bell className="w-5 h-5" />
-                <h3 className="font-semibold text-base">Notifications</h3>
-                {unreadCount > 0 && (
-                  <span className="bg-white/20 text-[10px] px-2 py-0.5 rounded-full font-bold">
-                    {unreadCount}
-                  </span>
-                )}
+                <h3 className="font-semibold text-sm">Notifications</h3>
               </div>
               <button
                 onClick={handleMarkAllRead}
-                className="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg transition-all"
+                className="text-xs bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded-lg transition-all"
               >
                 Mark all read
               </button>

@@ -56,7 +56,7 @@ export const PromotionNotificationModal = ({
       <div className="fixed inset-0 flex items-center justify-center z-[9999] px-3 pointer-events-none">
         <div className="w-full max-w-md bg-white rounded-xl shadow-2xl overflow-hidden pointer-events-auto">
           {/* Header */}
-          <div className="bg-white rounded-t-xl border-t-4 border-purple-500 flex justify-between items-center px-5 py-4 shadow-sm">
+          <div className="bg-white rounded-t-xl border-t-4 border-blue-400 flex justify-between items-center px-5 py-4 shadow-sm">
             <p className="text-gray-800 text-base font-bold tracking-tight">
               Promotion Details
             </p>
