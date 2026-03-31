@@ -181,6 +181,8 @@ export const AddHoliday = ({
                 name="holiday"
                 value={holiday.holiday}
                 handlerChange={handlerChange}
+                minLength={3}
+                maxLength={50}
               />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

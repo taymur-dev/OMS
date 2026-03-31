@@ -204,6 +204,8 @@ export const UpdateHoliday = ({
               name="holiday"
               value={holidayData.holiday}
               handlerChange={handlerChange}
+              minLength={3}
+              maxLength={50}
             />
 
             {/* Two columns for Dates */}

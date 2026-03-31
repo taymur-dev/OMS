@@ -243,7 +243,7 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
               value={form.amount}
               handlerChange={handlerChange}
               minLength={3}
-                maxLength={12}
+              maxLength={12}
             />
 
             <OptionField
@@ -269,7 +269,7 @@ export const AddEmployeeAccount = ({ setModal, refreshData }: Props) => {
                 name="description"
                 handlerChange={handlerChange}
                 inputVal={form.description || ""}
-                 minLength={3} // Add this
+                minLength={3} // Add this
                 maxLength={250}
               />
             </div>

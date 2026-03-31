@@ -58,7 +58,7 @@ export const CustomerAccount = ({
         headers: { Authorization: `Bearer ${currentUser?.token}` },
       });
 
-      setCustomers((response.data || []).reverse());
+      setCustomers(response.data || []);
 
       dispatch(navigationSuccess("Customer Account"));
     } catch (error) {

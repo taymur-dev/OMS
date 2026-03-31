@@ -32,8 +32,12 @@ type ProjectT = {
   projectCategory?: string;
 };
 
-const today = new Date();
-const currentDate = today.toLocaleDateString("en-CA");
+const currentDate = (() => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate(),
+  ).padStart(2, "0")}`;
+})();
 
 type AddProgressType = {
   employee_id: string;

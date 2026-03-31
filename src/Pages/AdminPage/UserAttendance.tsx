@@ -126,7 +126,7 @@ export const UserAttendance = ({
 
       // 2. Date Range Filter Logic
       // API se aane wali date string ko sirf date part tak mehdood karein comparison ke liye
-      const attendanceDateStr = new Date(att.date).toISOString().split("T")[0];
+      const attendanceDateStr = new Date(att.date).toLocaleDateString("en-CA");
 
       let matchesDate = true;
 

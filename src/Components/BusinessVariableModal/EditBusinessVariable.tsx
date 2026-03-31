@@ -221,6 +221,8 @@ export const EditBusinessVariable = ({
                 type="text"
                 handlerChange={handlerChange}
                 value={formData.address}
+                minLength={3}
+                maxLength={50}
               />
             </div>
           </div>

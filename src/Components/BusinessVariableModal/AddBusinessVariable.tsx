@@ -170,15 +170,15 @@ export const AddBusinessVariable = ({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <InputField
-                  labelName="Business Name*"
-                  name="name"
-                  type="text"
-                  handlerChange={handlerChange}
-                  value={formData.name}
-                  minLength={3}
-                  maxLength={50}
-                />
+              <InputField
+                labelName="Business Name*"
+                name="name"
+                type="text"
+                handlerChange={handlerChange}
+                value={formData.name}
+                minLength={3}
+                maxLength={50}
+              />
 
               <InputField
                 labelName="Email Address*"
@@ -202,6 +202,8 @@ export const AddBusinessVariable = ({
                 type="text"
                 handlerChange={handlerChange}
                 value={formData.address}
+                minLength={3}
+                maxLength={50}
               />
             </div>
           </div>

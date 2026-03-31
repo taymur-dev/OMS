@@ -49,7 +49,14 @@ export const Progress = ({
   const { loader } = useAppSelector((state) => state.NavigateState);
   const dispatch = useAppDispatch();
   const token = currentUser?.token;
-  const getCurrentDate = () => new Date().toISOString().split("T")[0];
+
+  const getCurrentDate = () => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   const [allProgress, setAllProgress] = useState<ALLPROGRESST[]>([]);
   const [isOpenModal, setIsOpenModal] = useState<
@@ -116,11 +123,8 @@ export const Progress = ({
         p.email?.toLowerCase().includes(externalSearch.toLowerCase());
 
       // 2. Date Range Filter - FIXED LOGIC
-      const dateObj = new Date(p.date);
-      const year = dateObj.getFullYear();
-      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
-      const day = String(dateObj.getDate()).padStart(2, "0");
-      const progressDateStr = `${year}-${month}-${day}`; // Format: YYYY-MM-DD
+
+      const progressDateStr = p.date?.split("T")[0];
 
       let matchesDate = true;
 
