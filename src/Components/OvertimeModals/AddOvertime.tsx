@@ -222,7 +222,7 @@ export const AddOverTime = ({
             </Title>
           </div>
 
-          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-5 space-y-2">
+          <div className="mx-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-6 gap-5 space-y-2">
             <div className="md:col-span-2">
               {isAdmin && (
                 <UserSelect
@@ -301,7 +301,7 @@ export const AddOverTime = ({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
+          <div className="flex justify-end gap-3 px-4 rounded py-6 bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>

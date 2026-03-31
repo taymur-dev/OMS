@@ -206,11 +206,11 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
               setModal={setModal}
               className="text-white text-lg font-semibold"
             >
-              ADD TODO
+              ADD TODO'S
             </Title>
           </div>
 
-          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2  py-2 gap-3">
+          <div className="mx-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2  py-6 gap-3">
             <div className="md:col-span-2">
               {isAdmin && (
                 <UserSelect
@@ -268,7 +268,7 @@ export const AddTodo = ({ setModal, getAllTodos }: AddTodoProps) => {
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 py-3 rounded bg-white">
+          <div className="flex justify-end gap-3 px-4 py-6 rounded bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>

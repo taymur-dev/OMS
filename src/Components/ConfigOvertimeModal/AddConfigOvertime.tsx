@@ -108,7 +108,7 @@ export const AddConfigOvertime = ({
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50">
       <div className="w-[30rem] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form onSubmit={handlerSubmitted}>
-          <div className="bg-white rounded-xl border-t-5 border-indigo-600">
+          <div className="bg-white rounded-xl border-t-5 border-blue-400">
             <Title
               setModal={setModal}
               className="text-white text-lg font-semibold"
@@ -117,7 +117,7 @@ export const AddConfigOvertime = ({
             </Title>
           </div>
 
-          <div className="mx-4 flex flex-col py-4 gap-4">
+          <div className="mx-4 flex flex-col py-6 gap-4">
             <OptionField
               labelName="Overtime Hours *"
               name="overtimeType"
@@ -136,7 +136,7 @@ export const AddConfigOvertime = ({
             />
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-gray-50">
+          <div className="flex justify-end gap-3 px-4 rounded py-6 bg-gray-50">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

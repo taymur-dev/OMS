@@ -236,7 +236,7 @@ export const AddResignation = ({
             </Title>
           </div>
 
-          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-2 space-y-2">
+          <div className="mx-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-6 gap-2 space-y-2">
             <div className="md:col-span-2">
               {isAdmin && (
                 <UserSelect

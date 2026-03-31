@@ -160,7 +160,7 @@ export const EditBusinessVariable = ({
             </Title>
           </div>
 
-          <div className="p-6 space-y-4">
+          <div className="px-4 py-6 space-y-4">
             {/* Logo Section */}
             <div className="flex items-center gap-4 pb-4">
               <div className="w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-50">
@@ -226,7 +226,7 @@ export const EditBusinessVariable = ({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 rounded-b-xl">
+          <div className="flex justify-end gap-3 px-4 py-6 bg-gray-50 rounded-b-xl">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

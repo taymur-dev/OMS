@@ -99,7 +99,7 @@ export const AddProjectCategory = ({
                 ADD PROJECT CATEGORY
               </Title>
             </div>
-            <div className="mx-2   flex-wrap gap-3 py-5  ">
+            <div className="mx-4   flex-wrap gap-3 py-6  ">
               <InputField
                 labelName="Category Name *"
                 type="text"
@@ -111,7 +111,7 @@ export const AddProjectCategory = ({
               />
             </div>
 
-            <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
+            <div className="flex justify-end gap-3 px-4 rounded py-6 bg-white">
               <CancelBtn setModal={setModal} />
               <AddButton
                 loading={loading}

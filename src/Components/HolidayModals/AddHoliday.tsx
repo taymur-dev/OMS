@@ -202,7 +202,7 @@ export const AddHoliday = ({
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 px-4 py-3 bg-white">
+            <div className="flex justify-end gap-3 px-4 py-6 bg-white">
               <CancelBtn setModal={setModal} />
 
               <AddButton

@@ -90,7 +90,7 @@ export const ViewCalendarSession = ({
         </div>
 
         {/* Session Info */}
-        <div className="p-6 space-y-6">
+        <div className="px-4 py-6 space-y-6">
           <div className="border border-gray-200 rounded-lg p-4 relative">
             <span className="absolute -top-3 left-4 bg-white px-2 text-xs font-bold text-blue-400 uppercase tracking-tighter">
               Session Information

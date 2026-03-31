@@ -223,7 +223,7 @@ export const EditAssignProject = ({
             </Title>
           </div>
 
-          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3 py-4">
+          <div className="mx-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3 py-6">
               <UserSelect
                 labelName="Employees *"
                 name="employee_id"
@@ -255,7 +255,7 @@ export const EditAssignProject = ({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
+          <div className="flex justify-end gap-3 px-4 rounded py-6 bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

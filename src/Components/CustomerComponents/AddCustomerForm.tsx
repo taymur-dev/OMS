@@ -171,7 +171,7 @@ export const AddCustomer = ({
           </div>
 
           {/* Form Body */}
-          <div className="px-6 py-6 grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-5">
+          <div className="px-4 py-6 grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-5">
             <InputField
               labelName="Customer Name *"
               type="text"
@@ -232,7 +232,7 @@ export const AddCustomer = ({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end items-center gap-3 px-6 py-4 bg-white rounded">
+          <div className="flex justify-end items-center gap-3 px-4 py-4 bg-white rounded">
             <CancelBtn setModal={setIsOpenModal} />
             <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>

@@ -146,7 +146,7 @@ export const UpdateProject = ({
           </div>
 
           {/* Form Body */}
-          <div className="p-6 grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-6">
+          <div className="px-4 py-6 grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-6">
             <OptionField
               labelName="Project Category *"
               name="projectCategory"
@@ -214,7 +214,7 @@ export const UpdateProject = ({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-4 px-6 py-4 bg-white rounded">
+          <div className="flex justify-end gap-4 px-4 py-6 bg-white rounded">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

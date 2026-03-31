@@ -118,7 +118,7 @@ export const AddAssetCategory = ({
                 ADD ASSET CATEGORY
               </Title>
             </div>
-            <div className="mx-2 flex-wrap py-2 gap-3">
+            <div className="mx-4 flex-wrap py-6 gap-3">
               <InputField
                 labelName="Category Name *"
                 type="text"
@@ -130,7 +130,7 @@ export const AddAssetCategory = ({
               />
             </div>
 
-            <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
+            <div className="flex justify-end gap-3 px-4 rounded py-6 bg-white">
               <CancelBtn setModal={setModal} />
               <AddButton
                 loading={loading}

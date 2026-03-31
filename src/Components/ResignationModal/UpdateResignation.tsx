@@ -163,7 +163,7 @@ export const UpdateResignation = ({
             </Title>
           </div>
 
-          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-2 space-y-2">
+          <div className="mx-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-6 gap-2 space-y-2">
             <InputField
               labelName="Employee Name *"
               name="employee_name"

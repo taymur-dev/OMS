@@ -16,7 +16,7 @@ export const ViewAssignProject = ({
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="w-full max-w-md bg-white rounded-xl shadow-2xl flex flex-col max-h-[85vh]">
-        <div className="border-b">
+        <div className="bg-white rounded-xl border-t-5 border-blue-400">
           <Title setModal={setIsOpenModal}>VIEW PROJECTS</Title>
         </div>
 

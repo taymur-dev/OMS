@@ -5,6 +5,7 @@ import { useAppSelector } from "../../redux/Hooks";
 import { InputField } from "../../Components/InputFields/InputField";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPrint } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 
 type Sale = {
   id: number;
@@ -307,6 +308,13 @@ export const ProfitLossReport = () => {
   const netProfitLoss = incomeData.grandTotal - expenseData.grandTotal;
 
   const printDiv = () => {
+    if (incomeData.grandTotal === 0 && expenseData.grandTotal === 0) {
+      toast.error("Report is empty. Nothing to print!", {
+        toastId: "empty-profit-loss",
+      });
+      return;
+    }
+
     const printStyles = `
     @page { size: A4 portrait; margin: 10mm; }
     body { font-family: Arial, sans-serif; font-size: 12pt; color: #333; background-color: white !important; }

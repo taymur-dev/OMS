@@ -235,7 +235,7 @@ export const EditProgress = ({
             </Title>
           </div>
 
-          <div className="mx-2  py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3">
+          <div className="mx-4  py-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3">
             <div className="md:col-span-2">
               {currentUser?.role === "admin" && (
                 <UserSelect
@@ -281,7 +281,7 @@ export const EditProgress = ({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
+          <div className="flex justify-end gap-3 px-4 rounded py-6 bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

@@ -74,7 +74,7 @@ export const ViewHoliday = ({
           </div>
         </div>
 
-        <div className="bg-whitep-3 flex justify-end">
+        <div className="bg-white px-4 py-6 flex justify-end">
           <button
             onClick={setIsOpenModal}
             className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-1 px-8 rounded shadow-sm transition-colors"

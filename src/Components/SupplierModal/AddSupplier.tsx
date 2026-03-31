@@ -138,7 +138,7 @@ export const AddSupplier = ({
               ADD SUPPLIER
             </Title>
           </div>
-          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3 py-2 ">
+          <div className="mx-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3 py-2 ">
             <InputField
               labelName="Supplier Name *"
               type="text"
@@ -178,7 +178,7 @@ export const AddSupplier = ({
             </div>
           </div>
 
-          <div className="flex justify-end items-center gap-3 px-2 py-2 bg-white rounded">
+          <div className="flex justify-end items-center gap-3 px-4 py-6 bg-white rounded">
             <CancelBtn setModal={setModal} />
             <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>

@@ -159,7 +159,7 @@ export const UpdateLeave = ({
           </div>
 
           {/* Form Body */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 px-6 py-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 px-4 py-6">
             <InputField
               labelName="Subject Leave*"
               type="text"
@@ -211,7 +211,7 @@ export const UpdateLeave = ({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 px-6 py-2 bg-white rounded ">
+          <div className="flex justify-end gap-3 px-4 py-6 bg-white rounded ">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={submitting}

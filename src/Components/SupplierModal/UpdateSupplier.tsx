@@ -139,7 +139,7 @@ export const UpdateSupplier = ({
               EDIT SUPPLIER
             </Title>
           </div>
-          <div className="mx-2 py-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3">
+          <div className="mx-4 py-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3">
             <InputField
               labelName="Supplier Name *"
               type="text"
@@ -179,7 +179,7 @@ export const UpdateSupplier = ({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 py-3 bg-white">
+          <div className="flex justify-end gap-3 px-4 py-6 bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

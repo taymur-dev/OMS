@@ -195,7 +195,7 @@ export const UpdateAttendance = ({
               EDIT ATTENDANCE
             </Title>
           </div>
-          <div className="mx-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
+          <div className="mx-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-6 gap-3">
             <UserSelect
               labelName="Select User *"
               name="userId"
@@ -247,7 +247,7 @@ export const UpdateAttendance = ({
             />
           </div>
 
-          <div className="flex justify-end  gap-3 px-6 py-4 bg-white rounded">
+          <div className="flex justify-end  gap-3 px-4 py-6 bg-white rounded">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

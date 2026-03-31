@@ -133,7 +133,7 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
                 Add Expense
               </Title>
             </div>
-            <div className="mx-2 grid grid-cols-1  sm:grid-cols-2 md:grid-cols-2 py-2 gap-3  ">
+            <div className="mx-4 grid grid-cols-1  sm:grid-cols-2 md:grid-cols-2 py-6 gap-3  ">
               <OptionField
                 labelName="Expense Category *"
                 name="expenseCategoryId"
@@ -186,7 +186,7 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
+            <div className="flex justify-end gap-3 px-4 rounded py-6 bg-white">
               <CancelBtn setModal={setModal} />
               <AddButton
                 loading={loading}

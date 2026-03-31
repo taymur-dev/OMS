@@ -105,7 +105,7 @@ export const EditCategory = ({
             </Title>
           </div>
 
-          <div className="mx-2 py-4">
+          <div className="mx-4 py-6">
             <InputField
               labelName="Expense Category *"
               name="expenseCategory"
@@ -116,7 +116,7 @@ export const EditCategory = ({
             />
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
+          <div className="flex justify-end gap-3 px-4 rounded py-6 bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

@@ -122,7 +122,7 @@ export const AddSalaryCycle = ({
             </Title>
           </div>
 
-          <div className="mx-2 py-4 gap-4 flex flex-col">
+          <div className="mx-4 py-6 gap-4 flex flex-col">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-semibold text-gray-900">
@@ -187,7 +187,7 @@ export const AddSalaryCycle = ({
             )}
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
+          <div className="flex justify-end gap-3 px-4 rounded py-6 bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

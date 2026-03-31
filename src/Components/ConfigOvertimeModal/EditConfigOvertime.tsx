@@ -117,7 +117,7 @@ export const EditConfigOvertime = ({
             </Title>
           </div>
 
-          <div className="mx-4 flex flex-col py-4 gap-4">
+          <div className="mx-4 flex flex-col py-6 gap-4">
             <OptionField
               labelName="Overtime Hours *"
               name="overtimeType"
@@ -136,7 +136,7 @@ export const EditConfigOvertime = ({
             />
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-gray-50">
+          <div className="flex justify-end gap-3 px-4 rounded py-6 bg-gray-50">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

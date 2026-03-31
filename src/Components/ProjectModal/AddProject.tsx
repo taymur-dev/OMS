@@ -144,7 +144,7 @@ export const AddProject = ({
           </div>
 
           {/* Body */}
-          <div className="px-6 py-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
+          <div className="px-4 py-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
             <OptionField
               labelName="Project Category *"
               name="projectCategory"
@@ -213,7 +213,7 @@ export const AddProject = ({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 px-6 py-4 bg-blue rounded">
+          <div className="flex justify-end gap-3 px-4 py-6 bg-blue rounded">
             <CancelBtn setModal={setModal} />
             <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>

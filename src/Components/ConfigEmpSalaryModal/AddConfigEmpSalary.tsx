@@ -198,7 +198,7 @@ export const AddConfigEmpSalary = ({
         if (e.key === "Enter") e.preventDefault();
       }}
     >
-      <div className="w-[42rem] max-h-[39rem] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
+      <div className="w-[42rem] max-h-[42rem]  bg-white mx-auto rounded-xl shadow-xl">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-white rounded-xl border-t-5 border-blue-400">
             <Title
@@ -209,7 +209,7 @@ export const AddConfigEmpSalary = ({
             </Title>
           </div>
 
-          <div className="mx-2 grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-2 gap-3">
+          <div className="mx-4 grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-6 gap-3">
             <UserSelect
               labelName="Employee Name *"
               name="employee_id"
@@ -335,7 +335,7 @@ export const AddConfigEmpSalary = ({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
+          <div className="flex justify-end gap-3 px-4 rounded py-6 bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>

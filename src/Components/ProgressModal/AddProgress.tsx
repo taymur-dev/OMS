@@ -240,7 +240,7 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
             </Title>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-2 mx-2 py-2 space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-2 mx-4 py-6 space-y-2">
             <div className="md:col-span-2">
               {isAdmin && (
                 <UserSelect
@@ -293,7 +293,7 @@ export const AddProgress = ({ setModal, handleRefresh }: AddProgressProps) => {
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
+          <div className="flex justify-end gap-3 px-4 rounded py-6 bg-white">
             <CancelBtn setModal={setModal} />
             <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>

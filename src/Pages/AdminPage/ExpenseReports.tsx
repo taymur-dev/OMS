@@ -17,6 +17,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPrint } from "@fortawesome/free-solid-svg-icons";
 import { RiInboxArchiveLine } from "react-icons/ri";
+import { toast } from "react-toastify";
 
 type ExpenseT = {
   id: number;
@@ -149,6 +150,13 @@ export const ExpenseReports = ({
   }, [token]);
 
   const printDiv = () => {
+    if (filteredExpenses.length === 0) {
+      toast.error("Report is empty. Nothing to print!", {
+        toastId: "empty-report-print",
+      });
+      return;
+    }
+
     const printStyles = `
     @page { size: A4 portrait; margin: 10mm; }
     body { font-family: Arial, sans-serif; font-size: 10pt; color: #333; }

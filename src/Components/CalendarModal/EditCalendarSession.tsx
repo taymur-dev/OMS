@@ -139,7 +139,7 @@ export const EditCalendarSession = ({
               </Title>
             </div>
 
-            <div className="px-2 py-6">
+            <div className="px-4 py-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Session Name */}
                 <div className="flex flex-col">
@@ -183,7 +183,7 @@ export const EditCalendarSession = ({
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
+            <div className="flex justify-end gap-3 px-4 rounded py-6 bg-white">
               <CancelBtn setModal={setModal} />
               <AddButton
                 loading={loading}

@@ -183,6 +183,14 @@ export const AttendanceReports = ({
     setReportData((prev) => ({ ...prev, [name]: value }));
   };
   const printDiv = () => {
+
+    if (filteredAttendance.length === 0) {
+    toast.error("Report is empty. Nothing to print!", {
+      toastId: "empty-report-print",
+    });
+    return;
+  }
+
     const printStyles = `
     @page { size: A4 portrait; margin: 10mm; }
     body { font-family: Arial, sans-serif; font-size: 10pt; color: #333; }

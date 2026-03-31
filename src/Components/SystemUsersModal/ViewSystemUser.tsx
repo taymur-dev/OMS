@@ -28,7 +28,7 @@ export const ViewSystemUser = ({ setIsOpenModal, viewUser }: ViewSystemUserProps
           </Title>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="px-4 py-6 space-y-6">
           {/* Section 1: Personal Information */}
           <div className="border border-gray-200 rounded-md p-5 relative">
             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
@@ -87,7 +87,7 @@ export const ViewSystemUser = ({ setIsOpenModal, viewUser }: ViewSystemUserProps
         <div className="bg-gray-50 p-4 flex justify-end border-t border-gray-100">
           <button
             onClick={setIsOpenModal}
-            className="bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 text-sm font-semibold py-2 px-10 rounded shadow-sm transition-colors"
+            className="bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 text-sm font-semibold py-1 px-6 rounded shadow-sm transition-colors"
           >
             Close
           </button>

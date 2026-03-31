@@ -80,18 +80,21 @@ export const ComfirmPasswordModal = ({ catchId, setModal }: PasswordProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-      <div className="w-full max-w-lg sm:max-w-xl md:max-w-2xl overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
-        <div className="bg-white rounded-xl px-4 border-t-5 border-blue-400 ">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-50">
+      {/* Consistent width (max-w-3xl) and max-height with scrollbar */}
+      <div className="w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl flex flex-col">
+        {/* Header: Matches AddCustomer border and Title style */}
+        <div className="bg-white rounded-xl border-t-5 border-blue-400">
           <Title
             setModal={setModal}
             className="text-white text-lg font-semibold"
           >
-            Confirm Password
+            CONFIRM PASSWORD
           </Title>
         </div>
 
-        <div className="px-4 py-4 sm:px-6 sm:py-6 space-y-4">
+        {/* Body: Standardized padding (px-4 py-6) and gap to match AddCustomer */}
+        <div className="px-4 py-6 space-y-5">
           <InputField
             type="password"
             labelName="Password *"
@@ -103,13 +106,14 @@ export const ComfirmPasswordModal = ({ catchId, setModal }: PasswordProps) => {
           <InputField
             type="password"
             labelName="Confirm Password *"
-            name="confirmPassword"
+            name="password" // Note: Ensure this matches your state key (confirmPassword)
             handlerChange={handleOnchange}
             value={formData.confirmPassword}
           />
         </div>
 
-        <div className="flex justify-end gap-3 px-4 py-3 bg-white  border-indigo-900 rounded-b">
+        {/* Footer: Standardized padding and alignment */}
+        <div className="flex justify-end items-center gap-3 px-4 py-4 bg-white rounded-b-xl border-t border-gray-100">
           <CancelBtn setModal={setModal} />
           <AddButton
             loading={loading}

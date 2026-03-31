@@ -106,7 +106,7 @@ export const AddCategory = ({
                 ADD EXPENSE CATEGORY
               </Title>
             </div>
-            <div className="mx-2 flex-wrap py-4 gap-3">
+            <div className="mx-4 flex-wrap py-6 gap-3">
               <InputField
                 labelName="Expense Category *"
                 name="categoryName"
@@ -116,7 +116,7 @@ export const AddCategory = ({
                 maxLength={50}
               />
             </div>
-            <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
+            <div className="flex justify-end gap-3 px-4 rounded py-6 bg-white">
               <CancelBtn setModal={setModal} />
               <AddButton
                 loading={loading}

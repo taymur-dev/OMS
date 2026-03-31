@@ -222,7 +222,7 @@ export const Expenses = ({
                     </span>
                   </div>
                   <div className="font-black text-lg text-blue-900">
-                    Rs. {totalExpenseAmount.toLocaleString()}
+                  {totalExpenseAmount.toLocaleString()}
                   </div>
                   <div className="col-span-2"></div>
                 </div>

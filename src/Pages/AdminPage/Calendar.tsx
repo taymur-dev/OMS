@@ -34,12 +34,14 @@ interface CalendarProps {
   externalSearch: string;
   externalPageSize: number;
   triggerModal: number;
+  triggerActivateModal: number;
 }
 
 export const Calendar = ({
   externalSearch,
   externalPageSize,
   triggerModal,
+  triggerActivateModal,
 }: CalendarProps) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const { loader } = useAppSelector((state) => state.NavigateState);
@@ -59,6 +61,13 @@ export const Calendar = ({
       setIsOpenModal("ADD");
     }
   }, [triggerModal]);
+
+  // Sync "Activate" modal with parent button trigger
+  useEffect(() => {
+    if (triggerActivateModal > 0) {
+      setIsOpenModal("ACTIVATE");
+    }
+  }, [triggerActivateModal]);
 
   const handleIncrementPageButton = () => {
     const totalPages = Math.ceil(
@@ -150,19 +159,9 @@ export const Calendar = ({
   if (loader) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-grow bg-white overflow-hidden rounded-lg shadow-sm">
-      {/* Sub-header Action Bar */}
-      <div className="p-3 bg-white flex items-center justify-end border-b border-gray-50">
-        <button
-          onClick={() => handleToggleViewModal("ACTIVATE")}
-          className="bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-2 px-4 rounded-md transition-colors shadow-sm"
-        >
-          Activate Calendar Session
-        </button>
-      </div>
-
+    <div className="flex flex-col flex-grow bg-white overflow-hidden">
       {/* Main Table Area */}
-      <div className="overflow-auto px-3 py-2">
+      <div className="overflow-auto px-0.5 py-2">
         <div className="min-w-[800px]">
           <div className="px-0.5 pt-0.5">
             {/* Grid Header aligned with UsersDetails style */}

@@ -162,7 +162,7 @@ export const EditAccessControl = ({
             </Title>
           </div>
 
-          <div className="p-6">
+          <div className="px-4 py-6">
             <div className="mb-6">
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Updating Permissions for Role

@@ -84,7 +84,7 @@ export const ViewExpense = ({
                   <FaMoneyBillWave className="text-gray-400" /> Amount
                 </label>
                 <p className="text-blue-700 font-bold text-lg">
-                  Rs{Number(viewExpense.amount).toLocaleString()}
+                  {Number(viewExpense.amount).toLocaleString()}
                 </p>
               </div>
             </div>

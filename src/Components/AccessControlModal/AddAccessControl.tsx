@@ -121,7 +121,7 @@ export const AddAccessControl = ({ onClose, onSuccess }: AddAccessControlProps) 
             </Title>
           </div>
 
-          <div className="p-6">
+          <div className="px-4 py-6">
             <div className="mb-6">
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Select Role to Assign Permissions

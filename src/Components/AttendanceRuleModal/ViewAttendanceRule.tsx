@@ -121,7 +121,7 @@ export const ViewAttendanceRule = ({
         <div className="bg-white p-3 flex justify-end">
           <button
             onClick={setIsOpenModal}
-            className="bg-gray-200 hover:bg-white text-gray-800 border border-1 border-gray-400 text-sm font-bold py-1.5 px-10 rounded
+            className="bg-gray-200 hover:bg-white text-gray-800 border border-1 border-gray-400 text-sm font-bold py-1 px-6 rounded
              shadow-sm transition-all active:scale-95"
           >
             Close

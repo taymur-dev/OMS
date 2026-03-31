@@ -40,7 +40,7 @@ export const ViewBusinessVariable = ({
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="px-4 py-6">
           {/* Logo Section */}
           <div className="flex flex-col items-center mb-8">
             <div className="w-24 h-24 rounded-2xl border-4 border-gray-50 shadow-inner flex items-center justify-center overflow-hidden bg-gray-100 mb-3">
