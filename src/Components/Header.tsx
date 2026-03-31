@@ -277,7 +277,7 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
               {unreadCount > 0 && (
                 <span className="absolute top-1 right-1 h-5 w-5 rounded-full bg-red-600 flex items-center justify-center text-[10px] sm:text-[12px] text-white font-bold z-10">
                   {" "}
-                  {unreadCount > 100 ? "99+" : unreadCount}{" "}
+                  {unreadCount > 10 ? "10+" : unreadCount}{" "}
                 </span>
               )}{" "}
               <CiBellOn size={32} className="relative text-gray-700" />
