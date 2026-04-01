@@ -87,28 +87,17 @@ export const Assets = ({
     }
   }, [triggerModal]);
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(filteredAssets.length / externalPageSize);
-    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () =>
-    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
-
   const handleToggleViewModal = (active: AssetT) =>
     setIsOpenModal((prev) => (prev === active ? "" : active));
 
   const handleDeleteAsset = async (id: number) => {
     try {
       await axios.delete(`${BASE_URL}/api/admin/deleteassets/${id}`);
-
       toast.success("Asset deleted successfully");
-
       fetchAssets();
       setIsOpenModal("");
     } catch (err) {
       console.error("Failed to delete asset:", err);
-
       toast.error("Failed to delete asset ");
     }
   };
@@ -140,7 +129,6 @@ export const Assets = ({
               <span className="text-left">Sr#</span>
               <span className="text-left">Asset Name</span>
               <span className="text-left">Category</span>
-              {/* Adjusted width and alignment to match UsersDetails Actions header */}
               <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
           </div>
@@ -166,17 +154,14 @@ export const Assets = ({
                       {startIndex + index + 1}
                     </span>
 
-                    {/* Icon removed, text-only alignment */}
                     <div className="truncate text-gray-800">
                       {asset.asset_name}
                     </div>
 
-                    {/* Icon removed, text-only alignment */}
                     <div className="text-gray-600 truncate">
                       {asset.category_name}
                     </div>
 
-                    {/* Actions container adjusted to match UsersDetails alignment */}
                     <div className="flex items-center justify-end gap-1 w-[140px]">
                       <ViewButton
                         handleView={() => {
@@ -219,8 +204,9 @@ export const Assets = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

@@ -491,13 +491,11 @@ export const ProcessReports = ({
           total={totalItems}
         />
         <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-          handleIncrementPageButton={() => {
-            const totalPages = Math.ceil(totalItems / externalPageSize);
-            if (pageNo < totalPages) setPageNo((p) => p + 1);
-          }}
-        />
+                pageNo={pageNo}
+                totalNum={filteredTasks.length}
+                pageSize={externalPageSize}
+                handlePageClick={(targetPage) => setPageNo(targetPage)}
+              />
       </div>
     </div>
   );

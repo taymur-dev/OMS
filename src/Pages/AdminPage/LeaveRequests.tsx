@@ -313,19 +313,12 @@ export const LeaveRequests = ({
           end={Math.min(startIndex + externalPageSize, filteredLeaves.length)}
           total={filteredLeaves.length}
         />
+
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={() =>
-            setPageNo((prev) => Math.max(prev - 1, 1))
-          }
-          handleIncrementPageButton={() =>
-            setPageNo((prev) =>
-              Math.min(
-                prev + 1,
-                Math.ceil(filteredLeaves.length / externalPageSize),
-              ),
-            )
-          }
+          totalNum={filteredLeaves.length} // Changed from totalNum to filteredLeaves.length
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

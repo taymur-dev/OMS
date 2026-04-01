@@ -205,16 +205,12 @@ export const BusinessVariables = ({
           end={Math.min(endIndex, totalNum)}
           total={totalNum}
         />
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={() =>
-            setPageNo((prev) => Math.max(prev - 1, 1))
-          }
-          handleIncrementPageButton={() => {
-            const totalPages = Math.ceil(totalNum / externalPageSize);
-            if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-          }}
-        />
+          <Pagination
+                  pageNo={pageNo}
+                  totalNum={totalNum}
+                  pageSize={externalPageSize}
+                  handlePageClick={(targetPage) => setPageNo(targetPage)}
+                />
       </div>
 
       {/* Modals */}

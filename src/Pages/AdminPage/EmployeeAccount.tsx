@@ -220,14 +220,11 @@ export const EmployeeAccount = ({
           )}
           total={filteredEmployees.length}
         />
-        <Pagination
+          <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={() => setPageNo((p) => Math.max(1, p - 1))}
-          handleIncrementPageButton={() => {
-            if (startIndex + externalPageSize < filteredEmployees.length) {
-              setPageNo((p) => p + 1);
-            }
-          }}
+          totalNum={filteredEmployees.length}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

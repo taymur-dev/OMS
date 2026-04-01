@@ -241,12 +241,9 @@ export const CustomerDetail = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={() =>
-            setPageNo((prev) => Math.max(prev - 1, 1))
-          }
-          handleIncrementPageButton={() =>
-            setPageNo((prev) => (endIndex < totalNum ? prev + 1 : prev))
-          }
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

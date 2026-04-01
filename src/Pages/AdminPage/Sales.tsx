@@ -100,12 +100,6 @@ export const Sales = ({
     startIndex + externalPageSize,
   );
 
-  const handleIncrementPageButton = () => {
-    if (pageNo < Math.ceil(totalNum / externalPageSize))
-      setPageNo((p) => p + 1);
-  };
-  const handleDecrementPageButton = () => setPageNo((p) => Math.max(p - 1, 1));
-
   const handleDeleteSale = async () => {
     if (!catchId) return;
     try {
@@ -222,8 +216,9 @@ export const Sales = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

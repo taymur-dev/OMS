@@ -120,15 +120,6 @@ export const EmployeeWithdraw = ({
   );
   const totalNum = filteredEmployees.length;
 
-  const handleIncrementPageButton = () => {
-    if (pageNo < Math.ceil(totalNum / externalPageSize))
-      setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    if (pageNo > 1) setPageNo((prev) => prev - 1);
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -232,8 +223,9 @@ export const EmployeeWithdraw = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

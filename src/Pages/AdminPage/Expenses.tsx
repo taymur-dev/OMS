@@ -115,15 +115,6 @@ export const Expenses = ({
     );
   }, [filteredExpenses]);
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(totalRecords / externalPageSize);
-    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    if (pageNo > 1) setPageNo((prev) => prev - 1);
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -222,7 +213,7 @@ export const Expenses = ({
                     </span>
                   </div>
                   <div className="font-black text-lg text-blue-900">
-                  {totalExpenseAmount.toLocaleString()}
+                    {totalExpenseAmount.toLocaleString()}
                   </div>
                   <div className="col-span-2"></div>
                 </div>
@@ -241,8 +232,9 @@ export const Expenses = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          totalNum={filteredExpenses.length}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

@@ -187,11 +187,9 @@ export const ProjectsCatogries = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-          handleIncrementPageButton={() =>
-            pageNo * externalPageSize < filteredCategories.length &&
-            setPageNo((p) => p + 1)
-          }
+          totalNum={filteredCategories.length}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

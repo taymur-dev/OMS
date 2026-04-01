@@ -11,6 +11,7 @@ import setAuthToken from "../SetAuthToken";
 import { Navigate } from "react-router-dom";
 import { navigationStart, navigationSuccess } from "../redux/NavigationSlice";
 import { ClipLoader } from "react-spinners";
+import { toast } from "react-toastify";
 
 // Icons
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
@@ -50,6 +51,7 @@ export const Login = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const res = await axios.post(`${BASE_URL}/api/login`, formData);
       const { token, user } = res.data;
@@ -64,6 +66,7 @@ export const Login = () => {
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       dispatch(authFailure(axiosError.response?.data?.message ?? ""));
+      toast.error(axiosError.response?.data?.message);
     }
     setLoading(false);
   };

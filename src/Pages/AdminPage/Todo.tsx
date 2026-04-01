@@ -133,14 +133,6 @@ export const Todo = ({
   const endIndex = startIndex + externalPageSize;
   const paginatedTodos = filteredTodos.slice(startIndex, endIndex);
 
-  const handleIncrementPageButton = () => {
-    if (pageNo < Math.ceil(totalNum / externalPageSize))
-      setPageNo((prev) => prev + 1);
-  };
-  const handleDecrementPageButton = () => {
-    if (pageNo > 1) setPageNo((prev) => prev - 1);
-  };
-
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return "-";
     return new Date(dateString)
@@ -307,8 +299,9 @@ export const Todo = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

@@ -75,16 +75,6 @@ export const Resignation = ({
     handleToggleViewModal("EDIT");
   };
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(
-      filteredResignations.length / externalPageSize,
-    );
-    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () =>
-    setPageNo((prev) => Math.max(prev - 1, 1));
-
   const handleGetAllResignations = useCallback(
     async (updatedItem?: ResignationDataT) => {
       if (!token || !currentUser) return;
@@ -272,8 +262,9 @@ export const Resignation = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          totalNum={filteredResignations.length}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
       {/* Modals */}

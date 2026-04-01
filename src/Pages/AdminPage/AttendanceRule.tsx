@@ -121,13 +121,7 @@ export const AttendanceRule = ({
   const endIndex = startIndex + externalPageSize;
   const paginatedConfig = filteredConfig.slice(startIndex, endIndex);
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(totalNum / externalPageSize);
-    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-  };
-  const handleDecrementPageButton = () => {
-    if (pageNo > 1) setPageNo((prev) => prev - 1);
-  };
+ 
 
   if (loader) return <Loader />;
 
@@ -248,10 +242,11 @@ export const AttendanceRule = ({
           end={Math.min(endIndex, totalNum)}
           total={totalNum}
         />
-        <Pagination
+          <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

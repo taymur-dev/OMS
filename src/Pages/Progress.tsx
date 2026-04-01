@@ -308,10 +308,9 @@ export const Progress = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-          handleIncrementPageButton={() =>
-            endIndex < totalItems && setPageNo((p) => p + 1)
-          }
+          totalNum={filteredProgress.length}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

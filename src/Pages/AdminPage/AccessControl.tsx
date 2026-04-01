@@ -112,15 +112,6 @@ export const AccessControl = ({
   const endIndex = startIndex + externalPageSize;
   const paginatedRoles = filteredRoles.slice(startIndex, endIndex);
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(totalNum / externalPageSize);
-    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    if (pageNo > 1) setPageNo((prev) => prev - 1);
-  };
-
   return (
     <div className="flex flex-col flex-grow bg-white overflow-hidden">
       <div className="overflow-auto px-3 sm:px-0">
@@ -185,8 +176,9 @@ export const AccessControl = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

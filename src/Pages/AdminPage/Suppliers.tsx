@@ -109,15 +109,6 @@ export const Suppliers = ({
   const endIndex = startIndex + externalPageSize;
   const paginatedData = filteredSuppliers.slice(startIndex, endIndex);
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(totalNum / externalPageSize);
-    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    if (pageNo > 1) setPageNo((prev) => prev - 1);
-  };
-
   const handleDeleteSupplier = async () => {
     if (!deleteId) return;
     try {
@@ -163,9 +154,7 @@ export const Suppliers = ({
                 <p className="text-lg font-medium">
                   No records available at the moment!
                 </p>
-                <p className="text-sm">
-                  Try adjusting your search term.
-                </p>
+                <p className="text-sm">Try adjusting your search term.</p>
               </div>
             ) : (
               <div className="flex flex-col gap-2">
@@ -247,8 +236,9 @@ export const Suppliers = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

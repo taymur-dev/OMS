@@ -113,14 +113,7 @@ export const ExpensesCatogries = ({
   const endIndex = startIndex + externalPageSize;
   const paginatedCategories = filteredCategories.slice(startIndex, endIndex);
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(totalNum / externalPageSize);
-    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    if (pageNo > 1) setPageNo((prev) => prev - 1);
-  };
+  
 
   return (
     <div className="flex flex-col flex-grow bg-white overflow-hidden">
@@ -194,11 +187,12 @@ export const ExpensesCatogries = ({
           end={Math.min(endIndex, totalNum)}
           total={totalNum}
         />
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
-        />
+         <Pagination
+                 pageNo={pageNo}
+                 totalNum={totalNum}
+                 pageSize={externalPageSize}
+                 handlePageClick={(targetPage) => setPageNo(targetPage)}
+               />
       </div>
 
       {/* --- MODALS SECTION --- */}

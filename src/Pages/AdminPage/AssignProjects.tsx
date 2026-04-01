@@ -222,7 +222,7 @@ export const AssignProjects = ({
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center justify-end gap-1 w-[140px]">
+                    <div className="flex items-center justify-end mr-5 gap-1 w-[140px]">
                       <ViewButton
                         handleView={() => {
                           setEditData(item);
@@ -248,15 +248,9 @@ export const AssignProjects = ({
 
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={() =>
-            setPageNo((p) => (p > 1 ? p - 1 : 1))
-          }
-          handleIncrementPageButton={() => {
-            const totalPages = Math.ceil(
-              groupedProjects.length / externalPageSize,
-            );
-            if (pageNo < totalPages) setPageNo((p) => p + 1);
-          }}
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

@@ -540,14 +540,12 @@ export const AttendanceReports = ({
           )}
           total={filteredAttendance.length}
         />
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-          handleIncrementPageButton={() =>
-            startIndex + externalPageSize < filteredAttendance.length &&
-            setPageNo((p) => p + 1)
-          }
-        />
+         <Pagination
+                 pageNo={pageNo}
+                 totalNum={filteredAttendance.length}
+                 pageSize={externalPageSize}
+                 handlePageClick={(targetPage) => setPageNo(targetPage)}
+               />
       </div>
     </div>
   );

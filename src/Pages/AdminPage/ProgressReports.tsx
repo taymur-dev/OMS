@@ -466,14 +466,12 @@ export const ProgressReports = ({
           end={Math.min(startIndex + externalPageSize, totalItems)}
           total={totalItems}
         />
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-          handleIncrementPageButton={() =>
-            startIndex + externalPageSize < totalItems &&
-            setPageNo((p) => p + 1)
-          }
-        />
+         <Pagination
+                 pageNo={pageNo}
+                 totalNum={filteredProgress.length}
+                 pageSize={externalPageSize}
+                 handlePageClick={(targetPage) => setPageNo(targetPage)}
+               />
       </div>
     </div>
   );

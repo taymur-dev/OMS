@@ -319,12 +319,11 @@ export const UserAttendance = ({
           end={Math.min(endIndex, totalNum)}
           total={totalNum}
         />
-        <Pagination
+         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-          handleIncrementPageButton={() => {
-            if (endIndex < totalNum) setPageNo((p) => p + 1);
-          }}
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
       {/* Modals Section */}

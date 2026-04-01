@@ -101,14 +101,16 @@ export const ComfirmPasswordModal = ({ catchId, setModal }: PasswordProps) => {
             name="password"
             handlerChange={handleOnchange}
             value={formData.password}
+            autoComplete="new-password"
           />
 
           <InputField
             type="password"
             labelName="Confirm Password *"
-            name="password" // Note: Ensure this matches your state key (confirmPassword)
+            name="confirmPassword" // Note: Ensure this matches your state key (confirmPassword)
             handlerChange={handleOnchange}
             value={formData.confirmPassword}
+            autoComplete="new-password"
           />
         </div>
 

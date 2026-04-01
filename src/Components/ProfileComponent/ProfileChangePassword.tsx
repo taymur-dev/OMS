@@ -29,7 +29,7 @@ export const ProfileChangePassword = ({
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setChangePassword({ ...changePassword, [name]: value.trim() });
+    setChangePassword({ ...changePassword, [name]: value });
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -37,6 +37,12 @@ export const ProfileChangePassword = ({
 
     if (!changePassword.oldPassword || !changePassword.newPassword) {
       setMessage("Please fill both old and new passwords.");
+      return;
+    }
+
+    // Check if old and new passwords are the same
+    if (changePassword.oldPassword === changePassword.newPassword) {
+      setMessage("New password cannot be the same as old password");
       return;
     }
 
@@ -56,6 +62,11 @@ export const ProfileChangePassword = ({
 
       setMessage(res.data.message);
       setChangePassword(initialState);
+
+      // Close modal after successful password change
+      setTimeout(() => {
+        setModal();
+      }, 1500);
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response) {
         setMessage(error.response.data.message || "Error updating password");
@@ -103,7 +114,13 @@ export const ProfileChangePassword = ({
             />
 
             {message && (
-              <p className="text-center text-sm font-medium text-red-600 bg-red-50 py-2 rounded-md">
+              <p
+                className={`text-center text-sm font-medium ${
+                  message.includes("success")
+                    ? "text-green-600 bg-green-50"
+                    : "text-red-600 bg-red-50"
+                } py-2 rounded-md`}
+              >
                 {message}
               </p>
             )}

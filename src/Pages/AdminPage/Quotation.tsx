@@ -113,15 +113,6 @@ export const Quotation = ({
   const endIndex = startIndex + externalPageSize;
   const paginatedData = filteredQuotations.slice(startIndex, endIndex);
 
-  const handleIncrementPageButton = () => {
-    if (pageNo < Math.ceil(totalNum / externalPageSize))
-      setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    if (pageNo > 1) setPageNo((prev) => prev - 1);
-  };
-
   if (loader) return <Loader />;
 
   return (
@@ -196,8 +187,9 @@ export const Quotation = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

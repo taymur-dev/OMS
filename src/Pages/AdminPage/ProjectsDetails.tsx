@@ -120,25 +120,25 @@ export const ProjectsDetails = ({
   );
 
   const getStatusBadge = (status: string) => {
-  const baseClasses =
-    "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm";
-  
-  if (!status) return `${baseClasses} bg-gray-400 text-white`;
+    const baseClasses =
+      "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm";
 
-  switch (status.trim()) { 
-    case "Completed":
-    case "completed": 
-      return `${baseClasses} bg-green-100 text-green-600 border border-green-400`;
-    case "New":
-    case "new":
-      return `${baseClasses} bg-blue-100 text-blue-600 border border-blue-400`;
-    case "Working":
-    case "working":
-      return `${baseClasses} bg-yellow-100 text-yellow-600 border border-yellow-400`;
-    default:
-      return `${baseClasses} bg-gray-400 text-white`;
-  }
-};
+    if (!status) return `${baseClasses} bg-gray-400 text-white`;
+
+    switch (status.trim()) {
+      case "Completed":
+      case "completed":
+        return `${baseClasses} bg-green-100 text-green-600 border border-green-400`;
+      case "New":
+      case "new":
+        return `${baseClasses} bg-blue-100 text-blue-600 border border-blue-400`;
+      case "Working":
+      case "working":
+        return `${baseClasses} bg-yellow-100 text-yellow-600 border border-yellow-400`;
+      default:
+        return `${baseClasses} bg-gray-400 text-white`;
+    }
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -262,13 +262,9 @@ export const ProjectsDetails = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={() =>
-            setPageNo((prev) => Math.max(prev - 1, 1))
-          }
-          handleIncrementPageButton={() => {
-            if (pageNo * externalPageSize < filteredProjects.length)
-              setPageNo((prev) => prev + 1);
-          }}
+          totalNum={filteredProjects.length}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

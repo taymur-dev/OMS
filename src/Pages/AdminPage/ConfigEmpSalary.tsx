@@ -110,14 +110,7 @@ export const ConfigEmpSalary = ({
   const endIndex = startIndex + externalPageSize;
   const paginatedSalaries = filteredSalaries.slice(startIndex, endIndex);
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(totalNum / externalPageSize);
-    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    if (pageNo > 1) setPageNo((prev) => prev - 1);
-  };
+ 
 
   if (loader) return <Loader />;
 
@@ -231,11 +224,12 @@ export const ConfigEmpSalary = ({
           end={Math.min(endIndex, totalNum)}
           total={totalNum}
         />
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
-        />
+         <Pagination
+                 pageNo={pageNo}
+                 totalNum={totalNum}
+                 pageSize={externalPageSize}
+                 handlePageClick={(targetPage) => setPageNo(targetPage)}
+               />
       </div>
 
       {/* Modals remain the same */}

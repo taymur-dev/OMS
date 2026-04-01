@@ -268,13 +268,12 @@ export const Promotion = ({
           end={Math.min(endIndex, totalItems)}
           total={totalItems}
         />
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-          handleIncrementPageButton={() =>
-            pageNo * externalPageSize < totalItems && setPageNo((p) => p + 1)
-          }
-        />
+          <Pagination
+                  pageNo={pageNo}
+                  totalNum={filteredPromotions.length}
+                  pageSize={externalPageSize}
+                  handlePageClick={(targetPage) => setPageNo(targetPage)}
+                />
       </div>
 
       {/* Modals remain unchanged */}

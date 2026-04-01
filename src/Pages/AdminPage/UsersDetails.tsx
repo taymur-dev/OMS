@@ -17,7 +17,11 @@ import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
-import { RiLockPasswordFill, RiUserFill , RiInboxArchiveLine } from "react-icons/ri";
+import {
+  RiLockPasswordFill,
+  RiUserFill,
+  RiInboxArchiveLine,
+} from "react-icons/ri";
 
 type UserType = {
   id: number;
@@ -114,15 +118,6 @@ export const UsersDetails = ({
   const endIndex = startIndex + externalPageSize;
   const paginatedUsers = activeUsers.slice(startIndex, endIndex);
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(totalNum / externalPageSize);
-    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    if (pageNo > 1) setPageNo((prev) => prev - 1);
-  };
-
   const handleDeleteUser = async (id: number | null) => {
     try {
       await axios.patch(
@@ -209,9 +204,7 @@ export const UsersDetails = ({
                 <p className="text-lg font-medium">
                   No records available at the moment!
                 </p>
-                <p className="text-sm">
-                  Try adjusting your search term.
-                </p>
+                <p className="text-sm">Try adjusting your search term.</p>
               </div>
             ) : (
               <div className="flex flex-col gap-2">
@@ -288,8 +281,9 @@ export const UsersDetails = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

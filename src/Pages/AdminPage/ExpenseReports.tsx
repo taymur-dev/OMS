@@ -423,14 +423,9 @@ export const ExpenseReports = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-          handleIncrementPageButton={() => {
-            if (
-              pageNo < Math.ceil(filteredExpenses.length / externalPageSize)
-            ) {
-              setPageNo((p) => p + 1);
-            }
-          }}
+          totalNum={filteredExpenses.length}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
     </div>

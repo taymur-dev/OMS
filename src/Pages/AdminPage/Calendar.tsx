@@ -69,16 +69,6 @@ export const Calendar = ({
     }
   }, [triggerActivateModal]);
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(
-      filteredCalendarList.length / externalPageSize,
-    );
-    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    if (pageNo > 1) setPageNo((prev) => prev - 1);
-  };
 
   const handleToggleViewModal = (active: CALENDART) => {
     setIsOpenModal((prev) => (prev === active ? "" : active));
@@ -230,11 +220,12 @@ export const Calendar = ({
           end={Math.min(endIndex, filteredCalendarList.length)}
           total={filteredCalendarList.length}
         />
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
-        />
+         <Pagination
+                 pageNo={pageNo}
+                 totalNum={filteredCalendarList.length}
+                 pageSize={externalPageSize}
+                 handlePageClick={(targetPage) => setPageNo(targetPage)}
+               />
       </div>
 
       {/* Modals */}

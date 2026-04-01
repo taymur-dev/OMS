@@ -54,13 +54,7 @@ export const SupplierAccount = ({
     setPageNo(1);
   }, [externalSearch, externalPageSize]);
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(filteredSuppliers.length / externalPageSize);
-    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-  };
 
-  const handleDecrementPageButton = () =>
-    setPageNo((prev) => (prev > 1 ? prev - 1 : 1));
 
   const handleToggleViewModal = (
     type: SupplierAccountT,
@@ -203,11 +197,12 @@ export const SupplierAccount = ({
           )}
           total={filteredSuppliers.length}
         />
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
-        />
+          <Pagination
+                  pageNo={pageNo}
+                  totalNum={filteredSuppliers.length}
+                  pageSize={externalPageSize}
+                  handlePageClick={(targetPage) => setPageNo(targetPage)}
+                />
       </div>
 
       {/* --- MODALS --- */}

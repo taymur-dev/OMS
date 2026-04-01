@@ -147,15 +147,6 @@ export const Loan = ({
     }
   }, [triggerModal]);
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(totalItems / externalPageSize);
-    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    if (pageNo > 1) setPageNo((prev) => prev - 1);
-  };
-
   if (loader) return <Loader />;
 
   return (
@@ -236,8 +227,9 @@ export const Loan = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          totalNum={filteredLoans.length}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

@@ -141,13 +141,6 @@ export const AccountReport = ({
     setPageNo(1);
   };
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(filteredReports.length / externalPageSize);
-    if (pageNo < totalPages) setPageNo((p) => p + 1);
-  };
-
-  const handleDecrementPageButton = () => setPageNo((p) => Math.max(p - 1, 1));
-
   const handleGetAccounts = useCallback(async () => {
     try {
       dispatch(navigationStart());
@@ -239,13 +232,12 @@ export const AccountReport = ({
   );
 
   const printDiv = () => {
-
     if (filteredReports.length === 0) {
-    toast.error("Report is empty. Nothing to print!", {
-      toastId: "empty-report-print",
-    });
-    return;
-  }
+      toast.error("Report is empty. Nothing to print!", {
+        toastId: "empty-report-print",
+      });
+      return;
+    }
 
     const printStyles = `
     @page { size: A4 portrait; margin: 10mm; }
@@ -611,8 +603,9 @@ export const AccountReport = ({
 
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          totalNum={filteredReports.length}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
     </div>

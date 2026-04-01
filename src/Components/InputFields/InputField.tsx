@@ -15,6 +15,7 @@ type InputFieldProps = {
   icon?: ReactNode;
   minLength?: number;
   maxLength?: number;
+  autoComplete?: string; // Add this line
 };
 
 export const InputField = ({
@@ -31,6 +32,7 @@ export const InputField = ({
   icon,
   minLength,
   maxLength,
+  autoComplete, // Add this line
 }: InputFieldProps) => {
   return (
     <div className="flex flex-col">
@@ -45,6 +47,7 @@ export const InputField = ({
 
         <input
           type={type}
+          autoComplete={autoComplete || "off"} // Use the prop with fallback to "off"
           className={`w-full p-2.5 ${icon ? "pl-10" : "pl-3"} border border-gray-200 rounded-lg shadow text-gray-800
             ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"}
             focus:outline-none focus:ring-1 focus:ring-blue-500

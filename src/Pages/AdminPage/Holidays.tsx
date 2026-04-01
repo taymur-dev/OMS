@@ -128,14 +128,7 @@ export const Holidays = ({
     [filteredHolidays, startIndex, externalPageSize],
   );
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(totalNum / externalPageSize);
-    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    if (pageNo > 1) setPageNo((prev) => prev - 1);
-  };
+  
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString("en-US", {
@@ -246,11 +239,12 @@ export const Holidays = ({
           end={Math.min(startIndex + externalPageSize, totalNum)}
           total={totalNum}
         />
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
-        />
+         <Pagination
+                 pageNo={pageNo}
+                 totalNum={totalNum}
+                 pageSize={externalPageSize}
+                 handlePageClick={(targetPage) => setPageNo(targetPage)}
+               />
       </div>
 
       {/* Modals */}

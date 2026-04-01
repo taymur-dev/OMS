@@ -184,14 +184,9 @@ export const OverTime = ({
 
         <Pagination
           pageNo={pageNo}
-          handleIncrementPageButton={() =>
-            setPageNo((prev) =>
-              Math.min(prev + 1, Math.ceil(totalNum / externalPageSize)),
-            )
-          }
-          handleDecrementPageButton={() =>
-            setPageNo((prev) => Math.max(prev - 1, 1))
-          }
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

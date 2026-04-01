@@ -124,15 +124,6 @@ export const ConfigOvertime = ({
     startIndex + externalPageSize,
   );
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(totalRecords / externalPageSize);
-    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    if (pageNo > 1) setPageNo((prev) => prev - 1);
-  };
-
   if (loader) return <Loader />;
 
   return (
@@ -217,8 +208,9 @@ export const ConfigOvertime = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          totalNum={filteredOvertime.length}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

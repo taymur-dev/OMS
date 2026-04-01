@@ -88,15 +88,6 @@ export const SalaryCycle = ({
   const endIndex = startIndex + externalPageSize;
   const paginatedList = filteredList.slice(startIndex, endIndex);
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(totalNum / externalPageSize);
-    if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-  };
-
-  const handleDecrementPageButton = () => {
-    if (pageNo > 1) setPageNo((prev) => prev - 1);
-  };
-
   if (loader) return <Loader />;
 
   return (
@@ -144,9 +135,7 @@ export const SalaryCycle = ({
                     </span>
 
                     {/* Year - Icons removed, kept font styling */}
-                    <div className="text-gray-800  truncate">
-                      {item.year}
-                    </div>
+                    <div className="text-gray-800  truncate">{item.year}</div>
 
                     {/* Month - Icons removed */}
                     <div className="text-gray-600 truncate">{item.month}</div>
@@ -180,8 +169,9 @@ export const SalaryCycle = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
 

@@ -234,6 +234,13 @@ export const AddUser = ({
       return;
     }
 
+    if (name.trim().length < 3) {
+      toast.error("Name must be at least 3 characters", {
+        toastId: "name-length",
+      });
+      return;
+    }
+
     if (password.length < 8 || password.length > 20) {
       toast.error("Password must be between 8 and 20 characters", {
         toastId: "password-length",
@@ -342,7 +349,7 @@ export const AddUser = ({
               name="name"
               handlerChange={handlerChange}
               value={userData.name}
-              minLength={3} 
+              minLength={3}
               maxLength={50}
             />
             <InputField
