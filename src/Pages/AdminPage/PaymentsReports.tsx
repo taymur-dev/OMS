@@ -158,12 +158,6 @@ export const PaymentsReports = ({
     startIndex + externalPageSize,
   );
 
-  const handleIncrementPageButton = () => {
-    const totalPages = Math.ceil(totalNum / externalPageSize);
-    if (pageNo < totalPages) setPageNo((p) => p + 1);
-  };
-  const handleDecrementPageButton = () => setPageNo((p) => Math.max(p - 1, 1));
-
   const printDiv = () => {
     // ... (Keep your existing printDiv logic here)
     const printStyles = `
@@ -321,8 +315,9 @@ export const PaymentsReports = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
     </div>

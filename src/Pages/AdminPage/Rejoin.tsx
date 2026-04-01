@@ -267,11 +267,9 @@ export const Rejoin = ({
         />
         <Pagination
           pageNo={pageNo}
-          handleDecrementPageButton={() => setPageNo((p) => Math.max(p - 1, 1))}
-          handleIncrementPageButton={() => {
-            const totalPages = Math.ceil(totalItems / externalPageSize);
-            if (pageNo < totalPages) setPageNo((prev) => prev + 1);
-          }}
+          totalNum={filteredData.length}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
         />
       </div>
       {isOpenModal === "ADD" && (

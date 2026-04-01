@@ -133,13 +133,7 @@ export const AdvanceSalary = ({
   const endIndex = startIndex + externalPageSize;
   const paginatedAdvance = filteredAdvance.slice(startIndex, endIndex);
 
-  const handleIncrementPageButton = () => {
-    if (pageNo < Math.ceil(totalNum / externalPageSize))
-      setPageNo((prev) => prev + 1);
-  };
-  const handleDecrementPageButton = () => {
-    if (pageNo > 1) setPageNo((prev) => prev - 1);
-  };
+
 
   const getStatusBadge = (status: string) => {
     const s = status?.toLowerCase();
@@ -269,11 +263,12 @@ export const AdvanceSalary = ({
           end={Math.min(endIndex, totalNum)}
           total={totalNum}
         />
-        <Pagination
-          pageNo={pageNo}
-          handleDecrementPageButton={handleDecrementPageButton}
-          handleIncrementPageButton={handleIncrementPageButton}
-        />
+          <Pagination
+                         pageNo={pageNo}
+                         totalNum={totalNum}
+                         pageSize={externalPageSize}
+                         handlePageClick={(targetPage) => setPageNo(targetPage)}
+                       />
       </div>
       {/* Modals */}
       {isOpenModal === "ADD" && (
