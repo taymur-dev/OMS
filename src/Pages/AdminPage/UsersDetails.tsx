@@ -100,14 +100,16 @@ export const UsersDetails = ({
   if (loader) return <Loader />;
 
   // Filtering using externalSearch prop
+  const hiddenRoles = ["admin"];
+
   const activeUsers = allUsers.filter(
     (user) =>
       user.loginStatus === "Y" &&
+      !hiddenRoles.includes(user.role.toLowerCase()) &&
       (user.name.toLowerCase().includes(externalSearch.toLowerCase()) ||
         user.email.toLowerCase().includes(externalSearch.toLowerCase()) ||
         user.contact.includes(externalSearch) ||
         user.cnic.includes(externalSearch) ||
-        user.role.toLowerCase().includes(externalSearch.toLowerCase()) ||
         user.address.toLowerCase().includes(externalSearch.toLowerCase())),
   );
 

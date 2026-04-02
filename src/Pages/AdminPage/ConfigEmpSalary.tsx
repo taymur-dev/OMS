@@ -18,6 +18,7 @@ import { AddConfigEmpSalary } from "../../Components/ConfigEmpSalaryModal/AddCon
 import { EditConfigEmpSalary } from "../../Components/ConfigEmpSalaryModal/EditConfigEmpSalary";
 import { ViewConfigEmpSalary } from "../../Components/ConfigEmpSalaryModal/ViewConfigEmpSalary";
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+import { RiHistoryLine } from "react-icons/ri";
 
 interface Salary {
   id: number;
@@ -110,8 +111,6 @@ export const ConfigEmpSalary = ({
   const endIndex = startIndex + externalPageSize;
   const paginatedSalaries = filteredSalaries.slice(startIndex, endIndex);
 
- 
-
   if (loader) return <Loader />;
 
   return (
@@ -135,8 +134,11 @@ export const ConfigEmpSalary = ({
 
           <div className="px-0.5 sm:px-1 py-2">
             {paginatedSalaries.length === 0 ? (
-              <div className="text-center py-10 text-gray-500">
-                No records available at the moment!
+              <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
+                <RiHistoryLine size={48} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">
+                  No configured salary found!
+                </p>
               </div>
             ) : (
               <div className="flex flex-col gap-2">
@@ -224,12 +226,12 @@ export const ConfigEmpSalary = ({
           end={Math.min(endIndex, totalNum)}
           total={totalNum}
         />
-         <Pagination
-                 pageNo={pageNo}
-                 totalNum={totalNum}
-                 pageSize={externalPageSize}
-                 handlePageClick={(targetPage) => setPageNo(targetPage)}
-               />
+        <Pagination
+          pageNo={pageNo}
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
+        />
       </div>
 
       {/* Modals remain the same */}
