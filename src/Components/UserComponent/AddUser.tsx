@@ -269,7 +269,7 @@ export const AddUser = ({
           Authorization: token,
         },
       });
-      toast.success("User added successfully", { toastId: "user-success" });
+      toast.success("Employee added successfully", { toastId: "user-success" });
       setUserData(initialState);
       setSelectedFile(null);
       setImagePreview("");
@@ -277,7 +277,7 @@ export const AddUser = ({
       onSuccesAction();
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "Error adding user", {
+        toast.error(error.response?.data?.message || "Error adding employee", {
           toastId: "user-error",
         });
       } else {
