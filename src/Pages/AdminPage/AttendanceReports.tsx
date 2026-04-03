@@ -183,13 +183,12 @@ export const AttendanceReports = ({
     setReportData((prev) => ({ ...prev, [name]: value }));
   };
   const printDiv = () => {
-
     if (filteredAttendance.length === 0) {
-    toast.error("Report is empty. Nothing to print!", {
-      toastId: "empty-report-print",
-    });
-    return;
-  }
+      toast.error("Report is empty. Nothing to print!", {
+        toastId: "empty-report-print",
+      });
+      return;
+    }
 
     const printStyles = `
     @page { size: A4 portrait; margin: 10mm; }
@@ -540,12 +539,12 @@ export const AttendanceReports = ({
           )}
           total={filteredAttendance.length}
         />
-         <Pagination
-                 pageNo={pageNo}
-                 totalNum={filteredAttendance.length}
-                 pageSize={externalPageSize}
-                 handlePageClick={(targetPage) => setPageNo(targetPage)}
-               />
+        <Pagination
+          pageNo={pageNo}
+          totalNum={filteredAttendance.length}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
+        />
       </div>
     </div>
   );

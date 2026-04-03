@@ -12,6 +12,7 @@ type UserT = {
   email?: string;
   cnic?: string;
   contact?: string;
+  source?: string;
 };
 
 type AuthState = {

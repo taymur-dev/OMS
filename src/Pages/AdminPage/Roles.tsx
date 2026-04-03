@@ -10,11 +10,11 @@ import {
 import { Loader } from "../../Components/LoaderComponent/Loader";
 import { Pagination } from "../../Components/Pagination/Pagination";
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
-import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
-import { EditButton } from "../../Components/CustomButtons/EditButton";
-import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+// import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+// import { EditButton } from "../../Components/CustomButtons/EditButton";
+// import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 import { AddRole } from "../../Components/Roles/AddRole";
-import { EditRole } from "../../Components/Roles/EditRole";
+// import { EditRole } from "../../Components/Roles/EditRole";
 import { RiInboxArchiveLine } from "react-icons/ri";
 
 
@@ -36,10 +36,10 @@ export const Roles = ({
 }: RolesProps) => {
   const [allRoles, setAllRoles] = useState<RoleType[]>([]);
   const [pageNo, setPageNo] = useState(1);
-  const [catchId, setCatchId] = useState<number | null>(null);
-  const [editRole, setEditRole] = useState<RoleType | null>(null);
+  // const [catchId, setCatchId] = useState<number | null>(null);
+  // const [editRole, setEditRole] = useState<RoleType | null>(null);
   const [modalTypeTooPen, setModalTypeTooPen] = useState<
-    "ADD" | "UPDATE" | "DELETE" | ""
+    "ADD" | ""
   >("");
 
   const { currentUser } = useAppSelector((state) => state.officeState);
@@ -89,18 +89,18 @@ export const Roles = ({
 
  
 
-  const handleDeleteRole = async (id: number | null) => {
-    try {
-      await axios.delete(`${BASE_URL}/api/admin/deleteRole/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      handlerGetRoles();
-      toast.success("Role deleted successfully");
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(axiosError?.response?.data?.message);
-    }
-  };
+  // const handleDeleteRole = async (id: number | null) => {
+  //   try {
+  //     await axios.delete(`${BASE_URL}/api/admin/deleteRole/${id}`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     handlerGetRoles();
+  //     toast.success("Role deleted successfully");
+  //   } catch (error) {
+  //     const axiosError = error as AxiosError<{ message: string }>;
+  //     toast.error(axiosError?.response?.data?.message);
+  //   }
+  // };
 
   return (
     <div className="flex flex-col flex-grow bg-white overflow-hidden">
@@ -108,13 +108,13 @@ export const Roles = ({
         <div className="min-w-[1000px]">
           <div className="px-0.5 pt-0.5">
             <div
-              className="grid grid-cols-[60px_1fr_auto] 
+              className="grid grid-cols-[60px_1fr] 
               bg-blue-400 text-white rounded-lg items-center font-bold
               text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
               <span>Sr#</span>
               <span>Role Name</span>
-              <span className="text-right w-[120px] pr-4">Actions</span>
+              {/* <span className="text-right w-[120px] pr-4">Actions</span> */}
             </div>
           </div>
 
@@ -148,7 +148,7 @@ export const Roles = ({
                     </span>
 
                     <div className="flex items-center justify-end gap-1 w-[120px]">
-                      <EditButton
+                      {/* <EditButton
                         handleUpdate={() => {
                           setEditRole(role);
                           setModalTypeTooPen("UPDATE");
@@ -159,7 +159,7 @@ export const Roles = ({
                           setCatchId(role.id);
                           setModalTypeTooPen("DELETE");
                         }}
-                      />
+                      /> */}
                     </div>
                   </div>
                 ))}
@@ -190,7 +190,7 @@ export const Roles = ({
         />
       )}
 
-      {modalTypeTooPen === "UPDATE" && editRole && (
+      {/* {modalTypeTooPen === "UPDATE" && editRole && (
         <EditRole
           selectRole={editRole}
           getAllRoles={handlerGetRoles}
@@ -207,7 +207,7 @@ export const Roles = ({
           onClose={() => setModalTypeTooPen("")}
           onConfirm={() => handleDeleteRole(catchId)}
         />
-      )}
+      )} */}
     </div>
   );
 };

@@ -58,8 +58,7 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route
             element={
-              currentUser?.role === "admin" ||
-              currentUser?.role === "system-user" ? (
+              currentUser?.role !== "user" ? (
                 <PrivateLayout />
               ) : (
                 <Navigate to="/User/dashboard" />
@@ -96,7 +95,6 @@ function App() {
               element={<UserDashboard />}
             />
           </Route>
-
           <Route
             element={
               currentUser?.role === "user" ? (

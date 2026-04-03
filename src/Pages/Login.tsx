@@ -39,9 +39,13 @@ export const Login = () => {
     dispatch(navigationSuccess("logIn"));
   }, [dispatch]);
 
-  if (currentUser?.role === "admin" || currentUser?.role === "system-user")
-    return <Navigate to="/" />;
-  if (currentUser?.role === "user") return <Navigate to="/User/dashboard" />;
+  if (currentUser) {
+    if (currentUser.role === "user") {
+      return <Navigate to="/User/dashboard" />;
+    } else {
+      return <Navigate to="/" />;
+    }
+  }
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
@@ -54,14 +58,16 @@ export const Login = () => {
 
     try {
       const res = await axios.post(`${BASE_URL}/api/login`, formData);
+
       const { token, user } = res.data;
+
       setAuthToken(token);
       dispatch(authSuccess(res.data));
 
-      if (user.role === "admin" || user.role === "system-user") {
-        navigate("/");
-      } else {
+      if (user.role === "user") {
         navigate("/User/dashboard");
+      } else {
+        navigate("/");
       }
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
