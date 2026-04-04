@@ -7,21 +7,21 @@ import {
   navigationSuccess,
 } from "../../redux/NavigationSlice";
 import { Loader } from "../../Components/LoaderComponent/Loader";
-// import { toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 // UI Components
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
 
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
-// import { EditButton } from "../../Components/CustomButtons/EditButton"; // Ensure you have this component
-// import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
+import { EditButton } from "../../Components/CustomButtons/EditButton"; // Ensure you have this component
+import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { Dispatch, SetStateAction } from "react";
 
 import { AddConfigOvertime } from "../../Components/ConfigOvertimeModal/AddConfigOvertime";
 import { ViewConfigOvertime } from "../../Components/ConfigOvertimeModal/ViewConfigOvertime";
-// import { EditConfigOvertime } from "../../Components/ConfigOvertimeModal/EditConfigOvertime";
-// import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
+import { EditConfigOvertime } from "../../Components/ConfigOvertimeModal/EditConfigOvertime";
+import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
 
 // Icons
 import { RiHistoryLine } from "react-icons/ri";
@@ -56,7 +56,7 @@ export const ConfigOvertime = ({
     null,
   );
   const [pageNo, setPageNo] = useState(1);
-  // const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const token = currentUser?.token;
 
@@ -75,22 +75,22 @@ export const ConfigOvertime = ({
     }
   }, [token]);
 
-  // const handleDeleteOvertime = async (id: number) => {
-  //   try {
-  //     const res = await axios.delete(
-  //       `${BASE_URL}/api/admin/deleteOvertimeConfig/${id}`,
-  //       {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       },
-  //     );
-  //     toast.success(res.data.message || "Config deleted successfully");
-  //     getAllOvertimeConfigs(); // Refresh the list
-  //     handleToggleModal(""); // Close modal
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.error("Failed to delete configuration");
-  //   }
-  // };
+  const handleDeleteOvertime = async (id: number) => {
+    try {
+      const res = await axios.delete(
+        `${BASE_URL}/api/admin/deleteOvertimeConfig/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      toast.success(res.data.message || "Config deleted successfully");
+      getAllOvertimeConfigs(); // Refresh the list
+      handleToggleModal(""); // Close modal
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to delete configuration");
+    }
+  };
 
   useEffect(() => {
     getAllOvertimeConfigs();
@@ -177,7 +177,7 @@ export const ConfigOvertime = ({
                         }}
                       />
 
-                      {/* <EditButton
+                      <EditButton
                         handleUpdate={() => {
                           setSelectedOvertime(item);
                           handleToggleModal("EDIT");
@@ -189,7 +189,7 @@ export const ConfigOvertime = ({
                           setDeleteId(item.id);
                           handleToggleModal("DELETE");
                         }}
-                      /> */}
+                      />
                     </div>
                   </div>
                 ))}
@@ -230,7 +230,7 @@ export const ConfigOvertime = ({
         />
       )}
 
-      {/* {isOpenModal === "EDIT" && selectedOvertime && (
+      {isOpenModal === "EDIT" && selectedOvertime && (
         <EditConfigOvertime
           data={selectedOvertime}
           existingOvertime={allOvertime}
@@ -248,7 +248,7 @@ export const ConfigOvertime = ({
           }}
           message="Are you sure you want to delete this Overtime Configuration?"
         />
-      )} */}
+      )}
     </div>
   );
 };
