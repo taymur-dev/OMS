@@ -111,7 +111,7 @@ export const SystemUsers = ({
 
   const handleDeleteUser = async (id: number | null) => {
     try {
-      await axios.delete(`${BASE_URL}/api/admin/deleteUser/${id}`, {
+      await axios.patch(`${BASE_URL}/api/admin/deleteUser/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       handlerGetUsers();
