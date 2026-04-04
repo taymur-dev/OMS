@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import { FiUpload, FiX } from "react-icons/fi";
 
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
@@ -28,7 +29,7 @@ const initialState = {
   password: "",
   confirmPassword: "",
   role: "",
-  roleId: "" as string | number, // Added roleId to state
+  roleId: "" as string | number,
 };
 
 const isValidEmail = (email: string): boolean => {
@@ -47,6 +48,10 @@ export const AddSystemUser = ({
   const [formData, setFormData] = useState(initialState);
   const [roles, setRoles] = useState<RoleOption[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // ✅ Image states
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -68,7 +73,6 @@ export const AddSystemUser = ({
     const { name, value } = e.target;
     let processedValue = value.replace(/^\s+/, "");
 
-    // Logic to handle Role selection and mapping to roleId
     if (name === "role") {
       const selectedRole = roles.find((r) => r.roleName === value);
       setFormData((prev) => ({
@@ -104,10 +108,10 @@ export const AddSystemUser = ({
       else if (digits.length <= 12)
         processedValue = `${digits.slice(0, 5)}-${digits.slice(5)}`;
       else
-        processedValue = `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(
+        processedValue = `${digits.slice(0, 5)}-${digits.slice(
+          5,
           12,
-          13,
-        )}`;
+        )}-${digits.slice(12, 13)}`;
     }
 
     if (name === "password" || name === "confirmPassword") {
@@ -115,6 +119,41 @@ export const AddSystemUser = ({
     }
 
     setFormData((prev) => ({ ...prev, [name]: processedValue }));
+  };
+
+  // ✅ Image Change
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        toast.error("Please select an image file");
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Image size should be less than 5MB");
+        return;
+      }
+
+      setSelectedFile(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedFile(null);
+    setImagePreview("");
+
+    const fileInput = document.getElementById(
+      "image-upload",
+    ) as HTMLInputElement;
+
+    if (fileInput) fileInput.value = "";
   };
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -141,39 +180,53 @@ export const AddSystemUser = ({
       !role ||
       !roleId
     ) {
-      toast.error("Please fill all required fields", {
-        toastId: "required-fields",
-      });
+      toast.error("Please fill all required fields");
       return;
     }
 
     if (!isValidEmail(email)) {
-      toast.error("Invalid email format", { toastId: "invalid-email" });
+      toast.error("Invalid email format");
       return;
     }
 
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match", { toastId: "password-mismatch" });
+      toast.error("Passwords do not match");
       return;
     }
 
     setLoading(true);
 
     try {
-      const payload = {
-        ...formData,
-        email: email.toLowerCase().trim(),
-        cnic: cnic.replace(/\D/g, ""), // Send raw digits to DB
-      };
+      // ✅ FormData instead of JSON
+      const data = new FormData();
+      data.append("name", name);
+      data.append("email", email.toLowerCase().trim());
+      data.append("password", password);
+      data.append("contact", contact);
+      data.append("cnic", cnic.replace(/\D/g, ""));
+      data.append("role", role);
+      data.append("roleId", String(roleId));
+
+      if (selectedFile) {
+        data.append("image", selectedFile);
+      }
 
       const res = await axios.post(
         `${BASE_URL}/api/admin/addSystemUser`,
-        payload,
-        { headers: { Authorization: `Bearer ${token}` } },
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       toast.success(res.data.message || "User added successfully");
+
       setFormData(initialState);
+      setSelectedFile(null);
+      setImagePreview("");
+
       handlerGetUsers();
       setModal();
     } catch (error) {
@@ -232,7 +285,7 @@ export const AddSystemUser = ({
                 name="role"
                 value={formData.role}
                 onChange={handlerChange}
-                className="border border-gray-300 rounded-md p-2 outline-none focus:border-blue-400 text-sm h-[40px]"
+                className="border border-gray-300 rounded-md p-2 h-[40px]"
               >
                 <option value="">Select Role</option>
                 {roles.map((r) => (
@@ -258,9 +311,53 @@ export const AddSystemUser = ({
               value={formData.confirmPassword}
               handlerChange={handlerChange}
             />
+
+            {/* ✅ Image Upload UI */}
+            <div className="sm:col-span-2">
+              <label className="block text-gray-600 text-xs font-semibold mb-2">
+                Profile Image
+              </label>
+
+              <div className="flex items-start gap-4">
+                {imagePreview && (
+                  <div className="relative">
+                    <img
+                      src={imagePreview}
+                      className="w-20 h-20 rounded-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+                    >
+                      <FiX size={14} />
+                    </button>
+                  </div>
+                )}
+
+                {!imagePreview && (
+                  <label
+                    htmlFor="image-upload"
+                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-400 rounded-lg cursor-pointer"
+                  >
+                    <FiUpload className="w-8 h-8 text-blue-500 mb-2" />
+                    <span className="text-sm text-gray-500">
+                      Click to upload image
+                    </span>
+
+                    <input
+                      id="image-upload"
+                      type="file"
+                      className="hidden"
+                      onChange={handleImageChange}
+                    />
+                  </label>
+                )}
+              </div>
+            </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 py-3 bg-gray-50 sticky bottom-0 border-t">
+          <div className="flex justify-end gap-3 px-4 py-3 bg-gray-50">
             <CancelBtn setModal={setModal} />
             <AddButton
               loading={loading}

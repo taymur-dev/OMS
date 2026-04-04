@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import { FiUpload, FiX } from "react-icons/fi";
 
-import { AddButton } from "../CustomButtons/AddButton"; // Using AddButton for consistent styling
+import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { InputField } from "../InputFields/InputField";
 import { Title } from "../Title";
@@ -10,286 +11,292 @@ import { Title } from "../Title";
 import { BASE_URL } from "../../Content/URL";
 import { useAppSelector } from "../../redux/Hooks";
 
+// ✅ TYPES
 type RoleOption = {
   id: number;
   roleName: string;
 };
 
-type UserType = {
+type SystemUser = {
   id: number;
   name: string;
-  contact: string;
   email: string;
+  contact: string;
+  cnic: string;
   role: string;
-  cnic?: string; // Optional if not always returned by list API
+  roleId: number | string;
+  image?: string;
 };
 
-type EditSystemUserProps = {
-  selectUser: UserType;
+type FormDataType = {
+  name: string;
+  email: string;
+  contact: string;
+  cnic: string;
+  role: string;
+  roleId: number | string;
+};
+
+type Props = {
   setModal: () => void;
   handlerGetUsers: () => void;
-};
-
-const isValidEmail = (email: string): boolean => {
-  const emailRegex =
-    /^(?!\.)(?!.*\.\.)[a-zA-Z0-9._+-]+(?<!\.)@(?!(?:-|\.)).*?(?<!-)\.[a-zA-Z]{2,}$/;
-  return emailRegex.test(email);
+  userData: SystemUser;
 };
 
 export const EditSystemUser = ({
-  selectUser,
   setModal,
   handlerGetUsers,
-}: EditSystemUserProps) => {
+  userData,
+}: Props) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
-  const [formData, setFormData] = useState({
-    name: selectUser.name || "",
-    cnic: selectUser.cnic || "",
-    contact: selectUser.contact || "",
-    email: selectUser.email || "",
-    role: selectUser.role || "",
-    password: "", // Usually left empty for security on edit
+  const [formData, setFormData] = useState<FormDataType>({
+    name: "",
+    email: "",
+    contact: "",
+    cnic: "",
+    role: "",
+    roleId: "",
   });
 
   const [roles, setRoles] = useState<RoleOption[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // ✅ Image states
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+
+  // ================= INIT =================
+  useEffect(() => {
+    if (userData) {
+      setFormData({
+        name: userData.name || "",
+        email: userData.email || "",
+        contact: userData.contact || "",
+        cnic: userData.cnic || "",
+        role: userData.role || "",
+        roleId: userData.roleId || "",
+      });
+
+      if (userData.image) {
+        const img = userData.image.startsWith("http")
+          ? userData.image
+          : `${BASE_URL}/${userData.image}`;
+        setImagePreview(img);
+      }
+    }
+  }, [userData]);
+
+  // ================= FETCH ROLES =================
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/api/admin/getRoles`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setRoles(res?.data?.roles || []);
+        const res = await axios.get<{ roles: RoleOption[] }>(
+          `${BASE_URL}/api/admin/getRoles`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        setRoles(res.data.roles || []);
       } catch (error) {
-        console.error("Error fetching roles:", error);
+        console.error(error);
       }
     };
     fetchRoles();
   }, [token]);
 
+  // ================= INPUT HANDLER =================
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const { name } = e.target;
-    let value = e.target.value;
+    const { name, value } = e.target;
 
-    value = value.replace(/^\s+/, "");
-
-    if (name === "name") {
-      value = value.replace(/[^a-zA-Z\s]/g, "");
-      value = value
-        .split(" ")
-        .map((word) =>
-          word ? word.charAt(0).toUpperCase() + word.slice(1) : "",
-        )
-        .join(" ");
-      value = value.slice(0, 50);
-    }
-
-    if (name === "email") {
-      value = value.replace(/[^a-zA-Z0-9@._+-]/g, "");
-
-      const [local, domain] = value.split("@");
-
-      if (local?.includes("..")) return;
-      if (local?.startsWith(".")) return;
-      if (local?.endsWith(".") && !domain) return;
-      if (domain?.startsWith(".")) return;
-      if (local?.startsWith("-") || local?.endsWith("-")) return;
-      if (domain?.startsWith("-") || domain?.endsWith("-")) return;
-    }
-
-    if (name === "contact") {
-      value = value.replace(/\D/g, "").slice(0, 11);
-    }
-
-    if (name === "cnic") {
-      const digits = value.replace(/\D/g, "");
-      if (digits.length <= 5) value = digits;
-      else if (digits.length <= 12)
-        value = `${digits.slice(0, 5)}-${digits.slice(5)}`;
-      else
-        value = `${digits.slice(0, 5)}-${digits.slice(
-          5,
-          12,
-        )}-${digits.slice(12, 13)}`;
-    }
-
-    if (name === "password") {
-      value = value.slice(0, 20);
+    if (name === "role") {
+      const selectedRole = roles.find((r) => r.roleName === value);
+      setFormData((prev) => ({
+        ...prev,
+        role: value,
+        roleId: selectedRole ? selectedRole.id : "",
+      }));
+      return;
     }
 
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // ================= IMAGE HANDLER =================
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
 
-    const { name, email, role, password, contact } = formData;
-
-    if (!name || !email || !role) {
-      toast.error("Please fill all required fields", {
-        toastId: "required-fields-edit",
-      });
-      return;
-    }
-
-    if (!isValidEmail(email)) {
-      toast.error("Please enter a valid email address", {
-        toastId: "invalid-email-edit",
-      });
-      return;
-    }
-
-    if (contact && contact.length !== 11) {
-      toast.error("Phone number must be exactly 11 digits", {
-        toastId: "invalid-contact-edit",
-      });
-      return;
-    }
-
-    if (password) {
-      if (password.length < 8 || password.length > 20) {
-        toast.error("Password must be between 8 and 20 characters", {
-          toastId: "password-length-edit",
-        });
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        toast.error("Select a valid image");
         return;
       }
+
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Max size 5MB");
+        return;
+      }
+
+      setSelectedFile(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedFile(null);
+    setImagePreview("");
+
+    const fileInput = document.getElementById(
+      "image-upload",
+    ) as HTMLInputElement;
+
+    if (fileInput) fileInput.value = "";
+  };
+
+  // ================= SUBMIT =================
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
     setLoading(true);
 
     try {
-      const payload: Partial<typeof formData> & { password?: string } = {
-        ...formData,
-        cnic: formData.cnic ? formData.cnic.replace(/\D/g, "") : "",
-      };
+      const data = new FormData();
 
-      if (!payload.password) {
-        delete payload.password;
+      data.append("name", formData.name);
+      data.append("email", formData.email);
+      data.append("contact", formData.contact);
+      data.append("cnic", formData.cnic.replace(/\D/g, ""));
+      data.append("role", formData.role);
+      data.append("roleId", String(formData.roleId));
+
+      if (selectedFile) {
+        data.append("image", selectedFile);
       }
 
-      const res = await axios.put(
-        `${BASE_URL}/api/admin/updateSystemUser/${selectUser.id}`,
-        payload,
+      await axios.put(
+        `${BASE_URL}/api/admin/updateSystemUser/${userData.id}`,
+        data,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
       );
 
-      toast.success(res.data.message || "User updated successfully", {
-        toastId: "edit-success",
-      });
+      toast.success("User updated successfully");
 
       handlerGetUsers();
       setModal();
     } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-      toast.error(
-        axiosError?.response?.data?.message || "Something went wrong",
-        { toastId: "edit-error" },
-      );
+      const err = error as AxiosError<{ message: string }>;
+      toast.error(err?.response?.data?.message || "Update failed");
     } finally {
       setLoading(false);
     }
   };
 
+  // ================= UI =================
   return (
-    <div
-      className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4 flex items-center justify-center z-50"
-      onKeyDown={(e) => {
-        if (e.key === "Enter") e.preventDefault();
-      }}
-    >
-      <div className="w-[45rem] max-h-[90vh] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
-        <form onSubmit={handlerSubmitted}>
-          <div className="bg-white rounded-xl border-t-5 border-blue-400 sticky top-0 z-10">
-            <Title
-              setModal={setModal}
-              className="text-white text-lg font-semibold"
-            >
-              EDIT SYSTEM USER
-            </Title>
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-50">
+      <div className="w-[45rem] bg-white rounded-xl shadow-xl">
+        <form onSubmit={handleSubmit}>
+          <div className="border-t-4 border-blue-400">
+            <Title setModal={setModal}>EDIT SYSTEM USER</Title>
           </div>
 
-          <div className="mx-4 grid grid-cols-1 sm:grid-cols-2 py-4 gap-4">
-            <div className="sm:col-span-2">
-              <InputField
-                labelName="Full Name *"
-                type="text"
-                name="name"
-                value={formData.name}
-                handlerChange={handlerChange}
-                minLength={3}
-                maxLength={50}
-              />
-            </div>
-
+          <div className="p-4 grid grid-cols-2 gap-4">
             <InputField
-              labelName="CNIC *"
-              type="text"
-              name="cnic"
-              value={formData.cnic}
+              labelName="Full Name"
+              name="name"
+              value={formData.name}
               handlerChange={handlerChange}
             />
 
             <InputField
-              labelName="Phone Number *"
-              type="text"
+              labelName="Email"
+              name="email"
+              value={formData.email}
+              handlerChange={handlerChange}
+            />
+
+            <InputField
+              labelName="Contact"
               name="contact"
               value={formData.contact}
               handlerChange={handlerChange}
             />
 
             <InputField
-              labelName="Email Address *"
-              type="email"
-              name="email"
-              value={formData.email}
+              labelName="CNIC"
+              name="cnic"
+              value={formData.cnic}
               handlerChange={handlerChange}
-              minLength={3}
-              maxLength={250}
             />
 
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-semibold text-gray-700">
-                Role *
-              </label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handlerChange}
-                className="border border-gray-300 rounded-md p-2 outline-none focus:border-blue-400 text-sm h-[40px]"
-              >
-                <option value="">Select Role</option>
-                {roles.map((role) => (
-                  <option key={role.id} value={role.roleName}>
-                    {role.roleName}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handlerChange}
+              className="border p-2 rounded"
+            >
+              <option value="">Select Role</option>
+              {roles.map((r) => (
+                <option key={r.id} value={r.roleName}>
+                  {r.roleName}
+                </option>
+              ))}
+            </select>
 
-            <div className="sm:col-span-2">
-              <InputField
-                labelName="Password *"
-                type="password"
-                name="password"
-                value={formData.password}
-                handlerChange={handlerChange}
-              />
+            {/* ✅ IMAGE */}
+            <div className="col-span-2">
+              <label className="text-sm font-semibold">Profile Image</label>
+
+              <div className="flex items-center gap-4 mt-2">
+                {imagePreview && (
+                  <div className="relative">
+                    <img
+                      src={imagePreview}
+                      className="w-20 h-20 rounded-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+                    >
+                      <FiX size={14} />
+                    </button>
+                  </div>
+                )}
+
+                {!imagePreview && (
+                  <label
+                    htmlFor="image-upload"
+                    className="border-dashed border-2 p-4 cursor-pointer rounded"
+                  >
+                    <FiUpload />
+                    <input
+                      id="image-upload"
+                      type="file"
+                      className="hidden"
+                      onChange={handleImageChange}
+                    />
+                  </label>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-gray-50 sticky bottom-0 border-t border-gray-100">
+          <div className="flex justify-end gap-3 p-4">
             <CancelBtn setModal={setModal} />
-            <AddButton
-              loading={loading}
-              label={loading ? "Updating..." : "Update User"}
-            />
+            <AddButton loading={loading} label="Update" />
           </div>
         </form>
       </div>

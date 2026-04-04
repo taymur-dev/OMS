@@ -13,13 +13,13 @@ import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { DeleteButton } from "../../Components/CustomButtons/DeleteButton";
 import { EditButton } from "../../Components/CustomButtons/EditButton";
 import { ViewButton } from "../../Components/CustomButtons/ViewButton";
-
 import { ConfirmationModal } from "../../Components/Modal/ComfirmationModal";
-// Import your user-specific modals here
+
 import { AddSystemUser } from "../../Components/SystemUsersModal/AddSystemUser";
 import { EditSystemUser } from "../../Components/SystemUsersModal/EditSystemUser";
 import { ViewSystemUser } from "../../Components/SystemUsersModal/ViewSystemUser";
-import { RiInboxArchiveLine } from "react-icons/ri";
+
+import { RiInboxArchiveLine, RiUserFill } from "react-icons/ri";
 
 type UserType = {
   id: number;
@@ -28,6 +28,8 @@ type UserType = {
   contact: string;
   email: string;
   role: string;
+  roleId: string;
+  image?: string;
 };
 
 interface SystemUsersProps {
@@ -88,6 +90,13 @@ export const SystemUsers = ({
 
   if (loader) return <Loader />;
 
+  // ✅ Image helper
+  const getImageUrl = (imagePath: string | undefined) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith("http")) return imagePath;
+    return `${BASE_URL}/${imagePath}`;
+  };
+
   const filteredUsers = allUsers.filter(
     (user) =>
       user.name.toLowerCase().includes(externalSearch.toLowerCase()) ||
@@ -99,8 +108,6 @@ export const SystemUsers = ({
   const startIndex = (pageNo - 1) * externalPageSize;
   const endIndex = startIndex + externalPageSize;
   const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
-
- 
 
   const handleDeleteUser = async (id: number | null) => {
     try {
@@ -119,23 +126,22 @@ export const SystemUsers = ({
     <div className="flex flex-col flex-grow bg-white overflow-hidden">
       <div className="overflow-auto px-3 sm:px-0">
         <div className="min-w-[1000px]">
+          {/* Header */}
           <div className="px-0.5 pt-0.5">
-            {/* Table Header */}
             <div
-              className="grid grid-cols-[60px_1.5fr_1.2fr_1.2fr_1.5fr_1fr_120px] 
+              className="grid grid-cols-[60px_1fr_1fr_1fr_auto] 
               bg-blue-400 text-white rounded-lg items-center font-bold
               text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
               <span>Sr#</span>
-              <span>Name</span>
-              <span>Phone</span>
-              <span>Cnic</span>
-              <span>Email</span>
+              <span>Name & Email</span>
+              <span>Contact</span>
               <span>Role</span>
               <span className="text-right pr-4">Actions</span>
             </div>
           </div>
 
+          {/* Body */}
           <div className="px-0.5 sm:px-1 py-2">
             {paginatedUsers.length === 0 ? (
               <div className="bg-gray-50 rounded-lg border p-12 flex flex-col items-center justify-center text-gray-400">
@@ -150,30 +156,50 @@ export const SystemUsers = ({
                 {paginatedUsers.map((user, index) => (
                   <div
                     key={user.id}
-                    className="grid grid-cols-[60px_1.5fr_1.2fr_1.2fr_1.5fr_1fr_120px]
-                    items-center px-3 py-2 gap-3 text-sm bg-white 
-                    border border-gray-100 rounded-lg 
-                    hover:bg-blue-50/30 transition-colors shadow-sm"
+                    className="grid grid-cols-[60px_1fr_1fr_1fr_auto]
+                    items-center px-3 py-0.5 gap-3 text-sm bg-white 
+                    border border-gray-100 rounded-lg hover:bg-blue-50/30 shadow-sm"
                   >
-                    <span className="text-gray-500 font-medium">
+                    {/* Sr */}
+                    <span className="text-gray-500">
                       {startIndex + index + 1}
                     </span>
 
-                    <span className="truncate text-gray-800">{user.name}</span>
+                    {/* ✅ Name + Image */}
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                        {user.image ? (
+                          <img
+                            src={getImageUrl(user.image)!}
+                            className="h-full w-full rounded-full object-cover"
+                          />
+                        ) : (
+                          <RiUserFill size={18} />
+                        )}
+                      </div>
 
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-gray-800">
+                          {user.name}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          {user.email}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Contact */}
                     <span className="text-gray-600">{user.contact}</span>
 
-                    <span className="truncate text-gray-800">{user.cnic}</span>
-
-                    <span className="truncate text-gray-600">{user.email}</span>
-
+                    {/* Role */}
                     <span>
-                      <span className="px-2 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold uppercase">
+                      <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-bold uppercase">
                         {user.role}
                       </span>
                     </span>
 
-                    <div className="flex items-center justify-end gap-1">
+                    {/* Actions */}
+                    <div className="flex justify-end gap-1">
                       <ViewButton
                         handleView={() => {
                           setViewUser(user);
@@ -201,22 +227,22 @@ export const SystemUsers = ({
         </div>
       </div>
 
-      {/* Footer / Pagination */}
-      <div className="flex flex-row items-center justify-between p-1">
+      {/* Footer */}
+      <div className="flex justify-between p-1">
         <ShowDataNumber
           start={totalNum === 0 ? 0 : startIndex + 1}
           end={Math.min(endIndex, totalNum)}
           total={totalNum}
         />
-         <Pagination
+        <Pagination
           pageNo={pageNo}
           totalNum={totalNum}
           pageSize={externalPageSize}
-          handlePageClick={(targetPage) => setPageNo(targetPage)}
+          handlePageClick={(p) => setPageNo(p)}
         />
       </div>
 
-      {/* Modals placeholders - connect your logic here */}
+      {/* Modals */}
       {modalTypeTooPen === "DELETE" && (
         <ConfirmationModal
           isOpen={() => setModalTypeTooPen("")}
@@ -234,7 +260,7 @@ export const SystemUsers = ({
 
       {modalTypeTooPen === "UPDATE" && editUser && (
         <EditSystemUser
-          selectUser={editUser}
+          userData={editUser}
           handlerGetUsers={handlerGetUsers}
           setModal={() => {
             setEditUser(null);
