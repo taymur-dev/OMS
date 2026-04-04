@@ -44,7 +44,7 @@ const initialState: IAddUserValues = {
   cnic: "",
   address: "",
   date: currentDate,
-  role: "User",
+  role: "user",
   userId: "",
   password: "",
   confirmPassword: "",
@@ -79,7 +79,7 @@ export const AddUser = ({
     if (initialValues) {
       setUserData({
         ...initialValues,
-        role: "User",
+        role: "user",
       });
 
       if (initialValues.image) {

@@ -90,18 +90,19 @@ export const Assets = ({
   const handleToggleViewModal = (active: AssetT) =>
     setIsOpenModal((prev) => (prev === active ? "" : active));
 
+  // Inside Assets.tsx, update the toast message for clarity
   const handleDeleteAsset = async (id: number) => {
     try {
+      // This stays the same, but the backend now handles it as a soft delete
       await axios.delete(`${BASE_URL}/api/admin/deleteassets/${id}`);
-      toast.success("Asset deleted successfully");
+      toast.success("Asset removed successfully");
       fetchAssets();
       setIsOpenModal("");
     } catch (err) {
       console.error("Failed to delete asset:", err);
-      toast.error("Failed to delete asset ");
+      toast.error("Failed to delete asset");
     }
   };
-
   if (loader) return <Loader />;
 
   const filteredAssets = assets.filter(

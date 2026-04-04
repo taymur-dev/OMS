@@ -205,12 +205,12 @@ export const BusinessVariables = ({
           end={Math.min(endIndex, totalNum)}
           total={totalNum}
         />
-          <Pagination
-                  pageNo={pageNo}
-                  totalNum={totalNum}
-                  pageSize={externalPageSize}
-                  handlePageClick={(targetPage) => setPageNo(targetPage)}
-                />
+        <Pagination
+          pageNo={pageNo}
+          totalNum={totalNum}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
+        />
       </div>
 
       {/* Modals */}
@@ -237,7 +237,8 @@ export const BusinessVariables = ({
           isOpen={() => handleToggleModal("")}
           onClose={() => handleToggleModal("")}
           onConfirm={() => handleDelete(itemToDelete)}
-          message="Are you sure you want to delete this business variable?"
+          // Updated message to reflect soft delete
+          message="Are you sure you want to remove this record? This action can be undone by an administrator."
         />
       )}
 

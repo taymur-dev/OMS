@@ -7,6 +7,9 @@ import {
   FaUserShield,
 } from "react-icons/fa";
 
+import { RiUserFill } from "react-icons/ri";
+import { BASE_URL } from "../../Content/URL";
+
 type UserType = {
   id: number;
   name: string;
@@ -14,6 +17,7 @@ type UserType = {
   email: string;
   role: string;
   cnic?: string;
+  image?: string; // ✅ added image
 };
 
 type ViewSystemUserProps = {
@@ -27,6 +31,15 @@ export const ViewSystemUser = ({
 }: ViewSystemUserProps) => {
   if (!viewUser) return null;
 
+  // ✅ image helper (same idea as ViewUserDetailModal)
+  const getImageUrl = (imagePath?: string) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith("http")) return imagePath;
+    return `${BASE_URL}/${imagePath}`;
+  };
+
+  const userImageUrl = getImageUrl(viewUser.image);
+
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-50">
       <div className="w-full max-w-2xl bg-white mx-auto rounded-xl shadow-xl overflow-hidden">
@@ -38,11 +51,37 @@ export const ViewSystemUser = ({
         </div>
 
         <div className="px-4 py-6 space-y-6">
+          {/* ✅ NEW: Profile Header Section */}
+          <div className="flex items-center gap-5 bg-gray-50 p-4 rounded-lg border border-gray-100">
+            <div className="h-20 w-20 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden border-4 border-white shadow-md">
+              {userImageUrl ? (
+                <img
+                  src={userImageUrl}
+                  alt={viewUser.name}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <RiUserFill size={35} className="text-blue-500" />
+              )}
+            </div>
+
+            <div>
+              <h2 className="text-lg font-bold text-gray-800">
+                {viewUser.name}
+              </h2>
+              <p className="text-sm text-blue-500 font-semibold uppercase">
+                {viewUser.role}
+              </p>
+              <p className="text-xs text-gray-500">{viewUser.email}</p>
+            </div>
+          </div>
+
           {/* Section 1: Personal Information */}
           <div className="border border-gray-200 rounded-md p-5 relative">
             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Personal Profile
             </h3>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 pt-2">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
@@ -83,10 +122,12 @@ export const ViewSystemUser = ({
             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-500 uppercase tracking-wider">
               System Access
             </h3>
+
             <div className="pt-2">
               <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                 <FaUserShield className="text-gray-400" /> Assigned Role
               </label>
+
               <div className="mt-1">
                 <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold uppercase">
                   {viewUser.role}

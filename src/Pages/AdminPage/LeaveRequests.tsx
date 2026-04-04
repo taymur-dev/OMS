@@ -112,9 +112,12 @@ export const LeaveRequests = ({
           ? `${BASE_URL}/api/admin/deleteLeave/${selectedLeave.id}`
           : `${BASE_URL}/api/user/deleteLeave/${selectedLeave.id}`;
 
+      // This calls the updated soft-delete route
       await axios.delete(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
+      // Removes it from the local list so the user sees it disappear
       setAllLeaves((prev) => prev.filter((l) => l.id !== selectedLeave.id));
       setIsOpenModal("");
     } catch (error) {

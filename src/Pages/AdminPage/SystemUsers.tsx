@@ -30,6 +30,7 @@ type UserType = {
   role: string;
   roleId: string;
   image?: string;
+  status: string;
 };
 
 interface SystemUsersProps {
@@ -97,7 +98,9 @@ export const SystemUsers = ({
     return `${BASE_URL}/${imagePath}`;
   };
 
-  const filteredUsers = allUsers.filter(
+  const filteredUsers = allUsers
+  .filter((user) => user.status !== "Inactive")
+  .filter(
     (user) =>
       user.name.toLowerCase().includes(externalSearch.toLowerCase()) ||
       user.email.toLowerCase().includes(externalSearch.toLowerCase()) ||
@@ -110,12 +113,19 @@ export const SystemUsers = ({
   const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
 
   const handleDeleteUser = async (id: number | null) => {
+    if (!id) return;
+
     try {
-      await axios.patch(`${BASE_URL}/api/admin/deleteUser/${id}`, {
+      await axios.delete(`${BASE_URL}/api/admin/deleteUser/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      handlerGetUsers();
-      toast.success("User deleted successfully");
+
+      // instantly remove from UI
+      setAllUsers((prev) =>
+        prev.map((u) => (u.id === id ? { ...u, status: "Inactive" } : u)),
+      );
+
+      toast.success("User deactivated successfully");
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(axiosError?.response?.data?.message);

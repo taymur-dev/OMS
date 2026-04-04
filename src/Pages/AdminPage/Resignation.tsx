@@ -30,6 +30,7 @@ export type ResignationDataT = {
   resignation_date: string;
   note: string;
   approval_status: string;
+  is_deleted?: number;
 };
 
 interface ResignationProps {
