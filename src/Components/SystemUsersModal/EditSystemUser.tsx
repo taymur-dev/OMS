@@ -18,7 +18,7 @@ type RoleOption = {
 type UserType = {
   id: number;
   name: string;
-  phone: string;
+  contact: string;
   email: string;
   role: string;
   cnic?: string; // Optional if not always returned by list API
@@ -47,7 +47,7 @@ export const EditSystemUser = ({
   const [formData, setFormData] = useState({
     name: selectUser.name || "",
     cnic: selectUser.cnic || "",
-    phone: selectUser.phone || "",
+    contact: selectUser.contact || "",
     email: selectUser.email || "",
     role: selectUser.role || "",
     password: "", // Usually left empty for security on edit
@@ -102,7 +102,7 @@ export const EditSystemUser = ({
       if (domain?.startsWith("-") || domain?.endsWith("-")) return;
     }
 
-    if (name === "phone") {
+    if (name === "contact") {
       value = value.replace(/\D/g, "").slice(0, 11);
     }
 
@@ -128,7 +128,7 @@ export const EditSystemUser = ({
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const { name, email, role, password, phone } = formData;
+    const { name, email, role, password, contact } = formData;
 
     if (!name || !email || !role) {
       toast.error("Please fill all required fields", {
@@ -144,9 +144,9 @@ export const EditSystemUser = ({
       return;
     }
 
-    if (phone && phone.length !== 11) {
+    if (contact && contact.length !== 11) {
       toast.error("Phone number must be exactly 11 digits", {
-        toastId: "invalid-phone-edit",
+        toastId: "invalid-contact-edit",
       });
       return;
     }
@@ -239,8 +239,8 @@ export const EditSystemUser = ({
             <InputField
               labelName="Phone Number *"
               type="text"
-              name="phone"
-              value={formData.phone}
+              name="contact"
+              value={formData.contact}
               handlerChange={handlerChange}
             />
 

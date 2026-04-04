@@ -23,7 +23,7 @@ type AddSystemUserProps = {
 const initialState = {
   name: "",
   cnic: "",
-  phone: "",
+  contact: "",
   email: "",
   password: "",
   confirmPassword: "",
@@ -94,7 +94,7 @@ export const AddSystemUser = ({
       processedValue = processedValue.replace(/[^a-zA-Z0-9@._+-]/g, "");
     }
 
-    if (name === "phone") {
+    if (name === "contact") {
       processedValue = processedValue.replace(/\D/g, "").slice(0, 11);
     }
 
@@ -125,7 +125,7 @@ export const AddSystemUser = ({
       email,
       password,
       confirmPassword,
-      phone,
+      contact,
       cnic,
       role,
       roleId,
@@ -133,7 +133,7 @@ export const AddSystemUser = ({
 
     if (
       !name ||
-      !phone ||
+      !contact ||
       !cnic ||
       !email ||
       !password ||
@@ -211,8 +211,8 @@ export const AddSystemUser = ({
 
             <InputField
               labelName="Phone Number *"
-              name="phone"
-              value={formData.phone}
+              name="contact"
+              value={formData.contact}
               handlerChange={handlerChange}
             />
 

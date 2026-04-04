@@ -25,7 +25,7 @@ type UserType = {
   id: number;
   name: string;
   cnic: string;
-  phone: string;
+  contact: string;
   email: string;
   role: string;
 };
@@ -92,7 +92,7 @@ export const SystemUsers = ({
     (user) =>
       user.name.toLowerCase().includes(externalSearch.toLowerCase()) ||
       user.email.toLowerCase().includes(externalSearch.toLowerCase()) ||
-      user.phone.includes(externalSearch),
+      user.contact.includes(externalSearch),
   );
 
   const totalNum = filteredUsers.length;
@@ -161,7 +161,7 @@ export const SystemUsers = ({
 
                     <span className="truncate text-gray-800">{user.name}</span>
 
-                    <span className="text-gray-600">{user.phone}</span>
+                    <span className="text-gray-600">{user.contact}</span>
 
                     <span className="truncate text-gray-800">{user.cnic}</span>
 

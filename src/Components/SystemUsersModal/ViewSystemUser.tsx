@@ -1,10 +1,16 @@
 import { Title } from "../Title";
-import { FaUser, FaPhoneAlt, FaEnvelope, FaIdCard, FaUserShield } from "react-icons/fa";
+import {
+  FaUser,
+  FaPhoneAlt,
+  FaEnvelope,
+  FaIdCard,
+  FaUserShield,
+} from "react-icons/fa";
 
 type UserType = {
   id: number;
   name: string;
-  phone: string;
+  contact: string;
   email: string;
   role: string;
   cnic?: string;
@@ -15,7 +21,10 @@ type ViewSystemUserProps = {
   viewUser: UserType | null;
 };
 
-export const ViewSystemUser = ({ setIsOpenModal, viewUser }: ViewSystemUserProps) => {
+export const ViewSystemUser = ({
+  setIsOpenModal,
+  viewUser,
+}: ViewSystemUserProps) => {
   if (!viewUser) return null;
 
   return (
@@ -41,19 +50,23 @@ export const ViewSystemUser = ({ setIsOpenModal, viewUser }: ViewSystemUserProps
                 </label>
                 <p className="text-gray-800 font-medium">{viewUser.name}</p>
               </div>
-              
+
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                   <FaIdCard className="text-gray-400" /> CNIC Number
                 </label>
-                <p className="text-gray-800 font-medium">{viewUser.cnic || "N/A"}</p>
+                <p className="text-gray-800 font-medium">
+                  {viewUser.cnic || "N/A"}
+                </p>
               </div>
 
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
                   <FaPhoneAlt className="text-gray-400" /> Phone Number
                 </label>
-                <p className="text-gray-800 font-medium">{viewUser.phone || "N/A"}</p>
+                <p className="text-gray-800 font-medium">
+                  {viewUser.contact || "N/A"}
+                </p>
               </div>
 
               <div>
