@@ -1,16 +1,16 @@
-// Header.tsx (updated with resignations and last 5 values)
+// Header.tsx (updated with proper unread count)
 import { RxHamburgerMenu } from "react-icons/rx";
 import { RiUserFill } from "react-icons/ri";
 import headerLogo from "../assets/Desk_Logo.png";
 import { CiBellOn } from "react-icons/ci";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAppSelector } from "../redux/Hooks";
 import { useNavigate } from "react-router-dom";
 import ProfileDropdown from "./ProfileComponent/ProfileDropdown";
 import NotificationDropdown from "./NotificationDropdown";
 import { LeaveNotification } from "./LeaveNotification";
 import { PromotionNotificationModal } from "./PromotionNotificationModal";
-import { ResignationNotificationModal } from "./ResignationNotificationModal"; // Create this
+import { ResignationNotificationModal } from "./ResignationNotificationModal";
 import axios from "axios";
 import { BASE_URL } from "../Content/URL";
 
@@ -76,7 +76,14 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
     const savedReadItems = localStorage.getItem("readNotifications");
     if (savedReadItems) {
       setReadIds(JSON.parse(savedReadItems));
+    } else {
+      setReadIds([]);
     }
+  }, []);
+
+  // Save read status to localStorage
+  const saveReadStatus = useCallback((ids: number[]) => {
+    localStorage.setItem("readNotifications", JSON.stringify(ids));
   }, []);
 
   const handleLogoClick = () => {
@@ -218,6 +225,24 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
     setNotifications(allNotifications);
   }, [fetchLeaves, fetchPromotions, fetchResignations]);
 
+  // Calculate unread count - ONLY unread notifications
+  const unreadCount = useMemo(() => {
+    return notifications.filter((n) => !readIds.includes(n.id)).length;
+  }, [notifications, readIds]);
+
+  // Handle marking a notification as read when modal is closed
+  const handleModalClose = useCallback(
+    (notificationId?: number) => {
+      if (notificationId && !readIds.includes(notificationId)) {
+        const updatedReadIds = [...readIds, notificationId];
+        setReadIds(updatedReadIds);
+        saveReadStatus(updatedReadIds);
+      }
+      syncReadStatus();
+    },
+    [readIds, saveReadStatus, syncReadStatus],
+  );
+
   useEffect(() => {
     if (currentUser) {
       fetchAllNotifications();
@@ -231,13 +256,19 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
 
     window.addEventListener("focus", handleFocus);
 
-    return () => window.removeEventListener("focus", handleFocus);
-  }, [currentUser, fetchAllNotifications, syncReadStatus]);
+    // Refresh notifications every 30 seconds
+    const interval = setInterval(() => {
+      if (currentUser && !isNotifOpen) {
+        fetchAllNotifications();
+        syncReadStatus();
+      }
+    }, 30000);
 
-  // Calculate unread count - exactly equal to number of unread notifications
-  const unreadCount = notifications.filter(
-    (n) => !readIds.includes(n.id),
-  ).length;
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      clearInterval(interval);
+    };
+  }, [currentUser, fetchAllNotifications, syncReadStatus, isNotifOpen]);
 
   return (
     <div className="bg-white w-full h-16 px-2 sm:px-4 flex shadow-md z-40 items-center relative">
@@ -271,16 +302,23 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
             {/* Notification Bell Container */}
             <div
               className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 cursor-pointer hover:bg-gray-100 rounded-full transition-colors"
-              onClick={() => setIsNotifOpen(!isNotifOpen)}
+              onClick={() => {
+                setIsNotifOpen(!isNotifOpen);
+                // Refresh notifications when opening dropdown
+                if (!isNotifOpen) {
+                  fetchAllNotifications();
+                  syncReadStatus();
+                }
+              }}
             >
-              {" "}
+              {/* Only show unread count */}
               {unreadCount > 0 && (
                 <span className="absolute top-1 right-1 h-5 w-5 rounded-full bg-red-600 flex items-center justify-center text-[10px] sm:text-[12px] text-white font-bold z-10">
-                  {" "}
-                  {unreadCount > 10 ? "10+" : unreadCount}{" "}
+                  {unreadCount > 10 ? "10+" : unreadCount}
                 </span>
-              )}{" "}
+              )}
               <CiBellOn size={32} className="relative text-gray-700" />
+
               {isNotifOpen && (
                 <NotificationDropdown
                   notifications={notifications}
@@ -337,7 +375,10 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
           isOpen={isLeaveModalOpen}
           onClose={() => {
             setIsLeaveModalOpen(false);
-            syncReadStatus();
+            if (selectedLeave) {
+              handleModalClose(selectedLeave.id);
+            }
+            setSelectedLeave(null);
           }}
           data={selectedLeave}
         />
@@ -346,7 +387,10 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
           isOpen={isPromotionModalOpen}
           onClose={() => {
             setIsPromotionModalOpen(false);
-            syncReadStatus();
+            if (selectedPromotion) {
+              handleModalClose(selectedPromotion.id);
+            }
+            setSelectedPromotion(null);
           }}
           data={selectedPromotion}
         />
@@ -355,7 +399,10 @@ export const Header = ({ toggleSideBar, isOpen }: IHeaderProps) => {
           isOpen={isResignationModalOpen}
           onClose={() => {
             setIsResignationModalOpen(false);
-            syncReadStatus();
+            if (selectedResignation) {
+              handleModalClose(selectedResignation.id);
+            }
+            setSelectedResignation(null);
           }}
           data={selectedResignation}
         />

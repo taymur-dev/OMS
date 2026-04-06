@@ -28,7 +28,7 @@ type UserType = {
   contact: string;
   email: string;
   role: string;
-  roleId: string;
+  roleId: number;
   image?: string;
   status: string;
 };
@@ -99,13 +99,13 @@ export const SystemUsers = ({
   };
 
   const filteredUsers = allUsers
-  .filter((user) => user.status !== "Inactive")
-  .filter(
-    (user) =>
-      user.name.toLowerCase().includes(externalSearch.toLowerCase()) ||
-      user.email.toLowerCase().includes(externalSearch.toLowerCase()) ||
-      user.contact.includes(externalSearch),
-  );
+    .filter((user) => user.status !== "Inactive")
+    .filter(
+      (user) =>
+        user.name.toLowerCase().includes(externalSearch.toLowerCase()) ||
+        user.email.toLowerCase().includes(externalSearch.toLowerCase()) ||
+        user.contact.includes(externalSearch),
+    );
 
   const totalNum = filteredUsers.length;
   const startIndex = (pageNo - 1) * externalPageSize;

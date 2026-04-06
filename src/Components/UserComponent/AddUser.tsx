@@ -99,12 +99,17 @@ export const AddUser = ({
     value = value.replace(/^\s+/, "");
 
     if (name === "name") {
-      value = value.replace(/[^a-zA-Z\s]/g, "");
+      value = value.replace(/[^a-zA-Z\s]/g, ""); // Allow only letters and spaces
+
+      // Capitalize first letter of every word
       value = value
         .split(" ")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .map(
+          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+        )
         .join(" ");
-      value = value.slice(0, 50);
+
+      value = value.slice(0, 50); // Limit length
     }
 
     if (name === "email") {

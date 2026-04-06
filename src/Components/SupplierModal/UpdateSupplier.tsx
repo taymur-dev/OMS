@@ -146,7 +146,7 @@ export const UpdateSupplier = ({
               name="supplierName"
               handlerChange={handlerChange}
               value={updateSupplier.supplierName}
-              minLength={3} 
+              minLength={3}
               maxLength={50}
             />
             <InputField
@@ -155,6 +155,7 @@ export const UpdateSupplier = ({
               name="supplierEmail"
               handlerChange={handlerChange}
               value={updateSupplier.supplierEmail}
+              readOnly={true}
             />
 
             <div className="md:col-span-2">
@@ -173,7 +174,7 @@ export const UpdateSupplier = ({
                 name="supplierAddress"
                 handlerChange={handlerChange}
                 inputVal={updateSupplier.supplierAddress}
-                 minLength={3} // Add this
+                minLength={3} // Add this
                 maxLength={250}
               />
             </div>

@@ -15,7 +15,15 @@ const ProfileDropdown = ({
   setIsOpenModal: (value: string) => void;
 }) => {
   const { currentUser } = useAppSelector((state) => state.officeState);
-  const isAdmin = currentUser?.role === "admin";
+
+  // Logic to determine the correct profile path
+  const getProfilePath = () => {
+    const role = currentUser?.role?.toLowerCase();
+    if (role === "admin") return "/profile";
+    if (role === "user") return "/user/profile";
+    // For any other end-user (System User)
+    return "/system-user/profile";
+  };
 
   const [viewPasswordModal, setViewPasswordModal] = useState<PASSWORDT | null>(
     null,
@@ -71,7 +79,7 @@ const ProfileDropdown = ({
         {/* Navigation Links */}
         <div className="py-1">
           <Link
-            to={isAdmin ? "/profile" : "/user/profile"}
+            to={getProfilePath()}
             onClick={() => setIsOpenModal("")}
             className="group flex items-center justify-between px-4 py-2.5 text-sm text-gray-700 
             hover:bg-indigo-50 transition-colors"

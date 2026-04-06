@@ -225,6 +225,7 @@ export const EditSystemUser = ({
               name="email"
               value={formData.email}
               handlerChange={handlerChange}
+              readOnly={true}
             />
 
             <InputField

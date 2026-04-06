@@ -36,6 +36,7 @@ import { TalentAcquisition } from "./Pages/AdminPage/TalentAcquisition";
 import { Propulsive } from "./Pages/AdminPage/Propulsive";
 
 import { EmployeeProfile } from "./Pages/AdminPage/EmployeeProfile";
+import { SystemUserProfile } from "./Pages/AdminPage/SystemUserProfile";
 import { Capital } from "./Pages/AdminPage/Capital";
 
 import { Ledgers } from "./Pages/AdminPage/Ledgers";
@@ -67,6 +68,10 @@ function App() {
           >
             <Route path="/" element={<AdminDashboard />} />
             <Route path="/profile" element={<Profile />} />
+            <Route
+              path="/system-user/profile"
+              element={<SystemUserProfile />}
+            />
             <Route path="/people" element={<People />} />
             <Route path="/human-resources" element={<HumanResources />} />
             <Route path="/dynamics" element={<Propulsive />} />

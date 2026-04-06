@@ -204,6 +204,7 @@ export const UpdateCustomer = ({
               name="email"
               handlerChange={handlerChange}
               value={customerData?.email || ""}
+              readOnly={true}
             />
 
             <InputField

@@ -242,6 +242,7 @@ export const UpdateApplicant = ({
               name="email"
               value={updateApplicant.email}
               handlerChange={handlerChange}
+              readOnly={true}
             />
 
             <InputField

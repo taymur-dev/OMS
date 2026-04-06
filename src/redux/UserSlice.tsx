@@ -13,6 +13,7 @@ type UserT = {
   cnic?: string;
   contact?: string;
   source?: string;
+  roleId?: number;
 };
 
 type AuthState = {
