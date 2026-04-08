@@ -30,6 +30,7 @@ type AllProjectT = {
   startDate: string;
   endDate: string;
   completionStatus: string;
+  isOnGoing: number;
 };
 
 interface ProjectsDetailsProps {
@@ -212,7 +213,7 @@ export const ProjectsDetails = ({
 
                     {/* End Date (Icon Removed) */}
                     <div className="text-gray-600 truncate">
-                      {formatDate(project.endDate)}
+                      {project.endDate ? formatDate(project.endDate) : "-----"}
                     </div>
 
                     {/* Status */}

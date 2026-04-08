@@ -179,7 +179,7 @@ export const Suppliers = ({
                       </div>
 
                       <div className="flex flex-col min-w-0">
-                        <span className="truncate font-semibold text-gray-800 text-sm">
+                        <span className="truncate text-gray-800 text-sm">
                           {item.supplierName}
                         </span>
                         <span className="truncate text-gray-400 text-xs">

@@ -162,7 +162,7 @@ export const BusinessVariables = ({
                       )}
                     </div>
 
-                    <div className="truncate font-semibold text-gray-800">
+                    <div className="truncate  text-gray-800">
                       {item.name}
                     </div>
                     <div className="truncate text-gray-600">{item.email}</div>

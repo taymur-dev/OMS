@@ -23,32 +23,19 @@ interface CalendarSession {
 
 interface ActivateCalendarSessionProps {
   setModal: () => void;
-  refreshSessions: (sessions?: CalendarSession[]) => Promise<void>
-
+  refreshSessions: (sessions?: CalendarSession[]) => Promise<void>;
 }
 
 const currentYear = new Date().getFullYear();
+const currentMonth = new Date().toLocaleString("default", {
+  month: "long",
+});
 
 const initialState = {
   session_name: "",
   year: String(currentYear),
-  month: "",
+  month: currentMonth,
 };
-
-const months = [
-  { id: 1, label: "January", value: "January" },
-  { id: 2, label: "February", value: "February" },
-  { id: 3, label: "March", value: "March" },
-  { id: 4, label: "April", value: "April" },
-  { id: 5, label: "May", value: "May" },
-  { id: 6, label: "June", value: "June" },
-  { id: 7, label: "July", value: "July" },
-  { id: 8, label: "August", value: "August" },
-  { id: 9, label: "September", value: "September" },
-  { id: 10, label: "October", value: "October" },
-  { id: 11, label: "November", value: "November" },
-  { id: 12, label: "December", value: "December" },
-];
 
 export const ActivateCalendarSession = ({
   setModal,
@@ -88,79 +75,77 @@ export const ActivateCalendarSession = ({
   }, [token]);
 
   const handlerChange = (
-  e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-) => {
-  const { name, value } = e.target;
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    const { name, value } = e.target;
 
-  let updatedValue = value;
+    let updatedValue = value;
 
-  if (name === "year") {
-    updatedValue = value.replace(/[^0-9]/g, "").slice(0, 4);
-  }
+    if (name === "year") {
+      updatedValue = value.replace(/[^0-9]/g, "").slice(0, 4);
+    }
 
-  setFormData({ ...formData, [name]: updatedValue });
-};
-
+    setFormData({ ...formData, [name]: updatedValue });
+  };
 
   const handlerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!formData.session_name || !formData.year || !formData.month) {
-    return toast.error("Please fill in all required fields", {
-      toastId: "activate-session-validation",
-    });
-  }
-
-  if (!token) {
-    return toast.error("Unauthorized", {
-      toastId: "activate-session-unauthorized",
-    });
-  }
-
-  setLoading(true);
-
-  try {
-    await axios.post(
-      `${BASE_URL}/api/admin/activate-calendar-session`,
-      formData,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    );
-
-    toast.success("Calendar session activated successfully", {
-      toastId: "activate-session-success",
-    });
-
-    const res = await axios.get<CalendarSession[]>(
-      `${BASE_URL}/api/admin/getCalendarSession`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    );
-
-    const updatedSessions = res.data;
-
-    await refreshSessions(updatedSessions);
-
-  
-    setModal();
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message || "Failed to activate calendar session",
-        { toastId: "activate-session-error" },
-      );
-    } else {
-      toast.error("Something went wrong", {
-        toastId: "activate-session-error-unknown",
+    if (!formData.session_name || !formData.year || !formData.month) {
+      return toast.error("Please fill in all required fields", {
+        toastId: "activate-session-validation",
       });
     }
-  } finally {
-    setLoading(false);
-  }
-};
 
+    if (!token) {
+      return toast.error("Unauthorized", {
+        toastId: "activate-session-unauthorized",
+      });
+    }
+
+    setLoading(true);
+
+    try {
+      await axios.post(
+        `${BASE_URL}/api/admin/activate-calendar-session`,
+        formData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      toast.success("Calendar session activated successfully", {
+        toastId: "activate-session-success",
+      });
+
+      const res = await axios.get<CalendarSession[]>(
+        `${BASE_URL}/api/admin/getCalendarSession`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      const updatedSessions = res.data;
+
+      await refreshSessions(updatedSessions);
+
+      setModal();
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        toast.error(
+          error.response?.data?.message ||
+            "Failed to activate calendar session",
+          { toastId: "activate-session-error" },
+        );
+      } else {
+        toast.error("Something went wrong", {
+          toastId: "activate-session-error-unknown",
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div>
@@ -203,15 +188,19 @@ export const ActivateCalendarSession = ({
                 name="year"
                 value={formData.year}
                 handlerChange={handlerChange}
+                readOnly
               />
 
               <OptionField
                 labelName="Month *"
                 name="month"
-                value={formData.month}
+                value={currentMonth}
                 handlerChange={handlerChange}
-                optionData={months}
-                inital="Select Month"
+                optionData={[
+                  { id: 1, label: currentMonth, value: currentMonth },
+                ]}
+                inital="Current Month"
+                disabled
               />
             </div>
 

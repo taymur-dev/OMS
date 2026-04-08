@@ -42,8 +42,10 @@ type OptionType = {
 
 const reasonLeaveOption = [
   { id: 1, label: "Present", value: "present" },
-  { id: 2, label: "Absent", value: "absent" },
-  { id: 3, label: "Leave", value: "leave" },
+  { id: 2, label: "Half Leave", value: "half leave" },
+  { id: 3, label: "Late", value: "late" },
+  { id: 4, label: "Absent", value: "absent" },
+  { id: 5, label: "Leave", value: "leave" },
 ];
 
 export const UpdateAttendance = ({
@@ -152,12 +154,12 @@ export const UpdateAttendance = ({
       await axios.patch(
         `${BASE_URL}/api/admin/updateAttendance/${addUserAttendance.id}`,
         {
+          userId: addUserAttendance.userId, // 👈 add this
           date: formattedDate,
           clockIn,
           clockOut,
           attendanceStatus: addUserAttendance.attendanceStatus,
         },
-        { headers: { Authorization: token } },
       );
 
       toast.success("Attendance updated successfully!");

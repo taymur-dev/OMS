@@ -131,6 +131,10 @@ export const AddCustomerAccount = ({
       });
     }
 
+    if (form.amount.length < 3) {
+      return toast.error("Amount must be minimum 3 characters long");
+    }
+
     setLoading(true);
 
     try {
@@ -222,7 +226,7 @@ export const AddCustomerAccount = ({
               value={form.amount}
               handlerChange={handlerChange}
               minLength={3}
-                maxLength={12}
+              maxLength={12}
             />
 
             <OptionField

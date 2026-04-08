@@ -145,6 +145,10 @@ export const AddLoan = ({ setModal, handleRefresh }: AddAttendanceProps) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (addLoan.loanAmount.length < 3) {
+      return toast.error("Loan Amount must be minimum 3 characters long");
+    }
+
     if (!token)
       return toast.error("Unauthorized", { toastId: "loan-unauthorized" });
 

@@ -29,6 +29,7 @@ const initialState = {
   startDate: currentDate,
   endDate: currentDate,
   completionStatus: "New", // default
+  isOnGoing: true,
 };
 
 export const AddProject = ({
@@ -81,44 +82,40 @@ export const AddProject = ({
     e.preventDefault();
     setLoading(true);
 
-    if (new Date(addProject.startDate) > new Date(addProject.endDate)) {
-      toast.error("Start Date cannot be later than End Date", {
-        toastId: "date-error",
-      });
-      return;
+    if (!addProject.isOnGoing && addProject.endDate) {
+      if (new Date(addProject.startDate) > new Date(addProject.endDate)) {
+        toast.error("Start Date cannot be later than End Date", {
+          toastId: "date-error",
+        });
+        setLoading(false);
+        return;
+      }
     }
+
+    const payload = {
+      ...addProject,
+      completionStatus: "New",
+      endDate: addProject.isOnGoing ? null : addProject.endDate, // optional
+    };
 
     try {
       const res = await axios.post(
         `${BASE_URL}/api/admin/addProject`,
-        addProject,
+        payload,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
-
+      console.log(res.status);
       await handleGetAllProjects();
-      console.log(res);
-
       setModal();
+
       toast.success("Project submitted successfully!", {
         toastId: "added success",
       });
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 400) {
-          toast.error(
-            error.response.data.message ||
-              "Project with this name and category already exists",
-            { toastId: "duplicate-project" },
-          );
-        } else {
-          toast.error("Failed to add project", { toastId: "failed" });
-        }
-      } else {
-        console.error(error);
-        toast.error("An unexpected error occurred", { toastId: "failed" });
-      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to add project");
     } finally {
       setLoading(false);
     }
@@ -164,7 +161,7 @@ export const AddProject = ({
               name="projectName"
               value={addProject.projectName}
               handlerChange={handlerChange}
-              minLength={3} 
+              minLength={3}
               maxLength={50}
             />
 
@@ -182,21 +179,24 @@ export const AddProject = ({
               name="endDate"
               value={addProject.endDate}
               handlerChange={handlerChange}
+              disabled={addProject.isOnGoing} // ✅ IMPORTANT
             />
 
-            <div className="md:col-span-2">
-              <OptionField
-                labelName="Completion Status *"
-                name="completionStatus"
-                value={addProject.completionStatus}
-                handlerChange={handlerChange}
-                optionData={[
-                  { id: 1, label: "New", value: "New" },
-                  { id: 2, label: "Working", value: "Working" },
-                  { id: 3, label: "Completed", value: "Completed" },
-                ]}
-                inital="Select Status"
+            <div className="md:col-span-2 flex items-center justify-center gap-2">
+              <input
+                type="checkbox"
+                name="isOnGoing"
+                checked={addProject.isOnGoing}
+                onChange={(e) =>
+                  setAddProject({
+                    ...addProject,
+                    isOnGoing: e.target.checked,
+                    endDate: e.target.checked ? "" : addProject.endDate,
+                    completionStatus: "New",
+                  })
+                }
               />
+              <label className="text-sm font-medium">On Going</label>
             </div>
 
             <div className="md:col-span-2">
@@ -206,7 +206,7 @@ export const AddProject = ({
                 handlerChange={handlerChange}
                 inputVal={addProject.description}
                 className="col-span-1 md:col-span-2"
-                 minLength={3} // Add this
+                minLength={3} // Add this
                 maxLength={250}
               />
             </div>

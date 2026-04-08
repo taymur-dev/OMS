@@ -172,6 +172,22 @@ export const EditConfigEmpSalary = ({
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (editConfigEmployee.salary_amount.length < 3) {
+      return toast.error("Salary Amount must be minimum 3 characters long");
+    }
+
+    if (editConfigEmployee.emp_of_mon_allowance.length < 3) {
+      return toast.error("Employee Monthly Allowance Amount must be minimum 3 characters long");
+    }
+
+    if (editConfigEmployee.transport_allowance.length < 3) {
+      return toast.error("Transport Allowance Amount must be minimum 3 characters long");
+    }
+
+    if (editConfigEmployee.medical_allowance.length < 3) {
+      return toast.error("Medical Allowance  Amount must be minimum 3 characters long");
+    }
+
     if (!token) {
       return toast.error("Unauthorized", {
         toastId: "salary-update-unauthorized",

@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPrint } from "@fortawesome/free-solid-svg-icons";
-import { RiUserFill, RiInboxArchiveLine } from "react-icons/ri";
+import { RiInboxArchiveLine } from "react-icons/ri";
 
 import { ShowDataNumber } from "../../Components/Pagination/ShowDataNumber";
 import { Pagination } from "../../Components/Pagination/Pagination";
@@ -443,7 +443,7 @@ export const ProcessReports = ({
                       isAdmin
                         ? "grid-cols-[60px_1fr_2fr_1fr_1fr_1fr]"
                         : "grid-cols-[60px_2fr_1fr_1fr_1fr]"
-                    } items-center px-3 py-1 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm`}
+                    } items-center px-3 py-2 gap-3 text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm`}
                   >
                     <span className="text-gray-500 font-medium">
                       {startIndex + index + 1}
@@ -451,9 +451,6 @@ export const ProcessReports = ({
 
                     {isAdmin && (
                       <div className="flex items-center gap-3 overflow-hidden">
-                        <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
-                          <RiUserFill size={16} />
-                        </div>
                         <span className="truncate text-gray-800">
                           {item.employeeName}
                         </span>
@@ -472,7 +469,7 @@ export const ProcessReports = ({
                       {item.endDate.slice(0, 10)}
                     </div>
 
-                    <div className="text-gray-600 truncate font-semibold">
+                    <div className="text-gray-600 truncate">
                       {item.deadline?.slice(0, 10)}
                     </div>
                   </div>
@@ -484,18 +481,18 @@ export const ProcessReports = ({
       </div>
 
       {/* --- PAGINATION SECTION --- */}
-      <div className="flex flex-row items-center justify-between p-2 mt-auto border-t border-gray-100 bg-white">
+      <div className="flex flex-row items-center justify-between p-2 mt-auto border-gray-100 bg-white">
         <ShowDataNumber
           start={totalItems === 0 ? 0 : startIndex + 1}
           end={Math.min(startIndex + externalPageSize, totalItems)}
           total={totalItems}
         />
         <Pagination
-                pageNo={pageNo}
-                totalNum={filteredTasks.length}
-                pageSize={externalPageSize}
-                handlePageClick={(targetPage) => setPageNo(targetPage)}
-              />
+          pageNo={pageNo}
+          totalNum={filteredTasks.length}
+          pageSize={externalPageSize}
+          handlePageClick={(targetPage) => setPageNo(targetPage)}
+        />
       </div>
     </div>
   );

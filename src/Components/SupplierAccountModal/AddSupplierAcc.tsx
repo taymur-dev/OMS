@@ -133,6 +133,10 @@ export const AddSupplierAccount = ({
       });
     }
 
+    if (form.amount.length < 3) {
+      return toast.error("Amount must be minimum 3 characters long");
+    }
+
     setLoading(true);
 
     try {

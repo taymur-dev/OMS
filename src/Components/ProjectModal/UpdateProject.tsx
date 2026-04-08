@@ -18,6 +18,7 @@ type AllProjectT = {
   startDate: string;
   endDate: string;
   completionStatus: string;
+   isOnGoing: number;
 };
 
 type AllCategoryT = {

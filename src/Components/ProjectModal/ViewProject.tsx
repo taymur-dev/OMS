@@ -14,6 +14,7 @@ type AllProjectT = {
   description: string;
   startDate: string;
   endDate: string;
+  completionStatus: string;
 };
 
 type CustomerDetailProps = {
@@ -26,6 +27,27 @@ export const ViewProject = ({
   viewProject,
 }: CustomerDetailProps) => {
   if (!viewProject) return null;
+
+  const getStatusBadge = (status: string) => {
+    const base =
+      "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider";
+
+    if (!status) return `${base} bg-gray-200 text-gray-600`;
+
+    switch (status.trim()) {
+      case "Completed":
+        return `${base} bg-green-100 text-green-700 border border-green-400`;
+
+      case "Working":
+        return `${base} bg-yellow-100 text-yellow-700 border border-yellow-400`;
+
+      case "New":
+        return `${base} bg-blue-100 text-blue-700 border border-blue-400`;
+
+      default:
+        return `${base} bg-gray-200 text-gray-600`;
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
@@ -105,13 +127,28 @@ export const ViewProject = ({
             <h3 className="absolute -top-3 left-3 bg-white px-2 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
               Details
             </h3>
-            <div className="pt-2">
-              <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
-                <FaAlignLeft className="text-gray-400" /> Description
-              </label>
-              <p className="text-gray-800 font-medium mt-1 leading-relaxed">
-                {viewProject.description || "No description provided."}
-              </p>
+            <div className="grid grid-cols-2 gap-y-4 pt-2">
+              <div className="pt-2">
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaAlignLeft className="text-gray-400" /> Description
+                </label>
+                <p className="text-gray-800 font-medium mt-1 leading-relaxed">
+                  {viewProject.description || "No description provided."}
+                </p>
+              </div>
+
+              <div className="pt-2">
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase">
+                  <FaAlignLeft className="text-gray-400" /> Status
+                </label>
+                <div className="mt-2">
+                  <span
+                    className={getStatusBadge(viewProject.completionStatus)}
+                  >
+                    {viewProject.completionStatus}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

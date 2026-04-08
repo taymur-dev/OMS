@@ -294,39 +294,67 @@ export const AddUser = ({
   };
 
   const handleUpdateUser = async (
-    id: string | number | undefined,
-  ): Promise<void> => {
-    if (!id) return;
+  id: string | number | undefined,
+): Promise<void> => {
+  if (!id) return;
 
-    const data = prepareFormData();
+  const { contact, cnic, name, email } = userData;
 
-    setLoading(true);
-    try {
-      await axios.put(`${BASE_URL}/api/admin/updateUser/${id}`, data, {
-        headers: {
-          Authorization: token,
-        },
+  // Required fields check (optional but recommended)
+  if (!name || !email || !contact || !cnic) {
+    toast.error("Please fill all required fields", {
+      toastId: "update-required-fields",
+    });
+    return;
+  }
+
+  // ✅ Phone validation (exactly 11 digits)
+  if (!/^\d{11}$/.test(contact)) {
+    toast.error("Phone number must be exactly 11 digits", {
+      toastId: "invalid-phone",
+    });
+    return;
+  }
+
+  // ✅ CNIC validation (13 digits ignoring dashes)
+  const cnicDigits = cnic.replace(/\D/g, "");
+  if (cnicDigits.length !== 13) {
+    toast.error("CNIC must be exactly 13 digits", {
+      toastId: "invalid-cnic",
+    });
+    return;
+  }
+
+  const data = prepareFormData();
+
+  setLoading(true);
+  try {
+    await axios.put(`${BASE_URL}/api/admin/updateUser/${id}`, data, {
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    toast.success("Employee updated successfully", {
+      toastId: "user-update-success",
+    });
+
+    handlerGetUsers();
+    onSuccesAction();
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(error.response?.data?.message || "Error updating user", {
+        toastId: "user-update-error",
       });
-      toast.success("Employee updated successfully", {
-        toastId: "user-update-success",
+    } else {
+      toast.error("An unexpected error occurred", {
+        toastId: "user-update-error",
       });
-
-      handlerGetUsers();
-      onSuccesAction();
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "Error updating user", {
-          toastId: "user-update-error",
-        });
-      } else {
-        toast.error("An unexpected error occurred", {
-          toastId: "user-update-error",
-        });
-      }
-    } finally {
-      setLoading(false);
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm px-4 flex items-center justify-center z-50">

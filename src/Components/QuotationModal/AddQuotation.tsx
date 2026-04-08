@@ -279,6 +279,7 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
               handlerChange={handlerChange}
               value={addQuotation.QTY}
               readOnly
+            
             />
             <InputField
               labelName="Project Price *"
@@ -286,6 +287,8 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
               name="UnitPrice"
               handlerChange={handlerChange}
               value={addQuotation.UnitPrice}
+               minLength={3} 
+              maxLength={12}
             />
           </div>
 
@@ -421,7 +424,7 @@ export const AddQuotation = ({ setModal, onAdded }: AddQuotationProps) => {
                 name="description"
                 handlerChange={handlerChange}
                 inputVal={addQuotation.description}
-                 minLength={3} // Add this
+                minLength={3} // Add this
                 maxLength={250}
               />
             </div>

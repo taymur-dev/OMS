@@ -50,6 +50,13 @@ export const Progress = ({
   const dispatch = useAppDispatch();
   const token = currentUser?.token;
 
+  const getStartOfMonth = () => {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  return `${year}-${month}-01`;
+};
+
   const getCurrentDate = () => {
     const d = new Date();
     const year = d.getFullYear();
@@ -72,7 +79,7 @@ export const Progress = ({
     null,
   );
   const [pageNo, setPageNo] = useState(1);
-  const [fromDate, setFromDate] = useState<string>(getCurrentDate());
+  const [fromDate, setFromDate] = useState<string>(getStartOfMonth());
   const [toDate, setToDate] = useState<string>(getCurrentDate());
 
   const handleGetAllProgress = useCallback(async () => {

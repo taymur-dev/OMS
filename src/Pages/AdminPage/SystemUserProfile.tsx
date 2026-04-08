@@ -7,7 +7,6 @@ import {
   ShieldCheck,
   User,
   LucideIcon,
-  CircleCheck,
 } from "lucide-react";
 import AvatarPlaceholder from "../../assets/vector.png";
 import { Footer } from "../../Components/Footer";
@@ -57,18 +56,11 @@ export const SystemUserProfile = () => {
 
         <div className="max-w-3xl mx-auto">
           <div className="bg-white rounded-3xl shadow-xl shadow-blue-100/50 border border-gray-100 overflow-hidden">
-            
             {/* Banner Section */}
             <div
               className="h-40 bg-blue-500 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))]
               from-blue-600 via-blue-700 to-indigo-900 relative"
-            >
-                <div className="absolute top-4 right-6 flex gap-2">
-                    <span className="px-3 py-1 bg-white/20 backdrop-blur-md text-white text-xs font-bold rounded-full border border-white/30">
-                        ID: #{currentUser?.id || "000"}
-                    </span>
-                </div>
-            </div>
+            ></div>
 
             <div className="px-8 pb-10">
               {/* Profile Header */}
@@ -96,10 +88,7 @@ export const SystemUserProfile = () => {
                       <ShieldCheck className="w-4 h-4" />
                       {currentUser?.role || "User"}
                     </div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-bold">
-                      <CircleCheck className="w-4 h-4" />
-                      Active
-                    </div>
+                    
                   </div>
                 </div>
               </div>
@@ -127,7 +116,6 @@ export const SystemUserProfile = () => {
                       label="Contact Number"
                       value={currentUser?.contact ?? "Not provided"}
                     />
-                     
                   </div>
                 </section>
               </div>

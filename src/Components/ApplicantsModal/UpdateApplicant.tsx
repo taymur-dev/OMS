@@ -226,6 +226,8 @@ export const UpdateApplicant = ({
               name="applicant_name"
               value={updateApplicant.applicant_name}
               handlerChange={handlerChange}
+              minLength={3}
+              maxLength={50}
             />
 
             <InputField
@@ -234,6 +236,8 @@ export const UpdateApplicant = ({
               name="fatherName"
               value={updateApplicant.fatherName}
               handlerChange={handlerChange}
+              minLength={3}
+              maxLength={50}
             />
 
             <InputField
@@ -259,6 +263,8 @@ export const UpdateApplicant = ({
               name="job"
               value={updateApplicant.job}
               handlerChange={handlerChange}
+              minLength={3} 
+              maxLength={50}
             />
 
             <InputField
@@ -275,6 +281,8 @@ export const UpdateApplicant = ({
               name="interviewPhase"
               value={updateApplicant.interviewPhase}
               handlerChange={handlerChange}
+               minLength={3} 
+              maxLength={50}
             />
 
             <div className="flex flex-col gap-1 md:col-span-1">

@@ -169,7 +169,7 @@ export const Applicants = ({
                       {startIndex + index + 1}
                     </span>
 
-                    <div className="text-gray-800 font-bold truncate">
+                    <div className="text-gray-800 truncate">
                       {item.applicant_name}
                     </div>
                     <div className="text-gray-600 truncate">

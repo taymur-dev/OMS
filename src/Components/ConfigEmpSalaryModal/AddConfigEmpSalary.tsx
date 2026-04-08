@@ -129,6 +129,32 @@ export const AddConfigEmpSalary = ({
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (addConfigEmployee.salary_amount.length < 3) {
+      return toast.error("Salary Amount must be minimum 3 characters long");
+    }
+
+    if (addConfigEmployee.emp_of_mon_allowance.length < 3) {
+      return toast.error(
+        "Employee,s Monthly Allowance Amount must be minimum 3 characters long",
+      );
+    }
+
+    if (addConfigEmployee.transport_allowance.length < 3) {
+      return toast.error(
+        "Transport Allowance Amount must be minimum 3 characters long",
+      );
+    }
+
+    if (addConfigEmployee.medical_allowance.length < 3) {
+      return toast.error(
+        "Medical Allowance Amount must be minimum 3 characters long",
+      );
+    }
+
+    if (addConfigEmployee.salary_amount.length < 3) {
+      return toast.error("Salary Amount must be minimum 3 characters long");
+    }
+
     if (!token) {
       return toast.error("Unauthorized", { toastId: "salary-unauthorized" });
     }

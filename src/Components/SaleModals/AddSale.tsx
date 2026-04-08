@@ -209,6 +209,8 @@ export const AddSale = ({ setModal, handleGetsales }: AddSaleProps) => {
                 setAddSaleItem({ ...addSaleItem, UnitPrice: e.target.value })
               }
               value={addSaleItem.UnitPrice}
+              minLength={3} 
+              maxLength={12}
             />
           </div>
 

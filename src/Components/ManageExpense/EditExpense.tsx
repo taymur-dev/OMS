@@ -62,6 +62,11 @@ export const EditExpense = ({
     e.preventDefault();
     if (!expense) return;
 
+    const amountStr = String(expense.amount);
+    if (amountStr.length < 3) {
+      return toast.error("Amount must be minimum 3 characters long");
+    }
+
     setLoading(true);
 
     try {
@@ -137,7 +142,7 @@ export const EditExpense = ({
               name="expenseName"
               handlerChange={handlerChange}
               value={expense?.expenseName ?? ""}
-              minLength={3} 
+              minLength={3}
               maxLength={50}
             />
 
@@ -147,7 +152,7 @@ export const EditExpense = ({
               type="number"
               handlerChange={handlerChange}
               value={expense?.amount ? String(expense.amount) : ""}
-              minLength={3} 
+              minLength={3}
               maxLength={12}
             />
 
@@ -156,8 +161,8 @@ export const EditExpense = ({
               name="addedBy"
               handlerChange={handlerChange}
               value={expense?.addedBy ?? ""}
+              minLength={3}
               maxLength={50}
-
             />
             <div className="md:col-span-2">
               <InputField

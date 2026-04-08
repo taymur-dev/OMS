@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
+import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 
 import { InputField } from "../InputFields/InputField";
@@ -66,9 +67,7 @@ export const AddResignation = ({
 
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getUsers`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       setAllUsers(res.data?.users ?? []);
@@ -83,9 +82,7 @@ export const AddResignation = ({
 
     try {
       const res = await axios.get(`${BASE_URL}/api/admin/getEmployeeLifeLine`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       setLifeLines(Array.isArray(res.data) ? res.data : []);
@@ -94,39 +91,32 @@ export const AddResignation = ({
     }
   }, [token, isAdmin]);
 
-  // New function to fetch current user's lifeline for non-admin users
+  // ✅ FIXED: use userId instead of id
   const getMyLifeLine = useCallback(async () => {
-    if (!token || isAdmin) return;
-    
+    if (!token || isAdmin || !currentUser?.userId) return;
+
     try {
       const res = await axios.get(`${BASE_URL}/api/user/getMyLifeLine`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       const myLifeLineData = Array.isArray(res.data) ? res.data : [];
-      
-      // Get the latest lifeline entry for current user
-      const latestLifeLine = myLifeLineData
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-      
-      if (latestLifeLine) {
-        setFormData((prev) => ({
-          ...prev,
-          id: String(currentUser?.id),
-          designation: latestLifeLine.position || "",
-        }));
-      } else {
-        setFormData((prev) => ({
-          ...prev,
-          id: String(currentUser?.id),
-        }));
-      }
-    } catch (error) {
-      console.error("Failed to fetch my lifeline:", error);
-      // Even if lifeline fetch fails, set the ID
+
+      const latestLifeLine = myLifeLineData.sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+      )[0];
+
       setFormData((prev) => ({
         ...prev,
-        id: String(currentUser?.id),
+        id: String(currentUser.userId), // ✅ FIX
+        designation: latestLifeLine?.position || "",
+      }));
+    } catch (error) {
+      console.error("Failed to fetch my lifeline:", error);
+
+      setFormData((prev) => ({
+        ...prev,
+        id: String(currentUser.userId), // ✅ FIX
       }));
     }
   }, [token, isAdmin, currentUser]);
@@ -168,18 +158,18 @@ export const AddResignation = ({
       getAllUsers();
       fetchUserDesignation();
     } else {
-      // For non-admin users, fetch their own lifeline data
       getMyLifeLine();
     }
-  }, [isAdmin, getAllUsers, fetchUserDesignation, getMyLifeLine, currentUser]);
+  }, [isAdmin, getAllUsers, fetchUserDesignation, getMyLifeLine]);
 
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.id || !formData.designation || !formData.note) {
-      return toast.error("Please fill all required fields", {
-        toastId: "add-resignation-validation",
-      });
+    // ✅ FIX: prevent "undefined" from ever going to backend
+    const employeeId = isAdmin ? formData.id : currentUser?.userId;
+
+    if (!employeeId || !formData.designation || !formData.note) {
+      return toast.error("Please fill all required fields");
     }
 
     setLoading(true);
@@ -189,25 +179,28 @@ export const AddResignation = ({
         ? `${BASE_URL}/api/admin/addResignation`
         : `${BASE_URL}/api/user/addResignation`;
 
-      await axios.post(url, formData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.post(
+        url,
+        {
+          id: String(employeeId), // ✅ FIXED HERE
+          designation: formData.designation,
+          note: formData.note,
+          resignation_date: formData.resignation_date,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
-      toast.success("Resignation added successfully", {
-        toastId: "add-resignation-success",
-      });
+      toast.success("Resignation added successfully");
 
       setModal();
       handleRefresh?.();
       setFormData(initialState);
     } catch (err) {
-      const axiosError = err as AxiosError<{ message: string }>;
-      toast.error(
-        axiosError.response?.data?.message || "Failed to add resignation",
-        { toastId: "add-resignation-error" },
-      );
-    } finally {
-      setLoading(false);
+      const error = err as AxiosError<{ message: string }>;
+
+      toast.error(error.response?.data?.message || "Failed to add resignation");
     }
   };
 
@@ -219,12 +212,7 @@ export const AddResignation = ({
     }));
 
   return (
-    <div
-      className="fixed inset-0 bg-black/30 backdrop-blur px-4  flex items-center justify-center z-50"
-      onKeyDown={(e) => {
-        if (e.key === "Enter") e.preventDefault();
-      }}
-    >
+    <div className="fixed inset-0 bg-black/30 backdrop-blur px-4 flex items-center justify-center z-50">
       <div className="w-[42rem] overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form onSubmit={handlerSubmitted}>
           <div className="bg-white rounded-xl border-t-5 border-blue-400">
@@ -236,9 +224,9 @@ export const AddResignation = ({
             </Title>
           </div>
 
-          <div className="mx-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 py-6 gap-2 space-y-2">
-            <div className="md:col-span-2">
-              {isAdmin && (
+          <div className="mx-4 grid grid-cols-1 sm:grid-cols-2 py-6 gap-2">
+            {isAdmin && (
+              <div className="sm:col-span-2">
                 <UserSelect
                   labelName="Select Employee*"
                   name="id"
@@ -246,8 +234,8 @@ export const AddResignation = ({
                   optionData={userOptions}
                   handlerChange={handlerChange}
                 />
-              )}
-            </div>
+              </div>
+            )}
 
             <InputField
               labelName="Current Position*"
@@ -265,7 +253,7 @@ export const AddResignation = ({
               handlerChange={handlerChange}
             />
 
-            <div className="md:col-span-2">
+            <div className="sm:col-span-2">
               <TextareaField
                 labelName="Note*"
                 name="note"
@@ -277,7 +265,7 @@ export const AddResignation = ({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 px-4 rounded py-3 bg-white">
+          <div className="flex justify-end gap-3 px-4 py-3">
             <CancelBtn setModal={setModal} />
             <AddButton loading={loading} label={loading ? "Saving" : "Save"} />
           </div>

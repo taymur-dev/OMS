@@ -189,7 +189,7 @@ export const SystemUsers = ({
                       </div>
 
                       <div className="flex flex-col">
-                        <span className="font-semibold text-gray-800">
+                        <span className="text-gray-800">
                           {user.name}
                         </span>
                         <span className="text-xs text-gray-400">

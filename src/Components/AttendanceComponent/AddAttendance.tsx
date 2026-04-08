@@ -33,13 +33,26 @@ const reasonLeaveOption = [
     label: "Present",
     value: "present",
   },
+
   {
     id: 2,
+    label: "Half Leave",
+    value: "half leave",
+  },
+
+  {
+    id: 3,
+    label: "Late",
+    value: "late",
+  },
+
+  {
+    id: 4,
     label: "Absent",
     value: "absent",
   },
   {
-    id: 3,
+    id: 5,
     label: "Leave",
     value: "leave",
   },
@@ -113,8 +126,11 @@ export const AddAttendance = ({
       return;
     }
 
-    if (attendanceStatus === "present" && (!clockIn || !clockOut)) {
-      toast.error("Clock In and Clock Out are required for Present status");
+    if (
+      ["present", "late", "half leave"].includes(attendanceStatus) &&
+      (!clockIn || !clockOut)
+    ) {
+      toast.error("Clock In and Clock Out are required");
       return;
     }
 
@@ -123,8 +139,13 @@ export const AddAttendance = ({
       // Make sure we're sending only the fields the backend expects
       const attendanceData = {
         date,
-        clockIn: attendanceStatus === "present" ? clockIn : null,
-        clockOut: attendanceStatus === "present" ? clockOut : null,
+        clockIn: ["present", "late", "half leave"].includes(attendanceStatus)
+          ? clockIn
+          : null,
+
+        clockOut: ["present", "late", "half leave"].includes(attendanceStatus)
+          ? clockOut
+          : null,
         attendanceStatus,
       };
 

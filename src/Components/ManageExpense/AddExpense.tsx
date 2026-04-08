@@ -52,15 +52,15 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
     let updatedValue = value;
 
     if (name === "expenseName") {
-      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "");
     }
 
     if (name === "amount") {
-      updatedValue = value.replace(/\D/g, "").slice(0, 12);
+      updatedValue = value.replace(/\D/g, "");
     }
 
     if (name === "addedBy") {
-      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+      updatedValue = value.replace(/[^a-zA-Z ]/g, "");
     }
 
     setAddExpense({ ...addExpense, [name]: updatedValue });
@@ -82,6 +82,14 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
 
   const handlerSubmitted = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (addExpense.amount.length < 3) {
+      return toast.error("Amount must be minimum 3 characters long");
+    }
+
+     if (addExpense.expenseName.length < 3) {
+      return toast.error("Amount must be minimum 3 characters long");
+    }
 
     setLoading(true);
 
