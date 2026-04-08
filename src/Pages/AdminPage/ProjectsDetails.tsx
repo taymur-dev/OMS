@@ -29,6 +29,7 @@ type AllProjectT = {
   description: string;
   startDate: string;
   endDate: string;
+  deadlineDate?: string;
   completionStatus: string;
   isOnGoing: number;
 };
@@ -157,7 +158,7 @@ export const ProjectsDetails = ({
           {/* 1. Header Section */}
           <div className="px-0.5 pt-0.5">
             <div
-              className="grid grid-cols-[60px_2fr_1.5fr_1.2fr_1.2fr_1fr_auto] bg-blue-400 text-white
+              className="grid grid-cols-[60px_2fr_1.5fr_1.2fr_1.2fr_1.2fr_1fr_auto] bg-blue-400 text-white
              rounded-lg items-center font-bold text-xs tracking-wider sticky top-0 z-10 gap-3 px-3 py-3 shadow-sm"
             >
               <span className="text-left">Sr#</span>
@@ -165,6 +166,7 @@ export const ProjectsDetails = ({
               <span className="text-left">Category</span>
               <span className="text-left">Start Date</span>
               <span className="text-left">End Date</span>
+              <span className="text-left">Deadline Date</span>
               <span className="text-center">Status</span>
               <span className="text-right w-[140px] pr-4">Actions</span>
             </div>
@@ -186,7 +188,7 @@ export const ProjectsDetails = ({
                 {paginatedProjects.map((project, index) => (
                   <div
                     key={project.id}
-                    className="grid grid-cols-[60px_2fr_1.5fr_1.2fr_1.2fr_1fr_auto] items-center px-3 py-2 gap-3
+                    className="grid grid-cols-[60px_2fr_1.5fr_1.2fr_1.2fr_1.2fr_1fr_auto] items-center px-3 py-2 gap-3
                      text-sm bg-white border border-gray-100 rounded-lg hover:bg-blue-50/30 transition-colors shadow-sm"
                   >
                     {/* Serial Number */}
@@ -214,6 +216,12 @@ export const ProjectsDetails = ({
                     {/* End Date (Icon Removed) */}
                     <div className="text-gray-600 truncate">
                       {project.endDate ? formatDate(project.endDate) : "-----"}
+                    </div>
+
+                    <div className="text-gray-600 truncate">
+                      {project.deadlineDate?.trim()
+                        ? formatDate(project.deadlineDate)
+                        : "-----"}
                     </div>
 
                     {/* Status */}

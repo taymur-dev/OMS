@@ -173,15 +173,7 @@ export const AddProject = ({
               handlerChange={handlerChange}
             />
 
-            <InputField
-              labelName="End Date *"
-              type="date"
-              name="endDate"
-              value={addProject.endDate}
-              handlerChange={handlerChange}
-              disabled={addProject.isOnGoing} // ✅ IMPORTANT
-            />
-
+            
             <div className="md:col-span-2 flex items-center justify-center gap-2">
               <input
                 type="checkbox"
@@ -198,6 +190,17 @@ export const AddProject = ({
               />
               <label className="text-sm font-medium">On Going</label>
             </div>
+
+
+            <InputField
+              labelName="End Date *"
+              type="date"
+              name="endDate"
+              value={addProject.endDate}
+              handlerChange={handlerChange}
+              disabled={addProject.isOnGoing} // ✅ IMPORTANT
+            />
+
 
             <div className="md:col-span-2">
               <TextareaField

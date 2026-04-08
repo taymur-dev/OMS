@@ -17,6 +17,7 @@ type AllProjectT = {
   description: string;
   startDate: string;
   endDate: string;
+  deadlineDate?: string;
   completionStatus: string;
   isOnGoing: number;
 };
@@ -40,9 +41,13 @@ export const UpdateProject = ({
   const { currentUser } = useAppSelector((state) => state.officeState);
   const token = currentUser?.token;
 
-  const [updateProject, setUpdateProject] = useState(selectProject);
-  const [loading, setLoading] = useState(false);
+  const [updateProject, setUpdateProject] = useState(() =>
+    selectProject
+      ? { ...selectProject, isOnGoing: !!selectProject.isOnGoing }
+      : null,
+  );
 
+  const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<AllCategoryT[] | null>(null);
 
   const handlerChange = (
@@ -65,12 +70,21 @@ export const UpdateProject = ({
         updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
       }
 
-      // 👉 IMPORTANT: status logic
+      // 👉 STATUS LOGIC
       if (name === "completionStatus") {
         return {
           ...prev,
           completionStatus: value,
-          endDate: value === "New" || value === "Working" ? "" : prev.endDate,
+          isOnGoing: value !== "Completed",
+          endDate: value === "Completed" ? prev.endDate : "",
+        };
+      }
+
+      // ✅ FIX: handle deadlineDate properly
+      if (name === "deadlineDate") {
+        return {
+          ...prev,
+          deadlineDate: value,
         };
       }
 
@@ -93,17 +107,28 @@ export const UpdateProject = ({
     handleGetAllCategories();
   }, [handleGetAllCategories]);
 
+  useEffect(() => {
+    if (selectProject) {
+      setUpdateProject({
+        ...selectProject,
+        isOnGoing: !!selectProject.isOnGoing,
+        deadlineDate: selectProject.deadlineDate ?? "",
+      });
+    }
+  }, [selectProject]);
+
   const handlerSubmitted = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!updateProject) return;
 
+    // ✅ VALIDATION: deadline vs start date
     if (
-      updateProject.completionStatus === "Completed" &&
-      updateProject.endDate &&
-      new Date(updateProject.startDate) > new Date(updateProject.endDate)
+      updateProject.completionStatus === "Working" &&
+      updateProject.deadlineDate &&
+      new Date(updateProject.deadlineDate) < new Date(updateProject.startDate)
     ) {
-      toast.error("Start Date cannot be later than End Date", {
-        toastId: "date-error-update",
+      toast.error("Deadline cannot be before start date", {
+        toastId: "deadline-error-update",
       });
       return;
     }
@@ -111,9 +136,15 @@ export const UpdateProject = ({
     setLoading(true);
 
     try {
+      // ✅ FIX: convert isOnGoing to number for backend
+      const payload = {
+        ...updateProject,
+        isOnGoing: updateProject.isOnGoing ? 1 : 0,
+      };
+
       const res = await axios.put(
         `${BASE_URL}/api/admin/updateProject/${updateProject.id}`,
-        updateProject,
+        payload,
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
@@ -134,7 +165,9 @@ export const UpdateProject = ({
             },
           );
         } else {
-          toast.error("Failed to update project", { toastId: "update-failed" });
+          toast.error("Failed to update project", {
+            toastId: "update-failed",
+          });
         }
       } else {
         console.error(error);
@@ -145,7 +178,7 @@ export const UpdateProject = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm px-4  flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm px-4 flex items-center justify-center z-50">
       <div className="w-full max-w-3xl overflow-y-auto bg-white mx-auto rounded-xl shadow-xl">
         <form
           onSubmit={handlerSubmitted}
@@ -196,31 +229,62 @@ export const UpdateProject = ({
               handlerChange={handlerChange}
             />
 
+            <div className="md:col-span-2 flex items-center justify-center gap-2">
+              <input
+                type="checkbox"
+                name="isOnGoing"
+                checked={updateProject?.isOnGoing || false}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+
+                  setUpdateProject((prev) => {
+                    if (!prev) return prev;
+
+                    return {
+                      ...prev,
+                      isOnGoing: checked,
+                      endDate: checked ? "" : prev.endDate,
+                      completionStatus: checked ? "New" : prev.completionStatus,
+                    };
+                  });
+                }}
+              />
+              <label className="text-sm font-medium">On Going</label>
+            </div>
+
             <InputField
               labelName="End Date *"
               type="date"
               name="endDate"
               value={updateProject?.endDate ?? ""}
               handlerChange={handlerChange}
-              disabled={
-                updateProject?.completionStatus === "New" ||
-                updateProject?.completionStatus === "Working"
-              }
+              disabled={updateProject?.isOnGoing}
             />
 
+            <OptionField
+              labelName="Completion Status *"
+              name="completionStatus"
+              value={updateProject?.completionStatus ?? "New"}
+              handlerChange={handlerChange}
+              optionData={[
+                { id: 1, label: "New", value: "New" },
+                { id: 2, label: "Working", value: "Working" },
+                { id: 3, label: "Completed", value: "Completed" },
+              ]}
+              inital="Select Status"
+            />
+
+            {/* ✅ NEW FIELD */}
             <div className="md:col-span-2">
-              <OptionField
-                labelName="Completion Status *"
-                name="completionStatus"
-                value={updateProject?.completionStatus ?? "New"}
-                handlerChange={handlerChange}
-                optionData={[
-                  { id: 1, label: "New", value: "New" },
-                  { id: 2, label: "Working", value: "Working" },
-                  { id: 3, label: "Completed", value: "Completed" },
-                ]}
-                inital="Select Status"
-              />
+              {updateProject?.completionStatus === "Working" && (
+                <InputField
+                  labelName="Deadline Date *"
+                  type="date"
+                  name="deadlineDate"
+                  value={updateProject?.deadlineDate ?? ""}
+                  handlerChange={handlerChange}
+                />
+              )}
             </div>
 
             <div className="md:col-span-2">
@@ -229,7 +293,7 @@ export const UpdateProject = ({
                 name="description"
                 handlerChange={handlerChange}
                 inputVal={updateProject?.description ?? ""}
-                minLength={3} // Add this
+                minLength={3}
                 maxLength={250}
               />
             </div>
