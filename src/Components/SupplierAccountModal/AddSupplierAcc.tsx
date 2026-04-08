@@ -109,10 +109,12 @@ export const AddSupplierAccount = ({
     getAllSuppliers();
   }, [getAllSuppliers]);
 
-  const supplierOptions = allSuppliers.map((s) => ({
-    value: s.supplierId.toString(),
-    label: s.supplierName,
-  }));
+  const supplierOptions = [...allSuppliers]
+    .sort((a, b) => a.supplierName.localeCompare(b.supplierName))
+    .map((s) => ({
+      value: s.supplierId.toString(),
+      label: s.supplierName,
+    }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

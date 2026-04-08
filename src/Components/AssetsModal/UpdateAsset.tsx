@@ -101,6 +101,7 @@ export const UpdateAsset = ({
           (cat: Category) =>
             cat.category_name && cat.category_name.trim() !== "",
         )
+        .sort((a, b) => a.id - b.id) // ✅ ADD THIS
         .map((cat: Category) => ({
           id: cat.id,
           label: cat.category_name.trim(),

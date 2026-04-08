@@ -87,7 +87,7 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
       return toast.error("Amount must be minimum 3 characters long");
     }
 
-     if (addExpense.expenseName.length < 3) {
+    if (addExpense.expenseName.length < 3) {
       return toast.error("Amount must be minimum 3 characters long");
     }
 
@@ -147,11 +147,14 @@ export const AddExpense = ({ setModal }: AddAttendanceProps) => {
                 name="expenseCategoryId"
                 value={addExpense.expenseCategoryId}
                 handlerChange={handlerChange}
-                optionData={allExpenseCategory?.map((category) => ({
-                  id: category.id,
-                  label: category.categoryName,
-                  value: category.id,
-                }))}
+                optionData={allExpenseCategory
+                  ?.slice()
+                  .sort((a, b) => a.id - b.id)
+                  .map((category) => ({
+                    id: category.id,
+                    label: category.categoryName,
+                    value: category.id,
+                  }))}
                 inital="Please Select Category"
               />
 

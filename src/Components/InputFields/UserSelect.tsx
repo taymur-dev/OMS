@@ -33,7 +33,7 @@ export const UserSelect = ({
         disabled={disabled}
         className="p-3 rounded bg-white text-gray-800 border-1 shadow rounded-lg border-gray-200"
       >
-        <option value="">Please Select end-user</option>
+        <option value="">Please Select</option>
         {optionData?.map((opt, idx) => (
           <option key={idx} value={opt.value}>
             {opt.label}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { AddButton } from "../CustomButtons/AddButton";
 import { CancelBtn } from "../CustomButtons/CancelBtn";
 import { Title } from "../Title";
@@ -16,7 +16,7 @@ export type TodoType = {
   id: number;
   employee_id: number;
   employeeName?: string;
-  email?: string; 
+  email?: string;
   name: string;
   task: string;
   startDate: string;
@@ -32,15 +32,6 @@ type UserT = {
   name?: string;
   employeeName?: string;
   loginStatus?: string;
-};
-
-type UserOption = {
-  id: number;
-  value: string;
-  label: string;
-  name: string;
-  loginStatus: string;
-  projectName: string;
 };
 
 type UpdateTodoProps = {
@@ -218,14 +209,18 @@ export const UpdateTodo = ({
     }
   };
 
-  const userOptions: UserOption[] = allUsers.map((u) => ({
-    id: u.id,
-    value: String(u.id),
-    label: u.employeeName || u.name || "User",
-    name: u.employeeName || u.name || "User",
-    loginStatus: u.loginStatus || "",
-    projectName: "",
-  }));
+  const userOptions = useMemo(() => {
+    return allUsers
+      .filter((u) => u.loginStatus === "Y")
+      .map((u) => ({
+        id: u.id,
+        value: String(u.id),
+        label: u.employeeName || u.name || "User",
+        name: u.employeeName || u.name || "User",
+        loginStatus: u.loginStatus || "",
+        projectName: "",
+      }));
+  }, [allUsers]);
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs px-4  flex items-center justify-center z-50">
@@ -262,7 +257,7 @@ export const UpdateTodo = ({
               name="task"
               handlerChange={handlerChange}
               value={todo?.task}
-              minLength={3} 
+              minLength={3}
               maxLength={50}
             />
 
@@ -305,7 +300,7 @@ export const UpdateTodo = ({
                 name="note"
                 inputVal={todo?.note || ""}
                 handlerChange={handlerChange}
-                 minLength={3} // Add this
+                minLength={3} // Add this
                 maxLength={250}
               />
             </div>

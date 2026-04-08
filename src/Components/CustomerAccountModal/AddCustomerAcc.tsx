@@ -107,10 +107,12 @@ export const AddCustomerAccount = ({
     getAllCustomers();
   }, [getAllCustomers]);
 
-  const customerOptions = allCustomers.map((c) => ({
-    value: c.id.toString(),
-    label: c.customerName,
-  }));
+  const customerOptions = [...allCustomers]
+    .sort((a, b) => a.customerName.localeCompare(b.customerName))
+    .map((c) => ({
+      value: c.id.toString(),
+      label: c.customerName,
+    }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

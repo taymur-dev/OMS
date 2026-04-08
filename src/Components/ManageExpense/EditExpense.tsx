@@ -129,11 +129,14 @@ export const EditExpense = ({
                   : ""
               }
               handlerChange={handlerChange}
-              optionData={categories?.map((cat) => ({
-                id: cat.id,
-                label: cat.categoryName,
-                value: cat.id,
-              }))}
+              optionData={categories
+                ?.slice()
+                .sort((a, b) => a.id - b.id)
+                .map((cat) => ({
+                  id: cat.id,
+                  label: cat.categoryName,
+                  value: cat.id,
+                }))}
               inital="Please Select Category"
             />
 

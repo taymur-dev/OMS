@@ -185,7 +185,7 @@ export const ConfigEmpSalary = ({
                       </div>
 
                       {/* Net Salary */}
-                      <div className="text-gray-600 font-semibold truncate">
+                      <div className="text-gray-600 truncate">
                         {salary.net_salary}
                       </div>
 

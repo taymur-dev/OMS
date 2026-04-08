@@ -100,6 +100,7 @@ export const AddAsset = ({
           (cat: Category) =>
             cat.category_name && cat.category_name.trim() !== "",
         )
+        .sort((a, b) => a.id - b.id) // ✅ ADD THIS LINE
         .map((cat: Category) => ({
           id: cat.id,
           label: cat.category_name.trim(),
