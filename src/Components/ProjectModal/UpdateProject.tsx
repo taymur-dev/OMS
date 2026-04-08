@@ -18,7 +18,7 @@ type AllProjectT = {
   startDate: string;
   endDate: string;
   completionStatus: string;
-   isOnGoing: number;
+  isOnGoing: number;
 };
 
 type AllCategoryT = {
@@ -167,7 +167,7 @@ export const UpdateProject = ({
               name="projectName"
               value={updateProject?.projectName}
               handlerChange={handlerChange}
-              minLength={3} 
+              minLength={3}
               maxLength={50}
             />
 
@@ -185,6 +185,10 @@ export const UpdateProject = ({
               name="endDate"
               value={updateProject?.endDate ?? ""}
               handlerChange={handlerChange}
+              disabled={
+                updateProject?.completionStatus === "New" ||
+                updateProject?.completionStatus === "Working"
+              }
             />
 
             <div className="md:col-span-2">
@@ -208,7 +212,7 @@ export const UpdateProject = ({
                 name="description"
                 handlerChange={handlerChange}
                 inputVal={updateProject?.description ?? ""}
-                 minLength={3} // Add this
+                minLength={3} // Add this
                 maxLength={250}
               />
             </div>
