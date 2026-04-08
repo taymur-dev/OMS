@@ -86,7 +86,7 @@ export const SystemUserProfile = () => {
                   <div className="flex flex-wrap justify-center sm:justify-start gap-2 mt-2">
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-bold">
                       <ShieldCheck className="w-4 h-4" />
-                      {currentUser?.role || "User"}
+                      {currentUser?.role || "System User"}
                     </div>
                     
                   </div>

@@ -25,6 +25,17 @@ const ProfileDropdown = ({
     return "/system-user/profile";
   };
 
+  const getDisplayRole = (role?: string) => {
+    if (!role) return "System User";
+
+    const normalized = role.toLowerCase();
+
+    if (normalized === "admin") return "Admin";
+    if (normalized === "user") return "User";
+
+    return "System User";
+  };
+
   const [viewPasswordModal, setViewPasswordModal] = useState<PASSWORDT | null>(
     null,
   );
@@ -65,9 +76,9 @@ const ProfileDropdown = ({
             {currentUser?.name || "User Name"}
             <span
               className="inline-flex mt-2 ml-1 items-center rounded-full bg-indigo-50 px-2 py-0.5 text-xs
-           font-medium text-indigo-700 capitalize"
+  font-medium text-indigo-700 capitalize"
             >
-              {currentUser?.role || "Member"}
+              {getDisplayRole(currentUser?.role)}
             </span>
           </p>
 
