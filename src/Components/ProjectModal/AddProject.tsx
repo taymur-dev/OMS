@@ -27,7 +27,7 @@ const initialState = {
   projectCategory: "",
   description: "",
   startDate: currentDate,
-  endDate: currentDate,
+  endDate: "",
   completionStatus: "New", // default
   isOnGoing: true,
 };

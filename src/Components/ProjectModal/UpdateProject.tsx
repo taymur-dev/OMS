@@ -52,17 +52,30 @@ export const UpdateProject = ({
   ) => {
     const { name, value } = e.target;
 
-    let updatedValue = value;
+    setUpdateProject((prev) => {
+      if (!prev) return prev;
 
-    if (name === "projectName") {
-      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
-    }
+      let updatedValue = value;
 
-    if (name === "description") {
-      updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
-    }
+      if (name === "projectName") {
+        updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 50);
+      }
 
-    setUpdateProject({ ...updateProject, [name]: updatedValue } as AllProjectT);
+      if (name === "description") {
+        updatedValue = value.replace(/[^a-zA-Z ]/g, "").slice(0, 250);
+      }
+
+      // 👉 IMPORTANT: status logic
+      if (name === "completionStatus") {
+        return {
+          ...prev,
+          completionStatus: value,
+          endDate: value === "New" || value === "Working" ? "" : prev.endDate,
+        };
+      }
+
+      return { ...prev, [name]: updatedValue };
+    });
   };
 
   const handleGetAllCategories = useCallback(async () => {
@@ -84,7 +97,11 @@ export const UpdateProject = ({
     e.preventDefault();
     if (!updateProject) return;
 
-    if (new Date(updateProject.startDate) > new Date(updateProject.endDate)) {
+    if (
+      updateProject.completionStatus === "Completed" &&
+      updateProject.endDate &&
+      new Date(updateProject.startDate) > new Date(updateProject.endDate)
+    ) {
       toast.error("Start Date cannot be later than End Date", {
         toastId: "date-error-update",
       });
